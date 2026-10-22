@@ -10,6 +10,10 @@ Target animated formats: GIF, Animated WebP and APNG. Static WebP, PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing
 will not require media uploads, accounts or a backend. No analytics is included.
 
+An isolated Milestone 1A Animated WebP engineering spike is available through
+`?spike=webp`; this is not production playback support. Its build, ownership and
+validation details are in [the technical notes](docs/milestones/milestone-1a-webp-wasm.md).
+
 ## Development
 
 Install Node.js 24 LTS (see `.nvmrc`) with npm, then:
@@ -66,6 +70,7 @@ to fully composited canvas-sized images so codec blend/disposal details stay in
 the decoder adapter. Renderer calls borrow a frame synchronously. The player
 will own sequence cleanup and a bounded cache; neither is implemented here.
 
-Archive, worker and shared UI component directories will be introduced with their
+The WebP spike Worker lives with its format adapter under `src/formats/webp/`.
+Archive and shared UI component directories will be introduced with their
 first real modules rather than empty scaffolding. See `PLAN.md` for the architecture
 and roadmap, and `AGENTS.md` for development rules.

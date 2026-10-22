@@ -1,0 +1,10 @@
+.webp-spike { max-width: 64rem; margin: auto; padding: 1.25rem; overflow-wrap: anywhere; }
+.webp-spike h1 { font-size: 1.75rem; margin-bottom: 1rem; }
+.webp-spike p, .webp-spike label { display: block; margin-bottom: 1rem; }
+.webp-spike input { max-width: 100%; margin-top: 0.5rem; }
+.spike-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 1rem; }
+.spike-controls button { min-height: 44px; padding: 0.5rem 1rem; cursor: pointer; }
+.webp-spike dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.3rem 1rem; }
+.webp-spike dd { margin: 0; font-variant-numeric: tabular-nums; }
+.webp-spike canvas { display: block; max-width: 100%; height: auto; border: 1px solid #536378; }
+.webp-spike [role="alert"] { color: #a21b22; }
