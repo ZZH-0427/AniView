@@ -6,7 +6,7 @@ Normal development uses the committed `.mjs` and `.wasm` files with Node.js 24.
 Validated host: Windows x64, Python 3.14, Emscripten 6.0.13, CMake 4.4.4,
 Ninja 1.13.2. Python 3.9+ with pip and network access is required for setup.
 The SDK download is approximately 800 MB plus extracted files. All tools and
-build intermediates stay in `.tools/`, which Git and ESLint ignore.
+build intermediates stay in `.tools/`, which Git, ESLint and Vite's dev watcher ignore.
 
 From the repository root:
 
