@@ -49,7 +49,7 @@ export async function runViewerCheck({ send, evaluate, waitFor, click, fixture, 
     await send('Emulation.setDeviceMetricsOverride', { width, height: 1000, deviceScaleFactor: 2, mobile: width < 600 })
     await new Promise(resolve => setTimeout(resolve, 100))
     if (await evaluate('document.documentElement.scrollWidth>innerWidth')) throw new Error('Viewer horizontal overflow')
-    if (!await evaluate('document.querySelector("canvas").width>=document.querySelector("canvas").clientWidth*1.9')) throw new Error('Viewer DPR sizing failed')
+    await waitFor('document.querySelector("canvas").width>=document.querySelector("canvas").clientWidth*1.9')
     await capture?.(width)
   }
   await click('Close')

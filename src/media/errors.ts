@@ -9,6 +9,8 @@ const errorMessages = {
   WORKER_FAILED: 'Media processing stopped. Please try opening the file again.',
   WASM_UNAVAILABLE: 'The required decoder could not be loaded in this browser.',
   FILE_READ_FAILED: 'This file could not be read.',
+  APNG_RUNTIME_UNAVAILABLE: 'APNG playback requires Worker image decoding and OffscreenCanvas support in this browser.',
+  STATIC_PNG_NOT_ANIMATED: 'This is a static PNG. Animated playback does not apply.',
 } as const
 
 export type MediaErrorCode = keyof typeof errorMessages

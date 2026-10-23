@@ -31,6 +31,20 @@ function setup(loopCount = 1, count = 2) {
   return { player, clock, sequence, drawn, released, pulls, restarts }
 }
 describe('presentation clock and bounded producer', () => {
+  it('yields zero-duration frames through the clock instead of spinning synchronously', async () => {
+    const { player, clock, sequence, drawn } = setup()
+    const original = sequence.frames
+    const zeroDuration: AnimationSequence = { ...sequence, async *frames() {
+      for await (const frame of original()) yield { ...frame, durationMs: 0 }
+    } }
+    await player.load(zeroDuration)
+    player.play()
+    expect(drawn).toEqual([0])
+    clock.advance(9); expect(drawn).toEqual([0])
+    clock.advance(1); expect(drawn).toEqual([0, 1])
+    clock.advance(10); expect(player.state).toBe('ended')
+    await player.dispose()
+  })
   it('holds the current frame on underrun, then presents sequentially when decode completes', async () => {
     const { player, clock, sequence, drawn } = setup(1, 8)
     const original = sequence.frames

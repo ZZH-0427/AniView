@@ -32,6 +32,7 @@ try {
   const errors = []
   const assets = []
   const frameTransfers = []
+  const bitmapCounts = []
   let workerTargets = 0
   socket.onmessage = ({ data }) => {
     const event = JSON.parse(data)
@@ -41,10 +42,20 @@ try {
       void send('Network.enable', {}, session)
         .then(() => send('Runtime.enable', {}, session))
         .then(() => send('Runtime.evaluate', { expression: `
+          const liveBitmaps=new Set();let peakBitmaps=0;
+          if(typeof createImageBitmap==='function'&&typeof ImageBitmap!=='undefined'){
+            const create=globalThis.createImageBitmap;
+            globalThis.createImageBitmap=async function(...args){
+              const bitmap=await create.apply(this,args);liveBitmaps.add(bitmap);peakBitmaps=Math.max(peakBitmaps,liveBitmaps.size);return bitmap;
+            };
+            const close=ImageBitmap.prototype.close;
+            ImageBitmap.prototype.close=function(){liveBitmaps.delete(this);return close.call(this);};
+          }
           const originalPostMessage=globalThis.postMessage;
           globalThis.postMessage=function(message,options){
             const result=originalPostMessage.call(this,message,options);
             if(message.type==='frame') console.debug('ANIVIEW_FRAME_DETACHED:'+message.rgba.byteLength);
+            if(message.type==='frame'&&message.liveBitmaps!==undefined)console.debug('ANIVIEW_BITMAP_COUNTS:'+liveBitmaps.size+':'+peakBitmaps);
             return result;
           };
         ` }, session))
@@ -62,6 +73,10 @@ try {
     if (event.method === 'Runtime.consoleAPICalled' && event.params.type === 'debug') {
       const text = event.params.args[0]?.value
       if (typeof text === 'string' && text.startsWith('ANIVIEW_FRAME_DETACHED:')) frameTransfers.push(text === 'ANIVIEW_FRAME_DETACHED:0')
+      if (typeof text === 'string' && text.startsWith('ANIVIEW_BITMAP_COUNTS:')) {
+        const [, live, peak] = text.split(':')
+        bitmapCounts.push({ live: Number(live), peak: Number(peak) })
+      }
     }
     if (event.method === 'Network.responseReceived') {
       const response = event.params.response
@@ -101,8 +116,21 @@ try {
   // Observe actual input ownership transfer without exposing file content remotely.
   await send('Page.addScriptToEvaluateOnNewDocument', { source: `
     window.__inputTransfers=[];
+    window.__decoderEvents=[];
     const original=Worker.prototype.postMessage;
     Worker.prototype.postMessage=function(message,transfer){
+      if(!this.__aniviewObserved){
+        this.__aniviewObserved=true;
+        this.addEventListener('message',event=>{
+          const m=event.data;
+          if(m.type==='ready'||m.type==='frame') window.__decoderEvents.push({
+            receivedAt:performance.now(),
+            type:m.type,frameIndex:m.frameIndex,readyMs:m.readyMs,decodeMs:m.decodeMs,durationMs:m.durationMs,
+            liveBitmaps:m.liveBitmaps,backupBytes:m.backupBytes,metadata:m.metadata,
+            pixels:m.rgba?.byteLength<=256?Array.from(new Uint8Array(m.rgba)):undefined
+          });
+        });
+      }
       const result=original.call(this,message,transfer);
       if(message.type==='open') window.__inputTransfers.push(message.data.byteLength===0);
       return result;
@@ -110,17 +138,20 @@ try {
   ` })
   await send('Page.navigate', { url })
   if (new URL(url).searchParams.get('spike') !== 'webp') {
-    const { runViewerCheck } = await import('../playback/browser-scenario.mjs')
-    const report = await runViewerCheck({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
+    const apngMode = process.argv[4] === 'apng'
+    const run = apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
+    const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `viewer-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      await writeFile(join(output, `${apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
-    if (!assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
+    if (!apngMode && !assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
+    if (apngMode && (!bitmapCounts.length || bitmapCounts.some(count => count.live !== 0 || count.peak !== 1))) throw new Error('APNG ImageBitmaps accumulated')
     if (errors.length) throw new Error(JSON.stringify(errors))
-    await writeFile(join(output, 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length }, null, 2))
-    console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length }, null, 2))
+    const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
+    await writeFile(join(output, apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
+    console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     await send('Browser.close')
   } else {
   await waitFor("document.querySelector('h1')?.textContent==='Animated WebP technical spike'")

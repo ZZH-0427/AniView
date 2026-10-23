@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { browserFile } from '../../input/browser-file'
-import { WebPAnimationDecoder } from '../../formats/webp/webp-animation-decoder'
+import { openAnimation } from '../../formats/open-animation'
 import { AnimationPlayer } from '../../player/animation-player'
 import { CanvasRenderer } from '../../renderer/canvas-renderer'
 import { MediaError } from '../../media/errors'
@@ -47,10 +47,10 @@ export function Viewer({ file, onClose }: { file: File; onClose: () => void }) {
           if (player.state === 'error') report(player.error)
         })
         controller.current = player
-        const sequence = await new WebPAnimationDecoder().decode(browserFile(file), { signal: abort.signal })
+        const { sequence, format } = await openAnimation(browserFile(file), { signal: abort.signal })
         if (!active) { await sequence.dispose(); return }
         opened = true
-        setMetadata(`${sequence.width} × ${sequence.height} · ${sequence.frameCount ?? '?'} frames`)
+        setMetadata(`${format.toUpperCase()} · ${sequence.width} × ${sequence.height} · ${sequence.frameCount ?? '?'} frames`)
         await player.load(sequence)
       } catch (cause) { report(cause) }
     })()
