@@ -4,7 +4,7 @@ Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
 Milestone 2B PASSED; Milestone 3 PASSED;
-Milestone 4 implemented, pending Android archive validation.**
+Milestone 4 PASSED.**
 The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
 looping and Close. All three formats use the same bounded cache, player and renderer.
 Single-frame GIF is supported. Static PNG/JPEG/WebP are recognized and display
@@ -32,7 +32,7 @@ replaces the current list; selecting ordinary images replaces the archive.
 Close archive releases its resources. Password-protected entries are identified,
 but password entry is not available yet. ZIP processing stays entirely local.
 See [ZIP archive notes](docs/milestones/milestone-4-zip-archive.md) for limits,
-supported entry discovery, validation and the pending Android checklist.
+supported entry discovery, validation and the completed Android acceptance record.
 
 Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing

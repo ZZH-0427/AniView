@@ -1,8 +1,8 @@
 # Milestone 4 — ZIP archive input
 
-Status: **PENDING ANDROID ARCHIVE VALIDATION**. Implemented with local automated
-and real desktop browser validation. Real Android ZIP acceptance remains required;
-earlier Android tests for loose images do not establish archive compatibility.
+Status: **PASSED**. Local automated tests, real desktop browser checks, CI, Pages
+and user-reported Android ZIP acceptance have passed. Android acceptance was
+reported on 2026-10-23 using Edge and Quark with the ZIP-specific checklist below.
 Milestone 5 has not started. PLAN.md and AGENTS.md are unchanged.
 
 ## Dependency and loading
@@ -203,7 +203,8 @@ Large smoke test: **28,813,442 encoded bytes**, 60 entries,
 113 ms. First current Blob: 1,001,718 bytes; next: 380,850 bytes; observed peak
 cached output: 1,001,718 bytes. FrameCache peak: 3,840,000 bytes / six frames,
 16,777,216-byte budget, zero underruns. A 10 ms UI heartbeat had a 12.6 ms maximum
-gap across 98 ticks. These are desktop results; Android performance is pending.
+gap across 98 ticks. These are desktop results; large-archive Android performance
+was not measured.
 
 ## GitHub Pages and Android acceptance
 
@@ -243,18 +244,51 @@ output 1,001,718 bytes; FrameCache peak was 3,840,000 bytes / six frames with ze
 underruns. The 10 ms heartbeat maximum gap was 12.1 ms over 110 ticks. These remain
 individual desktop observations, not Android conclusions.
 
-Android status: **Pending user real-device validation**. Use one mainstream
-Chromium browser (Chrome or Edge) and one usual browser (Quark or QQ). Download
-[mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/mixed.zip),
-open it via Open ZIP and verify:
+Android status: **PASSED — user-reported real-device acceptance, 2026-10-23**.
+The user reported “在edge和夸克上做了测试，均无问题” in response to the complete
+ZIP-specific checklist, satisfying the mainstream Chromium plus usual-browser
+requirement. This evidence is separate from earlier loose-file acceptance.
 
-1. Seven metadata entries, three image candidates; first GIF opens.
-2. Play/Pause; Next to WebP, Next to APNG; Previous works.
-3. Close archive and reopen the same ZIP; no freeze or crash.
-4. Open [encrypted-mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/encrypted-mixed.zip): public siblings play; encrypted entry says
-   password-protected, not corrupted; Next recovers.
-5. If available, repeat with a real ZIP containing dozens of animations. Report
-   ZIP size/count, responsiveness, browser and debug archive/frame-cache JSON.
+| Browser | Mixed ZIP / GIF, WebP, APNG / controls / navigation / close-reopen | Encrypted ZIP / public-sibling navigation | Stutter or crash |
+| --- | --- | --- | --- |
+| Android Edge | Passed, user-reported | Passed, user-reported | No issues reported |
+| Android Quark | Passed, user-reported | Passed, user-reported | No issues reported |
 
-Do not infer a pass from earlier Android loose-file tests. No password UI, folder
-tree, extract-all, archive editing, RAR/7z, conversion or export is provided.
+The acceptance checklist used these original Pages-hosted samples:
+
+1. [mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/mixed.zip):
+   1,056 encoded bytes, seven metadata entries and three image candidates.
+   Open the first GIF, Play/Pause, Next to WebP, Next to APNG, Previous,
+   Close archive and reopen the same ZIP.
+2. [encrypted-mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/encrypted-mixed.zip):
+   872 encoded bytes, four entries. Public first/last GIFs play; the middle
+   ZipCrypto/AES entries show password-protected rather than corrupted;
+   Next continues to public content.
+
+The user supplied two successful-playback frame-cache observations. Their ordering
+was not explicitly mapped to individual browsers, so neither is assigned a browser:
+
+| Observation | cacheBytes | cachedFrames | peakBytes | peakFrames | maxBytes | underruns |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Playback A | 48 | 2 | 72 | 3 | 16,777,216 | 0 |
+| Playback B | 72 | 3 | 72 | 3 | 16,777,216 | 0 |
+
+Both encrypted-entry observations showed the expected message:
+
+```text
+This ZIP entry is password-protected. Password-protected ZIP playback is not enabled yet.
+```
+
+Their frame-cache counters, including `maxBytes`, were all zero, consistent with
+an entry that cannot create a playback session. The successful cases had zero
+underruns. These are user-provided observations, not an independently witnessed
+Android run or a whole-process memory measurement.
+
+Browser versions, device details, archive-specific metrics JSON and a separate
+large Android ZIP were not supplied. No Android extraction timings or large-archive
+performance claims are inferred. The 60-entry desktop smoke test remains the
+measured large-archive evidence; the Android core checklist is complete.
+
+Milestone 4 is closed. Ready for Milestone 5 — Viewer UX as a separately requested
+task; no Milestone 5 work was started during closure. No password UI, folder tree,
+extract-all, archive editing, RAR/7z, conversion or export is provided.
