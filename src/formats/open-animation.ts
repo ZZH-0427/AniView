@@ -11,6 +11,9 @@ export async function openAnimation(file: VirtualFile, options?: DecodeOptions) 
   const format = await new BinaryFormatDetector().detect(file, options?.signal)
   if (options?.signal?.aborted) throw new MediaError('WORKER_FAILED')
   if (format.kind === 'png') throw new MediaError('STATIC_PNG_NOT_ANIMATED')
+  if (format.kind === 'jpeg' || (format.kind === 'webp' && !format.animated)) {
+    throw new MediaError('STATIC_IMAGE_NOT_AVAILABLE')
+  }
   const decoder = [new WebPAnimationDecoder(), new APNGAnimationDecoder(), new GIFAnimationDecoder()].find(candidate => candidate.canDecode(format))
   if (!decoder) throw new MediaError('UNSUPPORTED_FORMAT')
   return { format: format.kind, sequence: await decoder.decode(file, options) }

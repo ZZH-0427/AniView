@@ -3,14 +3,24 @@
 Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
-Milestone 2B PASSED.**
+Milestone 2B PASSED; Milestone 3 pending Android input validation.**
 The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
 looping and Close. All three formats use the same bounded cache, player and renderer.
-Static PNG is recognized but has no viewer yet. Single-frame GIF is supported.
+Single-frame GIF is supported. Static PNG/JPEG/WebP are recognized and display
+an explicit message that static-image viewing is not available yet.
 See the [WebP vertical slice](docs/milestones/milestone-1-webp-vertical-slice.md)
 and [APNG integration notes](docs/milestones/milestone-2a-apng.md).
 See [GIF integration notes](docs/milestones/milestone-2b-gif.md) for timing,
 disposal compatibility, the approved interlace adaptation and acceptance status.
+
+Choose **选择图片** on mobile or **Open Images** on desktop. The standard picker
+uses `image/*`; its gallery/directory interface depends on the browser and system.
+Select multiple files or drag files into the desktop page, then use Previous/Next,
+Remove from list, Choose more images and Clear session. Files are opened on demand
+from a temporary list (up to 1,000 items); removing an item never deletes the
+device file. Cancelling selection preserves the list; Close clears it.
+See [Input Experience](docs/milestones/milestone-3-input-experience.md) for the
+final Android picker validation matrix, which remains pending.
 
 Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing
@@ -66,8 +76,10 @@ Do not commit `dist/` or maintain a `gh-pages` source branch.
 
 - `src/app/` and `src/pages/`: React shell, Home and Viewer.
 - `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
+- `src/input/`: shared browser-file adapters for standard selection and file drops.
 - `src/formats/`: binary format detection and Worker-backed WebP/APNG/GIF adapters.
 - `src/media/`: animation/frame contracts and categorized errors.
+- `src/media/media-session.ts`: page-lifetime ordered references and file navigation.
 - `src/player/` and `src/renderer/`: bounded prefetch/cache, presentation clock and Canvas drawing.
 
 Animation sequences expose fresh incremental frame streams for replay. Consumers

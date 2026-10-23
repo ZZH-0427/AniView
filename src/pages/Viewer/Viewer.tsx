@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { browserFile } from '../../input/browser-file'
+import type { VirtualFile } from '../../input/virtual-file'
 import { openAnimation } from '../../formats/open-animation'
 import { AnimationPlayer } from '../../player/animation-player'
 import { CanvasRenderer } from '../../renderer/canvas-renderer'
 import { MediaError } from '../../media/errors'
 import './viewer.css'
 
-export function Viewer({ file, onClose }: { file: File; onClose: () => void }) {
+export function Viewer({ file, onClose, transition }: {
+  file: VirtualFile
+  onClose: () => void
+  transition: { current: Promise<void> }
+}) {
   const canvas = useRef<HTMLCanvasElement>(null)
   const container = useRef<HTMLDivElement>(null)
   const controller = useRef<AnimationPlayer | undefined>(undefined)
@@ -21,7 +25,7 @@ export function Viewer({ file, onClose }: { file: File; onClose: () => void }) {
     const parent = container.current
     if (!surface || !parent) return
     let active = true
-    let opened = false
+    const precedingCleanup = transition.current
     const abort = new AbortController()
     let renderer: CanvasRenderer | undefined
     let observer: ResizeObserver | undefined
@@ -31,7 +35,11 @@ export function Viewer({ file, onClose }: { file: File; onClose: () => void }) {
       setStatus('error')
       setError(cause instanceof MediaError ? cause.message : 'Unable to play this image. Please try another file.')
     }
-    void (async () => {
+    const opening = (async () => {
+      // Join the old open/teardown before allocating another decoder. This gate
+      // survives keyed Viewer replacements and Close -> immediate reselect.
+      await precedingCleanup
+      if (!active) return
       try {
         renderer = new CanvasRenderer(surface)
         const resize = () => renderer?.setViewport({ width: parent.clientWidth, height: parent.clientHeight,
@@ -47,22 +55,22 @@ export function Viewer({ file, onClose }: { file: File; onClose: () => void }) {
           if (player.state === 'error') report(player.error)
         })
         controller.current = player
-        const { sequence, format } = await openAnimation(browserFile(file), { signal: abort.signal })
+        const { sequence, format } = await openAnimation(file, { signal: abort.signal })
         if (!active) { await sequence.dispose(); return }
-        opened = true
         setMetadata(`${format.toUpperCase()} · ${sequence.width} × ${sequence.height} · ${sequence.frameCount ?? '?'} frames`)
         await player.load(sequence)
       } catch (cause) { report(cause) }
     })()
     return () => {
       active = false
-      if (!opened) abort.abort()
+      abort.abort() // Synchronously cancels any old Worker, including an in-flight frame.
       observer?.disconnect()
       controller.current = undefined
-      void player?.dispose().catch(() => {})
+      const closing = player?.dispose().catch(() => {})
       renderer?.dispose()
+      transition.current = Promise.all([opening, closing]).then(() => {})
     }
-  }, [file])
+  }, [file, transition])
 
   const debug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
   return <main className="viewer">

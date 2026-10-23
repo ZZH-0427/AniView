@@ -1,5 +1,5 @@
 const errorMessages = {
-  UNSUPPORTED_FORMAT: 'This file format is not supported.',
+  UNSUPPORTED_FORMAT: 'Unsupported image format.',
   CORRUPTED_FILE: 'This file appears to be damaged.',
   DECODE_FAILED: 'This image could not be decoded.',
   ARCHIVE_CORRUPTED: 'This archive appears to be damaged.',
@@ -12,7 +12,8 @@ const errorMessages = {
   FILE_READ_FAILED: 'This file could not be read.',
   APNG_RUNTIME_UNAVAILABLE: 'APNG playback requires Worker image decoding and OffscreenCanvas support in this browser.',
   GIF_RUNTIME_UNAVAILABLE: 'GIF playback requires Web Worker support in this browser.',
-  STATIC_PNG_NOT_ANIMATED: 'This is a static PNG. Animated playback does not apply.',
+  STATIC_PNG_NOT_ANIMATED: 'This file is a static image. Static-image viewing is not available in this milestone.',
+  STATIC_IMAGE_NOT_AVAILABLE: 'This file is a static image. Static-image viewing is not available in this milestone.',
 } as const
 
 export type MediaErrorCode = keyof typeof errorMessages

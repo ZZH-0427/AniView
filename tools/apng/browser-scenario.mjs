@@ -161,7 +161,7 @@ export async function runAPNGCheck({ send, evaluate, waitFor, click, fixture, ur
 
   await select(join(fixtures, 'static.png'), 'error')
   const staticMessage = await evaluate("document.querySelector('[role=alert]').textContent")
-  if (!/static PNG/i.test(staticMessage)) throw new Error('Static PNG was not distinguished from APNG')
+  if (!/static image/i.test(staticMessage)) throw new Error('Static PNG was not distinguished from APNG')
   await close()
   const damaged = join(output, 'truncated-apng.png')
   const bytes = await readFile(fixture)

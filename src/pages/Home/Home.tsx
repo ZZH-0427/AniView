@@ -1,4 +1,7 @@
-export function Home({ onOpen }: { onOpen?: (file: File) => void }) {
+import { ImageInput } from '../../components/ImageInput'
+import type { VirtualFile } from '../../input/virtual-file'
+
+export function Home({ onOpen }: { onOpen: (files: readonly VirtualFile[]) => void }) {
   return (
     <main className="home">
       <header>
@@ -9,15 +12,11 @@ export function Home({ onOpen }: { onOpen?: (file: File) => void }) {
 
       <section className="foundation" aria-labelledby="foundation-title">
         <span className="foundation-mark" aria-hidden="true">A</span>
-        <h2 id="foundation-title">Open WebP, APNG or GIF</h2>
-        <p>Early development. Animated WebP and APNG playback are available; GIF is planned.</p>
-        <label className="open-file">Open WebP, APNG or GIF
-          <input aria-label="Open WebP, APNG or GIF" type="file" accept=".webp,.png,.apng,.gif,image/webp,image/png,image/apng,image/gif" onChange={(event) => {
-            const file = event.target.files?.[0]
-            if (file) onOpen?.(file)
-            event.target.value = ''
-          }} />
-        </label>
+        <h2 id="foundation-title">Your animations, on your device</h2>
+        <p>Play GIF, Animated WebP and APNG files.</p>
+        <ImageInput onFiles={onOpen} />
+        <p className="drop-hint">Drag &amp; drop images here. You can select several at once.</p>
+        <p>Static-image viewing is not available yet.</p>
       </section>
 
       <footer>

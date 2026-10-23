@@ -52,3 +52,22 @@ p { line-height: 1.6; }
 
 .foundation p { max-width: 38rem; margin-top: 0.75rem; color: #536378; }
 footer { color: #536378; font-size: 0.9rem; }
+
+button { font: inherit; cursor: pointer; min-height: 44px; padding: 0.55rem 0.9rem; border: 1px solid #acb8c6; border-radius: 0.5rem; color: inherit; background: white; }
+button:disabled { opacity: 0.5; cursor: default; }
+button:focus-visible { outline: 3px solid #2765b0; outline-offset: 3px; }
+.image-picker { color: white; background: #285581; border-color: #285581; font-weight: 600; }
+.image-input { display: inline-block; }
+.foundation .image-input { margin-top: 1.5rem; }
+.mobile-label { display: none; }
+.drop-hint { display: none; }
+.session-controls { max-width: 72rem; margin: auto; padding: 1rem 1rem 0; }
+.session-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 0.65rem; }
+.session-notice { max-width: 72rem; padding: 1rem; margin: auto; }
+.drop-overlay { position: fixed; inset: 1rem; z-index: 10; display: grid; place-items: center; border: 3px dashed #285581; border-radius: 1rem; background: #e7eef7ef; color: #285581; font-size: 1.5rem; font-weight: 600; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { .drop-hint { display: block; } }
+@media (max-width: 40rem), (pointer: coarse) {
+  .desktop-label { display: none; }
+  .mobile-label { display: inline; }
+  .drop-hint { display: none; }
+}
