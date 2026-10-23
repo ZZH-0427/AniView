@@ -104,3 +104,28 @@ downloaded desktop samples (WebP, APNG, GIF). The external sources and licenses
 remain those recorded above and in the WebP milestone documentation; neither
 the archive nor extracted test media is committed. This smoke test checks
 current-only extraction and UI responsiveness without multi-gigabyte media.
+
+## Static and Viewer UX fixtures
+
+`static/` contains original 40×20 red/green/blue/yellow quadrants encoded as JPEG,
+PNG and static WebP by the installed Edge browser, with EXIF orientation 2/3/6/8
+JPEG variants and a deliberately truncated JPEG. The artwork is CC0-1.0; no
+downloaded content or new encoder package is involved. Regenerate and verify
+native orientation/pixels/resource release with:
+
+```sh
+node tools/static/generate-fixtures.mjs
+```
+
+See [static fixture details](static/README.md). Encoder bytes can vary between
+browser versions; pixel expectations and orientation semantics are reproducible.
+The application does not contain the fixture generator or an EXIF parser.
+
+`node tools/viewer/generate-fixtures.mjs` builds the original 200-frame red/green
+WebP (9,644 bytes) from the existing lossless payloads and a six-entry mixed-media
+ZIP (2,349 bytes) from the original JPEG/GIF/PNG/APNG/WebP fixtures. Its order is
+JPEG → GIF → static PNG → APNG → static WebP → animated WebP. Copies in
+`public/validation/viewer/long.webp`, `mixed-media.zip` and `orientation-6.jpg`
+provide small Pages-hosted Android acceptance samples, without copied artwork.
+Additional malformed/oversized files and browser reports remain in ignored
+`.tools/` output or are created in unit-test memory.

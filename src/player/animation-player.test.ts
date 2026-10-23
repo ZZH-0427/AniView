@@ -70,10 +70,12 @@ describe('presentation clock and bounded producer', () => {
     clock.advance(40); clock.advance(40)
     expect(drawn).toEqual([0, 1, 2])
     expect(player.underruns).toBe(1)
+    expect(player.buffering).toBe(true)
     release?.()
     await vi.waitFor(() => expect(player.metrics.cachedFrames).toBe(3))
     clock.advance(1)
     expect(drawn).toEqual([0, 1, 2, 3])
+    expect(player.buffering).toBe(false)
     await player.dispose()
   })
   it('honors a finite total-play count', async () => {

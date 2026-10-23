@@ -8,13 +8,14 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const url = process.argv[2]
 const inputMode = process.argv[4] === 'input'
 const archiveMode = process.argv[4] === 'archive'
+const uxMode = process.argv[4] === 'ux'
 const fixture = resolve(process.argv[3] ?? '.tools/fixtures/animated.webp')
 if (!url) throw new Error('Usage: node tools/webp-wasm/browser-check.mjs <spike-url> [animated.webp]')
 const output = join(root, '.tools', 'browser-results')
 await mkdir(output, { recursive: true })
 const profile = await mkdtemp(join(output, 'profile-'))
 const browser = spawn(process.env.EDGE_PATH ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', [
-  '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
+  '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--disable-extensions',
   '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank',
 ], { windowsHide: true, stdio: 'ignore' })
@@ -109,7 +110,15 @@ try {
     socket.send(JSON.stringify({ id, method, params, sessionId }))
   })
   const evaluate = async expression => {
-    const result = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })
+    // A system-installed extension can open an onboarding tab in a fresh profile.
+    // Keep the test page visible so real requestAnimationFrame playback is observed.
+    const visibility = await send('Runtime.evaluate', { expression: 'document.visibilityState', returnByValue: true })
+    if (visibility.result.value === 'hidden') await send('Page.bringToFront')
+    let deadline
+    const timeout = new Promise((_, reject) => { deadline = setTimeout(() => reject(new Error('Browser evaluation exceeded 45 seconds')), 45000) })
+    let result
+    try { result = await Promise.race([send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }), timeout]) }
+    finally { clearTimeout(deadline) }
     if (result.exceptionDetails) throw new Error(JSON.stringify(result.exceptionDetails))
     return result.result.value
   }
@@ -120,7 +129,10 @@ try {
     }
     throw new Error(`Timed out: ${expression}; ${await evaluate('document.body.innerText')}`)
   }
-  const click = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent===${JSON.stringify(label)})?.click()`)
+  const click = label => {
+    const actual = label === 'Previous' ? 'Previous File' : label === 'Next' ? 'Next File' : label
+    return evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent===${JSON.stringify(actual)}||b.getAttribute('aria-label')===${JSON.stringify(actual)})?.click()`)
+  }
   const select = async path => {
     const { root } = await send('DOM.getDocument')
     const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: 'input[type=file]' })
@@ -132,7 +144,7 @@ try {
   await send('Runtime.enable')
   await send('Network.enable')
   await send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: true, flatten: true })
-  if (inputMode || archiveMode) await send('Page.addScriptToEvaluateOnNewDocument', { source: `
+  if (inputMode || archiveMode || uxMode) await send('Page.addScriptToEvaluateOnNewDocument', { source: `
     window.__workerLifetime={created:0,terminated:0,active:0,peakActive:0,opens:0,history:[]};
     const BrowserWorker=window.Worker;
     window.Worker=class extends BrowserWorker {
@@ -153,6 +165,21 @@ try {
         return super.terminate();
       }
     };
+  ` })
+  if (uxMode) await send('Page.addScriptToEvaluateOnNewDocument', { source: `
+    window.__staticBitmaps={created:0,closed:0,live:0,peak:0};
+    if(typeof createImageBitmap==='function'){
+      const original=createImageBitmap, resources=new WeakSet();
+      globalThis.createImageBitmap=async function(...args){
+        const bitmap=await original.apply(this,args), m=window.__staticBitmaps;
+        resources.add(bitmap);m.created++;m.live++;m.peak=Math.max(m.peak,m.live);return bitmap;
+      };
+      const close=ImageBitmap.prototype.close;
+      ImageBitmap.prototype.close=function(){
+        if(resources.delete(this)){window.__staticBitmaps.closed++;window.__staticBitmaps.live--;}
+        return close.call(this);
+      };
+    }
   ` })
   // Observe actual input ownership transfer without exposing file content remotely.
   await send('Page.addScriptToEvaluateOnNewDocument', { source: `
@@ -182,11 +209,11 @@ try {
     const largeMode = process.argv[4] === 'apng-large'
     const apngMode = largeMode || process.argv[4] === 'apng'
     const gifMode = process.argv[4] === 'gif'
-    const run = archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+    const run = uxMode ? (await import('../viewer/browser-scenario.mjs')).runViewerUXCheck : archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
       : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
     const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `${archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      await writeFile(join(output, `${uxMode ? 'viewer-ux' : archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
@@ -197,7 +224,7 @@ try {
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
     const result = { ...report, assets, ...(archiveMode ? { archiveNetworkLoads: networkLoads } : {}), frameTransfers: frameTransfers.length, ownership }
-    await writeFile(join(output, archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
+    await writeFile(join(output, uxMode ? 'viewer-ux-report.json' : archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
     console.log(JSON.stringify(result, null, 2))
     await send('Browser.close')
   } else {

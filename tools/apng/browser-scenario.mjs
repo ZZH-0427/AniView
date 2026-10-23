@@ -159,9 +159,9 @@ export async function runAPNGCheck({ send, evaluate, waitFor, click, fixture, ur
   if (longCache.peakFrames > 6 || longCache.peakBytes > longCache.maxBytes) throw new Error('Long APNG cache grew past budget')
   await close()
 
-  await select(join(fixtures, 'static.png'), 'error')
+  await select(join(fixtures, 'static.png'), 'ready')
   const staticMessage = await evaluate("document.querySelector('[role=alert]').textContent")
-  if (!/static image/i.test(staticMessage)) throw new Error('Static PNG was not distinguished from APNG')
+  if (staticMessage || await evaluate("!!document.querySelector('.playback-controls')")) throw new Error('Static PNG did not use static viewing')
   await close()
   const damaged = join(output, 'truncated-apng.png')
   const bytes = await readFile(fixture)

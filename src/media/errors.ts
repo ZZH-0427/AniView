@@ -1,4 +1,5 @@
 const errorMessages = {
+  STATIC_IMAGE_RUNTIME_UNAVAILABLE: 'Static-image viewing requires ImageBitmap support in this browser.',
   UNSUPPORTED_FORMAT: 'Unsupported image format.',
   CORRUPTED_FILE: 'This file appears to be damaged.',
   DECODE_FAILED: 'This image could not be decoded.',

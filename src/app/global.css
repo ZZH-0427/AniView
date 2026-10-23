@@ -68,6 +68,9 @@ button:focus-visible { outline: 3px solid #2765b0; outline-offset: 3px; }
 .drop-hint { display: none; }
 .session-controls { max-width: 72rem; margin: auto; padding: 1rem 1rem 0; }
 .session-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 0.65rem; }
+.session-options summary { cursor: pointer; width: fit-content; min-height: 44px; padding: 0.6rem 0; }
+.session-options summary:focus-visible { outline: 3px solid #2765b0; outline-offset: 2px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .session-notice { max-width: 72rem; padding: 1rem; margin: auto; }
 .drop-overlay { position: fixed; inset: 1rem; z-index: 10; display: grid; place-items: center; border: 3px dashed #285581; border-radius: 1rem; background: #e7eef7ef; color: #285581; font-size: 1.5rem; font-weight: 600; pointer-events: none; }
 @media (hover: hover) and (pointer: fine) { .drop-hint { display: block; } }

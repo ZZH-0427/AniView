@@ -50,17 +50,18 @@ export function MediaApp() {
       archive={archive} onClose={clear} count={session.items.length} />}
     {current ? <>
       <nav className="session-controls" aria-label="Image list">
-        <p data-testid="session-position" aria-live="polite">{session.currentIndex + 1} / {session.items.length}</p>
+        <details className="session-options"><summary>Image list options</summary>
         <div className="session-actions">
-          <button disabled={session.currentIndex === 0} onClick={() => changeSession(previousFile)}>Previous</button>
-          <button disabled={session.currentIndex === session.items.length - 1} onClick={() => changeSession(nextFile)}>Next</button>
-          <button onClick={() => changeSession(removeCurrentFile)}>Remove from list</button>
           <ImageInput append={!archive} onFiles={addFiles} />
           <ArchiveInput onOpen={openArchive} />
           <button onClick={clear}>Clear session</button>
         </div>
+        </details>
       </nav>
-      <Viewer key={current.id} file={current.file} transition={transition} onClose={clear} />
+      <Viewer key={current.id} file={current.file} transition={transition} onClose={clear}
+        position={session.currentIndex + 1} count={session.items.length}
+        onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
+        onRemove={() => changeSession(removeCurrentFile)} />
     </> : <Home onOpen={addFiles} onArchive={openArchive} />}
     {notice && <p className="session-notice" role="status">{notice}</p>}
     {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}

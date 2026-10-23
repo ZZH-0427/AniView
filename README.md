@@ -2,21 +2,36 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
-Milestone 2B PASSED; Milestone 3 PASSED;
-Milestone 4 PASSED.**
-The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
-looping and Close. All three formats use the same bounded cache, player and renderer.
-Single-frame GIF is supported. Static PNG/JPEG/WebP are recognized and display
-an explicit message that static-image viewing is not available yet.
+**Project status: early development / Milestones 1–4 PASSED;
+Milestone 5 PENDING ANDROID VIEWER VALIDATION.**
+The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
+Previous/Next Frame and a current-frame count. All animated formats use the same
+bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static
+PNG and static WebP use native decoding and the same Canvas viewer, without an
+animation player or frame cache.
 See the [WebP vertical slice](docs/milestones/milestone-1-webp-vertical-slice.md)
 and [APNG integration notes](docs/milestones/milestone-2a-apng.md).
 See [GIF integration notes](docs/milestones/milestone-2b-gif.md) for timing,
 disposal compatibility, the approved interlace adaptation and acceptance status.
+See [Viewer UX notes](docs/milestones/milestone-5-viewer-ux.md) for static-image
+ownership, viewport interactions, frame stepping, limits and validation status.
+
+Use **Fit**, **100%**, zoom buttons, wheel zoom and mouse drag; on touchscreens,
+pinch, drag or double-tap. Double-click/tap toggles Fit and a closer detail view.
+100% means one image pixel per CSS pixel. A new file opens in Fit; animation
+frame changes preserve the current view. Animations initially open paused,
+preserving the previous viewer behavior; Play starts playback and Replay restarts
+and plays. Frame stepping pauses playback and never loops at an endpoint.
+Fullscreen is available when the browser supports it. Controls remain visible
+normally and hide after inactivity in fullscreen; interaction reveals them.
+
+When focus is on the image surface: Space toggles playback, Left/Right step
+frames, Shift+Left/Right change files, `0` selects Fit, `1` selects 100%, and
+`+`/`-` zoom. Focused controls retain their native keyboard behavior.
 
 Choose **选择图片** on mobile or **Open Images** on desktop. The standard picker
 uses `image/*`; its gallery/directory interface depends on the browser and system.
-Select multiple files or drag files into the desktop page, then use Previous/Next,
+Select multiple files or drag files into the desktop page, then use Previous/Next File,
 Remove from list, Choose more images and Clear session. Files are opened on demand
 from a temporary list (up to 1,000 items); removing an item never deletes the
 device file. Cancelling selection preserves the list; Close clears it.
@@ -25,18 +40,21 @@ final Android picker validation matrix. QQ, Quark, Chrome, Edge and Xiaomi
 passed user-reported selection, playback and multi-file navigation checks.
 
 Use the secondary **Open ZIP** action (**打开 ZIP 压缩包** on mobile) to browse
-animations inside a local ZIP without extracting it to your device. Entries keep
+images and animations inside a local ZIP without extracting it to your device. Entries keep
 their archive order and nested names. Only the current image is extracted;
-Previous/Next and playback use the same viewer as ordinary images. Opening a ZIP
+Previous/Next File and playback use the same viewer as ordinary images. Opening a ZIP
 replaces the current list; selecting ordinary images replaces the archive.
 Close archive releases its resources. Password-protected entries are identified,
 but password entry is not available yet. ZIP processing stays entirely local.
 See [ZIP archive notes](docs/milestones/milestone-4-zip-archive.md) for limits,
 supported entry discovery, validation and the completed Android acceptance record.
 
-Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
-are also planned. Files are processed locally in your browser. Normal viewing
-will not require media uploads, accounts or a backend. No analytics is included.
+Supported formats: GIF, Animated WebP, APNG, JPEG, static PNG and static WebP.
+The broad system image picker does not imply HEIC/TIFF/BMP/SVG/AVIF support.
+Files are processed locally in your browser; viewing requires no media uploads,
+accounts or backend. No analytics is included. Static files are limited to 64 MiB
+encoded, 4,194,304 pixels and 16,384 pixels per edge; oversized images are rejected
+before native decoding. There is no conversion, editing or export.
 
 An isolated Milestone 1A Animated WebP engineering spike is available through
 `?spike=webp`; this is not production playback support. Its build, ownership and
@@ -90,10 +108,11 @@ Do not commit `dist/` or maintain a `gh-pages` source branch.
 - `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
 - `src/input/`: shared browser-file adapters for standard selection and file drops.
 - `src/archive/`: lazy Worker-backed ZIP metadata, entry policy and VirtualFile source.
-- `src/formats/`: binary format detection and Worker-backed WebP/APNG/GIF adapters.
-- `src/media/`: animation/frame contracts and categorized errors.
+- `src/formats/`: binary detection, unified opening, Worker-backed animation adapters and native static-image sources.
+- `src/media/`: animation/frame contracts, resource policy and categorized errors.
 - `src/media/media-session.ts`: page-lifetime ordered references and file navigation.
-- `src/player/` and `src/renderer/`: bounded prefetch/cache, presentation clock and Canvas drawing.
+- `src/player/`: bounded prefetch/cache, presentation clock and frame inspection.
+- `src/renderer/`: viewport geometry, mouse/touch gestures and Canvas drawing.
 
 Animation sequences expose fresh incremental frame streams for replay. Consumers
 own yielded frames and must dispose of them on eviction. Frames are normalized
@@ -102,6 +121,10 @@ the decoder adapter. Renderer calls borrow a frame synchronously. The player
 owns sequence cleanup and a byte-bounded cache (16 MiB / six frames normally).
 Larger frames receive exactly two frames of cache capacity, up to a 32 MiB
 automatic ceiling. Explicitly configured budgets remain strict.
+Backward inspection uses cached neighboring frames or resets and reconstructs
+sequentially within the same budget. Static ImageBitmaps are explicitly closed
+when switching, removing or closing files. Viewport redraws reuse the current
+pixels and do not decode the image again.
 
 The shared WebP Worker lives with its format adapter under `src/formats/webp/`.
 ZIP metadata and extraction use a separate Worker; ZIP libraries are loaded only

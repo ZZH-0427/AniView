@@ -26,8 +26,18 @@ export class AnimationPlayer implements Player {
   private remaining = 0
   private starving = false
   private transitioning = false
+  private stepping = false
+  private rebuilding = false
+  private cacheHits = 0
+  private reconstructions = 0
+  private reconstructedFrames = 0
   constructor(private readonly renderer: Renderer, private readonly changed: () => void = () => {},
     private readonly clock: PlaybackClock = browserClock, private readonly budget?: { maxBytes: number; maxFrames: number }) {}
+  get frameCount() { return this.sequence?.frameCount }
+  get busy() { return this.transitioning || this.stepping }
+  get buffering() { return this.state === 'playing' && (this.starving || this.transitioning) }
+  get reconstructing() { return this.rebuilding }
+  get stepMetrics() { return { cacheHits: this.cacheHits, reconstructions: this.reconstructions, reconstructedFrames: this.reconstructedFrames } }
   get metrics() {
     const cache = this.buffer?.cache
     return { cacheBytes: cache?.bytes ?? 0, cachedFrames: cache?.size ?? 0, peakBytes: cache?.peakBytes ?? 0,
@@ -49,18 +59,22 @@ export class AnimationPlayer implements Player {
       if (generation === this.generation) { await this.dispose(); this.fail(error) }
     }
   }
-  private present(index: number) {
+  private present(index: number, inspecting = false) {
     const frame = this.buffer?.cache.get(index)
     if (!frame) return false
     this.renderer.render(frame)
-    if (index !== this.currentFrame) this.buffer?.cache.evict(this.currentFrame)
+    this.buffer?.retainNear(index, inspecting)
     this.currentFrame = index
     this.remaining = Math.max(10, frame.durationMs) // Avoid zero-duration busy loops; source timing is preserved.
     void this.buffer?.fill()
     return true
   }
   play() {
-    if (this.state !== 'paused') return
+    if (this.state !== 'paused' || this.busy) return
+    // Inspection may favor a previous neighbor in a two-frame cache. Resume
+    // restores forward-prefetch capacity without increasing either cache limit.
+    this.buffer?.retainNear(this.currentFrame)
+    void this.buffer?.fill()
     this.state = 'playing'
     this.due = this.clock.now() + this.remaining
     this.schedule()
@@ -73,6 +87,44 @@ export class AnimationPlayer implements Player {
     this.state = 'paused'
     this.cancel()
     this.changed()
+  }
+  stepForward() { return this.step(1) }
+  stepBackward() { return this.step(-1) }
+  private async step(direction: -1 | 1) {
+    const buffer = this.buffer
+    if (!buffer || this.busy || !['paused', 'playing', 'ended'].includes(this.state)) return
+    this.pause()
+    this.state = 'paused'
+    const target = Math.max(0, Math.min(this.currentFrame + direction, (this.frameCount ?? Infinity) - 1))
+    if (target === this.currentFrame) { this.changed(); return }
+    this.error = undefined
+    if (buffer.cache.get(target)) {
+      this.cacheHits++
+      this.present(target, true)
+      this.changed()
+      return
+    }
+    const generation = ++this.generation
+    this.stepping = true
+    this.rebuilding = buffer.needsReconstruction(target)
+    const rebuilding = this.rebuilding
+    const decoded = buffer.decodedFrames
+    if (rebuilding) this.reconstructions++
+    this.changed()
+    try {
+      const ready = await buffer.prepare(target)
+      if (generation !== this.generation) return
+      if (ready) this.present(target, true)
+    } catch (error) {
+      if (generation === this.generation) { this.error = error; throw error }
+    } finally {
+      if (generation === this.generation) {
+        if (rebuilding) this.reconstructedFrames += buffer.decodedFrames - decoded
+        this.stepping = false
+        this.rebuilding = false
+        this.changed()
+      }
+    }
   }
   private schedule() { if (this.state === 'playing' && this.scheduled === undefined) this.scheduled = this.clock.request(() => { try { this.tick() } catch (error) { this.fail(error) } }) }
   private cancel() { if (this.scheduled !== undefined) this.clock.cancel(this.scheduled); this.scheduled = undefined }
@@ -94,8 +146,7 @@ export class AnimationPlayer implements Player {
         void this.restartLoop()
         return
       } else {
-        if (!this.starving) { this.underruns++; this.changed() }
-        this.starving = true
+        if (!this.starving) { this.underruns++; this.starving = true; this.changed() }
         void this.buffer?.fill()
       }
     }
@@ -105,6 +156,8 @@ export class AnimationPlayer implements Player {
     const generation = ++this.generation
     this.cancel()
     this.transitioning = true
+    this.stepping = this.rebuilding = false
+    this.changed()
     try {
       await this.buffer?.restart()
       if (generation !== this.generation) return
@@ -114,13 +167,14 @@ export class AnimationPlayer implements Player {
       this.due = this.clock.now() + this.remaining
       this.changed()
     } catch (error) { if (generation === this.generation) this.fail(error) }
-    finally { if (generation === this.generation) { this.transitioning = false; this.schedule() } }
+    finally { if (generation === this.generation) { this.transitioning = false; this.changed(); this.schedule() } }
   }
   async reset() {
     if (!this.buffer) return
     this.pause()
     this.cancel()
     this.state = 'paused'
+    this.error = undefined
     this.completedPlays = 0
     await this.restartLoop()
   }
@@ -142,10 +196,12 @@ export class AnimationPlayer implements Player {
     this.sequence = undefined
     this.state = 'idle'
     this.transitioning = false
+    this.stepping = this.rebuilding = false
     this.starving = false
     this.currentFrame = 0
     this.completedPlays = 0
     this.underruns = 0
+    this.cacheHits = this.reconstructions = this.reconstructedFrames = 0
     this.error = undefined
     this.renderer.clear()
     if (buffer) await buffer.close()

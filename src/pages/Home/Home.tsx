@@ -11,17 +11,16 @@ export function Home({ onOpen, onArchive }: {
       <header>
         <p className="eyebrow">Local Animated Media Viewer</p>
         <h1>AniView</h1>
-        <p className="formats">GIF · Animated WebP · APNG</p>
+        <p className="formats">GIF · Animated WebP · APNG · JPEG · PNG · WebP</p>
       </header>
 
       <section className="foundation" aria-labelledby="foundation-title">
         <span className="foundation-mark" aria-hidden="true">A</span>
-        <h2 id="foundation-title">Your animations, on your device</h2>
-        <p>Play GIF, Animated WebP and APNG files.</p>
+        <h2 id="foundation-title">Your images, on your device</h2>
+        <p>View photos and animations. Inspect frames, zoom in and explore.</p>
         <ImageInput onFiles={onOpen} />
         <ArchiveInput onOpen={onArchive} />
         <p className="drop-hint">Drag &amp; drop images here. You can select several at once.</p>
-        <p>Static-image viewing is not available yet.</p>
       </section>
 
       <footer>

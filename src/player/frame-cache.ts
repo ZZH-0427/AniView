@@ -11,6 +11,11 @@ export class ByteBudgetFrameCache {
   }
   get size() { return this.frames.size }
   get(index: number) { return this.frames.get(index) }
+  get oldestIndex() {
+    let oldest = Infinity
+    for (const index of this.frames.keys()) oldest = Math.min(oldest, index)
+    return oldest
+  }
   canFit(bytes: number) { return this.bytes + bytes <= this.maxBytes && this.size < this.maxFrames }
   /** Takes ownership only on success; never evicts a future frame implicitly. */
   insert(frame: DecodedFrame): boolean {
@@ -32,5 +37,6 @@ export class ByteBudgetFrameCache {
     this.bytes -= frame.byteLength
     frame.dispose()
   }
+  evictBefore(index: number) { for (const cached of this.frames.keys()) if (cached < index) this.evict(cached) }
   clear() { for (const index of this.frames.keys()) this.evict(index) }
 }
