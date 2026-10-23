@@ -8,7 +8,7 @@ describe('foundation shell', () => {
     expect(html).toContain('<h1>AniView</h1>')
     expect(html).toContain('Local Animated Media Viewer')
     expect(html).toContain('GIF · Animated WebP · APNG')
-    expect(html).toContain('Viewer foundation ready')
+    expect(html).toContain('Open Animated WebP')
     expect(html).toContain('Early development.')
     expect(html).toContain('Files are processed locally in your browser.')
   })

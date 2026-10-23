@@ -1,4 +1,4 @@
-export function Home() {
+export function Home({ onOpen }: { onOpen?: (file: File) => void }) {
   return (
     <main className="home">
       <header>
@@ -9,8 +9,15 @@ export function Home() {
 
       <section className="foundation" aria-labelledby="foundation-title">
         <span className="foundation-mark" aria-hidden="true">A</span>
-        <h2 id="foundation-title">Viewer foundation ready</h2>
-        <p>Early development. Media opening and playback are coming in a later milestone.</p>
+        <h2 id="foundation-title">Open Animated WebP</h2>
+        <p>Early development. Animated WebP playback is available; GIF and APNG are planned.</p>
+        <label className="open-file">Open Animated WebP
+          <input aria-label="Open Animated WebP" type="file" accept=".webp,image/webp" onChange={(event) => {
+            const file = event.target.files?.[0]
+            if (file) onOpen?.(file)
+            event.target.value = ''
+          }} />
+        </label>
       </section>
 
       <footer>

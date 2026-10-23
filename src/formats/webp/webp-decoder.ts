@@ -10,7 +10,7 @@ interface Pending {
   readonly id: number
 }
 
-/** Spike transport, not the formal AnimationDecoder/Player implementation. */
+/** Shared Worker transport for the formal adapter and the isolated diagnostic spike. */
 export class WebPDecoder {
   private readonly worker: Worker
   private pending: Pending | undefined

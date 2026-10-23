@@ -13,6 +13,7 @@ await mkdir(output, { recursive: true })
 const profile = await mkdtemp(join(output, 'profile-'))
 const browser = spawn(process.env.EDGE_PATH ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
+  '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank',
 ], { windowsHide: true, stdio: 'ignore' })
 let socket
@@ -93,6 +94,7 @@ try {
     await waitFor(`Array.from(document.querySelectorAll('button')).some(b=>b.textContent==='Open File'&&!b.disabled)`)
   }
   await send('Page.enable')
+  await send('Page.bringToFront')
   await send('Runtime.enable')
   await send('Network.enable')
   await send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: true, flatten: true })
@@ -107,6 +109,20 @@ try {
     };
   ` })
   await send('Page.navigate', { url })
+  if (new URL(url).searchParams.get('spike') !== 'webp') {
+    const { runViewerCheck } = await import('../playback/browser-scenario.mjs')
+    const report = await runViewerCheck({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
+      const screenshot = await send('Page.captureScreenshot', { format: 'png' })
+      await writeFile(join(output, `viewer-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+    } })
+    if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
+    if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
+    if (!assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
+    if (errors.length) throw new Error(JSON.stringify(errors))
+    await writeFile(join(output, 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length }, null, 2))
+    console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length }, null, 2))
+    await send('Browser.close')
+  } else {
   await waitFor("document.querySelector('h1')?.textContent==='Animated WebP technical spike'")
   await select(fixture)
   await click('Open File')
@@ -168,6 +184,7 @@ try {
   await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2))
   console.log(JSON.stringify(report, null, 2))
   await send('Browser.close')
+  }
 } finally {
   socket?.close()
   browser.kill()

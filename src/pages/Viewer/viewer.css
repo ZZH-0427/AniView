@@ -1,0 +1,9 @@
+.viewer { max-width: 72rem; margin: auto; padding: 1rem; overflow-wrap: anywhere; }
+.viewer h1 { font-size: 1.4rem; }
+.viewer-surface { width: 100%; height: 60svh; min-height: 240px; background: #e4e8ee; margin-block: 1rem; }
+.viewer-surface canvas { width: 100%; height: 100%; display: block; }
+.viewer-controls { display: flex; gap: 0.75rem; margin-block: 1rem; }
+.viewer-controls button { min-height: 44px; min-width: 70px; }
+.viewer [role=alert] { color: #a21b22; }
+.open-file { display: block; margin-top: 1rem; }
+.open-file input { display: block; max-width: 100%; min-height: 44px; margin-top: 0.5rem; }

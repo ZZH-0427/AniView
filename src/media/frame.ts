@@ -5,7 +5,7 @@ export interface DecodedFrame {
   readonly height: number
   readonly durationMs: number
   readonly byteLength: number
-  readonly image: ImageBitmap | ImageData
+  readonly image: ImageBitmap | ImageData | null
   /** The consumer owns this frame and releases it on eviction; must be idempotent. */
   dispose(): void
 }

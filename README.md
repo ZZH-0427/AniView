@@ -2,9 +2,10 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / foundation stage (Milestone 0).**
-The responsive application shell and core TypeScript contracts exist. File opening,
-format detection and media playback are **not implemented yet**.
+**Project status: early development / Milestone 1 acceptance pending.**
+The formal Animated WebP viewer supports Play/Pause, Replay, looping and Close.
+Milestone 1 Android acceptance is pending. GIF/APNG playback is not implemented.
+See [the vertical slice notes](docs/milestones/milestone-1-webp-vertical-slice.md).
 
 Target animated formats: GIF, Animated WebP and APNG. Static WebP, PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing
@@ -58,19 +59,19 @@ Do not commit `dist/` or maintain a `gh-pages` source branch.
 
 ## Module boundaries
 
-- `src/app/` and `src/pages/`: React shell and Home page.
+- `src/app/` and `src/pages/`: React shell, Home and Viewer.
 - `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
-- `src/formats/`: detector and animation decoder contracts, without codec implementations.
+- `src/formats/`: detection/decoder contracts and the Worker-backed WebP adapter.
 - `src/media/`: animation/frame contracts and categorized errors.
-- `src/player/` and `src/renderer/`: separate playback and drawing contracts.
+- `src/player/` and `src/renderer/`: bounded prefetch/cache, presentation clock and Canvas drawing.
 
 Animation sequences expose fresh incremental frame streams for replay. Consumers
 own yielded frames and must dispose of them on eviction. Frames are normalized
 to fully composited canvas-sized images so codec blend/disposal details stay in
 the decoder adapter. Renderer calls borrow a frame synchronously. The player
-will own sequence cleanup and a bounded cache; neither is implemented here.
+owns sequence cleanup and a byte-bounded cache (16 MiB / six frames by default).
 
-The WebP spike Worker lives with its format adapter under `src/formats/webp/`.
+The shared WebP Worker lives with its format adapter under `src/formats/webp/`.
 Archive and shared UI component directories will be introduced with their
 first real modules rather than empty scaffolding. See `PLAN.md` for the architecture
 and roadmap, and `AGENTS.md` for development rules.
