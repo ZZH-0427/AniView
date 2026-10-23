@@ -1,9 +1,8 @@
 # Milestone 5: Viewer UX
 
 **Status: Milestone 5 PENDING ANDROID VIEWER VALIDATION.** Implementation and
-the recorded local checks and combined desktop acceptance pass. Publication,
-GitHub Actions/Pages and production checks are being completed; this record does
-not claim those results yet. Android Viewer-specific acceptance remains pending.
+local checks, combined desktop acceptance, GitHub Actions/Pages and actual
+production checks pass. Android Viewer-specific acceptance remains pending.
 Milestone 6 is not started.
 
 ## Architecture and opening behavior
@@ -262,11 +261,50 @@ claim that browser RSS must immediately decrease.
 
 ## Publication and Android acceptance
 
-GitHub Actions/Pages and production validation: **pending for this milestone at
-the time of this draft**. Existing `/AniView/` base handling, Worker/WASM resolution
-and ZIP dynamic loading are preserved; no root-hosted asset assumptions or router
-were introduced. No production success is inferred from the presence of a
-workflow file.
+Implementation commit: `038386a03d9f733459d6a8ffe667efe26cb18362`
+(`feat: add advanced viewer interactions`). It was published to main using the
+established Git Data API fallback with verified blob/tree/commit hashes and a
+non-force ref update. No repository settings, workflow or dependency changes
+were needed.
+
+[Actions run 39967969974](https://github.com/ZZH-0427/AniView/actions/runs/39967969974)
+completed successfully: Node 24, npm ci, lint, typecheck, 405 tests, build, official
+Pages artifact upload and deployment all passed.
+
+Real installed Edge checks at `https://ZZH-0427.github.io/AniView/?debug=1`
+passed all **64 Viewer UX groups** on the deployed build, including the real
+Fullscreen API, trusted mouse/touch input, native static image decode, exact EXIF
+pixels, three-codec stepping, delayed-response cancellation and six-format ZIP
+navigation. All four 320/390/768/1280 production screenshots were inspected with
+readable controls and no horizontal overflow. A final narrow-screen layout check
+also confirmed every button was at least 44×44 CSS pixels and no words were
+split inside the frame-control labels.
+
+Production resource counts: **18 Workers created / 18 terminated / final 0 /
+peak 2**; **29 static ImageBitmaps created / 29 closed / final 0 / peak 1**.
+All **5,748 RGBA transfers** detached correctly. The 1,435 observed APNG frame
+emissions had at most one live bitmap, and zero after emission. Mixed ZIP
+extraction counts progressed one entry at a time from one to six; maximum
+retained output was 9,644 bytes, not all six entry contents.
+
+Production previous-frame cache-hit observations were approximately **0.8 / 0.7 /
+0.8 ms** for WebP/APNG/GIF; first reconstruction was **29.4 / 32.3 / 14.6 ms**.
+These include UI commit/animation-frame polling. All three stayed at a maximum
+six cached frames with zero underruns. They are individual desktop observations,
+not isolated codec latency or Android measurements.
+
+The six existing browser suites also passed against Pages: WebP Viewer (eight
+groups), APNG (15), GIF (11), input/drag-drop/MediaSession (33), ZIP (40) and
+isolated WebP spike (nine). Static expectations were updated to successful static
+viewing; format conformance, loop, cancellation and resource checks remain enabled.
+
+Initial network resources contained only main JS/CSS, with no ZIP runtime. The
+30 observed runtime asset responses were all HTTP 200 beneath `/AniView/`, with
+no observed page exceptions, console errors or resource 404s. An independent
+HTTP/hash check matched every built JS/CSS/Worker/WASM asset, favicon and all
+three public Android samples to their local build bytes. No root-hosting
+assumption or application router was introduced. The final main bundle is about
+273.2 kB / 84.1 kB gzip; ZIP remains a separate lazy session chunk and Worker.
 
 Android status: **Pending user real-device validation**. After deployment, use
 one mainstream Chromium browser (Edge/Chrome) plus one usual browser (Quark/QQ).
