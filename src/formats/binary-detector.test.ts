@@ -39,6 +39,7 @@ describe('binary format detection', () => {
   })
 
   it.each([
+    [[71, 73, 70, 56, 55, 97], { kind: 'gif', animated: true }],
     [[71, 73, 70, 56, 57, 97], { kind: 'gif', animated: true }],
     [[255, 216, 255, 224], { kind: 'jpeg', animated: false }],
     [[80, 75, 3, 4], { kind: 'zip' }],

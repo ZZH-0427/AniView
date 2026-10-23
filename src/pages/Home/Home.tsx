@@ -9,10 +9,10 @@ export function Home({ onOpen }: { onOpen?: (file: File) => void }) {
 
       <section className="foundation" aria-labelledby="foundation-title">
         <span className="foundation-mark" aria-hidden="true">A</span>
-        <h2 id="foundation-title">Open WebP or APNG</h2>
+        <h2 id="foundation-title">Open WebP, APNG or GIF</h2>
         <p>Early development. Animated WebP and APNG playback are available; GIF is planned.</p>
-        <label className="open-file">Open WebP or APNG
-          <input aria-label="Open WebP or APNG" type="file" accept=".webp,.png,.apng,image/webp,image/png,image/apng" onChange={(event) => {
+        <label className="open-file">Open WebP, APNG or GIF
+          <input aria-label="Open WebP, APNG or GIF" type="file" accept=".webp,.png,.apng,.gif,image/webp,image/png,image/apng,image/gif" onChange={(event) => {
             const file = event.target.files?.[0]
             if (file) onOpen?.(file)
             event.target.value = ''

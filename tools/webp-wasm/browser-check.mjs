@@ -127,7 +127,7 @@ try {
             receivedAt:performance.now(),
             type:m.type,frameIndex:m.frameIndex,readyMs:m.readyMs,decodeMs:m.decodeMs,durationMs:m.durationMs,
             liveBitmaps:m.liveBitmaps,backupBytes:m.backupBytes,metadata:m.metadata,
-            pixels:m.rgba?.byteLength<=256?Array.from(new Uint8Array(m.rgba)):undefined
+            pixels:m.rgba?.byteLength<=512?Array.from(new Uint8Array(m.rgba)):undefined
           });
         });
       }
@@ -140,19 +140,21 @@ try {
   if (new URL(url).searchParams.get('spike') !== 'webp') {
     const largeMode = process.argv[4] === 'apng-large'
     const apngMode = largeMode || process.argv[4] === 'apng'
-    const run = largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+    const gifMode = process.argv[4] === 'gif'
+    const run = gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
       : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
     const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `${largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      await writeFile(join(output, `${gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
-    if (!apngMode && !assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
+    if (!apngMode && !gifMode && !assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
+    if (gifMode && !assets.some(asset => /gif-decoder\.worker/.test(asset.url) && asset.status === 200)) throw new Error('GIF Worker did not load')
     if (apngMode && (!bitmapCounts.length || bitmapCounts.some(count => count.live !== 0 || count.peak !== 1))) throw new Error('APNG ImageBitmaps accumulated')
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
-    await writeFile(join(output, largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
+    await writeFile(join(output, gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     await send('Browser.close')
   } else {

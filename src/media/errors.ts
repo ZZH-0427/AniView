@@ -11,6 +11,7 @@ const errorMessages = {
   WASM_UNAVAILABLE: 'The required decoder could not be loaded in this browser.',
   FILE_READ_FAILED: 'This file could not be read.',
   APNG_RUNTIME_UNAVAILABLE: 'APNG playback requires Worker image decoding and OffscreenCanvas support in this browser.',
+  GIF_RUNTIME_UNAVAILABLE: 'GIF playback requires Web Worker support in this browser.',
   STATIC_PNG_NOT_ANIMATED: 'This is a static PNG. Animated playback does not apply.',
 } as const
 

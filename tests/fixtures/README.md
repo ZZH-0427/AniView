@@ -50,3 +50,25 @@ SHA-256: `76c3568f8dbf0adcdf15d8a42acd96815ccf317d566118d569c218725167d0a0`.
 Neither downloaded binary is committed. These real external samples supplement
 the committed synthetic conformance fixtures rather than replacing their pixel
 assertions. Measured desktop results are not Android performance claims.
+
+## GIF fixtures
+
+`gif/` contains original CC0-1.0 synthetic pixel patterns, generated with
+`node tools/gif-generate.mjs` using omggif's writer only in test tooling.
+Cases cover GIF87a without GCE, global/local/local-only palettes, transparent
+indices, partial rectangles, disposal 0/1/2/3, absent/finite/infinite loops,
+raw delays 0/1/2cs and a 100-frame stream. The 3x4 interlace fixture reproduces
+omggif's short-image bug. `interlace-1` through `interlace-17` add offsets,
+transparency and local palettes across the four passes. Unit expectations are
+independent; browser tests also compare every small frame against Chromium.
+Malformed variants and resource-limit cases are generated in memory.
+
+Ignored desktop sample `.tools/fixtures/rotating-earth.gif` is Marvel's
+[Rotating earth (large)](https://commons.wikimedia.org/wiki/File:Rotating_earth_(large).gif),
+downloaded unchanged from
+`https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif`.
+It is licensed [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
+(also GFDL), and is not distributed in the application or Git.
+1,001,718 bytes, 400x400, 44 frames; 65,535 repeats normalize to 65,536 total
+plays. SHA-256:
+`b0acdc9a01f91f6123dbff38d4bee59d0d6e4b26071b5c83937b242b6b202378`.

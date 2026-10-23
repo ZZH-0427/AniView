@@ -2,12 +2,15 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED.**
-The formal viewer supports Animated WebP and APNG with Play/Pause, Replay,
-looping and Close. Both formats use the same bounded cache, player and renderer.
-Static PNG is recognized but has no viewer yet. GIF playback is not implemented.
+**Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
+Milestone 2B pending Android validation.**
+The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
+looping and Close. All three formats use the same bounded cache, player and renderer.
+Static PNG is recognized but has no viewer yet. Single-frame GIF is supported.
 See the [WebP vertical slice](docs/milestones/milestone-1-webp-vertical-slice.md)
 and [APNG integration notes](docs/milestones/milestone-2a-apng.md).
+See [GIF integration notes](docs/milestones/milestone-2b-gif.md) for timing,
+disposal compatibility, the approved interlace adaptation and acceptance status.
 
 Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing
@@ -63,7 +66,7 @@ Do not commit `dist/` or maintain a `gh-pages` source branch.
 
 - `src/app/` and `src/pages/`: React shell, Home and Viewer.
 - `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
-- `src/formats/`: binary format detection and Worker-backed WebP/APNG adapters.
+- `src/formats/`: binary format detection and Worker-backed WebP/APNG/GIF adapters.
 - `src/media/`: animation/frame contracts and categorized errors.
 - `src/player/` and `src/renderer/`: bounded prefetch/cache, presentation clock and Canvas drawing.
 
