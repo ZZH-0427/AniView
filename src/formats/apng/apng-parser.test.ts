@@ -126,9 +126,20 @@ describe('APNG parser adapter and generated container fixtures', () => {
     const dimensions = mutate(fixture('full-infinite.png'), 'IHDR', (view) => {
       view.setUint32(0, 100_000); view.setUint32(4, 100_000)
     })
-    expect(() => parseAPNGFile(dimensions)).toThrow(expect.objectContaining({ code: 'OUT_OF_MEMORY' }))
+    expect(() => parseAPNGFile(dimensions)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
     const frameCount = mutate(fixture('full-infinite.png'), 'acTL', (view) => view.setUint32(0, APNG_LIMITS.maxFrames + 1))
-    expect(() => parseAPNGFile(frameCount)).toThrow(expect.objectContaining({ code: 'OUT_OF_MEMORY' }))
+    expect(() => parseAPNGFile(frameCount)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
+  })
+
+  it('accepts the reported resolution at container level, bounded by the shared frame policy', () => {
+    const data = mutate(fixture('full-infinite.png'), 'IHDR', view => {
+      view.setUint32(0, 1280); view.setUint32(4, 1910)
+    })
+    mutate(data, 'fcTL', view => { view.setUint32(4, 1280); view.setUint32(8, 1910) })
+    // Compressed test pixels are intentionally tiny; real PNG inflation at this
+    // resolution is covered by the separate generated browser fixture.
+    expect(parseAPNGFile(data)).toMatchObject({ width: 1280, height: 1910, frameCount: 2 })
+    expect(APNG_LIMITS.maxFrameBytes).toBe(16 * 1024 * 1024)
   })
 
   it('bounds aggregate advertised scanline expansion even when each frame fits', () => {
@@ -138,7 +149,7 @@ describe('APNG parser adapter and generated container fixtures', () => {
     for (let index = 0; index < 100; index++) mutate(data, 'fcTL', (view) => {
       view.setUint32(4, 2048); view.setUint32(8, 1024); view.setUint32(12, 0); view.setUint32(16, 0)
     }, index)
-    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'OUT_OF_MEMORY' }))
+    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
   })
 
   it('rejects excessive logical metadata multiplication before vendor PNG reconstruction', () => {
@@ -146,7 +157,7 @@ describe('APNG parser adapter and generated container fixtures', () => {
     // frames exceeds the 128 MiB logical PNG work limit despite a small input.
     const data = withAncillary(fixture('long-bounded.png'), 1536 * 1024)
     expect(data.byteLength).toBeLessThan(APNG_LIMITS.maxEncodedBytes)
-    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'OUT_OF_MEMORY' }))
+    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
   })
 
   it('allows ordinary shared ancillary metadata without changing frame semantics', async () => {
@@ -159,6 +170,6 @@ describe('APNG parser adapter and generated container fixtures', () => {
 
   it('caps shared metadata even when only two animation frames are advertised', () => {
     const data = withAncillary(fixture('full-infinite.png'), APNG_LIMITS.maxSharedMetadataBytes)
-    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'OUT_OF_MEMORY' }))
+    expect(() => parseAPNGFile(data)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
   })
 })

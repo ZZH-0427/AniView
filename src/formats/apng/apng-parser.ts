@@ -1,10 +1,11 @@
 import parseAPNGModule from 'apng-js'
 import { MediaError } from '../../media/errors'
+import { MAX_AUTOMATIC_FRAME_BYTES } from '../../media/frame-budget'
 
 export const APNG_LIMITS = {
   maxEncodedBytes: 64 * 1024 * 1024,
-  // Matches the existing cache's requirement that two full frames fit in 16 MiB.
-  maxFrameBytes: 8 * 1024 * 1024,
+  // Keep two full frames within the shared automatic cache ceiling of 32 MiB.
+  maxFrameBytes: MAX_AUTOMATIC_FRAME_BYTES,
   maxFrames: 10_000,
   maxChunks: 100_000,
   maxTotalInflatedBytes: 1024 * 1024 * 1024,
@@ -52,7 +53,7 @@ function crc32(bytes: Uint8Array, start: number, end: number) {
 }
 
 function corrupted(): never { throw new MediaError('CORRUPTED_FILE') }
-function resourceLimit(): never { throw new MediaError('OUT_OF_MEMORY') }
+function resourceLimit(): never { throw new MediaError('RESOURCE_LIMIT_EXCEEDED') }
 
 /** Includes PNG filter bytes and Adam7 passes, even for 16-bit sample formats. */
 function inflatedBytes(width: number, height: number, bitsPerPixel: number, interlace: number) {

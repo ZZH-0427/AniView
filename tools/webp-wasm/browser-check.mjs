@@ -138,11 +138,13 @@ try {
   ` })
   await send('Page.navigate', { url })
   if (new URL(url).searchParams.get('spike') !== 'webp') {
-    const apngMode = process.argv[4] === 'apng'
-    const run = apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
+    const largeMode = process.argv[4] === 'apng-large'
+    const apngMode = largeMode || process.argv[4] === 'apng'
+    const run = largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+      : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
     const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `${apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      await writeFile(join(output, `${largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
@@ -150,7 +152,7 @@ try {
     if (apngMode && (!bitmapCounts.length || bitmapCounts.some(count => count.live !== 0 || count.peak !== 1))) throw new Error('APNG ImageBitmaps accumulated')
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
-    await writeFile(join(output, apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
+    await writeFile(join(output, largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     await send('Browser.close')
   } else {

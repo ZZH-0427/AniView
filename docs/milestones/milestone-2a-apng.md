@@ -1,8 +1,9 @@
 # Milestone 2A: APNG decoder integration
 
-**Status: PENDING ANDROID VALIDATION.** Implementation and local desktop checks
-are complete. Android acceptance has not been reported for this milestone. Do not infer Android APNG support
-from the previous WebP milestone or from a desktop mobile viewport.
+**Status: PENDING ANDROID VALIDATION (large-frame follow-up).** The user confirmed
+the beach-ball sample in Android Quark with no stutter/crash and supplied bounded
+cache metrics. A larger private image exposed the original frame-size policy
+limit; the shared-budget fix below needs a new original-file Android test.
 
 ## Architecture and dependency boundary
 
@@ -37,10 +38,10 @@ and APNG metadata, sequence numbers, required data, frame count and rectangle
 bounds, blend/dispose enumerations and chunk ordering. Unknown critical chunks,
 invalid metadata and corrupt data produce stable application error categories.
 Resource checks precede canvas allocation: encoded input is limited to 64 MiB,
-one full RGBA canvas to 8 MiB, animation frames to 10,000, chunks to 100,000 and
+one full RGBA canvas to 16 MiB, animation frames to 10,000, chunks to 100,000 and
 estimated cumulative inflation work to 1 GiB (including filter bytes/Adam7
-passes). The 8 MiB frame bound matches the generic cache requirement that two
-frames fit in its default 16 MiB budget. These are explicit conservative policy
+passes). The frame bound is imported from the shared automatic-budget policy,
+which permits two frames up to a 32 MiB ceiling. These are explicit conservative policy
 limits, not a claim that every valid PNG is supported.
 Shared ancillary metadata is limited to 2 MiB, and aggregate reconstructed PNG
 size to 128 MiB, counting repeated metadata and per-frame IDAT overhead before
@@ -93,8 +94,10 @@ are temporary. `postMessage(response, [rgba])` transfers the output buffer to th
 main thread; the compositor retains no emitted buffer. The generic frame disposer
 drops ImageData references when the cache evicts them.
 
-The existing default cache remains **16 MiB / six frames**, including the current
-frame. Existing prefetch pulls sequentially only while capacity remains. No APNG
+The shared default cache remains **16 MiB / six frames**, including the current
+frame. If two frames need more, it grows only to exactly two full-frame bytes,
+never over **32 MiB** automatically; explicit caller budgets do not grow.
+Existing prefetch pulls sequentially only while capacity remains. No APNG
 cache, prefetch loop, player or renderer is added. Canvas/bitmap/backup memory is
 additional to cache bytes; these counters do not measure browser process RSS.
 
@@ -152,7 +155,9 @@ Using installed Node 24.22.1/npm 11.19.1, `npm ci`, lint, typecheck, all **74 te
 in 14 files**, and the Vite production build passed. The initial Windows `npm ci`
 attempt encountered a native-module lock held by the preview process; stopping
 the validation servers allowed a clean install and the complete checks to pass.
-No Player, FrameBuffer, FrameCache or CanvasRenderer runtime code changed.
+The initial integration changed no Player, FrameBuffer, FrameCache or
+CanvasRenderer runtime code. The later generic budget correction is recorded
+below and does not add format-specific playback logic.
 A generic zero-duration scheduling regression was added to the existing player
 tests. Browser DPR checks wait for asynchronous ResizeObserver sizing.
 
@@ -199,18 +204,47 @@ Cache peaks stayed at six frames / 240,000 bytes for the real sample and six
 frames / 98,304 bytes for the long stream, with zero underruns. Independent bitmap
 instrumentation again observed 271 frame emissions, one maximum live bitmap and
 zero remaining after each emission; the PREVIOUS test backup peaked at four bytes.
-These results complete desktop, CI and Pages validation. Android APNG remains
-pending the new user real-device checklist below.
+These results completed desktop, CI and Pages validation of the initial
+integration. The new Android findings and subsequent correction follow.
 
 ## Android acceptance and limitations
 
-After desktop validation, CI and Pages succeed, status is **Milestone 2A:
-PENDING ANDROID VALIDATION** until new user-reported APNG testing is available.
-Open `https://ZZH-0427.github.io/AniView/?debug=1` on Android, select an APNG
-(the public-domain beach ball can be saved from its Commons original), confirm
-the APNG label and play through loops. Check transparent backgrounds, absence of
-trails/ghosting and correct partial-frame positions. Test Pause/Resume, Replay,
-Close/Reopen; report browser, sample, stutter/crash observations and cache JSON.
+The user tested the supplied beach-ball APNG in Android Quark and reported
+normal operation with no stutter or crash. The supplied diagnostic was:
+
+```json
+{"cacheBytes":120000,"cachedFrames":3,"peakBytes":240000,"peakFrames":6,"maxBytes":16777216,"underruns":0}
+```
+
+The user also tried a private **13.56 MB, 1280×1910** animated PNG, which returned
+the old OUT_OF_MEMORY message. One RGBA frame at that resolution is 9,779,200
+bytes: it exceeds the original APNG 8 MiB guard, while two frames exceed the
+generic 16 MiB cache budget. Those were configured application limits, not
+evidence that Android ran out of available memory.
+
+The correction in `src/media/frame-budget.ts` is format-independent. It keeps the
+normal 16 MiB budget, gives this resolution exactly **19,558,400 bytes / two
+frames**, and caps automatic growth at 32 MiB. APNG's pre-canvas guard shares the
+16 MiB single-frame ceiling; explicitly provided cache budgets remain strict.
+Invalid dimensions remain CORRUPTED_FILE. Policy rejection is now
+RESOURCE_LIMIT_EXCEEDED, distinct from an actual OUT_OF_MEMORY allocation error.
+No decoder-specific Player, cache, prefetch loop or renderer was introduced.
+
+Local lint/typecheck, **87 tests** and build passed. A separately generated
+1280×1910 APNG (12 frames, 16,983 compressed bytes) completed two browser loops,
+Pause/Resume, Replay and Close/Reopen. Observed cache range was 1–2 frames,
+peak/maxBytes both 19,558,400, with zero underruns. Independent bitmap monitoring
+found a maximum one live bitmap and none after emission; the partial PREVIOUS
+backup peaked at 98,304 bytes. A 4096×1025 frame above the ceiling was rejected
+before ready/frame emission with the explicit limit message, and another open
+succeeded afterward. The generated test is **not** the user's private file.
+
+The original file's frame count and compressed contents are unavailable locally.
+Other documented limits (including aggregate scanline work), browser allocation
+failure or performance may still affect it. The next Android test should reopen
+that original file, check the APNG dimensions, loop, Pause/Resume, Replay,
+Close/Reopen, visible composition and cache JSON. The cache ceiling does not
+include encoded blobs, compositor/renderer canvases, bitmap or PREVIOUS memory.
 
 This route requires Worker image decode and OffscreenCanvas support. Final
 gallery/files picker behavior remains Milestone 3; the temporary accept filter

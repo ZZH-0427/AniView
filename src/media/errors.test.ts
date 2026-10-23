@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { MediaError } from './errors'
 
 describe('media errors', () => {
+  it('distinguishes a configured resource limit from allocation failure', () => {
+    const limit = new MediaError('RESOURCE_LIMIT_EXCEEDED')
+    expect(limit.message).toContain('supported processing limits')
+    expect(limit.message).not.toBe(new MediaError('OUT_OF_MEMORY').message)
+  })
   it('keeps raw diagnostic details out of the visible message', () => {
     const cause = new Error('private filename and internal decoder details')
     const error = new MediaError('DECODE_FAILED', { cause })

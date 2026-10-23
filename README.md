@@ -2,7 +2,7 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestone 1 PASSED; Milestone 2A pending Android validation.**
+**Project status: early development / Milestone 1 PASSED; Milestone 2A large-frame fix pending Android retest.**
 The formal viewer supports Animated WebP and APNG with Play/Pause, Replay,
 looping and Close. Both formats use the same bounded cache, player and renderer.
 Static PNG is recognized but has no viewer yet. GIF playback is not implemented.
@@ -71,7 +71,9 @@ Animation sequences expose fresh incremental frame streams for replay. Consumers
 own yielded frames and must dispose of them on eviction. Frames are normalized
 to fully composited canvas-sized images so codec blend/disposal details stay in
 the decoder adapter. Renderer calls borrow a frame synchronously. The player
-owns sequence cleanup and a byte-bounded cache (16 MiB / six frames by default).
+owns sequence cleanup and a byte-bounded cache (16 MiB / six frames normally).
+Larger frames receive exactly two frames of cache capacity, up to a 32 MiB
+automatic ceiling. Explicitly configured budgets remain strict.
 
 The shared WebP Worker lives with its format adapter under `src/formats/webp/`.
 Archive and shared UI component directories will be introduced with their

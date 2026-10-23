@@ -31,6 +31,16 @@ function setup(loopCount = 1, count = 2) {
   return { player, clock, sequence, drawn, released, pulls, restarts }
 }
 describe('presentation clock and bounded producer', () => {
+  it('rejects frames above the automatic ceiling before pulling and disposes the sequence', async () => {
+    const { sequence, pulls } = setup()
+    const renderer = { render: vi.fn(), clear: vi.fn(), dispose: vi.fn(), setViewport: vi.fn() }
+    const player = new AnimationPlayer(renderer, () => {}, new Clock())
+    await player.load({ ...sequence, width: 4097, height: 1024 })
+    expect(player.state).toBe('error')
+    expect(player.error).toMatchObject({ code: 'RESOURCE_LIMIT_EXCEEDED' })
+    expect(pulls).not.toHaveBeenCalled()
+    expect(sequence.dispose).toHaveBeenCalledOnce()
+  })
   it('yields zero-duration frames through the clock instead of spinning synchronously', async () => {
     const { player, clock, sequence, drawn } = setup()
     const original = sequence.frames

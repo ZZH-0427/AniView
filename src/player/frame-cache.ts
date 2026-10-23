@@ -1,11 +1,12 @@
 import type { DecodedFrame } from '../media/frame'
+import { DEFAULT_FRAME_CACHE_BYTES } from '../media/frame-budget'
 
 export class ByteBudgetFrameCache {
   private readonly frames = new Map<number, DecodedFrame>()
   bytes = 0
   peakBytes = 0
   peakFrames = 0
-  constructor(readonly maxBytes = 16 * 1024 * 1024, readonly maxFrames = 6) {
+  constructor(readonly maxBytes = DEFAULT_FRAME_CACHE_BYTES, readonly maxFrames = 6) {
     if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0 || !Number.isSafeInteger(maxFrames) || maxFrames < 2) throw new Error('Invalid cache budget')
   }
   get size() { return this.frames.size }

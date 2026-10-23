@@ -6,6 +6,7 @@ const errorMessages = {
   ARCHIVE_ENCRYPTED: 'This archive requires a password.',
   ARCHIVE_UNSUPPORTED: 'This archive uses an unsupported feature.',
   OUT_OF_MEMORY: 'There is not enough memory to open this file.',
+  RESOURCE_LIMIT_EXCEEDED: 'This file exceeds the supported processing limits. Please try a smaller image.',
   WORKER_FAILED: 'Media processing stopped. Please try opening the file again.',
   WASM_UNAVAILABLE: 'The required decoder could not be loaded in this browser.',
   FILE_READ_FAILED: 'This file could not be read.',

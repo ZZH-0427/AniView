@@ -33,7 +33,7 @@ export class APNGDecoder {
     this.worker.onmessageerror = () => this.dispose()
   }
   async open(file: VirtualFile) {
-    if (file.size > 64 * 1024 * 1024) throw new MediaError('OUT_OF_MEMORY')
+    if (file.size > 64 * 1024 * 1024) throw new MediaError('RESOURCE_LIMIT_EXCEEDED')
     let data: ArrayBuffer
     try { data = await file.read() } catch (cause) { throw new MediaError('FILE_READ_FAILED', { cause }) }
     return this.request({ type: 'open', data }, [data])
