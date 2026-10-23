@@ -6,6 +6,7 @@ import { basename, join, resolve } from 'node:path'
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export async function runInputCheck({ send, evaluate, waitFor, click, fixture, url, capture }) {
+  const expectedURL = new URL(url).href
   const output = resolve('.tools/browser-results/input-fixtures')
   await mkdir(output, { recursive: true })
   const webp = resolve(fixture)
@@ -204,7 +205,7 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
   await expectCurrent(apng, 'apng', 1, 2)
   dragChecks.push(await drop([{ path: webp }]))
   await expectCurrent(apng, 'apng', 1, 3)
-  assert(dragChecks.every(check => check.overPrevented && check.dropPrevented && check.url === url), 'File drop lost navigation prevention')
+  assert(dragChecks.every(check => check.overPrevented && check.dropPrevented && check.url === expectedURL), 'File drop lost navigation prevention')
   const beforeTextDrop = await lifecycle()
   const nonFileDrops = await evaluate(`(() => {
     const results=[];
@@ -217,7 +218,7 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
   })()`)
   await delay(150)
   await expectCurrent(apng, 'apng', 1, 3)
-  assert((await lifecycle()).created === beforeTextDrop.created && await evaluate('location.href') === url, 'Non-file drop changed the session/page')
+  assert((await lifecycle()).created === beforeTextDrop.created && await evaluate('location.href') === expectedURL, 'Non-file drop changed the session/page')
   await empty()
   passed.push('single/multiple File drops from Home and Viewer', 'drop order and append', 'file-drop navigation prevention', 'text/URL/HTML/empty drops ignored')
 

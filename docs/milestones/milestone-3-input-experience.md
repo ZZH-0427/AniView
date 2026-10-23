@@ -143,6 +143,29 @@ This observation does not imply Android support for that optional API. Existing
 real WebP, APNG, GIF and WebP diagnostic-spike scenarios also pass against the
 production build served at the `/AniView/` subpath.
 
+### GitHub Pages verification
+
+Implementation commit `d94353cbc68b4f1694f520ad2d63068d83e5a9b7` passed
+[Actions run 39935955857](https://github.com/ZZH-0427/AniView/actions/runs/39935955857),
+including validation, artifact upload and Pages deployment. The source was
+published to main with verified Git object hashes and a non-force update using
+the official Git Data API fallback for the environment's Git HTTPS limitation.
+
+All **33 input browser checks** passed against
+`https://ZZH-0427.github.io/AniView/?debug=1`. Actual production Worker accounting:
+24 created, 24 terminated, maximum one live decoder, zero remaining after clear;
+138 RGBA ownership transfers observed. The 1001-item picker and 1002-item drop
+each retained 1000 references, displayed the explicit truncation message and
+decoded only the current file. Nested dragenter/dragleave, outer leave, drop and
+dragend correctly maintained/cleared the overlay. URL navigation was prevented;
+the test compares normalized URLs to allow browser hostname lowercasing.
+
+Production WebP, APNG, GIF and WebP spike regressions also passed, including
+continuous playback, Pause/Resume, Replay, loops, Close/reopen and failure
+recovery. All decoder Worker and WebP WASM resources loaded successfully under
+`/AniView/`; no page errors or asset 404s were observed. These results are desktop
+Edge 155 browser evidence; the final Android matrix below remains pending.
+
 ## Historical Android observations (before Milestone 3)
 
 These are user-observed behaviors under the previous input configuration, not
