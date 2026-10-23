@@ -1,9 +1,9 @@
 # Milestone 2B: GIF integration
 
-Status: **PENDING ANDROID VALIDATION**. Desktop conformance and cross-format
-checks pass. Android acceptance must be supplied by the user before PASSED or
-starting Milestone 3. PLAN.md, AGENTS.md and earlier milestone documents remain
-unchanged.
+Status: **PASSED** (2026-10-23). Desktop conformance, cross-format regression,
+GitHub Actions, production Pages checks and user-reported Android acceptance
+pass. PLAN.md, AGENTS.md and earlier milestone documents remain unchanged.
+Milestone 3 is ready for a separate user instruction; it has not been started.
 
 ## Architecture and dependency
 
@@ -125,21 +125,44 @@ node tools/webp-wasm/browser-check.mjs "http://127.0.0.1:4173/AniView/?spike=web
 ```
 
 Installed Edge/CDP; no browser/package download. Detailed reports/screenshots
-remain ignored in `.tools/browser-results`. Repeat against Pages after Actions;
-workflow existence alone is not deployment evidence.
+remain ignored in `.tools/browser-results`.
 
-## Android acceptance still required
+Implementation commit: `08fd5b1436433baa55b509ff82942d102defc90a`.
+[Actions run 39925621421](https://github.com/ZZH-0427/AniView/actions/runs/39925621421)
+completed successfully, including build and Pages deployment. Actual production
+checks at `https://ZZH-0427.github.io/AniView/` passed for WebP, APNG, GIF and
+the WebP spike. Worker/WASM assets loaded under `/AniView/`, Canvas and controls
+worked at phone/desktop viewports, and no page errors or asset 404s were observed.
 
-On at least one mainstream Chromium browser and the user's usual Android
-browser, open `https://ZZH-0427.github.io/AniView/?debug=1`. Select a real GIF,
-play complete loops for about a minute, inspect transparency/partial disposal
-for trails, then Pause/Play, Replay, Close/reopen. Record browser, dimensions/
-frame count, behavior, stutter/crash, cachedFrames range and paused metrics JSON.
-Include a transparent or partial-frame GIF where available. Desktop success
-does not close this item.
+Production GIF observation: decoder ready 1.1ms, first decode/composition 3.3ms,
+mean 1.08ms, selection to paused Viewer 337ms (network/CDP polling included).
+Cache peak remained 6 frames / 3,840,000 bytes; underruns 0.
 
-Limitations: delay normalization, resource ceilings and pending Android results.
-No seek/timeline or new input UX is added. Do not begin Milestone 3 yet.
+## Android acceptance
+
+On 2026-10-23 the user reported testing two real GIFs on Android, using Quark
+and QQ Browser respectively, with all requested functions working normally.
+The test request covered about one minute of continuous playback, visual trails/
+transparency, looping, Pause/Play, Replay and Close/reopen. This is user-reported
+device evidence, not an independent desktop emulation claim.
+
+| Browser (reported order) | GIF | Paused cache | Peak cache | Peak frames | Budget | Underruns |
+| --- | --- | --- | --- | --- | --- | --- |
+| Quark | 540x540, 60 frames | 3 frames / 3,499,200 bytes | 6,998,400 bytes | 6 | 16,777,216 bytes | 0 |
+| QQ Browser | 476x476, 128 frames | 5 frames / 4,531,520 bytes | 5,437,824 bytes | 6 | 16,777,216 bytes | 0 |
+
+Both snapshots match `width * height * 4` per cached frame and stay within the
+shared budget despite different total frame counts. The user did not provide
+browser versions, GIF bytes or a dynamic cachedFrames range, so exact disposal/
+transparency flags and per-browser engine versions are not independently
+verified. No separate real-device Chrome/Edge run is claimed or required by
+brand: QQ is included in the requested browser matrix; its documented Blink
+lineage supplies the Chromium-family coverage alongside the user's Quark test
+([Tencent engineering explanation](https://developer.cloud.tencent.com/article/1083770)).
+No stutter, trails or crashes were reported in the user's overall normal result.
+
+Limitations: delay compatibility normalization and documented resource ceilings.
+No seek/timeline or new input UX was added. Milestone 3 has not been started.
 
 References: [GIF89a](https://www.w3.org/Graphics/GIF/spec-gif89a.txt),
 [omggif source](https://github.com/deanm/omggif/blob/master/omggif.js).
