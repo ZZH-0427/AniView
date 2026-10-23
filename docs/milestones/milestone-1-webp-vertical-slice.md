@@ -81,11 +81,21 @@ The existing `.webp,image/webp` accept filter may still show Camera / Files or a
 restricted WebP subset. TODO: redesign Gallery / Files / Archive entry points in
 the Input Experience milestone; no Android picker hacks are added here.
 
-**New Android production playback acceptance is pending user testing.** The file
-is only on the phone. After deployment open `/AniView/?debug=1`, play through at
-least two complete loops, Pause/Resume, Replay, Close/Reopen; record browser,
-stutter/crashes, peakBytes/peakFrames and underruns. Do not infer mobile results
-from desktop or claim the 193-frame file was tested on the computer.
+On 2026-10-23 the user reported testing the deployed formal Viewer in Android
+Chrome, Edge, Xiaomi's built-in browser and Quark. The user reported all requested
+functions usable, automatic repetition after each complete play, and no observed
+stutter or crashes. This is user-reported real-device functional evidence, not an
+independently instrumented Android benchmark. Browser versions were not supplied.
+Automatic repetition is expected when the file's normalized loopCount is zero;
+the existing unit tests separately cover finite total-play counts.
+
+**Phone-file cache acceptance remains pending.** Confirmation of the exact
+672×1024, 193-frame test file, observed cached-frame range, peakBytes, peakFrames,
+maxBytes and underruns has been requested. The file exists only on the phone.
+Use `/AniView/?debug=1`, play through at least two complete loops and for about a
+minute, then pause and copy the diagnostic JSON. Do not substitute theoretical
+six-frame byte calculations, desktop observations or the historical 1A smoke
+test for these measurements.
 
 ## Validation and remaining scope
 
@@ -103,8 +113,21 @@ Use an optional second argument for another local file. The official 300×225,
 1,620,000 bytes; no underrun in that run. Reports live in ignored `.tools/`.
 The script explicitly excludes Replay's index reset from full-loop detection.
 
+Commit `3134823959f6e8aacced074fbe03bdea6c6d1cec` passed local lint, typecheck,
+23 Vitest tests and the production build using installed Node 24.22.1/npm 11.19.1.
+Local development and preview browser checks passed. GitHub Actions run
+[39897902334](https://github.com/ZZH-0427/AniView/actions/runs/39897902334)
+completed successfully, including build, Pages artifact upload and deployment.
+The deployed formal Viewer passed real Edge checks for continuous playback,
+Canvas pixel changes, pause/resume, replay, a full loop, bounded cache,
+close/reopen, 390/1280 viewport layouts and DPR sizing. Worker/WASM responses
+were HTTP 200 under `/AniView/`, with no observed page exceptions, console errors
+or resource 404s. The production spike also passed decoding, reset, corrupt input
+and recovery checks. Desktop results do not replace Android cache measurements.
+
 No APNG/GIF, ZIP, seek, previous-frame navigation, conversion, PWA or final mobile
 input UX is implemented. WASM linear memory may grow without shrinking; freeing
 C allocations or dropping cache references does not promise immediate RSS change.
-Milestone completion requires new Android testing and the phone-file cache
-observations, plus production deployment verification.
+Milestone 1 remains BLOCKED on phone-file confirmation and cache observations.
+The Android functional report and production deployment checks are recorded
+above; do not begin Milestone 2 until the remaining acceptance evidence arrives.

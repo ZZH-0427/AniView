@@ -4,7 +4,9 @@ Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestone 1 acceptance pending.**
 The formal Animated WebP viewer supports Play/Pause, Replay, looping and Close.
-Milestone 1 Android acceptance is pending. GIF/APNG playback is not implemented.
+Android functional smoke tests were reported successful in Chrome, Edge, Xiaomi
+Browser and Quark. The specified phone-file cache measurements are still pending.
+GIF/APNG playback is not implemented.
 See [the vertical slice notes](docs/milestones/milestone-1-webp-vertical-slice.md).
 
 Target animated formats: GIF, Animated WebP and APNG. Static WebP, PNG and JPEG
