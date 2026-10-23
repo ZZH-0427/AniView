@@ -1,9 +1,10 @@
 # Milestone 2A: APNG decoder integration
 
-**Status: PENDING ANDROID VALIDATION (large-frame follow-up).** The user confirmed
-the beach-ball sample in Android Quark with no stutter/crash and supplied bounded
-cache metrics. A larger private image exposed the original frame-size policy
-limit; the shared-budget fix below needs a new original-file Android test.
+**Status: Milestone 2A PASSED (2026-10-23).** Implementation, tests, desktop
+integration, WebP regression, CI/Pages and user-reported Android Quark acceptance
+are complete. The user also confirmed normal operation of the original private
+13.56 MB, 1280×1910 APNG after the shared large-frame budget correction, with
+two peak cached frames and zero reported underruns. Milestone 2B is not started.
 
 ## Architecture and dependency boundary
 
@@ -239,12 +240,31 @@ backup peaked at 98,304 bytes. A 4096×1025 frame above the ceiling was rejected
 before ready/frame emission with the explicit limit message, and another open
 succeeded afterward. The generated test is **not** the user's private file.
 
-The original file's frame count and compressed contents are unavailable locally.
-Other documented limits (including aggregate scanline work), browser allocation
-failure or performance may still affect it. The next Android test should reopen
-that original file, check the APNG dimensions, loop, Pause/Resume, Replay,
-Close/Reopen, visible composition and cache JSON. The cache ceiling does not
-include encoded blobs, compositor/renderer canvases, bitmap or PREVIOUS memory.
+Fix commit `437813b478eedd0bca010ead88e59ea9d02f5ede` passed GitHub Actions run
+[39916465543](https://github.com/ZZH-0427/AniView/actions/runs/39916465543), including
+build and Pages deployment. Real production browser checks passed the generated
+same-resolution animation and above-ceiling rejection/recovery, WebP Viewer and
+WebP spike. Worker/WASM paths returned HTTP 200 without observed page errors.
+
+The user then retried the **original 13.56 MB, 1280×1910 APNG in Android Quark**
+and confirmed normal operation in response to the playback/control/reopen
+checklist. The supplied diagnostic was:
+
+```json
+{"cacheBytes":9779200,"cachedFrames":1,"peakBytes":19558400,"peakFrames":2,"maxBytes":19558400,"underruns":0}
+```
+
+The reported peak equals the exact two-frame budget; current occupancy was one
+frame and no underruns were reported. Together with the earlier Android sample,
+this completes Milestone 2A acceptance, including the large-frame correction.
+These are user-supplied original-file observations, distinct from the generated
+desktop test. The original file's frame count and compressed contents remain
+unavailable locally; no independent inspection, other-browser large-file result
+or device-wide memory benchmark is claimed. The cache ceiling does not include
+encoded blobs, compositor/renderer canvases, bitmap or PREVIOUS memory.
+
+AniView is ready for Milestone 2B (GIF Decoder Integration) when requested. This
+closure changes documentation only and does not implement GIF or later features.
 
 This route requires Worker image decode and OffscreenCanvas support. Final
 gallery/files picker behavior remains Milestone 3; the temporary accept filter
