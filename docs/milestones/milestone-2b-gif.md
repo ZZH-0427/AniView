@@ -150,15 +150,25 @@ device evidence, not an independent desktop emulation claim.
 | --- | --- | --- | --- | --- | --- | --- |
 | Quark | 540x540, 60 frames | 3 frames / 3,499,200 bytes | 6,998,400 bytes | 6 | 16,777,216 bytes | 0 |
 | QQ Browser | 476x476, 128 frames | 5 frames / 4,531,520 bytes | 5,437,824 bytes | 6 | 16,777,216 bytes | 0 |
+| Edge (additional Android test) | 1280x878, 14 frames | 3 frames / 13,486,080 bytes | 13,486,080 bytes | 3 | 16,777,216 bytes | 0 |
 
-Both snapshots match `width * height * 4` per cached frame and stay within the
+The user subsequently supplied an additional Android Edge result for a
+1280x878, 14-frame GIF, reporting no abnormalities. Each full RGBA frame is
+4,495,360 bytes; the observed three-frame peak is expected under the existing
+16 MiB byte limit (four such frames would exceed it). No cache policy change
+was needed. The supplied snapshot was:
+
+```json
+{"cacheBytes":13486080,"cachedFrames":3,"peakBytes":13486080,"peakFrames":3,"maxBytes":16777216,"underruns":0}
+```
+
+All three snapshots match `width * height * 4` per cached frame and stay within the
 shared budget despite different total frame counts. The user did not provide
 browser versions, GIF bytes or a dynamic cachedFrames range, so exact disposal/
 transparency flags and per-browser engine versions are not independently
-verified. No separate real-device Chrome/Edge run is claimed or required by
-brand: QQ is included in the requested browser matrix; its documented Blink
-lineage supplies the Chromium-family coverage alongside the user's Quark test
-([Tencent engineering explanation](https://developer.cloud.tencent.com/article/1083770)).
+verified. Edge now supplies direct user-reported mainstream Chromium-browser
+coverage alongside the user's Quark and QQ Browser results; no Chrome test is
+claimed. These are distinct real-device reports, not inferred browser results.
 No stutter, trails or crashes were reported in the user's overall normal result.
 
 Limitations: delay compatibility normalization and documented resource ceilings.
