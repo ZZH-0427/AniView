@@ -143,8 +143,8 @@ node tools/webp-wasm/browser-check.mjs 'http://127.0.0.1:5173/AniView/?spike=web
 
 Repeat browser scenarios against the production build and Pages URL. APNG adds
 one Vite-resolved module Worker and no WASM runtime asset. WebP's Worker/WASM
-and `?spike=webp` remain part of regression validation. Actual results and exact
-metrics must be recorded after execution; this procedure is not a passed result.
+and `?spike=webp` remain part of regression validation. Recorded results below
+are actual executions, separate from these reproduction commands.
 
 ### Recorded local desktop results (2026-10-23)
 
@@ -176,6 +176,31 @@ Independent Worker instrumentation observed 271 bitmaps across the APNG suite:
 maximum one simultaneously live bitmap, zero after each frame emission.
 The PREVIOUS fixture's observed backup was four bytes (one 1×1 region).
 Reports/screenshots remain ignored under `.tools/browser-results/`.
+
+### Recorded CI and production results (2026-10-23)
+
+Implementation commit `95570655ae59712d7d7b7a643cfc2d1858cdac9d` was published to
+`origin/main` without history rewriting. GitHub Actions run
+[39913895009](https://github.com/ZZH-0427/AniView/actions/runs/39913895009)
+completed successfully: npm ci, lint, typecheck, tests, build, Pages artifact and
+deployment all passed. No workflow or repository-settings change was needed.
+
+Real Edge checks against `https://ZZH-0427.github.io/AniView/?debug=1` passed the
+entire APNG scenario, including all 19 exact fixture-frame pixel matches and the
+complete 100-frame loop. The WebP Viewer and `?spike=webp` also passed their full
+regression scenarios. APNG Worker and WebP Worker/WASM returned HTTP 200 beneath
+`/AniView/`, with no observed resource 404s, page exceptions or console errors.
+
+For the same beach-ball sample, production desktop selection-to-ready was
+~516.5ms, selection-to-first-presentation ~546.8ms (including CDP polling), Worker
+parse/canvas setup ~4.8ms, and mean decode/composition ~0.59ms (range ~0.2–1.4ms).
+Network/Worker startup makes these different from the local preview results.
+Cache peaks stayed at six frames / 240,000 bytes for the real sample and six
+frames / 98,304 bytes for the long stream, with zero underruns. Independent bitmap
+instrumentation again observed 271 frame emissions, one maximum live bitmap and
+zero remaining after each emission; the PREVIOUS test backup peaked at four bytes.
+These results complete desktop, CI and Pages validation. Android APNG remains
+pending the new user real-device checklist below.
 
 ## Android acceptance and limitations
 
