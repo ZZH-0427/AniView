@@ -2,8 +2,7 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestones 1–4 PASSED;
-Milestone 5 PENDING ANDROID VIEWER VALIDATION.**
+**Project status: early development / Milestones 1–5 PASSED.**
 The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
 Previous/Next Frame and a current-frame count. All animated formats use the same
 bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static

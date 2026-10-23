@@ -1,9 +1,9 @@
 # Milestone 5: Viewer UX
 
-**Status: Milestone 5 PENDING ANDROID VIEWER VALIDATION.** Implementation and
-local checks, combined desktop acceptance, GitHub Actions/Pages and actual
-production checks pass. Android Viewer-specific acceptance remains pending.
-Milestone 6 is not started.
+**Status: Milestone 5 PASSED.** Implementation, local checks, combined desktop
+acceptance, GitHub Actions/Pages and actual production checks pass. The user
+confirmed the complete Android Viewer checklist passed in Quark and Edge on
+2026-10-23. Milestone 6 is not started.
 
 ## Architecture and opening behavior
 
@@ -137,8 +137,9 @@ RSS reduction after objects are closed or dereferenced.
 JPEG orientation is delegated to the browser, not a new EXIF parser. Actual
 installed Edge 155 checks used original quadrant JPEGs with orientations 2, 3,
 6 and 8: both native and real Viewer pixels were correct; orientations 6/8
-reported 20×40 instead of the stored 40×20. Browser-specific Android orientation
-is still part of pending acceptance, not inferred from these desktop results.
+reported 20×40 instead of the stored 40×20. The user subsequently confirmed the
+Android checklist, including the supplied orientation-6 example, passed in Quark
+and Edge. Exact pixel measurements above remain desktop results.
 
 ## Resource and Canvas safety
 
@@ -306,9 +307,18 @@ three public Android samples to their local build bytes. No root-hosting
 assumption or application router was introduced. The final main bundle is about
 273.2 kB / 84.1 kB gzip; ZIP remains a separate lazy session chunk and Worker.
 
-Android status: **Pending user real-device validation**. After deployment, use
-one mainstream Chromium browser (Edge/Chrome) plus one usual browser (Quark/QQ).
-Open `https://ZZH-0427.github.io/AniView/?debug=1` and download the original samples:
+Android status: **Passed, user-reported real-device acceptance (2026-10-23)**.
+The user tested the deployed Viewer in Android Quark and Edge and confirmed:
+
+> 在夸克和edge上进行了测试，未发现任何问题，你列出的注意点均通过了我的检测
+
+| Android browser | Complete Viewer checklist | Reported issues |
+| --- | --- | --- |
+| Quark | Passed (user-reported) | None |
+| Edge | Passed (user-reported) | None |
+
+This satisfies the mainstream Chromium plus usual Android browser requirement.
+The accepted checklist at `https://ZZH-0427.github.io/AniView/?debug=1` covered:
 
 - `validation/viewer/long.webp`: Play/Pause, Next/Previous Frame around frame 50+,
   repeated backward inspection after history is evicted, then Replay.
@@ -317,20 +327,25 @@ Open `https://ZZH-0427.github.io/AniView/?debug=1` and download the original sam
 - `validation/viewer/orientation-6.jpg`: portrait-oriented JPEG, with blue/red on
   the top row and yellow/green on the bottom row.
 
-For static and animated images, test pinch, one-finger pan after zooming,
-double-tap, Fit, 100%, portrait↔landscape and fullscreen where supported. Confirm
-that frame stepping preserves the view and a new file resets Fit. Report browser,
-feature results, visible stutter/crash, and debug frame-cache/step/viewport JSON.
-An unavailable Fullscreen API is a recorded capability difference, not a Viewer
-failure. Desktop synthetic touch events do not replace this real-device check.
+For static and animated images, the checklist also covered pinch, one-finger
+pan after zooming, double-tap, Fit, 100%, portrait↔landscape and fullscreen where
+supported; frame changes preserve the view and file changes reset Fit. Static
+images have no playback/step controls, and stepping during playback pauses it.
+
+The user reported no issues with the checklist, which included checking for
+stutter and crashes. Device/browser versions, per-browser Fullscreen API
+availability and new playback/step/viewport JSON were not separately supplied.
+This is user-reported functional acceptance, not an independently observed
+Android run or a new Android memory/latency measurement. The measured resource
+counts and timings above remain desktop evidence.
 
 ## Remaining scope
 
-Until the required Android results arrive, the milestone remains pending. There
-is no arbitrary seek/timeline, swipe file navigation, slideshow, editing,
+There is no arbitrary seek/timeline, swipe file navigation, slideshow, editing,
 conversion, encoding, export or HEIC/TIFF/AVIF support commitment. No new password
 UI or change to ZIP metadata-first/current-only extraction is included.
 
-Viewer UX remains separated from format-specific decoding and playback. Once
-desktop, CI/Pages, production and Android acceptance all pass, Milestone 5 can be
-closed and Milestone 6 — Stability & Compatibility can be considered separately.
+Viewer UX remains separated from format-specific decoding and playback. Local,
+desktop, CI/Pages, production and Android acceptance have passed: **Milestone 5
+is closed. Ready for Milestone 6 — Stability & Compatibility.** Milestone 6 work
+requires a separate task and has not started.
