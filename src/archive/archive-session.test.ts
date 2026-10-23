@@ -3,6 +3,7 @@ import { ArchiveSession } from './archive-session'
 import { createArchiveEntryMetadata } from './archive-policy'
 import type { ArchiveEntryMetadata } from './archive-policy'
 import type { ArchiveRequest, ArchiveResponse } from './archive-worker-protocol'
+import { runtimeDiagnostics } from '../media/runtime-diagnostics'
 
 const entries = Array.from({ length: 10 }, (_, id) => createArchiveEntryMetadata({ name: `${id}.gif`, directory: false,
   compressedSize: 4, uncompressedSize: 4, encrypted: false, compressionMethod: 0 }, id))
@@ -10,8 +11,9 @@ const metrics = { entryCount: 10, mediaCount: 10, totalDeclaredBytes: 40, extrac
 let readyEntries: readonly ArchiveEntryMetadata[] = entries
 class TestWorker {
   static instances: TestWorker[] = []
+  static autoOpen = true
   readonly commands: ArchiveRequest[] = []
-  onmessage: ((event: MessageEvent<ArchiveResponse>) => void) | null = null
+  onmessage: ((event: MessageEvent<ArchiveResponse | null>) => void) | null = null
   onerror: ((event: ErrorEvent) => void) | null = null
   onmessageerror: (() => void) | null = null
   terminate = vi.fn()
@@ -21,7 +23,7 @@ class TestWorker {
   postMessage(command: ArchiveRequest) {
     this.commands.push(command)
     queueMicrotask(() => {
-      if (command.type === 'open') this.send({ id: command.id, type: 'ready', entries: readyEntries, metrics })
+      if (command.type === 'open' && TestWorker.autoOpen) this.send({ id: command.id, type: 'ready', entries: readyEntries, metrics })
       if (command.type === 'close') this.send({ id: command.id, type: 'closed' })
       if (command.type === 'cancel') this.send({ id: command.target, type: 'error', code: 'ARCHIVE_CLOSED', aborted: true })
       if (command.type === 'extract' && this.autoExtract) this.finish(command.id, command.entryId)
@@ -34,8 +36,8 @@ class TestWorker {
 }
 const file = () => new File(['zip'], 'test.zip')
 const worker = () => TestWorker.instances.at(-1)!
-beforeEach(() => { readyEntries = entries; TestWorker.instances = []; vi.stubGlobal('Worker', TestWorker) })
-afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers() })
+beforeEach(() => { readyEntries = entries; TestWorker.instances = []; TestWorker.autoOpen = true; vi.stubGlobal('Worker', TestWorker) })
+afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers(); vi.restoreAllMocks() })
 
 describe('archive session cache and VirtualFile ownership', () => {
   it('opens metadata with zero full extractions and exposes ordered VirtualFiles', async () => {
@@ -187,5 +189,176 @@ describe('archive cancellation and lifecycle', () => {
     await expect(opening).rejects.toMatchObject({ name: 'AbortError' })
     expect(worker().terminate).toHaveBeenCalledOnce()
     expect(worker().commands.some(command => command.type === 'close')).toBe(true)
+  })
+
+  it.each(['onerror', 'onmessageerror'] as const)('rejects in-flight extraction on %s and permits a fresh archive', async event => {
+    const session = await ArchiveSession.open(file())
+    const entry = session.files[0]!
+    const failedWorker = worker()
+    failedWorker.autoExtract = false
+    const read = entry.read()
+    const failure = expect(read).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    await vi.waitFor(() => expect(failedWorker.commands.some(command => command.type === 'extract')).toBe(true))
+    if (event === 'onerror') failedWorker.onerror?.({ preventDefault() {} } as ErrorEvent)
+    else failedWorker.onmessageerror?.()
+    await failure
+    expect(session.metrics.currentExtractedBytes).toBe(0)
+    expect(session.entries).toEqual([])
+    expect(session.files).toEqual([])
+    await session.close()
+    expect(failedWorker.terminate).toHaveBeenCalledOnce()
+    const fresh = await ArchiveSession.open(file())
+    expect(new Uint8Array(await fresh.files[1]!.read())[0]).toBe(1)
+    expect(fresh.id).not.toBe(session.id)
+    await fresh.close()
+  })
+
+  it('rejects a failed request postMessage immediately without retaining a Worker', async () => {
+    const post = vi.spyOn(TestWorker.prototype, 'postMessage').mockImplementationOnce(() => { throw new DOMException('Clone failed', 'DataCloneError') })
+    await expect(ArchiveSession.open(file())).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    expect(worker().terminate).toHaveBeenCalledOnce()
+    post.mockRestore()
+    const fresh = await ArchiveSession.open(file())
+    await fresh.files[0]!.read()
+    await fresh.close()
+  })
+
+  it('contains a failed cancellation postMessage and immediately rejects the pending read', async () => {
+    const session = await ArchiveSession.open(file())
+    const failedWorker = worker()
+    failedWorker.autoExtract = false
+    const controller = new AbortController()
+    const read = session.extractEntry(0, { signal: controller.signal })
+    const failure = expect(read).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    await vi.waitFor(() => expect(failedWorker.commands.some(command => command.type === 'extract')).toBe(true))
+    vi.spyOn(failedWorker, 'postMessage').mockImplementation(() => { throw new DOMException('Transport stopped', 'DataCloneError') })
+    expect(() => controller.abort()).not.toThrow()
+    await failure
+    expect(failedWorker.terminate).toHaveBeenCalledOnce()
+    await session.close()
+  })
+
+  it('times out an unexpectedly silent Worker and recovers by reopening without a page reload', async () => {
+    const session = await ArchiveSession.open(file())
+    worker().autoExtract = false
+    vi.useFakeTimers()
+    const read = session.files[0]!.read()
+    const failure = expect(read).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    await vi.advanceTimersByTimeAsync(30_000)
+    await failure
+    expect(worker().terminate).toHaveBeenCalledOnce()
+    await session.close()
+    const fresh = await ArchiveSession.open(file())
+    expect((await fresh.files[0]!.read()).byteLength).toBe(4)
+    await fresh.close()
+  })
+
+  it('does not revive an opening session when ready is immediately followed by Worker failure', async () => {
+    TestWorker.autoOpen = false
+    const opening = ArchiveSession.open(file())
+    const failure = expect(opening).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    const command = worker().commands.find(command => command.type === 'open')!
+    if (command.type !== 'open') throw new Error('Expected open')
+    worker().send({ id: command.id, type: 'ready', entries, metrics })
+    worker().onmessageerror?.()
+    await failure
+    expect(worker().terminate).toHaveBeenCalledOnce()
+  })
+
+  it('discards delayed metadata after abort and does not expose a closed archive', async () => {
+    TestWorker.autoOpen = false
+    const controller = new AbortController()
+    const opening = ArchiveSession.open(file(), { signal: controller.signal })
+    const failure = expect(opening).rejects.toMatchObject({ name: 'AbortError' })
+    const failedWorker = worker()
+    const command = failedWorker.commands.find(command => command.type === 'open')!
+    controller.abort()
+    await failure
+    if (command.type !== 'open') throw new Error('Expected open')
+    failedWorker.send({ id: command.id, type: 'ready', entries, metrics })
+    expect(failedWorker.terminate).toHaveBeenCalledOnce()
+    TestWorker.autoOpen = true
+    const fresh = await ArchiveSession.open(file())
+    await fresh.files[0]!.read()
+    await fresh.close()
+  })
+
+  it('releases an accepted but not yet committed Blob if close wins the continuation race', async () => {
+    const session = await ArchiveSession.open(file())
+    const entry = session.files[0]!
+    worker().autoExtract = false
+    const read = entry.read()
+    const failure = expect(read).rejects.toMatchObject({ name: 'AbortError' })
+    await vi.waitFor(() => expect(worker().commands.some(command => command.type === 'extract')).toBe(true))
+    const command = worker().commands.find(command => command.type === 'extract')!
+    if (command.type !== 'extract') throw new Error('Expected extract')
+    worker().finish(command.id, 0)
+    await session.close()
+    await failure
+    expect(session.metrics).toMatchObject({ currentEntryId: null, currentExtractedBytes: 0 })
+  })
+
+  it('keeps 100 visited entries bounded to the current Blob and cancels 100 rapid replacements', async () => {
+    readyEntries = Array.from({ length: 100 }, (_, id) => createArchiveEntryMetadata({ name: `nested/${id}.gif`,
+      directory: false, compressedSize: 4, uncompressedSize: 4, encrypted: false, compressionMethod: 0 }, id))
+    const session = await ArchiveSession.open(file())
+    for (const entry of session.files) {
+      expect(new Uint8Array(await entry.read())[0]).toBe(entry.entryId)
+      expect(session.metrics).toMatchObject({ currentEntryId: entry.entryId, currentExtractedBytes: 4, peakExtractedBytes: 4 })
+    }
+    const results = await Promise.allSettled(session.files.map(entry => entry.read()))
+    expect(results.filter(result => result.status === 'rejected')).toHaveLength(99)
+    expect(results.at(-1)?.status).toBe('fulfilled')
+    expect(session.metrics).toMatchObject({ currentEntryId: 99, currentExtractedBytes: 4, peakExtractedBytes: 4 })
+    await session.close()
+    expect(worker().terminate).toHaveBeenCalledOnce()
+  })
+
+  it('does not coalesce a reopened entry with its already cancelled extraction', async () => {
+    const session = await ArchiveSession.open(file())
+    const entry = session.files[0]!
+    worker().autoExtract = false
+    const oldRead = entry.read()
+    const failure = expect(oldRead).rejects.toMatchObject({ name: 'AbortError' })
+    await vi.waitFor(() => expect(worker().commands.some(command => command.type === 'extract')).toBe(true))
+    const releasing = entry.release()
+    worker().autoExtract = true
+    const newRead = entry.read()
+    await Promise.all([releasing, failure])
+    expect((await newRead).byteLength).toBe(4)
+    expect(session.metrics.currentEntryId).toBe(0)
+    await session.close()
+  })
+
+  it('treats an invalid Worker message as transport failure rather than an uncaught exception', async () => {
+    const session = await ArchiveSession.open(file())
+    worker().autoExtract = false
+    const read = session.files[0]!.read()
+    const failure = expect(read).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+    await vi.waitFor(() => expect(worker().commands.some(command => command.type === 'extract')).toBe(true))
+    expect(() => worker().onmessage?.(new MessageEvent('message', { data: null }))).not.toThrow()
+    await failure
+    expect(worker().terminate).toHaveBeenCalledOnce()
+    await session.close()
+  })
+
+  it('records actual session/Worker ownership and accepted extraction rather than repeated cache reads', async () => {
+    const before = runtimeDiagnostics.getSnapshot()
+    const session = await ArchiveSession.open(file())
+    await session.files[0]!.read()
+    await session.files[0]!.read()
+    const opened = runtimeDiagnostics.getSnapshot()
+    expect(opened.workersCreated - before.workersCreated).toBe(1)
+    expect(opened.archiveSessionsOpened - before.archiveSessionsOpened).toBe(1)
+    expect(opened.activeWorkers - before.activeWorkers).toBe(1)
+    expect(opened.activeArchiveSessions - before.activeArchiveSessions).toBe(1)
+    expect(opened.entryExtractionsStarted - before.entryExtractionsStarted).toBe(1)
+    expect(opened.entryExtractionsCompleted - before.entryExtractionsCompleted).toBe(1)
+    await session.close(); await session.close()
+    const after = runtimeDiagnostics.getSnapshot()
+    expect(after.workersTerminated - before.workersTerminated).toBe(1)
+    expect(after.archiveSessionsClosed - before.archiveSessionsClosed).toBe(1)
+    expect(after.activeWorkers).toBe(before.activeWorkers)
+    expect(after.activeArchiveSessions).toBe(before.activeArchiveSessions)
   })
 })

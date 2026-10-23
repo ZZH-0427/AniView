@@ -4,6 +4,7 @@ import type { ArchiveEntryMetadata, ArchiveLimits } from './archive-policy'
 import type { ArchiveEngineMetrics } from './archive-engine'
 import { ArchiveEntryVirtualFile } from './archive-entry-virtual-file'
 import type { ArchiveCommand, ArchiveRequest, ArchiveResponse } from './archive-worker-protocol'
+import { countRuntimeEvent, trackRuntimeResource } from '../media/runtime-diagnostics'
 
 interface Pending {
   resolve(value: ArchiveResponse): void
@@ -25,6 +26,8 @@ export class ArchiveSession {
   private entryList: readonly ArchiveEntryMetadata[] = []
   private fileList: readonly ArchiveEntryVirtualFile[] = []
   private readonly worker: Worker
+  private readonly releaseWorker: () => void
+  private releaseArchive: (() => void) | undefined
   private readonly pending = new Map<number, Pending>()
   private requestId = 0
   private generation = 0
@@ -42,14 +45,29 @@ export class ArchiveSession {
     if (typeof Worker === 'undefined') throw new MediaError('WORKER_FAILED')
     try { this.worker = new Worker(new URL('./archive.worker.ts', import.meta.url), { type: 'module' }) }
     catch (cause) { throw new MediaError('WORKER_FAILED', { cause }) }
+    this.releaseWorker = trackRuntimeResource('worker')
     this.worker.onmessage = (event: MessageEvent<ArchiveResponse>) => {
       const response = event.data
+      if (!response || typeof response !== 'object' || !Number.isSafeInteger(response.id)
+        || !['ready', 'extracted', 'closed', 'error'].includes(response.type)) {
+        this.terminate(new MediaError('WORKER_FAILED'))
+        return
+      }
       const pending = this.pending.get(response.id)
-      if (!pending) return
+      if (!pending) {
+        if (response.type === 'extracted') {
+          countRuntimeEvent('entryExtractionsDiscarded')
+          countRuntimeEvent('staleResultsDiscarded')
+        }
+        return
+      }
       this.pending.delete(response.id)
       clearTimeout(pending.timer)
       pending.unlisten()
-      if (response.type === 'error') pending.reject(response.aborted ? new DOMException('Cancelled', 'AbortError') : new MediaError(response.code))
+      if (response.type === 'error') {
+        if (!response.aborted) countRuntimeEvent('archiveErrors')
+        pending.reject(response.aborted ? new DOMException('Cancelled', 'AbortError') : new MediaError(response.code))
+      }
       else pending.resolve(response)
     }
     this.worker.onerror = event => { event.preventDefault(); this.terminate(new MediaError('WORKER_FAILED')) }
@@ -64,10 +82,14 @@ export class ArchiveSession {
     try {
       const response = await session.request({ type: 'open', file, limits }, options.signal)
       options.signal?.throwIfAborted()
+      // A ready message can be followed by a transport failure before this
+      // continuation runs. Never publish metadata or revive that dead session.
+      if (session.closed) throw new MediaError('WORKER_FAILED')
       if (response.type !== 'ready') throw new MediaError('ARCHIVE_CORRUPTED')
       session.entryList = Object.freeze(response.entries.map(entry => Object.freeze(entry)))
       session.fileList = Object.freeze(session.entries.filter(entry => entry.mediaCandidate).map(entry => new ArchiveEntryVirtualFile(session, entry)))
       session.counters = { ...session.counters, ...response.metrics }
+      session.releaseArchive = trackRuntimeResource('archive')
       return session
     } catch (cause) { await session.close(); throw cause }
   }
@@ -84,7 +106,7 @@ export class ArchiveSession {
     if (entry.blockedCode) return Promise.reject(new MediaError(entry.blockedCode))
     if (entry.encrypted && options.password === undefined) return Promise.reject(new MediaError('ARCHIVE_ENCRYPTED'))
     if (this.cached?.entryId === entryId) return Promise.resolve(this.cached.blob)
-    if (this.active?.entryId === entryId) return this.active.promise
+    if (this.active?.entryId === entryId && !this.active.controller.signal.aborted) return this.active.promise
     const previous = this.active
     previous?.controller.abort()
     this.cached = undefined
@@ -98,11 +120,18 @@ export class ArchiveSession {
         await previous?.promise.catch(() => undefined)
         controller.signal.throwIfAborted()
         if (this.closed || this.generation !== generation) throw new DOMException('Cancelled', 'AbortError')
+        countRuntimeEvent('entryExtractionsStarted')
         const response = await this.request({ type: 'extract', entryId,
           ...(options.password === undefined ? {} : { password: options.password }) }, controller.signal)
-        controller.signal.throwIfAborted()
-        if (this.closed || this.generation !== generation) throw new DOMException('Cancelled', 'AbortError')
+        if (controller.signal.aborted || this.closed || this.generation !== generation) {
+          if (response.type === 'extracted') {
+            countRuntimeEvent('entryExtractionsDiscarded')
+            countRuntimeEvent('staleResultsDiscarded')
+          }
+          throw new DOMException('Cancelled', 'AbortError')
+        }
         if (response.type !== 'extracted') throw new MediaError('ARCHIVE_CORRUPTED')
+        countRuntimeEvent('entryExtractionsCompleted')
         this.cached = { entryId, blob: response.blob }
         this.counters = { ...this.counters, ...response.metrics, currentEntryId: entryId,
           currentExtractedBytes: response.blob.size,
@@ -146,7 +175,13 @@ export class ArchiveSession {
     const id = ++this.requestId
     const request: ArchiveRequest = { ...command, id }
     return new Promise((resolve, reject) => {
-      const cancel = () => { this.worker.postMessage({ type: 'cancel', target: id } satisfies ArchiveRequest) }
+      const cancel = () => {
+        // Abort listeners run outside the request promise's executor. A failed
+        // cancellation send must reject/terminate here, not escape as a global
+        // exception and leave the caller waiting for the operation timeout.
+        try { this.worker.postMessage({ type: 'cancel', target: id } satisfies ArchiveRequest) }
+        catch { this.terminate(new MediaError('WORKER_FAILED')) }
+      }
       const timer = setTimeout(() => this.terminate(new MediaError('WORKER_FAILED')), timeout)
       this.pending.set(id, { resolve, reject, timer, unlisten: () => signal?.removeEventListener('abort', cancel) })
       signal?.addEventListener('abort', cancel, { once: true })
@@ -156,10 +191,17 @@ export class ArchiveSession {
 
   private terminate(error: MediaError) {
     if (this.terminated) return
+    if (error.code === 'WORKER_FAILED') countRuntimeEvent('archiveErrors')
     this.terminated = this.closed = true
     this.cached = undefined
+    this.fileList = []
+    this.entryList = []
     this.counters = { ...this.counters, currentEntryId: null, currentExtractedBytes: 0 }
     this.worker.terminate()
+    this.releaseWorker()
+    this.releaseArchive?.()
+    this.releaseArchive = undefined
+    this.worker.onmessage = this.worker.onerror = this.worker.onmessageerror = null
     for (const pending of this.pending.values()) { clearTimeout(pending.timer); pending.unlisten(); pending.reject(error) }
     this.pending.clear()
   }

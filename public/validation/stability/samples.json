@@ -1,0 +1,108 @@
+{
+  "license": "CC0-1.0",
+  "source": "Original AniView generated solid pixels/quadrants and existing original conformance media. No private user files.",
+  "generators": [
+    "tools/stability/media-fixtures.mjs",
+    "tools/stability/archive-fixtures.mjs",
+    "tools/stability/publish-fixtures.mjs"
+  ],
+  "samples": [
+    {
+      "name": "boundary-2048.jpg",
+      "bytes": 52154,
+      "width": 2048,
+      "height": 2048,
+      "pixels": 4194304,
+      "decodedRGBABytes": 16777216,
+      "expected": "accepted"
+    },
+    {
+      "name": "boundary-2048.png",
+      "bytes": 88763,
+      "width": 2048,
+      "height": 2048,
+      "pixels": 4194304,
+      "decodedRGBABytes": 16777216,
+      "expected": "accepted"
+    },
+    {
+      "name": "boundary-2048.webp",
+      "bytes": 1154,
+      "width": 2048,
+      "height": 2048,
+      "pixels": 4194304,
+      "decodedRGBABytes": 16777216,
+      "expected": "accepted"
+    },
+    {
+      "name": "phone-12mp-rejected.jpg",
+      "bytes": 153388,
+      "width": 4000,
+      "height": 3000,
+      "pixels": 12000000,
+      "decodedRGBABytes": 48000000,
+      "expected": "RESOURCE_LIMIT_EXCEEDED"
+    },
+    {
+      "name": "long-1000.webp",
+      "bytes": 48044,
+      "width": 2,
+      "height": 2,
+      "frameCount": 1000,
+      "durationMs": 20,
+      "timelineMs": 20000,
+      "loopCount": 0,
+      "expected": "accepted"
+    },
+    {
+      "name": "long-1000.png",
+      "bytes": 69561,
+      "width": 2,
+      "height": 2,
+      "frameCount": 1000,
+      "durationMs": 20,
+      "timelineMs": 20000,
+      "loopCount": 0,
+      "expected": "accepted"
+    },
+    {
+      "name": "long-1000.gif",
+      "bytes": 23045,
+      "width": 2,
+      "height": 2,
+      "frameCount": 1000,
+      "durationMs": 20,
+      "timelineMs": 20000,
+      "loopCount": 0,
+      "expected": "accepted"
+    },
+    {
+      "name": "large-2048-apng.png",
+      "bytes": 39526,
+      "width": 2048,
+      "height": 2048,
+      "frameCount": 2,
+      "durationMs": 100,
+      "decodedRGBABytes": 16777216,
+      "expected": "accepted"
+    },
+    {
+      "name": "many-entries.zip",
+      "encodedBytes": 127576,
+      "entries": 1008,
+      "declaredBytes": 5475
+    },
+    {
+      "name": "mixed-96.zip",
+      "encodedBytes": 36582,
+      "entries": 96,
+      "declaredBytes": 37296
+    },
+    {
+      "name": "recovery.zip",
+      "encodedBytes": 2627,
+      "entries": 9,
+      "declaredBytes": 2405
+    }
+  ]
+}

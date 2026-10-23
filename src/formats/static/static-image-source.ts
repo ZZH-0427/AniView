@@ -1,6 +1,7 @@
 import type { VirtualFile } from '../../input/virtual-file'
 import { MediaError } from '../../media/errors'
 import { assertMediaDimensions, assertMediaEncodedSize } from '../../media/resource-policy'
+import { countRuntimeEvent, trackRuntimeResource } from '../../media/runtime-diagnostics'
 import type { DecodeOptions } from '../animation-decoder'
 import { inspectStaticDimensions, type StaticImageFormat } from './static-dimensions'
 
@@ -18,7 +19,7 @@ export class StaticImageSource {
   private readonly signal: AbortSignal | undefined
   private readonly abort = () => this.dispose()
 
-  private constructor(bitmap: ImageBitmap, signal?: AbortSignal) {
+  private constructor(bitmap: ImageBitmap, private readonly releaseBitmap: () => void, signal?: AbortSignal) {
     this.width = bitmap.width
     this.height = bitmap.height
     this.bitmap = bitmap
@@ -29,9 +30,18 @@ export class StaticImageSource {
   get image() { return this.bitmap }
 
   static async open(file: VirtualFile, format: StaticImageFormat, options?: StaticImageOpenOptions): Promise<StaticImageSource> {
+    try { return await StaticImageSource.decode(file, format, options) }
+    catch (cause) {
+      if (!options?.signal?.aborted) countRuntimeEvent('staticDecodeErrors')
+      throw cause
+    }
+  }
+
+  private static async decode(file: VirtualFile, format: StaticImageFormat, options?: StaticImageOpenOptions): Promise<StaticImageSource> {
     const signal = options?.signal
     abortIfNeeded(signal)
     assertMediaEncodedSize(file.size)
+    if (typeof createImageBitmap !== 'function' || typeof Blob !== 'function') throw new MediaError('STATIC_IMAGE_RUNTIME_UNAVAILABLE')
     let data: ArrayBuffer
     try { data = await file.read() }
     catch (cause) {
@@ -43,19 +53,23 @@ export class StaticImageSource {
     if (data.byteLength !== file.size) throw new MediaError('FILE_READ_FAILED')
     assertMediaEncodedSize(data.byteLength)
     inspectStaticDimensions(data, format) // Reject hostile dimensions before native allocation.
-    if (typeof createImageBitmap !== 'function') throw new MediaError('STATIC_IMAGE_RUNTIME_UNAVAILABLE')
     options?.onDecoding?.()
+    abortIfNeeded(signal)
     let bitmap: ImageBitmap | undefined
+    let releaseBitmap: (() => void) | undefined
     try {
       const mime = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }[format]
       // Native decode is asynchronous; EXIF orientation is applied by the browser.
       bitmap = await createImageBitmap(new Blob([data], { type: mime }), { imageOrientation: 'from-image' })
+      releaseBitmap = trackRuntimeResource('bitmap')
       abortIfNeeded(signal)
       assertMediaDimensions(bitmap.width, bitmap.height)
-      return new StaticImageSource(bitmap, signal)
+      return new StaticImageSource(bitmap, releaseBitmap, signal)
     } catch (cause) {
       // createImageBitmap cannot be aborted: close a result arriving after cancellation.
       bitmap?.close()
+      releaseBitmap?.()
+      if (bitmap && signal?.aborted) countRuntimeEvent('staleResultsDiscarded')
       abortIfNeeded(signal)
       if (cause instanceof MediaError) throw cause
       if (cause instanceof RangeError) throw new MediaError('OUT_OF_MEMORY', { cause })
@@ -66,6 +80,7 @@ export class StaticImageSource {
   dispose() {
     this.signal?.removeEventListener('abort', this.abort)
     this.bitmap?.close()
+    this.releaseBitmap()
     this.bitmap = null
   }
 }

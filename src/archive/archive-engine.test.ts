@@ -42,6 +42,20 @@ describe('actual zip.js metadata and lazy extraction', () => {
     await engine.close()
   })
 
+  it('opens 1008 lightweight entries metadata-first and enforces the count limit before extraction', async () => {
+    const writer = new ZipWriter(new BlobWriter(), { useWebWorkers: false })
+    for (let id = 0; id < 1008; id++) await writer.add(`nested/${id}.${id < 1000 ? 'txt' : 'gif'}`,
+      new Uint8ArrayReader(new Uint8Array([id % 256])), { level: 0, useWebWorkers: false })
+    const blob = await writer.close()
+    const engine = await ArchiveEngine.open(blob, DEFAULT_ARCHIVE_LIMITS)
+    expect(engine.metrics).toMatchObject({ entryCount: 1008, mediaCount: 8, extractions: 0 })
+    expect(new Uint8Array(await (await engine.extract(1007)).arrayBuffer())[0]).toBe(1007 % 256)
+    expect(engine.metrics.extractions).toBe(1)
+    await engine.close()
+    await expect(ArchiveEngine.open(blob, normalizeArchiveLimits({ maxEntries: 1000 })))
+      .rejects.toMatchObject({ code: 'ARCHIVE_LIMIT_EXCEEDED' })
+  })
+
   it.each(['single-gif.zip', 'single-webp.zip', 'single-apng.zip', 'zip64.zip'])('extracts a real %s fixture', async name => {
     const engine = await open(name)
     expect(engine.metrics.extractions).toBe(0)

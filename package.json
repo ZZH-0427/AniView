@@ -13,7 +13,10 @@
     "lint": "eslint . --max-warnings 0",
     "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:browser": "node tools/stability/run-browser.mjs core",
+    "test:stress": "node tools/stability/run-browser.mjs stress",
+    "test:soak": "node tools/stability/run-browser.mjs soak"
   },
   "dependencies": {
     "@zip.js/zip.js": "2.23.0",

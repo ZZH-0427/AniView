@@ -96,6 +96,7 @@ describe('static resource ownership', () => {
     await expect(StaticImageSource.open(file(), 'jpeg')).rejects.toMatchObject({ code })
   })
   it('preserves archive-specific errors while normalizing generic read errors and short reads', async () => {
+    vi.stubGlobal('createImageBitmap', vi.fn())
     for (const [cause, code] of [[new MediaError('ARCHIVE_ENCRYPTED'), 'ARCHIVE_ENCRYPTED'], [new Error('read'), 'FILE_READ_FAILED']] as const) {
       await expect(StaticImageSource.open({ ...file(), read: async () => { throw cause } }, 'jpeg')).rejects.toMatchObject({ code })
     }

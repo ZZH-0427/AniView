@@ -45,7 +45,7 @@ export class CanvasRenderer implements Renderer {
     request: callback => requestAnimationFrame(callback), cancel: id => cancelAnimationFrame(id),
   }) {
     const context = canvas.getContext('2d')
-    if (!context) throw new MediaError('DECODE_FAILED')
+    if (!context) throw new MediaError('VIEWER_RUNTIME_UNAVAILABLE')
     this.context = context
   }
   setViewport(viewport: Viewport) {
@@ -75,7 +75,7 @@ export class CanvasRenderer implements Renderer {
     if (this.source.width !== width) this.source.width = width
     if (this.source.height !== height) this.source.height = height
     const context = this.source.getContext('2d')
-    if (!context) throw new MediaError('DECODE_FAILED')
+    if (!context) throw new MediaError('VIEWER_RUNTIME_UNAVAILABLE')
     context.clearRect(0, 0, width, height)
     if (image instanceof ImageData) context.putImageData(image, 0, 0)
     else context.drawImage(image, 0, 0)

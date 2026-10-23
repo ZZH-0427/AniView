@@ -149,4 +149,27 @@ describe('MediaSession', () => {
     expect(readded.added).toBe(1)
     expect(readded.session.items.at(-1)?.id).toBe(MAX_SESSION_ITEMS)
   })
+
+  it('keeps source-independent identities and references correct through 500 navigation transitions and reopen', () => {
+    const formats = ['gif', 'webp', 'png', 'jpg', 'png', 'webp']
+    const selected = Array.from({ length: 96 }, (_, index) => ({ ...file(`${index}.${formats[index % formats.length]}`),
+      source: index % 2 === 0 ? 'archive' as const : 'file' as const }))
+    let session = appendFiles(createMediaSession(), selected).session
+    let direction = 1
+    for (let step = 0; step < 500; step++) {
+      const id = currentSessionItem(session)?.id
+      const same = session.currentIndex === session.items.length - 1
+        ? nextFile(previousFile(session)) : previousFile(nextFile(session))
+      expect(currentSessionItem(same)?.id).toBe(id)
+      if (session.currentIndex === session.items.length - 1) direction = -1
+      else if (session.currentIndex === 0) direction = 1
+      session = direction === 1 ? nextFile(session) : previousFile(session)
+      expect(currentSessionItem(session)?.file).toBe(selected[session.currentIndex])
+    }
+    const previousIds = new Set(session.items.map(item => item.id))
+    session = appendFiles(clearMediaSession(session), selected).session
+    expect(session.currentIndex).toBe(0)
+    expect(session.items.every(item => !previousIds.has(item.id))).toBe(true)
+    for (const entry of selected) expect(entry.read).not.toHaveBeenCalled()
+  })
 })

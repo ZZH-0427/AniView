@@ -2,6 +2,7 @@ import type { AnimationSequence } from '../media/animation'
 import type { Player, PlaybackState } from './player'
 import type { Renderer } from '../renderer/renderer'
 import { FrameBuffer } from './frame-buffer'
+import { countRuntimeEvent } from '../media/runtime-diagnostics'
 
 export interface PlaybackClock {
   now(): number
@@ -31,20 +32,40 @@ export class AnimationPlayer implements Player {
   private cacheHits = 0
   private reconstructions = 0
   private reconstructedFrames = 0
+  private hidden = false
+  private resumeOnVisible = false
+  private deferredPresentation: { index: number; inspecting: boolean; generation: number } | undefined
+  private queuedStep: -1 | 1 | undefined
+  private activeStep: Promise<void> | undefined
+  private closing: Promise<void> | undefined
+  private disposal: Promise<void> | undefined
+  private loading: Promise<void> | undefined
+  private loadRequest = 0
   constructor(private readonly renderer: Renderer, private readonly changed: () => void = () => {},
     private readonly clock: PlaybackClock = browserClock, private readonly budget?: { maxBytes: number; maxFrames: number }) {}
   get frameCount() { return this.sequence?.frameCount }
   get busy() { return this.transitioning || this.stepping }
   get buffering() { return this.state === 'playing' && (this.starving || this.transitioning) }
   get reconstructing() { return this.rebuilding }
+  get backgrounded() { return this.hidden }
   get stepMetrics() { return { cacheHits: this.cacheHits, reconstructions: this.reconstructions, reconstructedFrames: this.reconstructedFrames } }
   get metrics() {
     const cache = this.buffer?.cache
     return { cacheBytes: cache?.bytes ?? 0, cachedFrames: cache?.size ?? 0, peakBytes: cache?.peakBytes ?? 0,
       peakFrames: cache?.peakFrames ?? 0, maxBytes: cache?.maxBytes ?? 0, underruns: this.underruns }
   }
-  async load(sequence: AnimationSequence) {
-    await this.dispose()
+  load(sequence: AnimationSequence): Promise<void> {
+    const request = ++this.loadRequest
+    const previous = this.loading
+    const cleanup = this.teardown()
+    const operation = this.loadAfterCleanup(sequence, request, Promise.all([previous, cleanup]))
+    this.loading = operation
+    return operation.finally(() => { if (this.loading === operation) this.loading = undefined })
+  }
+  private async loadAfterCleanup(sequence: AnimationSequence, request: number, cleanup: Promise<unknown>) {
+    try { await cleanup }
+    catch (error) { await sequence.dispose(); throw error }
+    if (request !== this.loadRequest) { await sequence.dispose(); return }
     const generation = ++this.generation
     this.sequence = sequence
     try {
@@ -56,12 +77,16 @@ export class AnimationPlayer implements Player {
       this.state = 'paused'
       this.changed()
     } catch (error) {
-      if (generation === this.generation) { await this.dispose(); this.fail(error) }
+      if (generation === this.generation) { await this.teardown(); this.fail(error) }
     }
   }
   private present(index: number, inspecting = false) {
     const frame = this.buffer?.cache.get(index)
     if (!frame) return false
+    if (this.hidden) {
+      this.deferredPresentation = { index, inspecting, generation: this.generation }
+      return true
+    }
     this.renderer.render(frame)
     this.buffer?.retainNear(index, inspecting)
     this.currentFrame = index
@@ -71,6 +96,7 @@ export class AnimationPlayer implements Player {
   }
   play() {
     if (this.state !== 'paused' || this.busy) return
+    if (this.hidden) { this.resumeOnVisible = true; return }
     // Inspection may favor a previous neighbor in a two-frame cache. Resume
     // restores forward-prefetch capacity without increasing either cache limit.
     this.buffer?.retainNear(this.currentFrame)
@@ -82,20 +108,59 @@ export class AnimationPlayer implements Player {
   }
   resume() { this.play() }
   pause() {
+    this.resumeOnVisible = false
     if (this.state !== 'playing') return
     this.remaining = Math.max(0, this.due - this.clock.now())
     this.state = 'paused'
     this.cancel()
     this.changed()
   }
-  stepForward() { return this.step(1) }
-  stepBackward() { return this.step(-1) }
+  /** Visibility is external UI state; retain it across load's resource reset. */
+  setBackgrounded(hidden: boolean) {
+    if (hidden === this.hidden) return
+    this.hidden = hidden
+    if (hidden) {
+      this.resumeOnVisible = this.state === 'playing'
+      if (this.state === 'playing') {
+        this.remaining = Math.max(0, this.due - this.clock.now())
+        this.state = 'paused'
+      }
+      this.cancel()
+    } else {
+      const deferred = this.deferredPresentation
+      this.deferredPresentation = undefined
+      try {
+        if (deferred?.generation === this.generation) this.present(deferred.index, deferred.inspecting)
+      } catch (error) { this.fail(error); return }
+      this.resumeVisibleIntent()
+    }
+    this.changed()
+  }
+  private resumeVisibleIntent() {
+    if (!this.hidden && this.resumeOnVisible && !this.busy && this.state === 'paused') {
+      this.resumeOnVisible = false
+      this.play()
+    }
+  }
+  stepForward() { return this.requestStep(1) }
+  stepBackward() { return this.requestStep(-1) }
+  private requestStep(direction: -1 | 1): Promise<void> {
+    if (this.stepping) {
+      // One pending latest intent, relative to the last presented frame. Never
+      // spawn a parallel iterator/reset or show an obsolete rewind afterward.
+      this.queuedStep = direction
+      return this.activeStep ?? Promise.resolve()
+    }
+    const operation = this.step(direction)
+    this.activeStep = operation
+    return operation.finally(() => { if (this.activeStep === operation) this.activeStep = undefined })
+  }
   private async step(direction: -1 | 1) {
     const buffer = this.buffer
     if (!buffer || this.busy || !['paused', 'playing', 'ended'].includes(this.state)) return
     this.pause()
     this.state = 'paused'
-    const target = Math.max(0, Math.min(this.currentFrame + direction, (this.frameCount ?? Infinity) - 1))
+    let target = this.stepTarget(direction)
     if (target === this.currentFrame) { this.changed(); return }
     this.error = undefined
     if (buffer.cache.get(target)) {
@@ -106,25 +171,37 @@ export class AnimationPlayer implements Player {
     }
     const generation = ++this.generation
     this.stepping = true
-    this.rebuilding = buffer.needsReconstruction(target)
-    const rebuilding = this.rebuilding
-    const decoded = buffer.decodedFrames
-    if (rebuilding) this.reconstructions++
-    this.changed()
     try {
-      const ready = await buffer.prepare(target)
-      if (generation !== this.generation) return
-      if (ready) this.present(target, true)
+      for (;;) {
+        this.rebuilding = buffer.needsReconstruction(target)
+        const rebuilding = this.rebuilding
+        const decoded = buffer.decodedFrames
+        if (rebuilding) this.reconstructions++
+        this.changed()
+        const ready = await buffer.prepare(target)
+        if (generation !== this.generation) return
+        if (rebuilding) this.reconstructedFrames += buffer.decodedFrames - decoded
+        if (this.queuedStep !== undefined) {
+          target = this.stepTarget(this.queuedStep)
+          this.queuedStep = undefined
+          continue
+        }
+        if (ready) this.present(target, true)
+        return
+      }
     } catch (error) {
       if (generation === this.generation) { this.error = error; throw error }
     } finally {
       if (generation === this.generation) {
-        if (rebuilding) this.reconstructedFrames += buffer.decodedFrames - decoded
         this.stepping = false
         this.rebuilding = false
+        this.queuedStep = undefined
         this.changed()
       }
     }
+  }
+  private stepTarget(direction: -1 | 1) {
+    return Math.max(0, Math.min(this.currentFrame + direction, (this.frameCount ?? Infinity) - 1))
   }
   private schedule() { if (this.state === 'playing' && this.scheduled === undefined) this.scheduled = this.clock.request(() => { try { this.tick() } catch (error) { this.fail(error) } }) }
   private cancel() { if (this.scheduled !== undefined) this.clock.cancel(this.scheduled); this.scheduled = undefined }
@@ -157,17 +234,18 @@ export class AnimationPlayer implements Player {
     this.cancel()
     this.transitioning = true
     this.stepping = this.rebuilding = false
+    this.queuedStep = undefined
+    this.deferredPresentation = undefined
     this.changed()
     try {
       await this.buffer?.restart()
       if (generation !== this.generation) return
       if (this.buffer?.error) throw this.buffer.error
-      this.currentFrame = 0 // Old frame indices must not evict entries from the newly seeded stream.
       if (!this.present(0)) throw new Error('Empty animation')
       this.due = this.clock.now() + this.remaining
       this.changed()
     } catch (error) { if (generation === this.generation) this.fail(error) }
-    finally { if (generation === this.generation) { this.transitioning = false; this.changed(); this.schedule() } }
+    finally { if (generation === this.generation) { this.transitioning = false; this.resumeVisibleIntent(); this.changed(); this.schedule() } }
   }
   async reset() {
     if (!this.buffer) return
@@ -178,34 +256,55 @@ export class AnimationPlayer implements Player {
     this.completedPlays = 0
     await this.restartLoop()
   }
-  async replay() { await this.reset(); this.play() }
+  async replay() {
+    const buffer = this.buffer
+    await this.reset()
+    if (buffer === this.buffer) this.play()
+  }
   private fail(error: unknown) {
+    this.generation++
     this.cancel(); this.error = error; this.state = 'error'
+    this.transitioning = this.stepping = this.rebuilding = false
+    this.queuedStep = this.deferredPresentation = undefined
+    this.resumeOnVisible = false
     const buffer = this.buffer
     this.buffer = undefined
     this.sequence = undefined
-    void buffer?.close().catch(() => {})
+    this.closing = buffer?.close().catch(() => countRuntimeEvent('cleanupErrors'))
     this.changed()
   }
-  async dispose() {
+  dispose(): Promise<void> {
+    this.loadRequest++
+    return Promise.all([this.teardown(), this.loading]).then(() => {})
+  }
+  private teardown(): Promise<void> {
+    if (this.disposal) return this.disposal
+    const operation = this.disposeResources()
+    this.disposal = operation
+    return operation.finally(() => { if (this.disposal === operation) this.disposal = undefined })
+  }
+  private async disposeResources() {
     this.generation++
     this.cancel()
     const buffer = this.buffer
     const sequence = this.sequence
+    const closing = this.closing
+    this.closing = undefined
     this.buffer = undefined
     this.sequence = undefined
     this.state = 'idle'
     this.transitioning = false
     this.stepping = this.rebuilding = false
+    this.queuedStep = this.deferredPresentation = undefined
+    this.resumeOnVisible = false
     this.starving = false
     this.currentFrame = 0
     this.completedPlays = 0
     this.underruns = 0
     this.cacheHits = this.reconstructions = this.reconstructedFrames = 0
     this.error = undefined
-    this.renderer.clear()
-    if (buffer) await buffer.close()
-    else await sequence?.dispose()
+    try { this.renderer.clear() }
+    finally { await Promise.all([buffer ? buffer.close() : sequence?.dispose(), closing]) }
   }
   close() { return this.dispose() }
 }

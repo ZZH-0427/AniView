@@ -4,6 +4,7 @@ import type { ArchiveSession } from '../archive/archive-session'
 import { appendFiles, clearMediaSession, createMediaSession, MAX_SESSION_ITEMS } from '../media/media-session'
 import type { MediaSession } from '../media/media-session'
 import { MediaError } from '../media/errors'
+import { countRuntimeEvent } from '../media/runtime-diagnostics'
 
 export type ArchiveState = { status: 'opening'; name: string }
   | { status: 'open'; name: string; session: ArchiveSession; chunkMs: number }
@@ -46,10 +47,11 @@ export function useMediaSource(transition: { current: Promise<void> }) {
   // Runs after the previous Viewer has unmounted and published its cleanup gate.
   useEffect(() => {
     if (!request) return
-    const abort = new AbortController()
+    const abort = typeof AbortController === 'function' ? new AbortController() : undefined
     opening.current = abort
-    const isCurrent = () => mounted.current && !abort.signal.aborted && generation.current === request.id
+    const isCurrent = () => mounted.current && !abort?.signal.aborted && generation.current === request.id
     tasks.current = tasks.current.then(async () => {
+      if (!abort) throw new MediaError('VIEWER_RUNTIME_UNAVAILABLE')
       await transition.current
       const old = activeArchive.current
       activeArchive.current = undefined
@@ -76,7 +78,7 @@ export function useMediaSource(transition: { current: Promise<void> }) {
       setArchive({ status: 'error', name: request.kind === 'archive' ? request.file.name : '',
         message: cause instanceof MediaError ? cause.message : 'This archive could not be opened. Please try another ZIP.' })
     })
-    return () => abort.abort()
+    return () => abort?.abort()
   }, [request, transition])
 
   const shutdown = useCallback(() => {
@@ -86,7 +88,7 @@ export function useMediaSource(transition: { current: Promise<void> }) {
       await transition.current
       const old = activeArchive.current; activeArchive.current = undefined
       await old?.close()
-    }).catch(() => {})
+    }).catch(() => countRuntimeEvent('cleanupErrors'))
   }, [transition])
   useEffect(() => { mounted.current = true; return shutdown }, [shutdown])
 

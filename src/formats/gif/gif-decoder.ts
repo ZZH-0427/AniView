@@ -1,5 +1,6 @@
 import type { VirtualFile } from '../../input/virtual-file'
 import { MediaError } from '../../media/errors'
+import { countRuntimeEvent, trackRuntimeResource } from '../../media/runtime-diagnostics'
 import type { GIFRequest, GIFResponse } from './gif-worker-protocol'
 
 type Command = { type: 'open'; data: ArrayBuffer } | { type: 'next' | 'reset' | 'close' }
@@ -13,6 +14,7 @@ interface Pending {
 /** Per-sequence Worker transport; one operation in flight, no decoded-frame queue. */
 export class GIFDecoder {
   private readonly worker: Worker
+  private readonly releaseWorker: () => void
   private pending: Pending | undefined
   private disposed = false
   private id = 0
@@ -20,17 +22,18 @@ export class GIFDecoder {
     if (typeof Worker === 'undefined') throw new MediaError('GIF_RUNTIME_UNAVAILABLE')
     try { this.worker = new Worker(new URL('./gif-decoder.worker.ts', import.meta.url), { type: 'module' }) }
     catch (cause) { throw new MediaError('WORKER_FAILED', { cause }) }
+    this.releaseWorker = trackRuntimeResource('worker')
     this.worker.onmessage = (event: MessageEvent<GIFResponse>) => {
       const response = event.data
       const pending = this.pending
-      if (!pending || response.id !== pending.id) return
+      if (!pending || response.id !== pending.id) { countRuntimeEvent('staleResultsDiscarded'); return }
       this.pending = undefined
       clearTimeout(pending.timer)
-      if (response.type === 'error') pending.reject(new MediaError(response.code))
+      if (response.type === 'error') { countRuntimeEvent('decoderErrors'); pending.reject(new MediaError(response.code)) }
       else pending.resolve(response)
     }
-    this.worker.onerror = event => { event.preventDefault(); this.dispose() }
-    this.worker.onmessageerror = () => this.dispose()
+    this.worker.onerror = event => { event.preventDefault(); this.fail() }
+    this.worker.onmessageerror = () => this.fail()
   }
   async open(file: VirtualFile) {
     if (file.size > 64 * 1024 * 1024) throw new MediaError('RESOURCE_LIMIT_EXCEEDED')
@@ -46,15 +49,21 @@ export class GIFDecoder {
     if (this.pending) return Promise.reject(new MediaError('DECODE_FAILED'))
     const request: GIFRequest = { ...command, id: ++this.id }
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => this.dispose(), 15000)
+      const timer = setTimeout(() => this.fail(), 15000)
       this.pending = { id: request.id, resolve, reject, timer }
-      try { this.worker.postMessage(request, transfer) } catch { this.dispose() }
+      try { this.worker.postMessage(request, transfer) } catch { this.fail() }
     })
+  }
+  private fail() {
+    if (this.disposed) return
+    countRuntimeEvent('decoderErrors')
+    this.dispose()
   }
   dispose() {
     if (this.disposed) return
     this.disposed = true
     this.worker.terminate()
+    this.releaseWorker()
     if (this.pending) {
       clearTimeout(this.pending.timer)
       this.pending.reject(new MediaError('WORKER_FAILED'))

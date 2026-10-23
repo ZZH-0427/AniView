@@ -2,7 +2,8 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestones 1–5 PASSED.**
+**Project status: early development / Milestones 1–5 PASSED;
+Milestone 6 PENDING ANDROID STABILITY VALIDATION.**
 The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
 Previous/Next Frame and a current-frame count. All animated formats use the same
 bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static
@@ -14,6 +15,8 @@ See [GIF integration notes](docs/milestones/milestone-2b-gif.md) for timing,
 disposal compatibility, the approved interlace adaptation and acceptance status.
 See [Viewer UX notes](docs/milestones/milestone-5-viewer-ux.md) for static-image
 ownership, viewport interactions, frame stepping, limits and validation status.
+See [stability and compatibility notes](docs/milestones/milestone-6-stability-compatibility.md)
+for the browser matrix, resource limits, lifecycle policy and stress procedures.
 
 Use **Fit**, **100%**, zoom buttons, wheel zoom and mouse drag; on touchscreens,
 pinch, drag or double-tap. Double-click/tap toggles Fit and a closer detail view.
@@ -54,6 +57,11 @@ Files are processed locally in your browser; viewing requires no media uploads,
 accounts or backend. No analytics is included. Static files are limited to 64 MiB
 encoded, 4,194,304 pixels and 16,384 pixels per edge; oversized images are rejected
 before native decoding. There is no conversion, editing or export.
+Animation scheduling suspends while the page is hidden. Returning resumes only
+when it was playing before backgrounding; paused media stays paused, with no
+attempt to catch up all hidden-time frames. Browser/device memory pressure can
+still prevent an otherwise supported file from opening. APNG needs Worker
+ImageBitmap decoding and OffscreenCanvas; GIF does not require OffscreenCanvas.
 
 An isolated Milestone 1A Animated WebP engineering spike is available through
 `?spike=webp`; this is not production playback support. Its build, ownership and
@@ -92,7 +100,7 @@ Repository: [ZZH-0427/AniView](https://github.com/ZZH-0427/AniView).
 
 Select **GitHub Actions** in **Settings → Pages → Build and deployment → Source**.
 The Pages workflow runs
-`npm ci`, lint, typecheck, tests and the build on pushes to `main`. It uploads
+`npm ci`, lint, typecheck, tests, the build and core browser regression on pushes to `main`. It uploads
 `dist/` with the official Pages artifact action and deploys with `deploy-pages`.
 Pull requests run validation only. Manual runs deploy only from `main`.
 

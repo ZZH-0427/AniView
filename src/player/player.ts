@@ -8,10 +8,13 @@ export interface Player {
   readonly frameCount: number | undefined
   readonly busy: boolean
   readonly reconstructing: boolean
+  readonly backgrounded: boolean
   /** Take ownership of the sequence, disposing the previous sequence and its frames. */
   load(sequence: AnimationSequence): Promise<void>
   play(): void
   pause(): void
+  /** Suspend scheduling while hidden; restore only prior/user playback intent. */
+  setBackgrounded(hidden: boolean): void
   reset(): Promise<void>
   /** Pause, move one frame without wrapping, and remain paused. */
   stepForward(): Promise<void>

@@ -118,6 +118,11 @@ export function attachViewportGestures(surface: HTMLElement, viewport: ViewportC
       event.clientX - bounds.left, event.clientY - bounds.top)
     if (viewport.snapshot.scale !== before.scale) event.preventDefault()
   }
+  const interrupt = () => {
+    gestures.cancel()
+    for (const id of captured) release(id)
+  }
+  const visibility = () => { if (document.visibilityState === 'hidden') interrupt() }
   surface.addEventListener('pointerdown', down)
   surface.addEventListener('pointermove', move)
   surface.addEventListener('pointerup', up)
@@ -125,6 +130,9 @@ export function attachViewportGestures(surface: HTMLElement, viewport: ViewportC
   surface.addEventListener('lostpointercapture', lost)
   surface.addEventListener('dblclick', doubleClick)
   surface.addEventListener('wheel', wheel, { passive: false })
+  window.addEventListener('resize', interrupt)
+  document.addEventListener('fullscreenchange', interrupt)
+  document.addEventListener('visibilitychange', visibility)
   return () => {
     gestures.cancel()
     surface.removeEventListener('pointerdown', down)
@@ -134,6 +142,9 @@ export function attachViewportGestures(surface: HTMLElement, viewport: ViewportC
     surface.removeEventListener('lostpointercapture', lost)
     surface.removeEventListener('dblclick', doubleClick)
     surface.removeEventListener('wheel', wheel)
+    window.removeEventListener('resize', interrupt)
+    document.removeEventListener('fullscreenchange', interrupt)
+    document.removeEventListener('visibilitychange', visibility)
     for (const id of captured) release(id)
     surface.style.touchAction = oldTouchAction
   }

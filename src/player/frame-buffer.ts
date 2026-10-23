@@ -13,6 +13,7 @@ export class FrameBuffer {
   private task: Promise<void> | undefined
   private generation = 0
   private closed = false
+  private closing: Promise<void> | undefined
   private readonly frameBytes: number
   private nextIndex = 0
   private decodedCount = 0
@@ -36,6 +37,7 @@ export class FrameBuffer {
     await this.task
     if (this.closed || generation !== this.generation) return
     await this.iterator?.return?.()
+    if (this.closed || generation !== this.generation) return
     this.cache.clear()
     this.ended = false
     this.error = undefined
@@ -102,14 +104,15 @@ export class FrameBuffer {
     this.nextIndex = frame.index + 1
     this.decodedCount++
   }
-  async close() {
-    if (this.closed) return
+  close(): Promise<void> { return this.closing ??= this.closeResources() }
+  private async closeResources() {
     this.closed = true
     this.generation++
     this.cache.clear()
-    await this.sequence.dispose() // Cancels any in-flight request before waiting on its iterator.
-    await this.task
-    await this.iterator?.return?.()
-    this.iterator = undefined
+    try { await this.sequence.dispose() } // Cancels in-flight work before waiting on its iterator.
+    finally {
+      try { await this.task; await this.iterator?.return?.() }
+      finally { this.iterator = undefined }
+    }
   }
 }

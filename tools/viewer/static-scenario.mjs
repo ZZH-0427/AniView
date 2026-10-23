@@ -93,7 +93,7 @@ export async function runStaticCheck({ send, evaluate, waitFor, click, pick, clo
   await evaluate('window.__nativeStaticCreate=window.createImageBitmap;window.createImageBitmap=undefined')
   try {
     await pick([fixture('quadrants.jpg')])
-    await waitFor(`${state}==='error'&&document.body.innerText.includes('Static-image viewing requires ImageBitmap support')`)
+    await waitFor(`${state}==='error'&&document.body.innerText.includes('Static-image viewing requires Blob and ImageBitmap support')`)
     assert((await workerCounts()).active === 0 && (await bitmapCounts()).live === 0, 'Capability error leaked native resources')
   } finally { await evaluate('window.createImageBitmap=window.__nativeStaticCreate;delete window.__nativeStaticCreate') }
   await close(); await noResources()

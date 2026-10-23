@@ -21,7 +21,7 @@ async function handle(request: APNGRequest) {
   if (request.type === 'close') { close(); send({ id: request.id, type: 'closed' }); return }
   if (request.type === 'open') {
     close()
-    if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined') throw new MediaError('APNG_RUNTIME_UNAVAILABLE')
+    if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas === 'undefined' || typeof Blob !== 'function') throw new MediaError('APNG_RUNTIME_UNAVAILABLE')
     const start = performance.now()
     parsed = parseAPNGFile(request.data) // Validate dimensions/resource limits before canvas allocation.
     compositor = new APNGCompositor(parsed.width, parsed.height)

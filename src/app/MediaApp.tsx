@@ -7,6 +7,7 @@ import { ArchiveSummary } from '../components/ArchiveSummary'
 import { droppedFiles } from '../input/drag-drop'
 import { currentSessionItem, nextFile, previousFile, removeCurrentFile } from '../media/media-session'
 import { useMediaSource } from './use-media-source'
+import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
 
 export function MediaApp() {
   const [dragging, setDragging] = useState(false)
@@ -64,6 +65,7 @@ export function MediaApp() {
         onRemove={() => changeSession(removeCurrentFile)} />
     </> : <Home onOpen={addFiles} onArchive={openArchive} />}
     {notice && <p className="session-notice" role="status">{notice}</p>}
+    <RuntimeDiagnosticsPanel />
     {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}
   </>
 }

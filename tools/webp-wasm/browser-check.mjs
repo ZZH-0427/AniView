@@ -8,21 +8,26 @@ const root = fileURLToPath(new URL('../../', import.meta.url))
 const url = process.argv[2]
 const inputMode = process.argv[4] === 'input'
 const archiveMode = process.argv[4] === 'archive'
-const uxMode = process.argv[4] === 'ux'
+const stabilityMode = ['core', 'stress', 'soak'].includes(process.argv[4])
+const uxMode = process.argv[4] === 'ux' || stabilityMode
 const fixture = resolve(process.argv[3] ?? '.tools/fixtures/animated.webp')
 if (!url) throw new Error('Usage: node tools/webp-wasm/browser-check.mjs <spike-url> [animated.webp]')
 const output = join(root, '.tools', 'browser-results')
 await mkdir(output, { recursive: true })
 const profile = await mkdtemp(join(output, 'profile-'))
-const browser = spawn(process.env.EDGE_PATH ?? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', [
+const browser = spawn(process.env.BROWSER_PATH ?? process.env.EDGE_PATH ?? (process.platform === 'win32'
+  ? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' : '/usr/bin/google-chrome'), [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--disable-extensions',
   '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank',
 ], { windowsHide: true, stdio: 'ignore' })
+let launchError
+browser.on('error', error => { launchError = error })
 let socket
 try {
   let port
   for (let i = 0; i < 200; i++) {
+    if (launchError) throw launchError
     try { port = (await readFile(join(profile, 'DevToolsActivePort'), 'utf8')).split('\n')[0]; break }
     catch { await new Promise(resolve => setTimeout(resolve, 100)) }
   }
@@ -69,6 +74,7 @@ try {
     }
     if (event.id) {
       const pending = requests.get(event.id)
+      if (!pending) return
       requests.delete(event.id)
       if (event.error) pending.reject(new Error(JSON.stringify(event.error)))
       else pending.resolve(event.result)
@@ -209,9 +215,9 @@ try {
     const largeMode = process.argv[4] === 'apng-large'
     const apngMode = largeMode || process.argv[4] === 'apng'
     const gifMode = process.argv[4] === 'gif'
-    const run = uxMode ? (await import('../viewer/browser-scenario.mjs')).runViewerUXCheck : archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+    const run = stabilityMode ? (await import('../stability/browser-scenario.mjs')).runStabilityCheck : uxMode ? (await import('../viewer/browser-scenario.mjs')).runViewerUXCheck : archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
       : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
-    const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
+    const report = await run({ send, evaluate, waitFor, click, fixture, url, mode: process.argv[4], capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
       await writeFile(join(output, `${uxMode ? 'viewer-ux' : archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
@@ -224,7 +230,7 @@ try {
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
     const result = { ...report, assets, ...(archiveMode ? { archiveNetworkLoads: networkLoads } : {}), frameTransfers: frameTransfers.length, ownership }
-    await writeFile(join(output, uxMode ? 'viewer-ux-report.json' : archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
+    await writeFile(join(output, stabilityMode ? `stability-${process.argv[4]}-report.json` : uxMode ? 'viewer-ux-report.json' : archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
     console.log(JSON.stringify(result, null, 2))
     await send('Browser.close')
   } else {

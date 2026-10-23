@@ -20,4 +20,9 @@ describe('shared media resource policy', () => {
   it.each([[16_385, 1], [1, 16_385], [2049, 2048], [50_000, 50_000]])('rejects excessive dimensions %s×%s', (width, height) => {
     expect(() => assertMediaDimensions(width, height)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
   })
+  it('deliberately rejects a 12 MP phone photo under the current measured-memory policy', () => {
+    expect(4000 * 3000 * 4).toBe(48_000_000)
+    expect(() => assertMediaDimensions(4000, 3000)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
+    expect(() => assertMediaDimensions(3000, 4000)).toThrow(expect.objectContaining({ code: 'RESOURCE_LIMIT_EXCEEDED' }))
+  })
 })

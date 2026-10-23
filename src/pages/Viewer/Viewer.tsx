@@ -17,10 +17,10 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
   const { playerRef, viewportRef, info, status, frame, busy, reconstructing, error, setError, view } = media
   const fullscreen = useViewerFullscreen(container, status === 'loading' || status === 'error' || !!error || busy || media.buffering)
   const animated = info?.kind === 'animation'
-  const ready = status !== 'loading' && status !== 'error' && !!info
+  const ready = ['ready', 'paused', 'playing', 'ended'].includes(status) && !!info
   const step = useCallback((direction: 'previous' | 'next') => {
     const player = playerRef.current
-    if (!player || player.busy || player.state === 'error') return
+    if (!player || player.state === 'error') return
     setError('')
     void (direction === 'previous' ? player.stepBackward() : player.stepForward())
       .catch(cause => setError(viewerErrorMessage(cause)))
@@ -89,7 +89,7 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
         <button disabled={!ready || busy || frame <= 1} onClick={() => step('previous')}>Previous Frame</button>
         <button disabled={!ready || busy || (status !== 'paused' && status !== 'playing')} onClick={togglePlayback}>{status === 'playing' ? 'Pause' : 'Play'}</button>
         <button disabled={!ready || busy || (info.frames !== undefined && frame >= info.frames)} onClick={() => step('next')}>Next Frame</button>
-        <button disabled={!ready || busy} onClick={() => {
+        <button disabled={!ready} onClick={() => {
           setError(''); void playerRef.current?.replay().catch(cause => setError(viewerErrorMessage(cause)))
         }}>Replay</button>
       </div>}

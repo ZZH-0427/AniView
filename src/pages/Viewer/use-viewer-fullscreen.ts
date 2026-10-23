@@ -11,6 +11,7 @@ class ViewerFullscreen {
   private readonly engaged = new Set<'pointer' | 'focus'>()
   private timer: ReturnType<typeof setTimeout> | undefined
   private keepVisible = true
+  private connected = false
   constructor(private readonly element: () => HTMLElement | null) {}
   getSnapshot = () => this.state
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
@@ -24,7 +25,7 @@ class ViewerFullscreen {
   reveal = () => {
     this.clearTimer()
     this.update({ hidden: false })
-    if (this.state.fullscreen && !this.keepVisible && !this.engaged.size && !this.state.notice)
+    if (this.connected && document.visibilityState !== 'hidden' && this.state.fullscreen && !this.keepVisible && !this.engaged.size && !this.state.notice)
       this.timer = setTimeout(() => this.update({ hidden: true }), 2500)
   }
   hold = (source: 'pointer' | 'focus', value: boolean) => {
@@ -36,6 +37,7 @@ class ViewerFullscreen {
     if (value !== this.keepVisible) { this.keepVisible = value; this.reveal() }
   }
   connect() {
+    this.connected = true
     const element = this.element()
     this.update({ available: !!element?.requestFullscreen && !!document.exitFullscreen && document.fullscreenEnabled !== false })
     const changed = () => {
@@ -47,7 +49,17 @@ class ViewerFullscreen {
       this.reveal()
     }
     document.addEventListener('fullscreenchange', changed)
-    return () => { this.clearTimer(); document.removeEventListener('fullscreenchange', changed) }
+    const visibility = () => {
+      this.engaged.clear()
+      if (document.visibilityState === 'hidden') this.clearTimer()
+      else changed() // The browser may have exited fullscreen while the page was hidden.
+    }
+    document.addEventListener('visibilitychange', visibility)
+    return () => {
+      this.connected = false; this.engaged.clear(); this.clearTimer()
+      document.removeEventListener('fullscreenchange', changed)
+      document.removeEventListener('visibilitychange', visibility)
+    }
   }
   toggle = () => {
     const element = this.element()
@@ -55,12 +67,14 @@ class ViewerFullscreen {
     this.update({ notice: '' })
     const request = document.fullscreenElement === element ? document.exitFullscreen() : element.requestFullscreen?.()
     void request?.catch(() => {
+      if (!this.connected) return
       this.update({ notice: 'Fullscreen is unavailable right now. You can keep viewing here.' }); this.reveal()
     })
   }
   exit = () => {
     if (document.fullscreenElement === this.element())
       void document.exitFullscreen().catch(() => {
+        if (!this.connected) return
         this.update({ notice: 'Please use your browser controls to leave fullscreen.' }); this.reveal()
       })
   }

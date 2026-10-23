@@ -31,6 +31,10 @@ jobs:
       - run: npm run typecheck
       - run: npm run test
       - run: npm run build
+      - name: Core browser regression
+        run: npm run test:browser
+        env:
+          BROWSER_PATH: /usr/bin/google-chrome
       - name: Configure Pages
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5

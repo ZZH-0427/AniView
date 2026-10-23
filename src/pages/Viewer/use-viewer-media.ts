@@ -10,6 +10,8 @@ import type { ViewportSnapshot } from '../../renderer/viewport-controller'
 import { attachViewportGestures } from '../../renderer/viewport-gestures'
 import { MediaError } from '../../media/errors'
 import type { AnimationSequence } from '../../media/animation'
+import { requireViewerCapabilities } from '../../media/viewer-capabilities'
+import { countRuntimeEvent } from '../../media/runtime-diagnostics'
 
 const emptyCache = { cacheBytes: 0, cachedFrames: 0, peakBytes: 0, peakFrames: 0, maxBytes: 0, underruns: 0 }
 interface MediaInfo { kind: 'static' | 'animation'; format: string; width: number; height: number; frames?: number | undefined }
@@ -41,17 +43,20 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
     let player: AnimationPlayer | undefined, image: StaticImageSource | undefined
     let pendingSequence: AnimationSequence | undefined
     let unobserve: (() => void) | undefined, detachGestures: (() => void) | undefined
+    let detachVisibility: (() => void) | undefined
     let labelUpdate: number | undefined
-    const abort = new AbortController()
+    let abort: AbortController | undefined
     const precedingCleanup = transition.current
     const report = (cause: unknown) => {
       if (!active) return
       setStatus('error'); setError(viewerErrorMessage(cause))
     }
     const opening = (async () => {
-      await precedingCleanup
-      if (!active) return
       try {
+        await precedingCleanup
+        if (!active) return
+        requireViewerCapabilities()
+        abort = new AbortController()
         renderer = new CanvasRenderer(element)
         const viewport = new ViewportController()
         viewportRef.current = viewport
@@ -77,6 +82,7 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
           if (active) setPhase(next === 'decoding' ? 'Decoding…' : file.source === 'archive' ? 'Loading ZIP entry…' : 'Opening file…')
         } })
         if (!active) {
+          countRuntimeEvent('staleResultsDiscarded')
           if (media.kind === 'static') media.source.dispose()
           else await media.sequence.dispose()
           return
@@ -95,29 +101,35 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
           setInfo({ kind: 'animation', format: media.format, width: sequence.width, height: sequence.height, frames: sequence.frameCount })
           player = new AnimationPlayer(renderer, () => {
             if (!active || !player) return
+            if (player.state === 'idle') return // Visibility may change before load has produced its first frame.
             setStatus(player.state); setFrame(player.currentFrame + 1)
             setBusy(player.busy); setReconstructing(player.reconstructing); setBuffering(player.buffering)
             setMetrics(player.metrics); setStepMetrics(player.stepMetrics)
             if (player.state === 'error') report(player.error)
           })
           playerRef.current = player
+          const visibility = () => player?.setBackgrounded(document.visibilityState === 'hidden')
+          visibility()
+          document.addEventListener('visibilitychange', visibility)
+          detachVisibility = () => document.removeEventListener('visibilitychange', visibility)
           await player.load(sequence)
           pendingSequence = undefined
         }
       } catch (cause) {
         image?.dispose()
-        await Promise.allSettled([player?.dispose(), pendingSequence?.dispose()])
-        if (!abort.signal.aborted) report(cause)
+        const cleanup = await Promise.allSettled([player?.dispose(), pendingSequence?.dispose()])
+        for (const result of cleanup) if (result.status === 'rejected') countRuntimeEvent('cleanupErrors')
+        if (!abort?.signal.aborted) report(cause)
       }
     })()
     return () => {
-      active = false; abort.abort()
-      observer?.disconnect(); unobserve?.(); detachGestures?.()
+      active = false; abort?.abort()
+      observer?.disconnect(); unobserve?.(); detachGestures?.(); detachVisibility?.()
       if (labelUpdate !== undefined) cancelAnimationFrame(labelUpdate)
       playerRef.current = undefined; viewportRef.current = undefined
       image?.dispose()
-      const closing = player?.dispose().catch(() => {})
-      const releasing = file.release?.().catch(() => {})
+      const closing = player?.dispose().catch(() => countRuntimeEvent('cleanupErrors'))
+      const releasing = file.release?.().catch(() => countRuntimeEvent('cleanupErrors'))
       renderer?.dispose()
       transition.current = Promise.all([opening, closing, releasing]).then(() => {})
     }
