@@ -3,7 +3,7 @@
 Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
-Milestone 2B PASSED; Milestone 3 pending Android input validation.**
+Milestone 2B PASSED; Milestone 3 PASSED.**
 The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
 looping and Close. All three formats use the same bounded cache, player and renderer.
 Single-frame GIF is supported. Static PNG/JPEG/WebP are recognized and display
@@ -20,7 +20,8 @@ Remove from list, Choose more images and Clear session. Files are opened on dema
 from a temporary list (up to 1,000 items); removing an item never deletes the
 device file. Cancelling selection preserves the list; Close clears it.
 See [Input Experience](docs/milestones/milestone-3-input-experience.md) for the
-final Android picker validation matrix, which remains pending.
+final Android picker validation matrix. QQ, Quark, Chrome, Edge and Xiaomi
+passed user-reported selection, playback and multi-file navigation checks.
 
 Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing

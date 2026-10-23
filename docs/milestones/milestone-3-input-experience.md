@@ -1,10 +1,11 @@
 # Milestone 3: Input Experience
 
-Status: **PENDING ANDROID INPUT VALIDATION**. New input code must be tested on
-real Android browsers after desktop, CI and production deployment validation.
-Historical Milestone 1/2 picker observations are not final Milestone 3 results.
-PLAN.md, AGENTS.md and previous milestone documents are unchanged. No ZIP,
-directory import, static-image engine or later Viewer UX feature is implemented.
+Status: **PASSED** (2026-10-23). Implementation, desktop/browser regressions,
+GitHub Actions/Pages and new user-reported Android input acceptance are complete.
+Historical Milestone 1/2 picker observations remain separate from these final
+Milestone 3 results. PLAN.md, AGENTS.md and previous milestone documents are
+unchanged. Milestone 4 has not been started. No ZIP, directory import,
+static-image engine or later Viewer UX feature is implemented.
 
 ## Shared input and session
 
@@ -164,7 +165,10 @@ Production WebP, APNG, GIF and WebP spike regressions also passed, including
 continuous playback, Pause/Resume, Replay, loops, Close/reopen and failure
 recovery. All decoder Worker and WebP WASM resources loaded successfully under
 `/AniView/`; no page errors or asset 404s were observed. These results are desktop
-Edge 155 browser evidence; the final Android matrix below remains pending.
+Edge 155 browser evidence, separate from the final Android matrix below.
+The production verification record and URL comparison correction in `bc9e219`
+also passed [Actions run 39936505473](https://github.com/ZZH-0427/AniView/actions/runs/39936505473),
+including build and Pages deployment.
 
 ## Historical Android observations (before Milestone 3)
 
@@ -186,24 +190,46 @@ then correctly opened through the shared File/VirtualFile/Viewer pipeline.
 
 ## Final Android matrix: accept="image/*"
 
-All entries below await new user real-device results after this deployment.
-Do not infer results from the historical table or previous codec smoke tests.
+On 2026-10-23 the user supplied new real Android results after testing the final
+`accept="image/*"` input. All five pickers opened and all five browsers could
+select and play the requested animation formats. These are user reports,
+not independently observed Android/browser sessions or historical codec results.
 
 | Browser | Picker style | Albums | Directory browse | Supported files selectable | Multiple | AniView open |
 | --- | --- | --- | --- | --- | --- | --- |
-| QQ | Pending | Pending | Pending | Pending | Pending | Pending |
-| Quark | Pending | Pending | Pending | Pending | Pending | Pending |
-| Chrome | Pending | Pending | Pending | Pending | Pending | Pending |
-| Edge | Pending | Pending | Pending | Pending | Pending | Pending |
-| Xiaomi | Pending | Pending | Pending | Pending | Pending | Pending |
+| QQ | Gallery only; all pictures accessible | All albums; switchable | No | Requested formats visible/selectable | Yes | Plays normally |
+| Quark | Gallery only; all pictures accessible | All albums; switchable | No | Requested formats visible/selectable | Yes | Plays normally |
+| Chrome | Gallery only; all pictures accessible | Four offered albums; switchable | No | Requested formats visible/selectable | Yes | Plays normally |
+| Edge | Gallery only; all pictures accessible | Four offered albums; switchable | No | Requested formats visible/selectable | Yes | Plays normally |
+| Xiaomi | Gallery only; all pictures accessible | Four offered albums; switchable | No | Requested formats visible/selectable | Yes | Plays normally |
 
-For each browser, record picker opening/style, albums/directories, selectable
-GIF/WebP/PNG-APNG and other images, multi-select availability, successful AniView
-opening, and any browser/system camera entry. Where multi-select is available,
-also try Next/Previous, add/remove and clear. Verify cancelling and same-file
-reselection. Missing system multi-select or different picker appearance does not
-fail a working single-file path. Static-image messaging is intentional.
+The user explicitly confirmed Previous/Next, adding images, Remove from list
+and Clear worked in every browser. Each browser offered a camera entry, even
+though AniView sets no `capture` attribute. This is recorded as browser/system
+UI, not an app request or failure. The exact additional visible image formats,
+browser/Android versions and original file contents were not supplied. Picker
+cancellation and Close/reselection remain covered by desktop integration tests;
+no separate explicit Android result for those two actions is invented.
+
+### Chrome/Edge picker change
+
+The earlier input used a specific extension/MIME list and single selection;
+the final input uses broad `image/*` with multiple selection. Chrome and Edge
+previously exposed directory browsing but the new user report describes a
+gallery-only picker with four offered albums. This is a real observed change
+in the browser/system selection route, not evidence of a decoding regression.
+The chosen formats are visible and playable, so the milestone's input success
+criterion is satisfied. Album categories are not a filesystem directory tree.
+
+The accept value hints the type of content, while the browser and Android choose
+the native selection interface. Broad image selection is consistent with routing
+to a visual-media picker, but the exact device-level cause cannot be established
+without browser/system versions or native intent diagnostics. AniView neither
+implements nor disables navigation inside the native picker. No UA workaround,
+capture request, extra picker API or input behavior change was added in response.
 
 Known limitations: browser/system picker UI and multi-selection vary; static
-viewing, recursive folders and ZIP input are not implemented. Final Android
-input acceptance remains pending. Do not start Milestone 4 before it closes.
+viewing, recursive folders and ZIP input are not implemented. The tested mobile
+image picker does not provide filesystem directory browsing; that is a documented
+platform limitation of this entry path. **Ready for Milestone 4 - ZIP Archive
+Input** when separately requested; no Milestone 4 work is included here.
