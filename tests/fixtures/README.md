@@ -72,3 +72,30 @@ It is licensed [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 1,001,718 bytes, 400x400, 44 frames; 65,535 repeats normalize to 65,536 total
 plays. SHA-256:
 `b0acdc9a01f91f6123dbff38d4bee59d0d6e4b26071b5c83937b242b6b202378`.
+
+## ZIP fixtures
+
+`zip/` contains original tiny CC0-1.0 test archives created by
+`node tools/archive/generate-fixtures.mjs` using the pinned zip.js writer only
+in test tooling. Their media are the original GIF/APNG patterns above and a
+2×2 red/green two-frame WebP assembled from original lossless canvas-encoded
+solid pixels (`original-two-frame.webp`). No downloaded artwork is committed.
+ZIP writer timestamps are fixed; encryption salts/headers remain randomized,
+so encrypted archives reproduce the same contents and metadata, not ciphertext.
+The deliberately public test password is `AniView-test`; it is never a user
+password and is not part of application password storage.
+
+The corpus covers empty, individual GIF/WebP/APNG, mixed central-directory
+order, nested directories, macOS metadata, no media, wrong/missing extensions,
+unsafe paths, Zip64, ZipCrypto, AES, mixed encrypted/public entries, damaged
+payload CRC, unsupported compression, truncated headers/directories, oversized
+declared output, and extreme declared compression ratio. `manifest.json`
+records entry sizes and generation metadata. Mutated ZIPs are test inputs,
+not valid examples for users.
+
+`node tools/archive/generate-fixtures.mjs --large` additionally creates ignored
+`.tools/fixtures/archive-large.zip` with 60 entries repeating the three existing
+downloaded desktop samples (WebP, APNG, GIF). The external sources and licenses
+remain those recorded above and in the WebP milestone documentation; neither
+the archive nor extracted test media is committed. This smoke test checks
+current-only extraction and UI responsiveness without multi-gigabyte media.

@@ -13,7 +13,7 @@ export function ImageInput({ onFiles, append = false }: {
       <span className="mobile-label">选择图片</span>
       <span className="desktop-label">{append ? 'Choose more images' : 'Open Images'}</span>
     </button>
-    <input ref={input} type="file" accept="image/*" multiple hidden
+    <input ref={input} data-testid="image-input" type="file" accept="image/*" multiple hidden
       aria-label={append ? 'Choose more images' : 'Open Images'}
       onChange={event => onFiles(takeFileSelection(event.currentTarget))} />
   </div>

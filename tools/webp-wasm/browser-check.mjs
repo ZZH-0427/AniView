@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const url = process.argv[2]
 const inputMode = process.argv[4] === 'input'
+const archiveMode = process.argv[4] === 'archive'
 const fixture = resolve(process.argv[3] ?? '.tools/fixtures/animated.webp')
 if (!url) throw new Error('Usage: node tools/webp-wasm/browser-check.mjs <spike-url> [animated.webp]')
 const output = join(root, '.tools', 'browser-results')
@@ -82,7 +83,7 @@ try {
     if (event.method === 'Network.responseReceived') {
       const response = event.params.response
       if (response.status >= 400) errors.push(`${response.status} ${response.url}`)
-      if (/wasm|worker/i.test(response.url)) assets.push({ url: response.url, status: response.status })
+      if (/wasm|worker|\/assets\/.*\.js/i.test(response.url)) assets.push({ url: response.url, status: response.status })
     }
   }
   const send = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
@@ -114,7 +115,7 @@ try {
   await send('Runtime.enable')
   await send('Network.enable')
   await send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: true, flatten: true })
-  if (inputMode) await send('Page.addScriptToEvaluateOnNewDocument', { source: `
+  if (inputMode || archiveMode) await send('Page.addScriptToEvaluateOnNewDocument', { source: `
     window.__workerLifetime={created:0,terminated:0,active:0,peakActive:0,opens:0,history:[]};
     const BrowserWorker=window.Worker;
     window.Worker=class extends BrowserWorker {
@@ -155,7 +156,7 @@ try {
         });
       }
       const result=original.call(this,message,transfer);
-      if(message.type==='open') window.__inputTransfers.push(message.data.byteLength===0);
+      if(message.type==='open'&&message.data instanceof ArrayBuffer) window.__inputTransfers.push(message.data.byteLength===0);
       return result;
     };
   ` })
@@ -164,20 +165,21 @@ try {
     const largeMode = process.argv[4] === 'apng-large'
     const apngMode = largeMode || process.argv[4] === 'apng'
     const gifMode = process.argv[4] === 'gif'
-    const run = inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+    const run = archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
       : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
     const report = await run({ send, evaluate, waitFor, click, fixture, url, capture: async width => {
       const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `${inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      await writeFile(join(output, `${archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
     if (!apngMode && !gifMode && !assets.some(asset => new URL(asset.url).pathname.endsWith('.wasm') && asset.status === 200)) throw new Error('Viewer WASM did not load')
     if (gifMode && !assets.some(asset => /gif-decoder\.worker/.test(asset.url) && asset.status === 200)) throw new Error('GIF Worker did not load')
+    if (archiveMode && !assets.some(asset => /archive.*worker/.test(asset.url) && asset.status === 200)) throw new Error('Archive Worker did not load')
     if (apngMode && (!bitmapCounts.length || bitmapCounts.some(count => count.live !== 0 || count.peak !== 1))) throw new Error('APNG ImageBitmaps accumulated')
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
-    await writeFile(join(output, inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
+    await writeFile(join(output, archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
     await send('Browser.close')
   } else {

@@ -1,7 +1,11 @@
 import { ImageInput } from '../../components/ImageInput'
+import { ArchiveInput } from '../../components/ArchiveInput'
 import type { VirtualFile } from '../../input/virtual-file'
 
-export function Home({ onOpen }: { onOpen: (files: readonly VirtualFile[]) => void }) {
+export function Home({ onOpen, onArchive }: {
+  onOpen: (files: readonly VirtualFile[]) => void
+  onArchive: (file: File) => void
+}) {
   return (
     <main className="home">
       <header>
@@ -15,6 +19,7 @@ export function Home({ onOpen }: { onOpen: (files: readonly VirtualFile[]) => vo
         <h2 id="foundation-title">Your animations, on your device</h2>
         <p>Play GIF, Animated WebP and APNG files.</p>
         <ImageInput onFiles={onOpen} />
+        <ArchiveInput onOpen={onArchive} />
         <p className="drop-hint">Drag &amp; drop images here. You can select several at once.</p>
         <p>Static-image viewing is not available yet.</p>
       </section>

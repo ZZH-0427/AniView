@@ -30,9 +30,9 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
     }
   }
   const pick = async paths => {
-    await waitFor("!!document.querySelector('input[type=file]')")
+    await waitFor("!!document.querySelector('[data-testid=image-input]')")
     const { root } = await send('DOM.getDocument')
-    const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: 'input[type=file]' })
+    const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: '[data-testid=image-input]' })
     await send('DOM.setFileInputFiles', { nodeId, files: paths })
   }
   const empty = async (label = 'Clear session') => {
@@ -70,8 +70,8 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
   await waitFor("document.querySelector('h1')?.textContent==='AniView'")
   const capabilities = await evaluate("({showOpenFilePicker:typeof window.showOpenFilePicker,Worker:typeof Worker,DataTransfer:typeof DataTransfer})")
   const baseline = await evaluate(`(() => {
-    const input=document.querySelector('input[type=file]');
-    return {count:document.querySelectorAll('input[type=file]').length,accept:input.accept,multiple:input.multiple,capture:input.getAttribute('capture')};
+    const input=document.querySelector('[data-testid=image-input]');
+    return {count:document.querySelectorAll('[data-testid=image-input]').length,accept:input.accept,multiple:input.multiple,capture:input.getAttribute('capture')};
   })()`)
   assert(baseline.count === 1 && baseline.accept === 'image/*' && baseline.multiple && baseline.capture === null, 'Input baseline is incorrect')
   // Report what this browser exposes; the product deliberately keeps the HTML

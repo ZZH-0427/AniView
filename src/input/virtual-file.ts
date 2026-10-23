@@ -8,4 +8,6 @@ export interface VirtualFile {
   readonly source: FileSource
   /** Read [start, end) bytes; omitted bounds mean the entire file. */
   read(start?: number, end?: number): Promise<ArrayBuffer>
+  /** Release source-owned temporary content and cancel a pending read, if any. */
+  release?(): Promise<void>
 }

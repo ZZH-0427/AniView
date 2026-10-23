@@ -16,6 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@zip.js/zip.js": "2.23.0",
     "apng-js": "1.1.5",
     "omggif": "1.0.10",
     "react": "^19.3.1",

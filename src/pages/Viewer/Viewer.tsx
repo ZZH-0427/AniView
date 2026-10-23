@@ -67,8 +67,9 @@ export function Viewer({ file, onClose, transition }: {
       observer?.disconnect()
       controller.current = undefined
       const closing = player?.dispose().catch(() => {})
+      const releasing = file.release?.().catch(() => {})
       renderer?.dispose()
-      transition.current = Promise.all([opening, closing]).then(() => {})
+      transition.current = Promise.all([opening, closing, releasing]).then(() => {})
     }
   }, [file, transition])
 

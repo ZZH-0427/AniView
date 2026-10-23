@@ -3,7 +3,8 @@
 Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestone 1 PASSED; Milestone 2A PASSED;
-Milestone 2B PASSED; Milestone 3 PASSED.**
+Milestone 2B PASSED; Milestone 3 PASSED;
+Milestone 4 implemented, pending Android archive validation.**
 The formal viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay,
 looping and Close. All three formats use the same bounded cache, player and renderer.
 Single-frame GIF is supported. Static PNG/JPEG/WebP are recognized and display
@@ -22,6 +23,16 @@ device file. Cancelling selection preserves the list; Close clears it.
 See [Input Experience](docs/milestones/milestone-3-input-experience.md) for the
 final Android picker validation matrix. QQ, Quark, Chrome, Edge and Xiaomi
 passed user-reported selection, playback and multi-file navigation checks.
+
+Use the secondary **Open ZIP** action (**打开 ZIP 压缩包** on mobile) to browse
+animations inside a local ZIP without extracting it to your device. Entries keep
+their archive order and nested names. Only the current image is extracted;
+Previous/Next and playback use the same viewer as ordinary images. Opening a ZIP
+replaces the current list; selecting ordinary images replaces the archive.
+Close archive releases its resources. Password-protected entries are identified,
+but password entry is not available yet. ZIP processing stays entirely local.
+See [ZIP archive notes](docs/milestones/milestone-4-zip-archive.md) for limits,
+supported entry discovery, validation and the pending Android checklist.
 
 Target animated formats: GIF, Animated WebP and APNG. Static PNG and JPEG
 are also planned. Files are processed locally in your browser. Normal viewing
@@ -78,6 +89,7 @@ Do not commit `dist/` or maintain a `gh-pages` source branch.
 - `src/app/` and `src/pages/`: React shell, Home and Viewer.
 - `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
 - `src/input/`: shared browser-file adapters for standard selection and file drops.
+- `src/archive/`: lazy Worker-backed ZIP metadata, entry policy and VirtualFile source.
 - `src/formats/`: binary format detection and Worker-backed WebP/APNG/GIF adapters.
 - `src/media/`: animation/frame contracts and categorized errors.
 - `src/media/media-session.ts`: page-lifetime ordered references and file navigation.
@@ -92,6 +104,6 @@ Larger frames receive exactly two frames of cache capacity, up to a 32 MiB
 automatic ceiling. Explicitly configured budgets remain strict.
 
 The shared WebP Worker lives with its format adapter under `src/formats/webp/`.
-Archive and shared UI component directories will be introduced with their
-first real modules rather than empty scaffolding. See `PLAN.md` for the architecture
+ZIP metadata and extraction use a separate Worker; ZIP libraries are loaded only
+after Open ZIP. See `PLAN.md` for the architecture
 and roadmap, and `AGENTS.md` for development rules.

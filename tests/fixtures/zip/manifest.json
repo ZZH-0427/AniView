@@ -1,0 +1,217 @@
+{
+  "empty.zip": {
+    "encodedBytes": 22,
+    "entries": []
+  },
+  "single-gif.zip": {
+    "encodedBytes": 191,
+    "entries": [
+      {
+        "name": "first.gif",
+        "bytes": 114,
+        "encrypted": false
+      }
+    ]
+  },
+  "single-webp.zip": {
+    "encodedBytes": 194,
+    "entries": [
+      {
+        "name": "second.webp",
+        "bytes": 140,
+        "encrypted": false
+      }
+    ]
+  },
+  "single-apng.zip": {
+    "encodedBytes": 262,
+    "entries": [
+      {
+        "name": "third.png",
+        "bytes": 202,
+        "encrypted": false
+      }
+    ]
+  },
+  "mixed.zip": {
+    "encodedBytes": 1056,
+    "entries": [
+      {
+        "name": "nested/",
+        "bytes": 0,
+        "encrypted": false
+      },
+      {
+        "name": "first.gif",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "nested/second.webp",
+        "bytes": 140,
+        "encrypted": false
+      },
+      {
+        "name": "nested/third.png",
+        "bytes": 202,
+        "encrypted": false
+      },
+      {
+        "name": "__MACOSX/._first.gif",
+        "bytes": 8,
+        "encrypted": false
+      },
+      {
+        "name": ".DS_Store",
+        "bytes": 8,
+        "encrypted": false
+      },
+      {
+        "name": "notes.txt",
+        "bytes": 9,
+        "encrypted": false
+      }
+    ]
+  },
+  "no-media.zip": {
+    "encodedBytes": 217,
+    "entries": [
+      {
+        "name": "notes.txt",
+        "bytes": 9,
+        "encrypted": false
+      },
+      {
+        "name": "folder/",
+        "bytes": 0,
+        "encrypted": false
+      }
+    ]
+  },
+  "wrong-extension.zip": {
+    "encodedBytes": 563,
+    "entries": [
+      {
+        "name": "really-gif.jpg",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "without-extension",
+        "bytes": 202,
+        "encrypted": false
+      },
+      {
+        "name": "fake.gif",
+        "bytes": 12,
+        "encrypted": false
+      }
+    ]
+  },
+  "unsafe-paths.zip": {
+    "encodedBytes": 764,
+    "entries": [
+      {
+        "name": "../escape.gif",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "/absolute.gif",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "C:\\folder\\image.gif",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "safe/../nested/image.gif",
+        "bytes": 114,
+        "encrypted": false
+      }
+    ]
+  },
+  "zip64.zip": {
+    "encodedBytes": 307,
+    "entries": [
+      {
+        "name": "first.gif",
+        "bytes": 114,
+        "encrypted": false
+      }
+    ]
+  },
+  "encrypted-zipcrypto.zip": {
+    "encodedBytes": 223,
+    "entries": [
+      {
+        "name": "private.gif",
+        "bytes": 114,
+        "encrypted": true
+      }
+    ]
+  },
+  "encrypted-aes.zip": {
+    "encodedBytes": 245,
+    "entries": [
+      {
+        "name": "private.gif",
+        "bytes": 114,
+        "encrypted": true
+      }
+    ]
+  },
+  "encrypted-mixed.zip": {
+    "encodedBytes": 872,
+    "entries": [
+      {
+        "name": "public.gif",
+        "bytes": 114,
+        "encrypted": false
+      },
+      {
+        "name": "private.webp",
+        "bytes": 140,
+        "encrypted": true
+      },
+      {
+        "name": "private.png",
+        "bytes": 202,
+        "encrypted": true
+      },
+      {
+        "name": "public-again.gif",
+        "bytes": 114,
+        "encrypted": false
+      }
+    ]
+  },
+  "stored.zip": {
+    "encodedBytes": 230,
+    "entries": [
+      {
+        "name": "first.gif",
+        "bytes": 114,
+        "encrypted": false
+      }
+    ]
+  },
+  "bad-crc.zip": {
+    "encodedBytes": 230,
+    "mutation": true
+  },
+  "unsupported-compression.zip": {
+    "encodedBytes": 230,
+    "mutation": true
+  },
+  "oversize-declared.zip": {
+    "encodedBytes": 230,
+    "mutation": true
+  },
+  "ratio-limit.zip": {
+    "encodedBytes": 230,
+    "mutation": true
+  }
+}

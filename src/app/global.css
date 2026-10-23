@@ -59,6 +59,11 @@ button:focus-visible { outline: 3px solid #2765b0; outline-offset: 3px; }
 .image-picker { color: white; background: #285581; border-color: #285581; font-weight: 600; }
 .image-input { display: inline-block; }
 .foundation .image-input { margin-top: 1.5rem; }
+.foundation .archive-input { margin-top: 0.75rem; }
+.archive-summary { width: min(100%, 72rem); margin: auto; padding: 1rem; overflow-wrap: anywhere; }
+.archive-summary button { margin-top: 0.75rem; }
+.archive-summary [role=alert] { color: #a21b22; }
+.archive-summary output { display: block; font-size: 0.85rem; overflow-wrap: anywhere; }
 .mobile-label { display: none; }
 .drop-hint { display: none; }
 .session-controls { max-width: 72rem; margin: auto; padding: 1rem 1rem 0; }
