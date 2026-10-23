@@ -1,5 +1,9 @@
 # Milestone 1: formal Animated WebP vertical slice
 
+**Status: Milestone 1 PASSED (2026-10-23).** Local checks, desktop and production
+browser validation, GitHub Actions/Pages, and user-reported Android functional
+and bounded-cache acceptance are complete. Milestone 2 is not implemented here.
+
 The production path is `browserFile → VirtualFile → WebPAnimationDecoder → shared
 libwebp Worker → AnimationSequence → FrameBuffer/ByteBudgetFrameCache →
 AnimationPlayer → CanvasRenderer → Viewer`. The existing 1A C bridge, WASM,
@@ -89,13 +93,22 @@ independently instrumented Android benchmark. Browser versions were not supplied
 Automatic repetition is expected when the file's normalized loopCount is zero;
 the existing unit tests separately cover finite total-play counts.
 
-**Phone-file cache acceptance remains pending.** Confirmation of the exact
-672×1024, 193-frame test file, observed cached-frame range, peakBytes, peakFrames,
-maxBytes and underruns has been requested. The file exists only on the phone.
-Use `/AniView/?debug=1`, play through at least two complete loops and for about a
-minute, then pause and copy the diagnostic JSON. Do not substitute theoretical
-six-frame byte calculations, desktop observations or the historical 1A smoke
-test for these measurements.
+The user subsequently confirmed that all four browsers used the same
+**672×1024, 193-frame WebP** and supplied this production `?debug=1` observation
+in response to the requested minute-long playback/cache check:
+
+```json
+{"cacheBytes":16515072,"cachedFrames":6,"peakBytes":16515072,"peakFrames":6,"maxBytes":16777216,"underruns":0}
+```
+
+Observed cachedFrames varied approximately from **1 to 6**. Peak cached bytes
+were **16,515,072**, below the **16,777,216-byte (16 MiB)** configured budget, with
+no underruns in the supplied measurement. The reported range and peak support
+bounded cache occupancy during this run rather than growth with total decoded
+frame count. This is actual user-supplied phone data; the matching six-frame byte
+calculation above is not its substitute. The user did not identify which of the
+four browsers supplied the JSON; the one measurement is not attributed to all
+four. No browser RSS/heap trace or long-term memory benchmark was supplied.
 
 ## Validation and remaining scope
 
@@ -128,6 +141,7 @@ and recovery checks. Desktop results do not replace Android cache measurements.
 No APNG/GIF, ZIP, seek, previous-frame navigation, conversion, PWA or final mobile
 input UX is implemented. WASM linear memory may grow without shrinking; freeing
 C allocations or dropping cache references does not promise immediate RSS change.
-Milestone 1 remains BLOCKED on phone-file confirmation and cache observations.
-The Android functional report and production deployment checks are recorded
-above; do not begin Milestone 2 until the remaining acceptance evidence arrives.
+The specified phone-file confirmation and bounded-cache observation complete
+the remaining Milestone 1 acceptance items. AniView is ready to proceed to
+Milestone 2 (Core Format Support) when requested; this closure adds no APNG/GIF
+implementation or other later-milestone features.

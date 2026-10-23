@@ -2,10 +2,12 @@
 
 Local Animated Media Viewer for mobile and desktop browsers.
 
-**Project status: early development / Milestone 1 acceptance pending.**
+**Project status: early development / Milestone 1 PASSED.**
 The formal Animated WebP viewer supports Play/Pause, Replay, looping and Close.
 Android functional smoke tests were reported successful in Chrome, Edge, Xiaomi
-Browser and Quark. The specified phone-file cache measurements are still pending.
+Browser and Quark using the same 672×1024, 193-frame WebP. Reported cache occupancy
+stayed around 1–6 frames, with a 16,515,072-byte peak below the 16 MiB budget and
+zero underruns in the supplied measurement.
 GIF/APNG playback is not implemented.
 See [the vertical slice notes](docs/milestones/milestone-1-webp-vertical-slice.md).
 
