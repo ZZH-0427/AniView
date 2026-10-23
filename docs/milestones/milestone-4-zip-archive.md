@@ -161,6 +161,10 @@ original GIF/APNG fixtures and an original two-frame red/green WebP. No copied
 artwork or large downloaded ZIP is committed. Fixture provenance is recorded in
 `tests/fixtures/README.md`; manifest sizes and entry descriptions accompany ZIPs.
 ZipCrypto/AES fixtures use the public test-only password `AniView-test`.
+The generator also copies only `mixed.zip` and `encrypted-mixed.zip` to
+`public/validation/zip/` (1,928 bytes combined) for Pages-hosted Android downloads;
+these contain the same original test artwork. GitHub Raw downloads timed out in
+the validation environment, so mobile acceptance does not depend on that host.
 
 Cases include empty, three single-format archives, mixed/nested/directory/junk,
 no-media, extension mismatch, extensionless, mixed encrypted/public, ZipCrypto,
@@ -241,12 +245,13 @@ individual desktop observations, not Android conclusions.
 
 Android status: **Pending user real-device validation**. Use one mainstream
 Chromium browser (Chrome or Edge) and one usual browser (Quark or QQ). Download
-`tests/fixtures/zip/mixed.zip` from GitHub, open it via Open ZIP and verify:
+[mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/mixed.zip),
+open it via Open ZIP and verify:
 
 1. Seven metadata entries, three image candidates; first GIF opens.
 2. Play/Pause; Next to WebP, Next to APNG; Previous works.
 3. Close archive and reopen the same ZIP; no freeze or crash.
-4. Open `encrypted-mixed.zip`: public siblings play; encrypted entry says
+4. Open [encrypted-mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/encrypted-mixed.zip): public siblings play; encrypted entry says
    password-protected, not corrupted; Next recovers.
 5. If available, repeat with a real ZIP containing dozens of animations. Report
    ZIP size/count, responsiveness, browser and debug archive/frame-cache JSON.

@@ -72,6 +72,12 @@ await writeFile(join(folder, 'corrupt.zip'), Buffer.from('PK\x03\x04This ZIP hea
 await writeFile(join(folder, 'not-a-zip.zip'), Buffer.from('This is not a ZIP archive.'))
 await writeFile(join(folder, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n')
 
+// Two tiny original acceptance samples are also hosted on Pages for Android.
+const publicSamples = resolve('public/validation/zip')
+await mkdir(publicSamples, { recursive: true })
+for (const name of ['mixed.zip', 'encrypted-mixed.zip'])
+  await writeFile(join(publicSamples, name), await readFile(join(folder, name)))
+
 // Optional representative desktop smoke test; downloaded artwork remains ignored.
 if (process.argv.includes('--large')) {
   const dest = resolve('.tools/fixtures'); await mkdir(dest, { recursive: true })

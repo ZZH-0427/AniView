@@ -93,6 +93,11 @@ declared output, and extreme declared compression ratio. `manifest.json`
 records entry sizes and generation metadata. Mutated ZIPs are test inputs,
 not valid examples for users.
 
+The generator copies the two valid original acceptance examples, `mixed.zip` and
+`encrypted-mixed.zip`, into `public/validation/zip/` for direct Android downloads
+from GitHub Pages. Their total encoded size is 1,928 bytes; no downloaded artwork
+or large performance archive is published.
+
 `node tools/archive/generate-fixtures.mjs --large` additionally creates ignored
 `.tools/fixtures/archive-large.zip` with 60 entries repeating the three existing
 downloaded desktop samples (WebP, APNG, GIF). The external sources and licenses
