@@ -1,10 +1,10 @@
 # Milestone 6 — Stability & Compatibility
 
-**Status: PENDING ANDROID STABILITY VALIDATION.** This milestone freezes major
-product features. Desktop stability work, CI, Pages and production checks pass;
-new Android acceptance is required before PASSED. Earlier Android milestones
-are historical evidence, not substitutes for background/foreground and stress
-acceptance of this build. No Milestone 7 tagging, release or release notes.
+**Status: Milestone 6 PASSED (2026-10-24).** Desktop stability work, CI, Pages
+and production checks pass. The user confirmed the new Android P0 stability
+checklist passed in Quark and Edge and supplied six runtime snapshots per browser.
+These are new Milestone 6 results, separate from historical Android acceptance.
+No Milestone 7 tagging, release or release notes; Milestone 7 is not started.
 
 ## Scope and corrections
 
@@ -41,14 +41,14 @@ PLAN.md, AGENTS.md and earlier milestone documents are unchanged.
 
 | Domain | Desktop evidence | Android status |
 | --- | --- | --- |
-| A. Media Stress | Boundary static formats, two-slot large APNG, 1000-frame animations, controlled rejection, logical long durations | New large/long sample check pending |
-| B. Lifecycle Stress | 100 rapid switches, immediate open/close, late native/decode responses, latest load/step ownership | New switch/close check pending |
-| C. Archive Stress | 1008 entries, 96 mixed media, local 100 MiB ZIP, corrupt/encrypted/unsupported recovery, current-only extraction | New many-entry/recovery check pending |
-| D. Interaction Stress | Play+zoom, step/reconstruction+viewport, keyboard burst, fullscreen repetition, resize, interruption | Touch/orientation check pending |
-| E. Browser Compatibility | Installed Edge full regression and stress; installed Chrome core smoke | Edge or Chrome + Quark P0 pending; QQ/Xiaomi reduced matrix pending |
-| F. Page Lifecycle | Synthetic visibility, genuine desktop tab hide, delayed first frame; injected-clock no-catch-up policy | Actual app switch/lock screen pending |
-| G. Error Recovery | Bad loose files/ZIP, limits, missing capability, Worker error/messageerror/send failure/timeout; later good file opens | New recovery smoke pending |
-| H. Long-running Stability | Six-round soak with 570 sequential file transitions and source/ZIP replacement | Real-device reasonable-pressure session pending |
+| A. Media Stress | Boundary static formats, two-slot large APNG, 1000-frame animations, controlled rejection, logical long durations | Large/long sample checklist passed, user-reported |
+| B. Lifecycle Stress | 100 rapid switches, immediate open/close, late native/decode responses, latest load/step ownership | Navigation/Close/reopen passed; all supplied post-close resource snapshots idle |
+| C. Archive Stress | 1008 entries, 96 mixed media, local 100 MiB ZIP, corrupt/encrypted/unsupported recovery, current-only extraction | 96-media ZIP opening/first-six navigation and recovery checklist passed; no mobile 100 MiB/1008-entry run claimed |
+| D. Interaction Stress | Play+zoom, step/reconstruction+viewport, keyboard burst, fullscreen repetition, resize, interruption | Touch/pan/orientation checklist passed, user-reported |
+| E. Browser Compatibility | Installed Edge full regression and stress; installed Chrome core smoke | Edge + Quark P0 passed; QQ/Xiaomi P1 not retested |
+| F. Page Lifecycle | Synthetic visibility, genuine desktop tab hide, delayed first frame; injected-clock no-catch-up policy | Playing/paused app-switch checklist passed; separate lock-screen details not supplied |
+| G. Error Recovery | Bad loose files/ZIP, limits, missing capability, Worker error/messageerror/send failure/timeout; later good file opens | Limit/recovery ZIP checklist passed, user-reported |
+| H. Long-running Stability | Six-round soak with 570 sequential file transitions and source/ZIP replacement | Requested real-device sequence passed; no timed Android soak or transition-count measurement supplied |
 
 ## Unified resource policy
 
@@ -240,10 +240,11 @@ filename, archive path, password, user bytes, stack trace or network upload.
 | --- | --- | --- |
 | Desktop Edge 155 | P0 | PASS: full regression, core, stress and soak |
 | Desktop Chrome 153 | P1 | PASS: six-format/core/ZIP/error/visibility/fullscreen smoke |
-| Android Edge or Chrome | P0 | Pending new real-device stability acceptance |
-| Android Quark | P0 | Pending new real-device stability acceptance |
-| Android QQ | P1 | Pending reduced smoke |
-| Xiaomi Browser | P1 | Pending reduced smoke |
+| Android Edge | P0 | PASS: new checklist and post-close runtime snapshots, user-reported |
+| Android Quark | P0 | PASS: new checklist and post-close runtime snapshots, user-reported |
+| Android Chrome | P0 alternative to Edge | Not retested in this milestone; no new Chrome result claimed |
+| Android QQ | P1 | Reduced smoke not supplied in this milestone |
+| Xiaomi Browser | P1 | Reduced smoke not supplied in this milestone |
 
 Required shared capabilities: Canvas 2D, AbortController, ResizeObserver, Pointer
 Events and animation-frame scheduling. Animations require Worker; WebP also
@@ -252,17 +253,56 @@ Static viewing needs Blob/ImageBitmap. GIF uses typed-array composition and does
 not require OffscreenCanvas. Fullscreen is optional and feature detected.
 Missing capabilities show a categorized message; no browser-name routing/fallback.
 
-New P0 Android check: use Edge/Chrome and Quark, open six-format media or
-`validation/stability/mixed-96.zip`, verify play/pause, stepping, file navigation,
-pinch/pan, orientation and Close/reopen. Open `long-1000.webp` and one boundary
-static/APNG sample individually. While playing, switch apps for 10–30 s and
-return; the same logical position should resume without rapid hidden-time catch-up.
-Repeat while paused, which must stay paused. Lock/unlock in at least one browser
-if convenient. Check `recovery.zip` can skip damaged/encrypted/unsupported entries.
-`phone-12mp-rejected.jpg` should give a clear limit message and allow another file.
-Send the browser results and final runtime/cache JSON; do not combine extreme
-loads to deliberately exhaust the device. QQ/Xiaomi need only the reduced
-media/ZIP/controls/touch/orientation smoke if available.
+The requested P0 checklist covered six-format opening/first-six navigation in
+`validation/stability/mixed-96.zip`, play/pause, stepping, rapid file navigation,
+pinch/pan, orientation and Close/reopen. It included `long-1000.webp` past frame
+800, repeated backward steps and Replay; app switching for 10–30 s while playing
+and while paused; separate boundary JPEG and large-frame APNG checks; controlled
+12 MP rejection followed by a good file; and navigation past damaged, encrypted,
+unsupported and bad-CRC entries in `recovery.zip`. Lock/unlock was requested if
+convenient. These original samples remain available for reproduction.
+
+On 2026-10-24 the user reported **“夸克均正常”** and **“edge上也均正常”** in
+response to that new checklist. This completes the required Android P0 gate
+(Edge or Chrome plus Quark), including user-reported background/foreground and
+large/long-media functionality. No stutter, crash or other issue was reported.
+This is user-reported real-device acceptance, not an independently observed
+Android browser run. Device/browser versions, a separate lock-screen outcome,
+per-browser Fullscreen capability and new frame-cache/heap/RSS/latency data were
+not supplied. No precise Android cache or performance measurements are inferred
+from the functional response or resource-count snapshots.
+
+Each browser supplied six cumulative runtime snapshots. Every snapshot showed
+zero active Workers, bitmaps and archive sessions, with cleanupErrors zero.
+Snapshots are successive observations, not six independent counts to add up.
+The final snapshot from each browser was:
+
+| Android browser | Workers created / terminated | Bitmaps created / closed | Archives opened / closed | Extraction started / completed | archiveErrors | cleanupErrors |
+| --- | --- | --- | --- | --- | ---: | ---: |
+| Quark | 34 / 34 | 19 / 19 | 5 / 5 | 42 / 41 | 2 | 0 |
+| Edge | 13 / 13 | 7 / 7 | 2 / 2 | 19 / 18 | 1 | 0 |
+
+Both final snapshots had **activeWorkers = activeBitmaps = activeArchiveSessions
+= 0**, peakWorkers 2 and peakBitmaps 1. Their decoderErrors, staticDecodeErrors,
+entryExtractionsDiscarded and staleResultsDiscarded counters were also zero.
+The nonzero archiveErrors are retained as reported. The checklist intentionally
+included damaged archives/entries; aggregate counters do not identify which
+specific operations produced them. Likewise, started/completed differing by one
+does not establish a particular cancellation or failure. These are handled-event
+counters, not evidence of a crash or a retained resource.
+
+Final user-supplied snapshots (unchanged numeric values):
+
+```json
+{
+  "Quark": {"workersCreated":34,"workersTerminated":34,"activeWorkers":0,"peakWorkers":2,"bitmapsCreated":19,"bitmapsClosed":19,"activeBitmaps":0,"peakBitmaps":1,"archiveSessionsOpened":5,"archiveSessionsClosed":5,"activeArchiveSessions":0,"entryExtractionsStarted":42,"entryExtractionsCompleted":41,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":2,"cleanupErrors":0},
+  "Edge": {"workersCreated":13,"workersTerminated":13,"activeWorkers":0,"peakWorkers":2,"bitmapsCreated":7,"bitmapsClosed":7,"activeBitmaps":0,"peakBitmaps":1,"archiveSessionsOpened":2,"archiveSessionsClosed":2,"activeArchiveSessions":0,"entryExtractionsStarted":19,"entryExtractionsCompleted":18,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":1,"cleanupErrors":0}
+}
+```
+
+QQ/Xiaomi reduced P1 smoke was not supplied; it remains a coverage limitation,
+with no new pass claimed. The task's milestone status rule makes the new P0
+acceptance the closing gate, which is now satisfied.
 
 ## Publication and remaining risks
 
@@ -300,8 +340,8 @@ ZIP remains a lazy separate chunk/Worker. Normal startup still does not load ZIP
 
 Browser reports, screenshots, heap observations and the local 100 MiB archive
 remain ignored under `.tools/`. The reproducible tools and small acceptance
-inputs are committed. A new Android P0 request was sent after these production
-checks; its results are still pending. The working milestone is not marked PASSED.
+inputs are committed. The new Android P0 request was sent after these production
+checks and has now passed as recorded above. Milestone 6 is closed.
 
 The browser can retain heap pages and native/GPU allocations after logical
 cleanup. Native bitmap decode cannot be force-aborted; completion is joined and
@@ -311,9 +351,10 @@ Canvas copies, encoded blobs and browser/device pressure are outside FrameCache.
 Silent Worker exit has no reliable browser exit event: a subsequent/pending
 request fails by its deadline (15 s decode / 30 s archive); explicit ZIP Close
 uses the 2 s fallback. Extreme hostile inputs remain resource sensitive despite
-bounds. OEM capability/picker/fullscreen behavior can differ; no actual Android
-stability result is claimed before the user tests this deployed version.
+bounds. OEM capability/picker/fullscreen behavior can differ. The Android reports
+above cover Edge and Quark; they do not establish equivalent results in every
+browser or on every device.
 
 Architecture verdict: **Yes**, existing input/decoder/player/viewport/archive/
-renderer separation is preserved. Remaining release-readiness blocker: new
-Android P0 stability acceptance. Milestone 7 is not started.
+renderer separation is preserved. **Milestone 6: PASSED. Ready for Milestone 7 —
+V0.1 Release.** Milestone 7 is not started; no V0.1 release or tag is created here.
