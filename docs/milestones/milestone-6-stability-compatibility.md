@@ -1,7 +1,7 @@
 # Milestone 6 — Stability & Compatibility
 
 **Status: PENDING ANDROID STABILITY VALIDATION.** This milestone freezes major
-product features. Desktop stability work is implemented and measured below;
+product features. Desktop stability work, CI, Pages and production checks pass;
 new Android acceptance is required before PASSED. Earlier Android milestones
 are historical evidence, not substitutes for background/foreground and stress
 acceptance of this build. No Milestone 7 tagging, release or release notes.
@@ -266,8 +266,42 @@ media/ZIP/controls/touch/orientation smoke if available.
 
 ## Publication and remaining risks
 
-Implementation publication, actual Actions/Pages result and deployed checks are
-recorded after completion; a workflow file alone is not proof of success.
+Implementation commit: `fc74e2e0e60b4e9a64060ea2dd0de0b9ff03d8ea`
+(`chore: harden AniView stability and compatibility`). Published to main using
+the established Git Data API fallback, verifying blob/tree/commit hashes and
+updating the ref without force. No repository settings changed.
+
+[Actions run 39999656499](https://github.com/ZZH-0427/AniView/actions/runs/39999656499)
+completed successfully: Node 24/npm ci, lint, typecheck, 469 unit tests, build,
+the new installed-Chrome core browser regression, official Pages artifact and
+deployment all passed. The browser step really ran; it was not inferred from
+the workflow configuration. Extended stress/soak remain outside normal CI.
+
+Real installed Edge checks at `https://ZZH-0427.github.io/AniView/?debug=1`
+passed both the seven core stability groups and the complete **64 Viewer UX
+groups**, including static/animation/ZIP, exact pixels and EXIF, previous/next
+frame and bounded reconstruction, zoom/pan/gestures, fullscreen, responsive
+layout, delayed cancellation and error recovery. Core resources ended at 10/10
+Workers and 11/11 static bitmaps, all inactive. The full Viewer run ended at
+18/18 Workers and 29/29 static bitmaps, all inactive; 5792 RGBA transfers detached;
+1435 APNG emissions peaked at one temporary bitmap and zero after emission.
+
+The production core also observed a genuine desktop hidden tab preserving frame
+17 and paused state; returning restored prior playing intent. Holding a real
+first-frame response confirmed visibility changes did not enable incomplete
+media, hidden painting stayed deferred, and foreground paint/step succeeded.
+These are desktop lifecycle results, not an Android app-switch/lock-screen claim.
+
+All **26** checked JS/CSS/Worker/WASM, favicon and original acceptance-resource
+responses were HTTP 200 beneath `/AniView/` and matched the tested local build
+SHA-256, including all new stability samples. No page exceptions, unexpected
+console errors or asset 404s were observed. Main JS is ~279.60 kB / 85.67 kB gzip;
+ZIP remains a lazy separate chunk/Worker. Normal startup still does not load ZIP.
+
+Browser reports, screenshots, heap observations and the local 100 MiB archive
+remain ignored under `.tools/`. The reproducible tools and small acceptance
+inputs are committed. A new Android P0 request was sent after these production
+checks; its results are still pending. The working milestone is not marked PASSED.
 
 The browser can retain heap pages and native/GPU allocations after logical
 cleanup. Native bitmap decode cannot be force-aborted; completion is joined and
