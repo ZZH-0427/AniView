@@ -33,6 +33,8 @@ try {
   const requests = new Map()
   const errors = []
   const assets = []
+  const networkRequests = new Map()
+  const networkLoads = []
   const frameTransfers = []
   const bitmapCounts = []
   let workerTargets = 0
@@ -85,6 +87,21 @@ try {
       if (response.status >= 400) errors.push(`${response.status} ${response.url}`)
       if (/wasm|worker|\/assets\/.*\.js/i.test(response.url)) assets.push({ url: response.url, status: response.status })
     }
+    if (event.method === 'Network.requestWillBeSent') {
+      networkRequests.set(`${event.sessionId ?? 'page'}:${event.params.requestId}`, {
+        url: event.params.request.url, startedAt: event.params.timestamp,
+      })
+    }
+    if (event.method === 'Network.loadingFinished') {
+      const key = `${event.sessionId ?? 'page'}:${event.params.requestId}`
+      const request = networkRequests.get(key)
+      if (request && /archive/i.test(request.url)) networkLoads.push({
+        url: request.url, durationMs: (event.params.timestamp - request.startedAt) * 1000,
+        encodedBytes: event.params.encodedDataLength,
+      })
+      networkRequests.delete(key)
+    }
+    if (event.method === 'Network.loadingFailed') networkRequests.delete(`${event.sessionId ?? 'page'}:${event.params.requestId}`)
   }
   const send = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
     const id = ++nextId
@@ -120,11 +137,11 @@ try {
     const BrowserWorker=window.Worker;
     window.Worker=class extends BrowserWorker {
       constructor(...args){
-        super(...args);const t=window.__workerLifetime;this.__testId=++t.created;
+        const atMs=performance.now();super(...args);const t=window.__workerLifetime;this.__testId=++t.created;
         t.active++;t.peakActive=Math.max(t.peakActive,t.active);
-        t.history.push({id:this.__testId,type:'create',url:String(args[0])});
+        t.history.push({id:this.__testId,type:'create',atMs,url:String(args[0])});
         this.addEventListener('message',event=>{
-          if(event.data.type==='ready')t.history.push({id:this.__testId,type:'ready',metadata:event.data.metadata});
+          if(event.data.type==='ready')t.history.push({id:this.__testId,type:'ready',atMs:performance.now(),metadata:event.data.metadata,metrics:event.data.metrics});
         });
       }
       postMessage(message,...args){
@@ -179,8 +196,9 @@ try {
     if (apngMode && (!bitmapCounts.length || bitmapCounts.some(count => count.live !== 0 || count.peak !== 1))) throw new Error('APNG ImageBitmaps accumulated')
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
-    await writeFile(join(output, archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
-    console.log(JSON.stringify({ ...report, assets, frameTransfers: frameTransfers.length, ownership }, null, 2))
+    const result = { ...report, assets, ...(archiveMode ? { archiveNetworkLoads: networkLoads } : {}), frameTransfers: frameTransfers.length, ownership }
+    await writeFile(join(output, archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
+    console.log(JSON.stringify(result, null, 2))
     await send('Browser.close')
   } else {
   await waitFor("document.querySelector('h1')?.textContent==='Animated WebP technical spike'")

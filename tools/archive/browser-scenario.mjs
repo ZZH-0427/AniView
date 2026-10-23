@@ -179,6 +179,14 @@ export async function runArchiveCheck({ send, evaluate, waitFor, click, fixture,
 
   const workers = await lifetime()
   assert(workers.active === 0 && workers.created === workers.terminated && workers.peakActive <= 2, 'Worker leak/overlap: ' + JSON.stringify(workers))
+  const firstArchiveCreated = workers.history.find(event => event.type === 'create' && /archive/.test(event.url))
+  const firstArchiveReady = workers.history.find(event => event.type === 'ready' && event.id === firstArchiveCreated?.id)
+  assert(firstArchiveCreated && firstArchiveReady, 'First ZIP Worker ready timestamp is missing')
+  const archiveWorkerStartup = {
+    createToReadyMs: firstArchiveReady.atMs - firstArchiveCreated.atMs,
+    metadataMs: firstArchiveReady.metrics.metadataMs,
+    includes: 'Worker network loading, ZIP runtime initialization and metadata parsing; not a pure zip.js import timing',
+  }
   const resources = await evaluate("performance.getEntriesByType('resource').map(e=>({url:e.name,status:e.responseStatus,durationMs:e.duration,bytes:e.transferSize}))")
   const lazyResources = resources.filter(entry => !initialResources.includes(entry.url) && /\/assets\//.test(new URL(entry.url).pathname))
   assert(lazyResources.some(entry => /archive-session/.test(entry.url) && entry.status === 200), 'ZIP session dynamic chunk not observed with HTTP 200')
@@ -188,5 +196,5 @@ export async function runArchiveCheck({ send, evaluate, waitFor, click, fixture,
     tinyMixed: { first, second, third, revisit, afterRemoval }, errors,
     largeArchive: { encodedSize, firstOpenedMs: largeFirstMs, nextOpenedMs: largeNextMs,
       first: largeFirst, second: largeSecond, revisit: largeRevisit, frameCache: largeCache, heartbeat },
-    initialResources, lazyResources, workerLifetime: workers, passed }
+    archiveWorkerStartup, initialResources, lazyResources, workerLifetime: workers, passed }
 }

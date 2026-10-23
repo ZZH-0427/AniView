@@ -203,10 +203,41 @@ gap across 98 ticks. These are desktop results; Android performance is pending.
 
 ## GitHub Pages and Android acceptance
 
-Deployment uses the existing Node 24 validation / official Pages Actions workflow.
-Runtime assets resolve under `/AniView/`; the release must also pass real production
-ZIP and loose-format browser checks after the workflow succeeds. Actual release
-results are reported with the release commit and Actions run.
+Code release: `ca385310564fef9fd0b8bd06943dd033a0927107`
+(`feat: add lazy ZIP archive input`). Publication used the existing credential and
+GitHub Git Data API after Git HTTPS returned HTTP 408. Blob/tree/commit hashes were
+verified; main was updated without force and the local upstream ref was updated.
+
+[Actions run 39944852456](https://github.com/ZZH-0427/AniView/actions/runs/39944852456)
+completed successfully, including Node 24, clean install, lint, typecheck, all tests,
+build, official Pages artifact upload and deployment.
+
+Real Edge 155 checks against `https://ZZH-0427.github.io/AniView/?debug=1` passed:
+all 40 ZIP checks and all five existing WebP viewer/APNG/GIF/input/spike suites.
+Initial resources were main JS/CSS only. The archive-session chunk and archive
+Worker (containing zip.js), all decoder Workers and WebP WASM returned HTTP 200
+under `/AniView/`. No page exceptions, console errors or resource 404s were observed.
+390px and 1280px screenshots were inspected with no horizontal overflow.
+
+The production ZIP run with startup instrumentation ended with 43 Workers created
+and 43 terminated, peak two and final zero. All 80 observed RGBA transfers detached
+correctly; APNG bitmap ownership returned to zero. This run's session-chunk import
+took 356.3 ms (CDP request-to-finished network time 354.7 ms); tiny archive metadata
+took 3.0 ms and first extraction 2.9 ms (981 ms selection to display).
+`chunkMs` measures the archive-session dynamic import, not isolated zip.js execution
+inside its Worker. Worker Resource Timing durations reported negative values under
+CDP auto-attachment and are not treated as valid download timings. The first archive
+Worker's create-to-ready interval was 262.7 ms, including script loading, ZIP runtime
+initialization, metadata parsing and debugger instrumentation. The measurement
+harness records timestamps and labels this combined interval explicitly; it does
+not claim a separately measured pure zip.js import/download duration.
+
+The 60-entry production smoke test retained the same bounded Blob/frame budgets:
+metadata 6.3 ms, first extraction 14.7 ms, next extraction 6.2 ms, first display
+226 ms and next display 108 ms. Current extracted WebP was 380,850 bytes, peak
+output 1,001,718 bytes; FrameCache peak was 3,840,000 bytes / six frames with zero
+underruns. The 10 ms heartbeat maximum gap was 12.1 ms over 110 ticks. These remain
+individual desktop observations, not Android conclusions.
 
 Android status: **Pending user real-device validation**. Use one mainstream
 Chromium browser (Chrome or Edge) and one usual browser (Quark or QQ). Download
