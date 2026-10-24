@@ -185,7 +185,7 @@ workflows. None is available in v0.1.0, and no release dates are promised.
 
 ## Current Version
 
-**0.1.0 — release candidate preparation.** Version metadata is prepared; this
+**0.1.0 — release candidate.** Version metadata is prepared; this
 step does not create the `v0.1.0` tag or publish a GitHub Release. See the
 [release notes source](docs/releases/v0.1.0.md) and
 [release QA record](docs/releases/v0.1.0-qa.md) for the remaining release gates.
