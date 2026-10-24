@@ -26,7 +26,7 @@ has been published yet.
 
 - No password entry UI, RAR/7z, conversion, export, timeline seeking or thumbnails.
 - Supported files remain subject to processing limits and device/browser memory.
-- Final Android RC smoke and a project license decision are release gates.
+- Final Android RC smoke passed; public release awaits the project-license decision.
 
 See [release notes](docs/releases/v0.1.0.md) and
 [candidate QA](docs/releases/v0.1.0-qa.md) for the current release status.

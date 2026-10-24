@@ -91,13 +91,14 @@ do not guarantee that every file will open on every device or under memory press
 | --- | --- |
 | Desktop Edge | Complete Viewer regression, stress/soak, lifecycle and UI checks |
 | Desktop Chrome | Core cross-browser checks and release UI checks |
-| Android Edge | User-reported core viewing, ZIP, stability and release UI acceptance |
-| Android Quark | User-reported core viewing, ZIP, stability and release UI acceptance |
+| Android Edge | User-reported core viewing, ZIP, stability, UI and final RC smoke |
+| Android Quark | User-reported core viewing, ZIP, stability, UI and final RC smoke |
 | Android QQ | Earlier GIF/input functionality; reduced coverage |
 | Xiaomi Browser | Earlier WebP/input functionality; reduced coverage |
 
-Other browsers may work but are outside this validation matrix. The final
-v0.1.0 candidate's short Android smoke is tracked in the [release QA record](docs/releases/v0.1.0-qa.md).
+Other browsers may work but are outside this validation matrix. Final Android
+candidate smoke passed in Edge and Quark by user report; details are in the
+[release QA record](docs/releases/v0.1.0-qa.md).
 Detailed evidence is in the [stability](docs/milestones/milestone-6-stability-compatibility.md)
 and [UI acceptance](docs/milestones/milestone-7a-release-ui-polish.md) records.
 
