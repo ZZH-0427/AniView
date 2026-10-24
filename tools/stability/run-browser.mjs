@@ -3,8 +3,8 @@ import { spawn } from 'node:child_process'
 import { mkdir } from 'node:fs/promises'
 
 const mode = process.argv[2] ?? 'core'
-if (!['core', 'stress', 'soak'].includes(mode)) throw new Error('Expected core, stress or soak')
-if (mode !== 'core') {
+if (!['core', 'stress', 'soak', 'release-ui'].includes(mode)) throw new Error('Expected core, stress, soak or release-ui')
+if (mode === 'stress' || mode === 'soak') {
   const { generateMediaStressFixtures } = await import('./media-fixtures.mjs')
   const { generateArchiveFixtures } = await import('./archive-fixtures.mjs')
   await generateMediaStressFixtures()

@@ -76,7 +76,7 @@ export async function runViewerUXCheck({ send, evaluate, waitFor, click, url, ca
     await new Promise(resolve => setTimeout(resolve, 120))
     const layout = await evaluate(`(() => {
       const buttons=[...document.querySelectorAll('.viewer button')].filter(b=>b.getBoundingClientRect().width);
-      const bounds=buttons.map(b=>({label:b.textContent,width:b.getBoundingClientRect().width,height:b.getBoundingClientRect().height}));
+      const bounds=buttons.map(b=>({label:b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim(),width:b.getBoundingClientRect().width,height:b.getBoundingClientRect().height}));
       const canvas=document.querySelector('.viewer canvas');
       return {width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,bounds,
         cssWidth:canvas.clientWidth,backingWidth:canvas.width};
@@ -89,7 +89,7 @@ export async function runViewerUXCheck({ send, evaluate, waitFor, click, url, ca
     assert(!await evaluate('document.documentElement.scrollWidth>innerWidth'), 'Long filename overflow at ' + width)
     const header = await evaluate(`(() => {
       const heading=document.querySelector('.viewer h1').getBoundingClientRect();
-      const close=[...document.querySelectorAll('.viewer header button')][0].getBoundingClientRect();
+      const close=[...document.querySelectorAll('.viewer header button')].find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Close').getBoundingClientRect();
       return {headingRight:heading.right,closeLeft:close.left};
     })()`)
     assert(header.headingRight <= header.closeLeft, 'Filename overlaps Close at ' + width)

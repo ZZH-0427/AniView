@@ -28,7 +28,7 @@ export async function runStaticCheck({ send, evaluate, waitFor, click, pick, clo
     await waitFor(`${viewport}?.mode==='fit'`)
   }
   const assertStatic = async () => {
-    const controls = await evaluate(`Array.from(document.querySelectorAll('.playback-controls button')).map(b=>b.textContent)`)
+    const controls = await evaluate(`Array.from(document.querySelectorAll('.playback-controls button')).map(b=>b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())`)
     assert(controls.length === 0 && !await evaluate("!!document.querySelector('[data-testid=current-frame]')"), 'Static image has animation controls')
     assert((await workerCounts()).active === 0, 'Static image created/retained animation Worker')
     assert((await bitmapCounts()).live === 1, 'Static image should own exactly one native bitmap')
@@ -60,7 +60,7 @@ export async function runStaticCheck({ send, evaluate, waitFor, click, pick, clo
     if (i) await click('Next File')
     await current(name, 'static', width, height)
     await assertStatic()
-    const info = await evaluate("document.querySelector('.viewer-heading p').textContent")
+    const info = await evaluate("document.querySelector('.viewer header p').textContent")
     assert(info.startsWith(format.toUpperCase() + ' ·') && info.includes(`${width} × ${height}`), 'Static format/dimensions missing')
     const colors = await readQuadrants(); assertPixels(colors, order, name)
     samples.push({ name, width, height, colors, bitmapCounts: await bitmapCounts() })

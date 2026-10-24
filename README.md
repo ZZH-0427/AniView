@@ -3,6 +3,7 @@
 Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestones 1–6 PASSED.**
+Milestone 7A UI polish is implemented; new Android Edge/Quark UI acceptance is pending.
 The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
 Previous/Next Frame and a current-frame count. All animated formats use the same
 bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static
@@ -16,8 +17,10 @@ See [Viewer UX notes](docs/milestones/milestone-5-viewer-ux.md) for static-image
 ownership, viewport interactions, frame stepping, limits and validation status.
 See [stability and compatibility notes](docs/milestones/milestone-6-stability-compatibility.md)
 for the browser matrix, resource limits, lifecycle policy and stress procedures.
+See [release UI notes](docs/milestones/milestone-7a-release-ui-polish.md) for the
+icon controls, responsive screenshots and current acceptance status.
 
-Use **Fit**, **100%**, zoom buttons, wheel zoom and mouse drag; on touchscreens,
+Use **Fit**, **1:1**, zoom buttons, wheel zoom and mouse drag; on touchscreens,
 pinch, drag or double-tap. Double-click/tap toggles Fit and a closer detail view.
 100% means one image pixel per CSS pixel. A new file opens in Fit; animation
 frame changes preserve the current view. Animations initially open paused,
@@ -25,6 +28,10 @@ preserving the previous viewer behavior; Play starts playback and Replay restart
 and plays. Frame stepping pauses playback and never loops at an endpoint.
 Fullscreen is available when the browser supports it. Controls remain visible
 normally and hide after inactivity in fullscreen; interaction reveals them.
+The header contains Fullscreen, More and Close. Frame-step controls use bar/triangle
+icons; file navigation uses chevrons with an **Image N / Total** count. Button
+tooltips and accessible names describe each action. Static images omit playback
+and frame controls.
 
 When focus is on the image surface: Space toggles playback, Left/Right step
 frames, Shift+Left/Right change files, `0` selects Fit, `1` selects 100%, and
@@ -33,7 +40,7 @@ frames, Shift+Left/Right change files, `0` selects Fit, `1` selects 100%, and
 Choose **选择图片** on mobile or **Open Images** on desktop. The standard picker
 uses `image/*`; its gallery/directory interface depends on the browser and system.
 Select multiple files or drag files into the desktop page, then use Previous/Next File,
-Remove from list, Choose more images and Clear session. Files are opened on demand
+More → Remove from list, Choose more images and Clear session. Files are opened on demand
 from a temporary list (up to 1,000 items); removing an item never deletes the
 device file. Cancelling selection preserves the list; Close clears it.
 See [Input Experience](docs/milestones/milestone-3-input-experience.md) for the
@@ -82,12 +89,23 @@ npm run lint
 npm run typecheck
 npm run test
 npm run build
+npm run test:browser
+npm run test:release-ui
 npm run preview
 ```
 
 `test` runs Vitest once for CI; `test:watch` enables watch mode. The baseline tests
 use React's static rendering API in Node, so no simulated DOM dependency is needed.
 Production output is generated in `dist/` and is ignored by Git.
+Browser checks use an installed Edge on Windows or Chrome on Linux; `BROWSER_PATH`
+can select an existing executable. No browser is downloaded. `test:release-ui`
+checks icon/menu semantics, responsive layouts, diagnostics and short resource smoke.
+
+Normal viewing renders no developer diagnostics. With `?debug=1`, Image,
+Resource and (when applicable) Archive diagnostics appear as collapsed panels.
+Expand a panel for grouped numeric values, then expand **Raw JSON** only when
+the original complete counters are needed. Diagnostics remain local and do not
+change playback, memory limits or cleanup.
 
 ## GitHub Pages
 
@@ -99,7 +117,8 @@ Repository: [ZZH-0427/AniView](https://github.com/ZZH-0427/AniView).
 
 Select **GitHub Actions** in **Settings → Pages → Build and deployment → Source**.
 The Pages workflow runs
-`npm ci`, lint, typecheck, tests, the build and core browser regression on pushes to `main`. It uploads
+`npm ci`, lint, typecheck, tests, the build, core browser regression and release UI
+browser regression on pushes to `main`. It uploads
 `dist/` with the official Pages artifact action and deploys with `deploy-pages`.
 Pull requests run validation only. Manual runs deploy only from `main`.
 

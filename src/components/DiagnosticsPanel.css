@@ -1,0 +1,14 @@
+.diagnostics-panel { min-width: 0; max-width: 100%; color: #536378; border: 1px solid #d9e0e8; border-radius: 0.5rem; background: #f8fafc; font-size: 0.75rem; line-height: 1.4; }
+.diagnostics-panel > summary, .diagnostics-raw > summary { min-height: 44px; padding: 0.75rem; cursor: pointer; font-weight: 600; }
+.diagnostics-panel summary:focus-visible { outline: 3px solid #2765b0; outline-offset: -3px; border-radius: 0.4rem; }
+.diagnostics-panel-content { max-height: 22rem; overflow: auto; overscroll-behavior: contain; border-top: 1px solid #e1e6ed; padding: 0.75rem; }
+.diagnostics-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 1rem; }
+.diagnostics-group { min-width: 0; }
+.diagnostics-group h3 { margin: 0 0 0.4rem; color: #354b62; font-size: 0.8rem; font-weight: 650; }
+.diagnostics-group dl { display: grid; gap: 0.3rem; margin: 0; }
+.diagnostics-group dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.15rem 0.75rem; }
+.diagnostics-group dt { min-width: 0; }
+.diagnostics-group dd { margin: 0; overflow-wrap: anywhere; text-align: right; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-variant-numeric: tabular-nums; }
+.diagnostics-raw { min-width: 0; margin-top: 0.75rem; border-top: 1px solid #e1e6ed; }
+.diagnostics-raw > summary { padding: 0.75rem 0; font-weight: 500; }
+.diagnostics-raw output { display: block; max-width: 100%; margin-bottom: 0.6rem; overflow-wrap: anywhere; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.7rem; user-select: text; }

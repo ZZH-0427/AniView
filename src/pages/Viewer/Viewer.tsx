@@ -3,6 +3,8 @@ import type { VirtualFile } from '../../input/virtual-file'
 import { useViewerMedia, viewerErrorMessage } from './use-viewer-media'
 import { useViewerFullscreen } from './use-viewer-fullscreen'
 import { hasControlFocus, viewerShortcut } from './viewer-shortcuts'
+import { ViewerHeader, PlaybackControls, FileNavigation, ViewportControls } from './ViewerControls'
+import { ViewerDiagnostics } from '../../components/DiagnosticsPanel'
 import './viewer.css'
 
 export function Viewer({ file, onClose, transition, position, count, onPrevious, onNext, onRemove }: {
@@ -56,7 +58,6 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
     return () => window.removeEventListener('keydown', keydown)
   }, [animated, count, fullscreen, onNext, onPrevious, position, ready, step, togglePlayback, viewportRef])
 
-  const debug = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
   const message = status === 'loading' ? media.phase : reconstructing ? 'Reconstructing previous frame…'
     : busy ? 'Decoding…' : media.buffering ? 'Buffering…' : status === 'playing' ? 'Playing' : status === 'paused' ? 'Paused' : status === 'ended' ? 'Finished' : status === 'ready' ? 'Ready' : ''
   return <main className={`viewer${fullscreen.hidden ? ' viewer-controls-hidden' : ''}`} ref={container} tabIndex={-1}
@@ -64,11 +65,10 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
     <header className="viewer-chrome viewer-header" onPointerEnter={() => fullscreen.hold('pointer', true)}
       onPointerLeave={() => fullscreen.hold('pointer', false)} onFocus={() => fullscreen.hold('focus', true)}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) fullscreen.hold('focus', false) }}>
-      <div className="viewer-heading"><h1 title={file.name}>{file.name}</h1>
-        <p>{info && `${info.format.toUpperCase()} · ${info.width} × ${info.height}${animated ? ` · ${info.frames ?? '?'} frames` : ''}`}</p>
-        <p className="viewer-file-count">Image <span data-testid="session-position">{position} / {count}</span></p>
-      </div>
-      <button onClick={onClose}>Close</button>
+      <ViewerHeader name={file.name}
+        metadata={info && `${info.format.toUpperCase()} · ${info.width} × ${info.height}${animated ? ` · ${info.frames ?? '?'} frames` : ''}`}
+        fullscreenAvailable={fullscreen.available} fullscreen={fullscreen.fullscreen} onFullscreen={fullscreen.toggle}
+        onClose={onClose} onRemove={onRemove} />
     </header>
     <div className="viewer-surface" data-testid="media-surface" ref={surface} tabIndex={0}
       aria-label="Image view. Drag to pan; pinch or use the wheel to zoom."
@@ -85,33 +85,16 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
         <p role="status" data-testid="viewer-operation">{message}</p>
         {animated && <p data-testid="current-frame">Frame {frame} / {info.frames ?? '?'}</p>}
       </div>
-      {animated && <div className="viewer-controls playback-controls" aria-label="Animation playback">
-        <button disabled={!ready || busy || frame <= 1} onClick={() => step('previous')}>Previous Frame</button>
-        <button disabled={!ready || busy || (status !== 'paused' && status !== 'playing')} onClick={togglePlayback}>{status === 'playing' ? 'Pause' : 'Play'}</button>
-        <button disabled={!ready || busy || (info.frames !== undefined && frame >= info.frames)} onClick={() => step('next')}>Next Frame</button>
-        <button disabled={!ready} onClick={() => {
+      {animated && <PlaybackControls status={status} ready={ready} busy={busy} frame={frame} total={info.frames}
+        onStep={step} onToggle={togglePlayback} onReplay={() => {
           setError(''); void playerRef.current?.replay().catch(cause => setError(viewerErrorMessage(cause)))
-        }}>Replay</button>
-      </div>}
-      <div className="viewer-controls" aria-label="Image navigation and view">
-        <button disabled={position <= 1} onClick={onPrevious}>Previous File</button>
-        <button disabled={position >= count} onClick={onNext}>Next File</button>
-        <button onClick={onRemove}>Remove from list</button>
-        <button disabled={!ready || !view || view.scale <= view.minScale} onClick={() => viewportRef.current?.zoomBy(1 / 1.25)} aria-label="Zoom Out">−</button>
-        <output data-testid="zoom-percent" aria-label="Zoom">{view ? `${Math.round(view.scale * 100)}%` : '—'}</output>
-        <button disabled={!ready || !view || view.scale >= view.maxScale} onClick={() => viewportRef.current?.zoomBy(1.25)} aria-label="Zoom In">+</button>
-        <button disabled={!ready} onClick={() => viewportRef.current?.fit()}>Fit</button>
-        <button disabled={!ready} onClick={() => viewportRef.current?.actual()}>100%</button>
-        {fullscreen.available && <button onClick={fullscreen.toggle}>{fullscreen.fullscreen ? 'Exit Fullscreen' : 'Fullscreen'}</button>}
-      </div>
+        }} />}
+      <FileNavigation position={position} count={count} onPrevious={onPrevious} onNext={onNext} />
+      <ViewportControls ready={ready} scale={view?.scale} minimum={view?.minScale} maximum={view?.maxScale} mode={view?.mode}
+        onZoom={factor => viewportRef.current?.zoomBy(factor)} onFit={() => viewportRef.current?.fit()} onActual={() => viewportRef.current?.actual()} />
       <p role="alert">{error}</p>
       <p role="status">{fullscreen.notice}</p>
-      {debug && <div className="viewer-diagnostics">
-        <output data-testid="playback-metrics">{JSON.stringify(media.metrics)}</output>
-        <output data-testid="step-metrics">{JSON.stringify(media.stepMetrics)}</output>
-        <output data-testid="viewport-metrics">{JSON.stringify(view)}</output>
-        <output data-testid="media-resource">{JSON.stringify({ kind: info?.kind, width: info?.width, height: info?.height })}</output>
-      </div>}
+      <ViewerDiagnostics metrics={media.metrics} stepMetrics={media.stepMetrics} view={view} info={info} />
       <p className="viewer-privacy">Files are processed locally in your browser.</p>
     </div>
   </main>

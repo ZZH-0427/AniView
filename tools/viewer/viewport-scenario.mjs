@@ -35,9 +35,9 @@ export async function runViewportCheck({ send, evaluate, waitFor, click, pick, c
     // fullscreenchange updates native state before React commits the button's
     // new label; wait for the actionable control rather than racing that render.
     await waitFor(`Array.from(document.querySelectorAll('button')).some(b=>!b.disabled&&
-      (b.textContent===${JSON.stringify(label)}||b.getAttribute('aria-label')===${JSON.stringify(label)}))`)
+      ((b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(label)}||b.getAttribute('aria-label')===${JSON.stringify(label)}))`)
     const box = await evaluate(`(() => {
-      const e=[...document.querySelectorAll('button')].find(b=>b.textContent===${JSON.stringify(label)}||b.getAttribute('aria-label')===${JSON.stringify(label)});
+      const e=[...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(label)}||b.getAttribute('aria-label')===${JSON.stringify(label)});
       if(!e||e.disabled)return null;e.scrollIntoView({block:'nearest'});
       const b=e.getBoundingClientRect();return {x:b.x+b.width/2,y:b.y+b.height/2};
     })()`)

@@ -21,7 +21,7 @@ export async function runFrameStepCheck({ evaluate, waitFor, click, pick, close,
   await evaluate(`window.__viewerStep = async function(label) {
     const read = id => document.querySelector('[data-testid='+id+']')?.textContent;
     const index = () => Number(read('current-frame').match(/Frame (\\d+)/)[1]);
-    const button = Array.from(document.querySelectorAll('button')).find(b=>b.textContent===label);
+    const button = Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===label);
     if (!button || button.disabled) throw new Error('Unavailable step button: '+label);
     const before=index(), target=before+(label==='Previous Frame'?-1:1);
     const beforeMetrics=JSON.parse(read('step-metrics'));
@@ -43,7 +43,7 @@ export async function runFrameStepCheck({ evaluate, waitFor, click, pick, close,
   }`)
 
   const step = label => evaluate(`window.__viewerStep(${JSON.stringify(label)})`)
-  const isDisabled = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent===${JSON.stringify(label)})?.disabled`)
+  const isDisabled = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(label)})?.disabled`)
   const hash = () => evaluate(`(() => {
     const canvas=document.querySelector('canvas');
     const data=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
@@ -136,7 +136,7 @@ export async function runFrameStepCheck({ evaluate, waitFor, click, pick, close,
       // Advance by inspection to force a well-defined evicted target.
       for (let index = 0; index < 24; index++) await step('Next Frame')
       await step('Previous Frame'); await step('Previous Frame')
-      await evaluate("window.__viewerStepGate.armed=true;Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='Previous Frame').click()")
+      await evaluate("window.__viewerStepGate.armed=true;Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Previous Frame').click()")
       await waitFor("!!window.__viewerStepGate.held&&document.querySelector('[data-testid=viewer-operation]')?.textContent==='Reconstructing previous frame…'")
       await click(action)
       if (action === 'Next File') await waitFor(`${state}==='paused'&&${total}===100&&${frame}===1`)

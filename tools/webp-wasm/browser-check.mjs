@@ -9,7 +9,8 @@ const url = process.argv[2]
 const inputMode = process.argv[4] === 'input'
 const archiveMode = process.argv[4] === 'archive'
 const stabilityMode = ['core', 'stress', 'soak'].includes(process.argv[4])
-const uxMode = process.argv[4] === 'ux' || stabilityMode
+const releaseMode = process.argv[4] === 'release-ui'
+const uxMode = process.argv[4] === 'ux' || stabilityMode || releaseMode
 const fixture = resolve(process.argv[3] ?? '.tools/fixtures/animated.webp')
 if (!url) throw new Error('Usage: node tools/webp-wasm/browser-check.mjs <spike-url> [animated.webp]')
 const output = join(root, '.tools', 'browser-results')
@@ -135,15 +136,23 @@ try {
     }
     throw new Error(`Timed out: ${expression}; ${await evaluate('document.body.innerText')}`)
   }
-  const click = label => {
+  const click = async label => {
     const actual = label === 'Previous' ? 'Previous File' : label === 'Next' ? 'Next File' : label
-    return evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent===${JSON.stringify(actual)}||b.getAttribute('aria-label')===${JSON.stringify(actual)})?.click()`)
+    if (actual === 'Remove from list') {
+      await evaluate(`(() => {
+        const name=b=>b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim();
+        const target=[...document.querySelectorAll('button')].find(b=>name(b)==='Remove from list');
+        if(!target?.getClientRects().length)[...document.querySelectorAll('button')].find(b=>name(b)==='More')?.click();
+      })()`)
+      await waitFor(`Array.from(document.querySelectorAll('button')).some(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Remove from list'&&b.getClientRects().length>0)`)
+    }
+    return evaluate(`Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(actual)})?.click()`)
   }
   const select = async path => {
     const { root } = await send('DOM.getDocument')
     const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: 'input[type=file]' })
     await send('DOM.setFileInputFiles', { nodeId, files: [path] })
-    await waitFor(`Array.from(document.querySelectorAll('button')).some(b=>b.textContent==='Open File'&&!b.disabled)`)
+    await waitFor(`Array.from(document.querySelectorAll('button')).some(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Open File'&&!b.disabled)`)
   }
   await send('Page.enable')
   await send('Page.bringToFront')
@@ -215,11 +224,16 @@ try {
     const largeMode = process.argv[4] === 'apng-large'
     const apngMode = largeMode || process.argv[4] === 'apng'
     const gifMode = process.argv[4] === 'gif'
-    const run = stabilityMode ? (await import('../stability/browser-scenario.mjs')).runStabilityCheck : uxMode ? (await import('../viewer/browser-scenario.mjs')).runViewerUXCheck : archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
+    const run = releaseMode ? (await import('../release-ui/browser-scenario.mjs')).runReleaseUICheck : stabilityMode ? (await import('../stability/browser-scenario.mjs')).runStabilityCheck : uxMode ? (await import('../viewer/browser-scenario.mjs')).runViewerUXCheck : archiveMode ? (await import('../archive/browser-scenario.mjs')).runArchiveCheck : inputMode ? (await import('../input/browser-scenario.mjs')).runInputCheck : gifMode ? (await import('../gif-scenario.mjs')).runGIFCheck : largeMode ? (await import('../apng/large-frame-scenario.mjs')).runLargeAPNGCheck
       : apngMode ? (await import('../apng/browser-scenario.mjs')).runAPNGCheck : (await import('../playback/browser-scenario.mjs')).runViewerCheck
     const report = await run({ send, evaluate, waitFor, click, fixture, url, mode: process.argv[4], capture: async width => {
-      const screenshot = await send('Page.captureScreenshot', { format: 'png' })
-      await writeFile(join(output, `${uxMode ? 'viewer-ux' : archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
+      const metrics = releaseMode ? await send('Page.getLayoutMetrics') : undefined
+      const content = metrics?.cssContentSize
+      const screenshot = await send('Page.captureScreenshot', { format: 'png', ...(content ? {
+        captureBeyondViewport: true,
+        clip: { x: 0, y: 0, width: Math.ceil(content.width), height: Math.ceil(content.height), scale: 1 },
+      } : {}) })
+      await writeFile(join(output, `${releaseMode ? 'release-ui' : uxMode ? 'viewer-ux' : archiveMode ? 'archive' : inputMode ? 'input' : gifMode ? 'gif' : largeMode ? 'apng-large' : apngMode ? 'apng' : 'viewer'}-${width}.png`), Buffer.from(screenshot.data, 'base64'))
     } })
     if (frameTransfers.length < 10 || frameTransfers.some(detached => !detached)) throw new Error('Viewer RGBA ownership was not transferred')
     if (!(await evaluate('window.__inputTransfers')).every(Boolean)) throw new Error('Viewer input ownership was not transferred')
@@ -230,7 +244,7 @@ try {
     if (errors.length) throw new Error(JSON.stringify(errors))
     const ownership = { framesObserved: bitmapCounts.length, peakLiveBitmaps: Math.max(0, ...bitmapCounts.map(count => count.peak)), liveBitmapsAfterEmit: Math.max(0, ...bitmapCounts.map(count => count.live)) }
     const result = { ...report, assets, ...(archiveMode ? { archiveNetworkLoads: networkLoads } : {}), frameTransfers: frameTransfers.length, ownership }
-    await writeFile(join(output, stabilityMode ? `stability-${process.argv[4]}-report.json` : uxMode ? 'viewer-ux-report.json' : archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
+    await writeFile(join(output, releaseMode ? 'release-ui-report.json' : stabilityMode ? `stability-${process.argv[4]}-report.json` : uxMode ? 'viewer-ux-report.json' : archiveMode ? 'archive-report.json' : inputMode ? 'input-report.json' : gifMode ? 'gif-report.json' : largeMode ? 'apng-large-report.json' : apngMode ? 'apng-report.json' : 'viewer-report.json'), JSON.stringify(result, null, 2))
     console.log(JSON.stringify(result, null, 2))
     await send('Browser.close')
   } else {

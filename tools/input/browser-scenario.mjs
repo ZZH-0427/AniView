@@ -19,7 +19,7 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
   const passed = []
   const lifecycle = () => evaluate('window.__workerLifetime')
   const assert = (value, message) => { if (!value) throw new Error(message) }
-  const isDisabled = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent===${JSON.stringify(label === 'Previous' ? 'Previous File' : label === 'Next' ? 'Next File' : label)})?.disabled`)
+  const isDisabled = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(label === 'Previous' ? 'Previous File' : label === 'Next' ? 'Next File' : label)})?.disabled`)
   const expectCurrent = async (path, expectedFormat, index, total, expectedState = 'paused') => {
     await waitFor(`${title}===${JSON.stringify(basename(path))}&&${position}===${JSON.stringify(`${index} / ${total}`)}&&${state}===${JSON.stringify(expectedState)}`)
     if (expectedFormat) {
@@ -152,7 +152,7 @@ export async function runInputCheck({ send, evaluate, waitFor, click, fixture, u
     await delay(120)
     assert(!await evaluate('document.documentElement.scrollWidth>innerWidth'), 'Session controls overflow viewport')
     await evaluate("document.querySelector('.session-options').open=true")
-    const controls = await evaluate("Array.from(document.querySelectorAll('.session-actions button,.viewer-controls button')).map(b=>({label:b.textContent,height:b.getBoundingClientRect().height}))")
+    const controls = await evaluate("Array.from(document.querySelectorAll('.session-actions button,.viewer-controls button')).map(b=>({label:b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim(),height:b.getBoundingClientRect().height}))")
     assert(controls.every(button => button.height >= 44), 'Small session/player touch target')
     await evaluate("document.querySelector('.session-options').open=false")
     await capture?.(`viewer-${width}`)

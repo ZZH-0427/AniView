@@ -137,7 +137,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
   await click('Pause')
   checks.push('real desktop tab visibility observed and previous playback intent restored')
 
-  const fullscreenAvailable = await evaluate("[...document.querySelectorAll('button')].some(b=>b.textContent==='Fullscreen')")
+  const fullscreenAvailable = await evaluate("[...document.querySelectorAll('button')].some(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Fullscreen')")
   const fullscreenRounds = mode === 'core' ? 1 : 5
   if (fullscreenAvailable) for (let round = 0; round < fullscreenRounds; round++) {
     const result = await send('Runtime.evaluate', { expression: "document.querySelector('.viewer').requestFullscreen()", userGesture: true, awaitPromise: true, returnByValue: true })
@@ -167,7 +167,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
   if (mode !== 'core') {
     const selection = Array.from({ length: 192 }, (_, index) => mixed[index % 6][0])
     await pick(selection); await waitFor(`${state}==='ready'`)
-    await evaluate("for(let i=0;i<100;i++)[...document.querySelectorAll('button')].find(b=>b.textContent==='Next File').click()")
+    await evaluate("for(let i=0;i<100;i++)[...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())==='Next File').click()")
     await waitFor(`document.querySelector('[data-testid=session-position]')?.textContent==='101 / 192'&&${state}==='ready'`)
     assert(await evaluate("document.querySelector('.viewer h1').textContent") === 'quadrants.webp', 'Stale rapid-switch media committed')
     rapidSwitches = 100; await close()

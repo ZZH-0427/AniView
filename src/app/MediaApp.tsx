@@ -46,7 +46,7 @@ export function MediaApp() {
     }
   }, [addFiles])
 
-  return <>
+  return <div className={`media-app${current ? ' has-media' : ''}${archive ? ' has-archive' : ''}`}>
     {archive && <ArchiveSummary key={archive.status === 'open' ? archive.session.id : `${archive.status}:${archive.name}`}
       archive={archive} onClose={clear} count={session.items.length} />}
     {current ? <>
@@ -67,5 +67,5 @@ export function MediaApp() {
     {notice && <p className="session-notice" role="status">{notice}</p>}
     <RuntimeDiagnosticsPanel />
     {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}
-  </>
+  </div>
 }

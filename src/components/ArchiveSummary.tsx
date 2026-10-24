@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ArchiveState } from '../app/use-media-source'
+import { DiagnosticsGroup, DiagnosticsPanel, RawDiagnostics } from './DiagnosticsPanel'
 
 export function ArchiveSummary({ archive, onClose, count }: {
   archive: ArchiveState; onClose: () => void; count: number
@@ -19,7 +20,16 @@ export function ArchiveSummary({ archive, onClose, count }: {
     {archive.status === 'open' && <>
       <p>{archive.session.entries.length} entries · {count} images in the viewing list</p>
       {!count && <p>{archive.session.files.length ? 'No images remain in the viewing list.' : 'No viewable media found in this ZIP.'}</p>}
-      {debug && <output data-testid="archive-metrics">{JSON.stringify({ ...metrics, chunkMs: archive.chunkMs })}</output>}
+      {debug && <DiagnosticsPanel title="Archive diagnostics">
+        <DiagnosticsGroup title="Archive" values={[
+          { label: 'Entries / media', value: `${metrics?.entryCount ?? 0} / ${metrics?.mediaCount ?? 0}` },
+          { label: 'Declared bytes', value: metrics?.totalDeclaredBytes ?? 0 },
+          { label: 'Extractions', value: metrics?.extractions ?? 0 },
+          { label: 'Current / peak bytes', value: `${metrics?.currentExtractedBytes ?? 0} / ${metrics?.peakExtractedBytes ?? 0}` },
+          { label: 'Chunk / metadata / extraction (ms)', value: `${archive.chunkMs.toFixed(1)} / ${(metrics?.metadataMs ?? 0).toFixed(1)} / ${(metrics?.extractMs ?? 0).toFixed(1)}` },
+        ]} />
+        <RawDiagnostics items={[{ testId: 'archive-metrics', value: { ...metrics, chunkMs: archive.chunkMs } }]} />
+      </DiagnosticsPanel>}
     </>}
     <button onClick={onClose}>Close archive</button>
   </section>
