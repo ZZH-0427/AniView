@@ -208,8 +208,10 @@ malformed/oversized variants are created in test memory or ignored browser outpu
 `tools/viewer/generate-fixtures.mjs` reuses the original lossless red/green WebP
 payloads to produce a **200-frame, 9,644-byte** WebP. It also creates a **six-entry,
 2,349-byte** ZIP ordered JPEG → GIF → PNG → APNG → static WebP → animated WebP.
-These and orientation-6 JPEG are hosted under `public/validation/viewer/` for
-Android checks. No downloaded artwork or large performance archive is published.
+These and orientation-6 JPEG were hosted for Android checks. Milestone 7B removed
+the historical production assets; the identical samples now live under
+[`tests/fixtures/validation/viewer/`](../../tests/fixtures/validation/viewer/).
+No downloaded artwork or large performance archive is published.
 
 Formal local environment: installed Windows Node **v24.22.1**, npm **11.19.1**.
 `npm ci`, lint, typecheck, tests and build pass: **33 files / 405 tests**, including
@@ -320,11 +322,11 @@ The user tested the deployed Viewer in Android Quark and Edge and confirmed:
 This satisfies the mainstream Chromium plus usual Android browser requirement.
 The accepted checklist at `https://ZZH-0427.github.io/AniView/?debug=1` covered:
 
-- `validation/viewer/long.webp`: Play/Pause, Next/Previous Frame around frame 50+,
+- [long.webp](../../tests/fixtures/validation/viewer/long.webp): Play/Pause, Next/Previous Frame around frame 50+,
   repeated backward inspection after history is evicted, then Replay.
-- `validation/viewer/mixed-media.zip`: all three static and three animated formats;
+- [mixed-media.zip](../../tests/fixtures/validation/viewer/mixed-media.zip): all three static and three animated formats;
   Previous/Next File, mode/controls changing with media, Close/reopen.
-- `validation/viewer/orientation-6.jpg`: portrait-oriented JPEG, with blue/red on
+- [orientation-6.jpg](../../tests/fixtures/validation/viewer/orientation-6.jpg): portrait-oriented JPEG, with blue/red on
   the top row and yellow/green on the bottom row.
 
 For static and animated images, the checklist also covered pinch, one-finger

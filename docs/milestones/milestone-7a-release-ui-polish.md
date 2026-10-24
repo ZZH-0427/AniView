@@ -1,11 +1,12 @@
 # Milestone 7A — Release UI Polish
 
-Status: **PENDING ANDROID UI VALIDATION** (2026-10-24).
+Status: **PASSED** (2026-10-24).
 
 Milestones 0–6 remain closed. This milestone changes presentation only. The new
-Android Edge and Quark functional UI checks passed by user report. Animated and
-static real-phone screenshots remain outstanding; earlier desktop emulation
-screenshots do not provide that evidence.
+Android Edge and Quark functional UI checks passed by user report. The user's
+Milestone 7B brief subsequently confirms completion of the real-device UI and
+animated/static screenshot acceptance. This closure uses that explicit user
+confirmation; no independent review of new phone image attachments is claimed.
 No version change, tag or GitHub Release is part of this milestone.
 
 ## Presentation boundaries
@@ -198,8 +199,13 @@ no issue was reported. This is fresh real-device acceptance for Milestone 7A.
 No device/browser versions, per-browser fullscreen capability detail or new
 numeric performance measurements were supplied, and none are inferred.
 
-The remaining evidence is **one animated-media and one static-media real-phone
-screenshot**, required by the task's Android screenshot validation section.
-Neither has been supplied yet. No additional functional rerun is requested.
-Until that evidence arrives: **PENDING ANDROID UI VALIDATION; Milestone 7B is
-not started**.
+The subsequent Milestone 7B brief explicitly states that the Android Edge/Quark
+UI and screenshot acceptance is complete and identifies **Milestone 7A PASSED**.
+That current user confirmation closes the previously pending screenshot gate.
+Milestone 7A is closed; release preparation proceeds under Milestone 7B.
+
+Milestone 7B also retires the historical production `/validation/` downloads.
+The same small originals remain in
+[`tests/fixtures/validation/`](../../tests/fixtures/validation/), and browser tools
+select those local files. Earlier production checks above describe the assets
+available when that milestone was verified.

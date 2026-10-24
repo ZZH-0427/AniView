@@ -1,82 +1,136 @@
 # AniView
 
-Local Animated Media Viewer for mobile and desktop browsers.
+A client-side web viewer for animated and static images, with first-class
+Animated WebP, APNG and GIF playback on mobile and desktop.
 
-**Project status: early development / Milestones 1–6 PASSED.**
-Milestone 7A UI polish is implemented. New Android Edge/Quark functional UI
-acceptance passed; real-device animated/static screenshots are still pending.
-The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
-Previous/Next Frame and a current-frame count. All animated formats use the same
-bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static
-PNG and static WebP use native decoding and the same Canvas viewer, without an
-animation player or frame cache.
-See the [WebP vertical slice](docs/milestones/milestone-1-webp-vertical-slice.md)
-and [APNG integration notes](docs/milestones/milestone-2a-apng.md).
-See [GIF integration notes](docs/milestones/milestone-2b-gif.md) for timing,
-disposal compatibility, the approved interlace adaptation and acceptance status.
-See [Viewer UX notes](docs/milestones/milestone-5-viewer-ux.md) for static-image
-ownership, viewport interactions, frame stepping, limits and validation status.
-See [stability and compatibility notes](docs/milestones/milestone-6-stability-compatibility.md)
-for the browser matrix, resource limits, lifecycle policy and stress procedures.
-See [release UI notes](docs/milestones/milestone-7a-release-ui-polish.md) for the
-icon controls, responsive screenshots and current acceptance status.
+## Live Demo
 
-Use **Fit**, **1:1**, zoom buttons, wheel zoom and mouse drag; on touchscreens,
-pinch, drag or double-tap. Double-click/tap toggles Fit and a closer detail view.
-100% means one image pixel per CSS pixel. A new file opens in Fit; animation
-frame changes preserve the current view. Animations initially open paused,
-preserving the previous viewer behavior; Play starts playback and Replay restarts
-and plays. Frame stepping pauses playback and never loops at an endpoint.
-Fullscreen is available when the browser supports it. Controls remain visible
-normally and hide after inactivity in fullscreen; interaction reveals them.
-The header contains Fullscreen, More and Close. Frame-step controls use bar/triangle
-icons; file navigation uses chevrons with an **Image N / Total** count. Button
-tooltips and accessible names describe each action. Static images omit playback
-and frame controls.
+**[Open AniView](https://zzh-0427.github.io/AniView/)**
 
-When focus is on the image surface: Space toggles playback, Left/Right step
-frames, Shift+Left/Right change files, `0` selects Fit, `1` selects 100%, and
-`+`/`-` zoom. Focused controls retain their native keyboard behavior.
+Choose local images or a ZIP archive. Media processing happens in your browser.
 
-Choose **选择图片** on mobile or **Open Images** on desktop. The standard picker
-uses `image/*`; its gallery/directory interface depends on the browser and system.
-Select multiple files or drag files into the desktop page, then use Previous/Next File,
-More → Remove from list, Choose more images and Clear session. Files are opened on demand
-from a temporary list (up to 1,000 items); removing an item never deletes the
-device file. Cancelling selection preserves the list; Close clears it.
-See [Input Experience](docs/milestones/milestone-3-input-experience.md) for the
-final Android picker validation matrix. QQ, Quark, Chrome, Edge and Xiaomi
-passed user-reported selection, playback and multi-file navigation checks.
+## Features and Supported Formats
 
-Use the secondary **Open ZIP** action (**打开 ZIP 压缩包** on mobile) to browse
-images and animations inside a local ZIP without extracting it to your device. Entries keep
-their archive order and nested names. Only the current image is extracted;
-Previous/Next File and playback use the same viewer as ordinary images. Opening a ZIP
-replaces the current list; selecting ordinary images replaces the archive.
-Close archive releases its resources. Password-protected entries are identified,
-but password entry is not available yet. ZIP processing stays entirely local.
-See [ZIP archive notes](docs/milestones/milestone-4-zip-archive.md) for limits,
-supported entry discovery, validation and the completed Android acceptance record.
+| Media | Supported formats |
+| --- | --- |
+| Animated images | Animated WebP, APNG, GIF, including single-frame GIF |
+| Static images | JPEG/JPG, PNG, static WebP |
+| Archive input | ZIP containing supported images |
 
-Supported formats: GIF, Animated WebP, APNG, JPEG, static PNG and static WebP.
-The broad system image picker does not imply HEIC/TIFF/BMP/SVG/AVIF support.
-Files are processed locally in your browser; viewing requires no media uploads,
-accounts or backend. No analytics is included. Static files are limited to 64 MiB
-encoded, 4,194,304 pixels and 16,384 pixels per edge; oversized images are rejected
-before native decoding. There is no conversion, editing or export.
-Animation scheduling suspends while the page is hidden. Returning resumes only
-when it was playing before backgrounding; paused media stays paused, with no
-attempt to catch up all hidden-time frames. Browser/device memory pressure can
-still prevent an otherwise supported file from opening. APNG needs Worker
-ImageBitmap decoding and OffscreenCanvas; GIF does not require OffscreenCanvas.
+Animated formats use AniView's decoding and playback pipeline rather than
+browser-native animated `<img>` playback as the baseline. All three animation
+formats share playback, bounded frame caching and Canvas rendering.
 
-An isolated Milestone 1A Animated WebP engineering spike is available through
-`?spike=webp`; this is not production playback support. Its build, ownership and
-validation details are in [the technical notes](docs/milestones/milestone-1a-webp-wasm.md).
+- Play, pause, resume, replay and inspect individual frames.
+- Browse multiple selected or dropped images with Previous/Next File.
+- Fit, actual size, zoom, pan, pinch and double-tap/double-click.
+- Use fullscreen when the browser provides it.
+- View images inside a ZIP without manually extracting the archive.
+- Use a responsive, icon-first viewer with accessible names and keyboard controls.
 
-## Development
+## How to Use
 
-Install Node.js 24 LTS (see `.nvmrc`) with npm, then:
+1. On a phone, tap **选择图片**; on desktop, choose **Open Images** or drag files
+   onto the page. Multiple image selection is supported.
+2. An animation opens paused on its first frame. Press Play to start; Replay
+   restarts and plays. Static images open without animation controls.
+3. Use the file chevrons around **Image N / Total** to change images. Use the
+   bar/triangle controls to step animation frames.
+4. Add more images through the image-list options. **More → Remove from list**
+   removes a reference from the temporary list; it does not delete the file on
+   your device. Close clears the current viewing source.
+
+The exact system picker interface, available albums, directory access and Camera
+entry are controlled by the browser/OS. Cancelling a picker preserves the current
+list. A broad image picker can show formats that AniView does not support.
+
+## ZIP Support
+
+Choose **Open ZIP** (**打开 ZIP 压缩包** on mobile) to browse a local archive.
+Entries retain their archive order and nested names. Metadata is read first;
+only the current image entry is extracted. Opening a ZIP replaces the ordinary
+image list, and choosing ordinary images replaces the archive.
+
+Encrypted entries are identified separately from corrupted entries, and you can
+continue to other images. **Password entry UI is not included in v0.1.0.** ZIP
+browsing is subject to resource and integrity checks. RAR and 7z are unsupported.
+
+## Viewer Controls
+
+| Action | Controls |
+| --- | --- |
+| Animation | Previous Frame, Play/Pause, Next Frame, Replay; current frame counter |
+| Files | Previous File, Image N / Total, Next File |
+| View | Zoom out/in, percentage, Fit, 1:1, drag/pinch, double-tap/double-click |
+| Viewer | Fullscreen when supported, More, Close |
+
+Hover over an icon for its title. **1:1** means one image pixel per CSS pixel.
+A new file opens in Fit; frame changes preserve the current view. Frame stepping
+pauses playback and stops at the endpoints. Older frames may be reconstructed
+rather than permanently retained, keeping frame inspection bounded-memory.
+
+With focus on the image surface, Space toggles playback, Left/Right step frames,
+Shift+Left/Right change files, `0` selects Fit, `1` selects actual size, and
+`+`/`-` zoom. Escape exits fullscreen. Focused controls retain their native
+keyboard behavior. In fullscreen, controls hide after inactivity and reappear
+with interaction.
+
+## Privacy and Local Processing
+
+Image and ZIP contents are processed locally in the browser. AniView has no
+backend media-upload API and does not require an account. It does not upload
+selected media, archive passwords or diagnostics, and includes no analytics.
+The browser still downloads the website's application assets from GitHub Pages.
+
+AniView applies resource limits to untrusted media and ZIP input. These limits
+do not guarantee that every file will open on every device or under memory pressure.
+
+## Browser Compatibility
+
+| Environment | Validation coverage |
+| --- | --- |
+| Desktop Edge | Complete Viewer regression, stress/soak, lifecycle and UI checks |
+| Desktop Chrome | Core cross-browser checks and release UI checks |
+| Android Edge | User-reported core viewing, ZIP, stability and release UI acceptance |
+| Android Quark | User-reported core viewing, ZIP, stability and release UI acceptance |
+| Android QQ | Earlier GIF/input functionality; reduced coverage |
+| Xiaomi Browser | Earlier WebP/input functionality; reduced coverage |
+
+Other browsers may work but are outside this validation matrix. The final
+v0.1.0 candidate's short Android smoke is tracked in the [release QA record](docs/releases/v0.1.0-qa.md).
+Detailed evidence is in the [stability](docs/milestones/milestone-6-stability-compatibility.md)
+and [UI acceptance](docs/milestones/milestone-7a-release-ui-polish.md) records.
+
+The viewer requires Canvas 2D, Pointer Events, ResizeObserver, AbortController,
+animation-frame scheduling and local File/Blob APIs. Animated formats and ZIP
+use module Web Workers. Animated WebP also requires WebAssembly. Static images
+need `createImageBitmap`; APNG needs Worker-side `createImageBitmap` and
+OffscreenCanvas. GIF does not require OffscreenCanvas. Fullscreen is optional.
+
+## Resource Limits and Known Limitations
+
+| Resource | Current limit |
+| --- | --- |
+| Encoded image or extracted media entry | 64 MiB |
+| Static image pixels | 4,194,304 |
+| Static image edge | 16,384 pixels |
+| Display Canvas backing | 8,192 pixels per edge; 16,777,216 pixels total |
+| Viewing list | 1,000 images |
+| ZIP | 512 MiB encoded; 10,000 entries; 64 MiB per uncompressed entry |
+
+Other archive/path/compression and decoded-frame limits apply. See
+[v0.1.0 resource limits](docs/releases/v0.1.0-limits.md). Browser memory pressure
+can prevent a supported file from opening. Playback suspends while the page is
+hidden and preserves prior playing/paused intent on return.
+
+v0.1.0 does not include password entry for encrypted ZIPs, RAR/7z, conversion,
+static-image-to-animation creation, video, converted-file export, timeline or
+arbitrary frame seeking, or a thumbnail gallery. HEIC, TIFF, AVIF, SVG and BMP
+are not supported formats. These are scope limits, not advertised features.
+
+## Development and Validation
+
+Use **Node.js 24 LTS** with **npm**. `.nvmrc` and package engines specify Node 24.
 
 ```sh
 npm ci
@@ -95,64 +149,43 @@ npm run test:release-ui
 npm run preview
 ```
 
-`test` runs Vitest once for CI; `test:watch` enables watch mode. The baseline tests
-use React's static rendering API in Node, so no simulated DOM dependency is needed.
-Production output is generated in `dist/` and is ignored by Git.
-Browser checks use an installed Edge on Windows or Chrome on Linux; `BROWSER_PATH`
-can select an existing executable. No browser is downloaded. `test:release-ui`
-checks icon/menu semantics, responsive layouts, diagnostics and short resource smoke.
+`test:watch` enables Vitest watch mode. Browser checks use an installed Edge on
+Windows or Chrome on Linux; `BROWSER_PATH` selects another installed executable.
+The harness downloads no browser. Optional `test:stress` and `test:soak` commands
+are documented in the stability record. Generated test data stays outside the
+production public tree.
 
-Normal viewing renders no developer diagnostics. With `?debug=1`, Image,
-Resource and (when applicable) Archive diagnostics appear as collapsed panels.
-Expand a panel for grouped numeric values, then expand **Raw JSON** only when
-the original complete counters are needed. Diagnostics remain local and do not
-change playback, memory limits or cleanup.
+For development, `?debug=1` enables initially collapsed, local diagnostics with
+optional Raw JSON. It neither disables safety limits nor uploads diagnostics.
+Ordinary viewing renders no diagnostic panels.
 
-## GitHub Pages
+Vite uses **`/AniView/`** in development and production. The GitHub Actions Pages
+workflow validates clean installation, lint, types, tests, build and browser
+regressions. Main builds deploy through the official Pages actions; pull requests
+validate only. `dist/` is generated and is not committed. Architecture and
+contribution rules are in [PLAN.md](PLAN.md) and [AGENTS.md](AGENTS.md).
 
-Vite uses `/AniView/` as its base in development and production. Future runtime
-assets must use Vite imports, `new URL(..., import.meta.url)` or
-`import.meta.env.BASE_URL` rather than hard-coded root URLs.
+## Third-party Components and Licensing
 
-Repository: [ZZH-0427/AniView](https://github.com/ZZH-0427/AniView).
+AniView uses libwebp/Emscripten, apng-js, omggif, zip.js, React and React DOM.
+Versions, purposes and license sources are listed in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); retained license texts are under
+[`third_party/licenses/`](third_party/licenses/). The deployed application also
+includes [third-party notices](https://zzh-0427.github.io/AniView/third-party-notices.txt).
 
-Select **GitHub Actions** in **Settings → Pages → Build and deployment → Source**.
-The Pages workflow runs
-`npm ci`, lint, typecheck, tests, the build, core browser regression and release UI
-browser regression on pushes to `main`. It uploads
-`dist/` with the official Pages artifact action and deploys with `deploy-pages`.
-Pull requests run validation only. Manual runs deploy only from `main`.
+AniView's own project license has not been selected.
+**PROJECT LICENSE DECISION REQUIRED BEFORE PUBLIC RELEASE.** Third-party notices
+do not grant a license to AniView's own code.
 
-The expected production URL is [AniView](https://ZZH-0427.github.io/AniView/).
-Check the **Validate and deploy Pages** workflow in the repository's **Actions**
-tab for the actual validation and deployment result.
-Do not commit `dist/` or maintain a `gh-pages` source branch.
+## Roadmap
 
-## Module boundaries
+Future work may include password ZIP UI, static images to animation, GIF/WebP/APNG
+conversion, animated images to video, video to animated formats and export
+workflows. None is available in v0.1.0, and no release dates are promised.
 
-- `src/app/` and `src/pages/`: React shell, Home and Viewer.
-- `src/input/virtual-file.ts`: source-independent byte reads, including ranges.
-- `src/input/`: shared browser-file adapters for standard selection and file drops.
-- `src/archive/`: lazy Worker-backed ZIP metadata, entry policy and VirtualFile source.
-- `src/formats/`: binary detection, unified opening, Worker-backed animation adapters and native static-image sources.
-- `src/media/`: animation/frame contracts, resource policy and categorized errors.
-- `src/media/media-session.ts`: page-lifetime ordered references and file navigation.
-- `src/player/`: bounded prefetch/cache, presentation clock and frame inspection.
-- `src/renderer/`: viewport geometry, mouse/touch gestures and Canvas drawing.
+## Current Version
 
-Animation sequences expose fresh incremental frame streams for replay. Consumers
-own yielded frames and must dispose of them on eviction. Frames are normalized
-to fully composited canvas-sized images so codec blend/disposal details stay in
-the decoder adapter. Renderer calls borrow a frame synchronously. The player
-owns sequence cleanup and a byte-bounded cache (16 MiB / six frames normally).
-Larger frames receive exactly two frames of cache capacity, up to a 32 MiB
-automatic ceiling. Explicitly configured budgets remain strict.
-Backward inspection uses cached neighboring frames or resets and reconstructs
-sequentially within the same budget. Static ImageBitmaps are explicitly closed
-when switching, removing or closing files. Viewport redraws reuse the current
-pixels and do not decode the image again.
-
-The shared WebP Worker lives with its format adapter under `src/formats/webp/`.
-ZIP metadata and extraction use a separate Worker; ZIP libraries are loaded only
-after Open ZIP. See `PLAN.md` for the architecture
-and roadmap, and `AGENTS.md` for development rules.
+**0.1.0 — release candidate preparation.** Version metadata is prepared; this
+step does not create the `v0.1.0` tag or publish a GitHub Release. See the
+[release notes source](docs/releases/v0.1.0.md) and
+[release QA record](docs/releases/v0.1.0-qa.md) for the remaining release gates.

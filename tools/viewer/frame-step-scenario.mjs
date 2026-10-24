@@ -12,7 +12,7 @@ export async function runFrameStepCheck({ evaluate, waitFor, click, pick, close,
   const assert = (value, message) => { if (!value) throw new Error(message) }
   const records = [], passed = []
   const cases = [
-    { format: 'WebP', path: resolve('.tools/fixtures/viewer-long.webp'), count: 200, pauseAfter: 150 },
+    { format: 'WebP', path: resolve('tests/fixtures/validation/viewer/long.webp'), count: 200, pauseAfter: 150 },
     { format: 'APNG', path: resolve('tests/fixtures/apng/long-bounded.png'), count: 100, pauseAfter: 55 },
     { format: 'GIF', path: resolve('tests/fixtures/gif/long.gif'), count: 100, pauseAfter: 55 },
   ]

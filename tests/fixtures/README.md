@@ -94,9 +94,9 @@ records entry sizes and generation metadata. Mutated ZIPs are test inputs,
 not valid examples for users.
 
 The generator copies the two valid original acceptance examples, `mixed.zip` and
-`encrypted-mixed.zip`, into `public/validation/zip/` for direct Android downloads
-from GitHub Pages. Their total encoded size is 1,928 bytes; no downloaded artwork
-or large performance archive is published.
+`encrypted-mixed.zip`, into `validation/zip/`. These 1,928 bytes were formerly
+hosted for direct Android downloads. Milestone 7B removed the production copies;
+the small repository originals remain for local acceptance reproduction.
 
 `node tools/archive/generate-fixtures.mjs --large` additionally creates ignored
 `.tools/fixtures/archive-large.zip` with 60 entries repeating the three existing
@@ -125,7 +125,8 @@ The application does not contain the fixture generator or an EXIF parser.
 WebP (9,644 bytes) from the existing lossless payloads and a six-entry mixed-media
 ZIP (2,349 bytes) from the original JPEG/GIF/PNG/APNG/WebP fixtures. Its order is
 JPEG → GIF → static PNG → APNG → static WebP → animated WebP. Copies in
-`public/validation/viewer/long.webp`, `mixed-media.zip` and `orientation-6.jpg`
-provide small Pages-hosted Android acceptance samples, without copied artwork.
+`validation/viewer/long.webp`, `mixed-media.zip` and `orientation-6.jpg`
+preserve the original acceptance samples. Milestone 7B retired their former
+Pages URLs; [the repository corpus](validation/README.md) is used for reproduction.
 Additional malformed/oversized files and browser reports remain in ignored
 `.tools/` output or are created in unit-test memory.

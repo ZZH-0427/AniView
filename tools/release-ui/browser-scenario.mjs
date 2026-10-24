@@ -10,7 +10,7 @@ export async function runReleaseUICheck({ send, evaluate, waitFor, click, url, c
   const position = "document.querySelector('[data-testid=session-position]')?.textContent"
   const menu = "document.querySelector('[data-testid=viewer-more-menu]')"
   const trigger = "document.querySelector('[data-testid=viewer-more-trigger]')"
-  const animated = resolve('public/validation/stability/long-1000.webp')
+  const animated = resolve('tests/fixtures/validation/stability/long-1000.webp')
   const photo = resolve('tests/fixtures/static/quadrants.png')
   const checks = [], layouts = [], diagnostics = []
   const button = label => `[...document.querySelectorAll('button')].find(b=>(b.getAttribute('aria-label')||b.getAttribute('title')||b.textContent.trim())===${JSON.stringify(label)})`
@@ -229,7 +229,7 @@ export async function runReleaseUICheck({ send, evaluate, waitFor, click, url, c
   checks.push('390x667 expanded diagnostics do not overlap; all enabled controls scroll into view and receive pointer hits')
   await close()
 
-  await pick(['public/validation/viewer/mixed-media.zip'], 'archive')
+  await pick(['tests/fixtures/validation/viewer/mixed-media.zip'], 'archive')
   await waitFor(`${state}==='ready'&&JSON.parse(document.querySelector('[data-testid=archive-metrics]').textContent).extractions===1`)
   assert(await evaluate("[...document.querySelectorAll('[data-testid=diagnostics-panel]')].some(e=>/Archive/.test(e.querySelector('summary').textContent)&&!e.open)"), 'archive diagnostics is not initially collapsed')
   await click('Next File'); await waitFor(`${state}==='paused'&&JSON.parse(document.querySelector('[data-testid=archive-metrics]').textContent).extractions===2`)

@@ -1,9 +1,10 @@
-// Publish only small original acceptance inputs; the 100 MiB ZIP stays ignored.
+// Stage original acceptance inputs in the repository corpus, never the website.
+// The historical command name is retained; the 100 MiB ZIP stays ignored.
 import { mkdir, readFile, copyFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 const media = JSON.parse(await readFile('.tools/fixtures/stability/manifest.json', 'utf8')).metadata
 const archives = JSON.parse(await readFile('.tools/fixtures/stability/archive-manifest.json', 'utf8')).archives
-const directory = 'public/validation/stability'
+const directory = 'tests/fixtures/validation/stability'
 await mkdir(directory, { recursive: true })
 const samples = []
 for (const [key, name] of [

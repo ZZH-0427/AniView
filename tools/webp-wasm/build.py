@@ -74,9 +74,9 @@ def main():
     em_license = ROOT / 'third_party' / 'licenses' / 'emscripten' / 'LICENSE'
     em_license.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(em_root / 'LICENSE', em_license)
-    notices = ['libwebp v1.6.0\n', (licenses / 'COPYING').read_text(),
-               (licenses / 'PATENTS').read_text(), 'Emscripten 6.0.13 runtime glue\n', em_license.read_text()]
-    (ROOT / 'public' / 'third-party-notices.txt').write_text('\n\n'.join(notices), encoding='utf-8')
+    # The public file aggregates notices for codecs, C runtime, React and build
+    # helpers. A codec rebuild must not replace it with only two components.
+    print('Review THIRD_PARTY_NOTICES.md and public/third-party-notices.txt after a toolchain or codec update.')
 
 
 if __name__ == '__main__':

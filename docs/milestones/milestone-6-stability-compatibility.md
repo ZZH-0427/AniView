@@ -130,8 +130,10 @@ These are test tools, not new product encoders. No private user file is publishe
   two-frame APNG; 3000² rejection APNG; seven corrupt/renamed media inputs.
 - `tools/stability/archive-fixtures.mjs`: 1008-entry, 96-media, mixed damaged/
   encrypted/CRC-failed/unsupported archives and an optional stored 100 MiB ZIP.
-- `tools/stability/publish-fixtures.mjs`: copies only 11 small original samples,
-  642,420 bytes in total, to `public/validation/stability/`, with `samples.json`.
+- `tools/stability/publish-fixtures.mjs`: stages 11 original samples,
+  642,420 bytes in total, to `tests/fixtures/validation/stability/`, with `samples.json`.
+  These were historically hosted under `/validation/stability/`; Milestone 7B
+  retired those production URLs while preserving the repository samples.
   The 100 MiB ZIP and generated debug outputs remain ignored under `.tools/`.
 
 Use installed Node 24/npm, then:
@@ -254,7 +256,7 @@ not require OffscreenCanvas. Fullscreen is optional and feature detected.
 Missing capabilities show a categorized message; no browser-name routing/fallback.
 
 The requested P0 checklist covered six-format opening/first-six navigation in
-`validation/stability/mixed-96.zip`, play/pause, stepping, rapid file navigation,
+[`mixed-96.zip`](../../tests/fixtures/validation/stability/mixed-96.zip), play/pause, stepping, rapid file navigation,
 pinch/pan, orientation and Close/reopen. It included `long-1000.webp` past frame
 800, repeated backward steps and Replay; app switching for 10–30 s while playing
 and while paused; separate boundary JPEG and large-frame APNG checks; controlled

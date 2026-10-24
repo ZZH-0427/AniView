@@ -23,7 +23,10 @@ environment globally. Setup also installs pinned CMake/Ninja into a local target
 
 `build.py` downloads a SHA256-pinned libwebp commit archive if needed, checks the
 compiler version, invokes emcmake/CMake/Ninja, and copies only the final runtime
-and license notices into versioned directories. It never changes npm dependencies.
+and codec/SDK license files into versioned directories. It never changes npm
+dependencies or overwrites the aggregate production notices. After updating the
+codec or toolchain, review `THIRD_PARTY_NOTICES.md` and
+`public/third-party-notices.txt`, including C runtime subcomponents.
 
 Outputs:
 
@@ -31,7 +34,9 @@ Outputs:
 - `src/formats/webp/wasm/aniview-webp.wasm`
 - `third_party/licenses/libwebp/{COPYING,PATENTS,AUTHORS}`
 - `third_party/licenses/emscripten/LICENSE`
-- `public/third-party-notices.txt` (redistributed by Vite/Pages)
+
+The separately maintained `public/third-party-notices.txt` is redistributed by
+Vite/Pages and also covers React, ZIP, other codecs and generated build helpers.
 
 The adjacent `.d.mts` is a hand-maintained declaration for the deliberately small
 C bridge API. Update it when changing exported bridge functions. Generated glue

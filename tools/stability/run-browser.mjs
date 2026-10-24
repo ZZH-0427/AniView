@@ -28,7 +28,7 @@ try {
     await new Promise(resolve => setTimeout(resolve, 100))
   }
   if (!ready) throw new Error(`Preview did not start: ${previewError}`)
-  const browser = spawn(process.execPath, ['tools/webp-wasm/browser-check.mjs', url, 'public/validation/viewer/long.webp', mode], {
+  const browser = spawn(process.execPath, ['tools/webp-wasm/browser-check.mjs', url, 'tests/fixtures/validation/viewer/long.webp', mode], {
     windowsHide: true, stdio: 'inherit',
   })
   const code = await new Promise((resolve, reject) => { browser.on('error', reject); browser.on('exit', resolve) })

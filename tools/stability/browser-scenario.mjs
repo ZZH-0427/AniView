@@ -36,7 +36,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
     ['tests/fixtures/static/quadrants.png', 'ready'],
     ['tests/fixtures/apng/full-infinite.png', 'paused'],
     ['tests/fixtures/static/quadrants.webp', 'ready'],
-    ['public/validation/viewer/long.webp', 'paused'],
+    ['tests/fixtures/validation/viewer/long.webp', 'paused'],
   ]
   await pick(mixed.map(item => item[0]))
   const formats = []
@@ -65,7 +65,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
   checks.push('six formats, Play/Pause, step+zoom, file Fit reset, static controls')
   await close()
 
-  await pick(['public/validation/viewer/mixed-media.zip'], 'archive')
+  await pick(['tests/fixtures/validation/viewer/mixed-media.zip'], 'archive')
   const entries = []
   for (let index = 0; index < 6; index++) {
     if (index) await click('Next File')
@@ -79,7 +79,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
   await mkdir(temporary, { recursive: true })
   const corruptFiles = []
   for (const [name, source, cut] of [
-    ['damaged.webp', 'public/validation/viewer/long.webp', 40],
+    ['damaged.webp', 'tests/fixtures/validation/viewer/long.webp', 40],
     ['damaged.png', 'tests/fixtures/apng/full-infinite.png', 48],
     ['damaged.gif', 'tests/fixtures/gif/previous.gif', 20],
     ['damaged.jpg', 'tests/fixtures/static/quadrants.jpg', 12],
@@ -102,7 +102,7 @@ export async function runStabilityCheck({ send, evaluate, waitFor, click, url, m
   checks.push('five corrupt/unsupported inputs recover by Next without reload')
 
   // Synthetic visibility integration is explicit; genuine Android backgrounding is a separate gate.
-  await pick(['public/validation/viewer/long.webp'])
+  await pick(['tests/fixtures/validation/viewer/long.webp'])
   await waitFor(`${state}==='paused'`)
   await click('Play'); await waitFor(`${frame}>=8`)
   await evaluate(`window.__stabilityHidden=true;Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>window.__stabilityHidden?'hidden':'visible'});document.dispatchEvent(new Event('visibilitychange'))`)

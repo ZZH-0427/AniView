@@ -162,8 +162,9 @@ artwork or large downloaded ZIP is committed. Fixture provenance is recorded in
 `tests/fixtures/README.md`; manifest sizes and entry descriptions accompany ZIPs.
 ZipCrypto/AES fixtures use the public test-only password `AniView-test`.
 The generator also copies only `mixed.zip` and `encrypted-mixed.zip` to
-`public/validation/zip/` (1,928 bytes combined) for Pages-hosted Android downloads;
-these contain the same original test artwork. GitHub Raw downloads timed out in
+`tests/fixtures/validation/zip/` (1,928 bytes combined). These were formerly
+Pages-hosted Android downloads; Milestone 7B removed them from production.
+They contain the same original test artwork. GitHub Raw downloads timed out in
 the validation environment, so mobile acceptance does not depend on that host.
 
 Cases include empty, three single-format archives, mixed/nested/directory/junk,
@@ -256,11 +257,11 @@ requirement. This evidence is separate from earlier loose-file acceptance.
 
 The acceptance checklist used these original Pages-hosted samples:
 
-1. [mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/mixed.zip):
+1. [mixed.zip](../../tests/fixtures/validation/zip/mixed.zip):
    1,056 encoded bytes, seven metadata entries and three image candidates.
    Open the first GIF, Play/Pause, Next to WebP, Next to APNG, Previous,
    Close archive and reopen the same ZIP.
-2. [encrypted-mixed.zip](https://ZZH-0427.github.io/AniView/validation/zip/encrypted-mixed.zip):
+2. [encrypted-mixed.zip](../../tests/fixtures/validation/zip/encrypted-mixed.zip):
    872 encoded bytes, four entries. Public first/last GIFs play; the middle
    ZipCrypto/AES entries show password-protected rather than corrupted;
    Next continues to public content.

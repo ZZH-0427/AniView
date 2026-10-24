@@ -22,7 +22,7 @@ export async function runLateVisibilityCheck({ evaluate, waitFor, click, pick, c
     };
   })()`)
   try {
-    await pick(['public/validation/viewer/long.webp'])
+    await pick(['tests/fixtures/validation/viewer/long.webp'])
     await waitFor('!!window.__lateVisibility.held')
     assert(await evaluate(state) === 'loading', 'Hidden first decode lost Loading state')
     await evaluate("window.__lateVisibility.hidden=false;document.dispatchEvent(new Event('visibilitychange'))")

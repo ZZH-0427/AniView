@@ -31,7 +31,7 @@ export async function runViewerUXCheck({ send, evaluate, waitFor, click, url, ca
   await close()
   const { root } = await send('DOM.getDocument')
   const { nodeId } = await send('DOM.querySelector', { nodeId: root.nodeId, selector: '[data-testid=archive-input]' })
-  await send('DOM.setFileInputFiles', { nodeId, files: [resolve('.tools/fixtures/viewer-mixed.zip')] })
+  await send('DOM.setFileInputFiles', { nodeId, files: [resolve('tests/fixtures/validation/viewer/mixed-media.zip')] })
   const expected = [
     ['photos/sample.jpg', 'static', 'JPEG'], ['animations/sample.gif', 'animation', 'GIF'],
     ['photos/sample.png', 'static', 'PNG'], ['animations/sample.png', 'animation', 'APNG'],
@@ -69,7 +69,7 @@ export async function runViewerUXCheck({ send, evaluate, waitFor, click, url, ca
   const layouts = []
   for (const width of [320, 390, 768, 1280]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 1000, deviceScaleFactor: 2, mobile: width < 600 })
-    await pick([longPath, resolve('.tools/fixtures/viewer-long.webp')])
+    await pick([longPath, resolve('tests/fixtures/validation/viewer/long.webp')])
     await waitFor(`${state}==='ready'&&${viewport}?.viewportWidth>10`)
     await click('Next File')
     await waitFor(`${state}==='paused'&&${viewport}.mode==='fit'`)
