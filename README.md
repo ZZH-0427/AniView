@@ -3,7 +3,8 @@
 Local Animated Media Viewer for mobile and desktop browsers.
 
 **Project status: early development / Milestones 1–6 PASSED.**
-Milestone 7A UI polish is implemented; new Android Edge/Quark UI acceptance is pending.
+Milestone 7A UI polish is implemented. New Android Edge/Quark functional UI
+acceptance passed; real-device animated/static screenshots are still pending.
 The viewer supports Animated WebP, APNG and GIF with Play/Pause, Replay, looping,
 Previous/Next Frame and a current-frame count. All animated formats use the same
 bounded cache, player and renderer. Single-frame GIF is supported. JPEG, static

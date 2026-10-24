@@ -2,9 +2,10 @@
 
 Status: **PENDING ANDROID UI VALIDATION** (2026-10-24).
 
-Milestones 0–6 remain closed. This milestone changes presentation only. New
-Android Edge and Quark UI checks and animated/static phone screenshots are still
-required; earlier Android stability acceptance does not close this UI gate.
+Milestones 0–6 remain closed. This milestone changes presentation only. The new
+Android Edge and Quark functional UI checks passed by user report. Animated and
+static real-phone screenshots remain outstanding; earlier desktop emulation
+screenshots do not provide that evidence.
 No version change, tag or GitHub Release is part of this milestone.
 
 ## Presentation boundaries
@@ -177,8 +178,28 @@ build SHA-256. No page exception, unexpected console error or asset 404 was
 observed during these browser scenarios. The source and runtime paths retain
 the `/AniView/` production base.
 
-The remaining gate is a new Android Edge and Quark run on the deployed UI:
-animated/static layout, tap targets, correct frame/file navigation, zoom/Fit/1:1,
-More/removal, Close, fullscreen when available, and debug collapsed/scrolling
-behavior. Record one animated and one static real-phone screenshot. Until those
-results arrive: **PENDING ANDROID UI VALIDATION; Milestone 7B is not started**.
+## Android functional acceptance update
+
+On 2026-10-24, the user replied to the new deployed-UI checklist:
+
+> 在这两个浏览器都做了测试，均以达成上述要求
+
+| Android browser | New functional UI acceptance |
+| --- | --- |
+| Edge | Passed, user-reported |
+| Quark | Passed, user-reported |
+
+The checklist covered animated/static layout and touch targets, no diagnostics
+in normal mode, no animation controls for static media, Play/Pause, frame versus
+file navigation, zoom/Fit/1:1, More/removal, Close, fullscreen when available,
+and debug panels initially collapsed with normal scrolling and separately
+disclosed Raw JSON. The user's response confirms those checks in both browsers;
+no issue was reported. This is fresh real-device acceptance for Milestone 7A.
+No device/browser versions, per-browser fullscreen capability detail or new
+numeric performance measurements were supplied, and none are inferred.
+
+The remaining evidence is **one animated-media and one static-media real-phone
+screenshot**, required by the task's Android screenshot validation section.
+Neither has been supplied yet. No additional functional rerun is requested.
+Until that evidence arrives: **PENDING ANDROID UI VALIDATION; Milestone 7B is
+not started**.
