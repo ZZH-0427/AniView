@@ -6,8 +6,9 @@ site distributes the complete notice collection as
 [`third-party-notices.txt`](public/third-party-notices.txt).
 
 This inventory covers third-party code shipped in the browser application,
-including generated runtime helpers. It does not choose a license for AniView's
-own code. A project license decision is required before the v0.1.0 public release.
+including generated runtime helpers. No project license is granted for AniView
+v0.1.0; its package metadata is `UNLICENSED`. Each third-party component remains
+governed by its own terms, independently of AniView's project licensing.
 
 | Component | Audited version | License | Use | Retained license/source |
 | --- | --- | --- | --- | --- |

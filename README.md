@@ -97,7 +97,7 @@ do not guarantee that every file will open on every device or under memory press
 | Xiaomi Browser | Earlier WebP/input functionality; reduced coverage |
 
 Other browsers may work but are outside this validation matrix. Final Android
-candidate smoke passed in Edge and Quark by user report; details are in the
+smoke passed in Edge and Quark by user report; details are in the
 [release QA record](docs/releases/v0.1.0-qa.md).
 Detailed evidence is in the [stability](docs/milestones/milestone-6-stability-compatibility.md)
 and [UI acceptance](docs/milestones/milestone-7a-release-ui-polish.md) records.
@@ -166,7 +166,16 @@ regressions. Main builds deploy through the official Pages actions; pull request
 validate only. `dist/` is generated and is not committed. Architecture and
 contribution rules are in [PLAN.md](PLAN.md) and [AGENTS.md](AGENTS.md).
 
-## Third-party Components and Licensing
+## Licensing
+
+No project license is granted for AniView v0.1.0. The source repository is
+publicly viewable, but the project does not grant permission to reuse, modify,
+redistribute or commercially redistribute AniView code unless separately
+authorized. The package metadata is `UNLICENSED`, and no root LICENSE is provided.
+
+Third-party components remain governed by their respective licenses.
+
+### Third-party Components
 
 AniView uses libwebp/Emscripten, apng-js, omggif, zip.js, React and React DOM.
 Versions, purposes and license sources are listed in
@@ -174,9 +183,7 @@ Versions, purposes and license sources are listed in
 [`third_party/licenses/`](third_party/licenses/). The deployed application also
 includes [third-party notices](https://zzh-0427.github.io/AniView/third-party-notices.txt).
 
-AniView's own project license has not been selected.
-**PROJECT LICENSE DECISION REQUIRED BEFORE PUBLIC RELEASE.** Third-party notices
-do not grant a license to AniView's own code.
+Third-party notices do not grant a license to AniView's own code.
 
 ## Roadmap
 
@@ -186,7 +193,7 @@ workflows. None is available in v0.1.0, and no release dates are promised.
 
 ## Current Version
 
-**0.1.0 — release candidate.** Version metadata is prepared; this
-step does not create the `v0.1.0` tag or publish a GitHub Release. See the
-[release notes source](docs/releases/v0.1.0.md) and
-[release QA record](docs/releases/v0.1.0-qa.md) for the remaining release gates.
+**0.1.0 — 2026-10-25.** See the
+[release notes](docs/releases/v0.1.0.md),
+[release QA record](docs/releases/v0.1.0-qa.md) and
+[GitHub Release](https://github.com/ZZH-0427/AniView/releases/tag/v0.1.0).

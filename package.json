@@ -2,6 +2,7 @@
   "name": "aniview",
   "private": true,
   "version": "0.1.0",
+  "license": "UNLICENSED",
   "type": "module",
   "engines": {
     "node": ">=24 <25"

@@ -1,9 +1,8 @@
 # Changelog
 
-## 0.1.0 — Release candidate
+## 0.1.0 - 2026-10-25
 
-Prepared for the first public AniView release. No version tag or GitHub Release
-has been published yet.
+First public AniView release.
 
 ### Added
 
@@ -26,7 +25,11 @@ has been published yet.
 
 - No password entry UI, RAR/7z, conversion, export, timeline seeking or thumbnails.
 - Supported files remain subject to processing limits and device/browser memory.
-- Final Android RC smoke passed; public release awaits the project-license decision.
+
+### Licensing
+
+No project license is granted for AniView v0.1.0 (`UNLICENSED`). Third-party
+components remain subject to their respective licenses.
 
 See [release notes](docs/releases/v0.1.0.md) and
-[candidate QA](docs/releases/v0.1.0-qa.md) for the current release status.
+[release QA](docs/releases/v0.1.0-qa.md) for validation evidence.

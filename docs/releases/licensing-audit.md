@@ -6,13 +6,20 @@ text is [public/third-party-notices.txt](../../public/third-party-notices.txt).
 
 ## AniView's own license
 
-At the start of this audit there was no root LICENSE, LICENSE.md or LICENSE.txt,
-and package.json had no license field. The third-party license directories do
-not establish a license for AniView's own code or C bridge. No project license
-was selected by this audit.
+The owner finalized the v0.1.0 licensing decision on 2026-10-25:
 
-**PROJECT LICENSE DECISION REQUIRED BEFORE PUBLIC RELEASE.** This decision is a
-7C release blocker; the remaining release preparation can proceed.
+- Project license: **None / UNLICENSED**, intentionally for v0.1.0.
+- package.json and root package-lock metadata: `license: "UNLICENSED"`.
+- `private: true` remains set to prevent accidental npm publication.
+- Root LICENSE, LICENSE.md or LICENSE.txt: none.
+- No project-level open-source license or permission to reuse, modify or
+  redistribute AniView code is granted by the project without separate authorization.
+- Third-party licenses, complete notice texts and patent grants remain retained.
+
+The earlier audit found the project decision unresolved; this explicit owner
+decision resolves that gate. Public source visibility and `UNLICENSED` metadata
+do not grant a project license. AniView's own code and C bridge are distinct
+from third-party components, which remain governed by their respective terms.
 
 ## Evidence and scope
 
@@ -57,8 +64,8 @@ line-ending normalization. The existing libwebp patent grant was preserved.
 The build checks Emscripten 6.0.13. The installed SDK version file also reports
 6.0.13, and its LICENSE matches the existing mirror. Generated glue is covered
 by the SDK's MIT/NCSA notice collection, including its Node-derived path code
-notice. The C bridge is AniView-authored source and remains subject to the
-pending project-license decision.
+notice. The C bridge is AniView-authored source and is covered by the owner's
+no-project-license decision.
 
 SDK subcomponents were reviewed because the output includes C library and
 stack/runtime support. The SDK musl VERSION reports 1.2.6; its full COPYRIGHT
@@ -107,6 +114,6 @@ changing the codec or SDK. Its codec license-copy outputs remain intact.
 Python syntax was checked without rebuilding WASM or altering global tooling.
 
 The release inventory records component versions, declared licenses, uses and
-license sources; it does not assert rights over user media or choose AniView's
-project license. Re-audit these records when updating dependencies, codecs or
-the WASM toolchain.
+license sources; it does not assert rights over user media. The owner's separate
+no-project-license decision does not change third-party license terms.
+Re-audit these records when updating dependencies, codecs or the WASM toolchain.
