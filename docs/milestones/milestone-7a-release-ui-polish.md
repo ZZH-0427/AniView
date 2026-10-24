@@ -148,8 +148,34 @@ the `/AniView/` base.
 
 ## Publication and remaining acceptance
 
-Publication and production verification are recorded below after the actual
-Actions/Pages run. Do not infer success from the workflow file alone.
+Implementation commit: `56907660b61862ff31761ae82b635b5db5a97357`
+(`feat: polish viewer UI for v0.1`). Published to main through the established
+Git Data API fallback, checking blob/tree/commit hashes and updating the ref with
+force disabled. No repository setting changed.
+
+[Actions run 40060783337](https://github.com/ZZH-0427/AniView/actions/runs/40060783337)
+completed successfully. npm ci, lint, typecheck, unit tests, build, both actual
+Chrome browser regression steps, official Pages artifact upload and deployment
+all succeeded. This is the observed run result, not inferred configuration.
+
+At [the production URL](https://ZZH-0427.github.io/AniView/), installed Edge 155
+passed the 20 release UI groups in ordinary/debug mode and seven core stability
+groups. The ordinary page rendered no diagnostics DOM; debug panels and Raw JSON
+started collapsed. Animated/static screenshots at 320/390/768/1280 and short
+expanded panels were checked against the deployed build. Production core ended
+with 10/10 Workers and 11/11 static bitmaps, all inactive. Production UI normal
+and debug page resource counts also balanced independently after closure.
+The full **64-group Viewer UX** run passed on that same production asset as
+well: 18/18 Workers and 29/29 static bitmaps ended inactive, 5,992 RGBA transfers
+detached, and 1,435 APNG emissions peaked at one temporary bitmap with zero live
+after emission.
+
+The HTML was HTTP 200 and referenced the tested main asset
+`/AniView/assets/index-C3A1PzEA.js`. All 26 checked main/lazy JS, CSS, Worker,
+WASM, favicon and acceptance resources returned HTTP 200 and matched the local
+build SHA-256. No page exception, unexpected console error or asset 404 was
+observed during these browser scenarios. The source and runtime paths retain
+the `/AniView/` production base.
 
 The remaining gate is a new Android Edge and Quark run on the deployed UI:
 animated/static layout, tap targets, correct frame/file navigation, zoom/Fit/1:1,
