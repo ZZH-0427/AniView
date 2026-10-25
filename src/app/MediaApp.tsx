@@ -9,7 +9,7 @@ import { currentSessionItem, nextFile, previousFile, removeCurrentFile } from '.
 import { useMediaSource } from './use-media-source'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
 
-export function MediaApp() {
+export function MediaApp({ onCreate }: { onCreate?: () => void }) {
   const [dragging, setDragging] = useState(false)
   const transition = useRef(Promise.resolve())
   const { session, notice, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
@@ -63,7 +63,7 @@ export function MediaApp() {
         position={session.currentIndex + 1} count={session.items.length}
         onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
         onRemove={() => changeSession(removeCurrentFile)} />
-    </> : <Home onOpen={addFiles} onArchive={openArchive} />}
+    </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} />}
     {notice && <p className="session-notice" role="status">{notice}</p>}
     <RuntimeDiagnosticsPanel />
     {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}

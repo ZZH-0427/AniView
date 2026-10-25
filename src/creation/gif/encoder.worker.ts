@@ -1,5 +1,6 @@
 import { runEncoding } from './encoder-core'
 import { EncodeError } from './model'
+import { assertSourceLimits, resolveEncodeLimits } from './gif-validation'
 import type { EncoderRequest, EncoderResponse } from './protocol'
 
 interface Job {
@@ -16,7 +17,8 @@ async function start(request: Extract<EncoderRequest, { type: 'start' }>) {
   const current: Job = { id: request.id, sizes: request.sizes, cancelled: false, pending: undefined }
   job = current
   try {
-    if (current.sizes.some(size => !Number.isSafeInteger(size) || size < 0 || size > 64 * 1024 * 1024)) throw new EncodeError('RESOURCE_LIMIT')
+    const limits = resolveEncodeLimits(request.limits)
+    assertSourceLimits(current.sizes, limits)
     const result = await runEncoding(current.sizes.length, index => new Promise((resolve, reject) => {
       if (current.cancelled) { reject(new EncodeError('CANCELLED')); return }
       current.pending = { index, resolve, reject }
@@ -27,11 +29,12 @@ async function start(request: Extract<EncoderRequest, { type: 'start' }>) {
         await new Promise(resolve => setTimeout(resolve, 0))
         if (current.cancelled) throw new EncodeError('CANCELLED')
       },
-    })
+    }, limits)
     if (current.cancelled) throw new EncodeError('CANCELLED')
     send({ type: 'result', id: current.id, result }, [result.data])
   } catch (cause) {
-    send({ type: 'error', id: current.id, code: cause instanceof EncodeError ? cause.code : 'WORKER_FAILED' })
+    send({ type: 'error', id: current.id, code: cause instanceof EncodeError ? cause.code : 'WORKER_FAILED',
+      ...(cause instanceof EncodeError && cause.detail ? { detail: cause.detail } : {}) })
   } finally {
     current.pending = undefined
     job = undefined

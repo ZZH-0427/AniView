@@ -69,4 +69,15 @@ describe('static image dimension preflight', () => {
   it.each(['jpeg', 'png', 'webp'] satisfies StaticImageFormat[])('never trusts filename or MIME during dimension validation: %s', format => {
     expect(() => inspectStaticDimensions(new ArrayBuffer(0), format)).toThrow()
   })
+  it('allows a stricter creation policy without changing default Viewer admission', () => {
+    const data = jpeg(3000, 1000)
+    expect(inspectStaticDimensions(data, 'jpeg')).toEqual({ width: 3000, height: 1000 })
+    expect(() => inspectStaticDimensions(data, 'jpeg', (width, height) => {
+      if (width > 2048 || height > 2048) throw new Error('Creation side limit')
+    })).toThrow('Creation side limit')
+    expect(inspectStaticDimensions(data, 'jpeg')).toEqual({ width: 3000, height: 1000 })
+  })
+  it('retains malformed-dimension checks even when a custom policy is supplied', () => {
+    expect(() => inspectStaticDimensions(jpeg(0, 1), 'jpeg', () => {})).toThrow(expect.objectContaining({ code: 'CORRUPTED_FILE' }))
+  })
 })

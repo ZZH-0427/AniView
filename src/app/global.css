@@ -60,6 +60,7 @@ button:focus-visible { outline: 3px solid #2765b0; outline-offset: 3px; }
 .image-input { display: inline-block; }
 .foundation .image-input { margin-top: 1.5rem; }
 .foundation .archive-input { margin-top: 0.75rem; }
+.home-create-entry { margin-top: 1rem; }
 .archive-summary { width: min(100%, 72rem); margin: auto; padding: 1rem; overflow-wrap: anywhere; }
 .archive-summary button { margin-top: 0.75rem; }
 .archive-summary [role=alert] { color: #a21b22; }

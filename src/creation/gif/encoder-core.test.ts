@@ -8,6 +8,7 @@ import gif from '../../../tests/fixtures/gif/previous.gif?inline'
 import webp from '../../../tests/fixtures/validation/viewer/long.webp?inline'
 import { runEncoding } from './encoder-core'
 import { EncodeError, resolveEncodeOptions, type EncodeProgress } from './model'
+import { GIF_CREATION_LIMITS } from './gif-validation'
 
 const unpack = (uri: string) => Uint8Array.from(atob(uri.split(',')[1]!), c => c.charCodeAt(0)).buffer
 const red = [255, 0, 0, 255], green = [0, 255, 0, 255], blue = [0, 0, 255, 255], clear = [0, 0, 0, 0]
@@ -86,6 +87,16 @@ describe('sequential static GIF Worker engine', () => {
     const files = ['quadrants.png', 'quadrants.jpg', 'quadrants.webp']
     expect((await runEncoding(3, async i => staticFixture(files[i]!), resolveEncodeOptions(), hooks())).metrics.frameCount).toBe(3)
   })
+  it.each([
+    ['quadrants.png', 'quadrants.jpg'], ['quadrants.png', 'quadrants.webp'], ['quadrants.jpg', 'quadrants.webp'],
+  ])('accepts the product two-source pair %s + %s', async (first, second) => {
+    native(Array.from({ length: 4 }, (_, index) => new Bitmap(2, 1, index % 2 ? green : red)))
+    const files = [first, second]
+    const result = await runEncoding(2, async index => staticFixture(files[index]!), resolveEncodeOptions(), hooks(), GIF_CREATION_LIMITS)
+    const roundTrip = decoded(result.data, result.byteLength)
+    expect(roundTrip.parsed.frames).toHaveLength(2)
+    expect(roundTrip.pixels).toEqual([[...red, ...red], [...green, ...green]])
+  })
   it.each([['GIF', gif], ['APNG', apng], ['animated WebP', webp]])('rejects %s rather than taking its first frame', async (_kind, encoded) => {
     const create = native([])
     await expect(runEncoding(1, async () => unpack(encoded), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'ANIMATED_INPUT' })
@@ -93,7 +104,7 @@ describe('sequential static GIF Worker engine', () => {
   })
   it('rejects corrupt native input and unsupported signatures distinctly', async () => {
     const create = native([])
-    await expect(runEncoding(1, async () => staticFixture('corrupt.jpg'), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'DECODE_FAILED' })
+    await expect(runEncoding(1, async () => staticFixture('corrupt.jpg'), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'CORRUPT_SOURCE' })
     await expect(runEncoding(1, async () => new ArrayBuffer(4), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'UNSUPPORTED_INPUT' })
     expect(create).not.toHaveBeenCalled()
   })
@@ -101,6 +112,18 @@ describe('sequential static GIF Worker engine', () => {
     native([])
     await expect(runEncoding(1, async () => staticFixture('quadrants.png'), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'DECODE_FAILED' })
     await expect(runEncoding(1, async () => { throw new Error('read'); }, resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'FILE_READ_FAILED' })
+  })
+  it.each([
+    [new DOMException('The source image could not be decoded', 'InvalidStateError'), 'CORRUPT_SOURCE'],
+    [new DOMException('Native decoder unavailable', 'NotSupportedError'), 'DECODE_FAILED'],
+    [new Error('Unexpected native decode failure'), 'DECODE_FAILED'],
+    [new RangeError('Native allocation failed'), 'RESOURCE_LIMIT'],
+  ])('classifies a native Blob decode rejection without collapsing error categories: %s', async (cause, code) => {
+    const create = native([])
+    create.mockRejectedValueOnce(cause)
+    await expect(runEncoding(2, async () => staticFixture('quadrants.png'), resolveEncodeOptions(), hooks(), GIF_CREATION_LIMITS)).rejects.toMatchObject({ code })
+    expect(create).toHaveBeenCalledOnce()
+    expect(canvases).toHaveLength(0)
   })
   it('rejects hostile dimensions before native decoding', async () => {
     const create = native([]), bytes = staticFixture('quadrants.png')
@@ -157,5 +180,26 @@ describe('sequential static GIF Worker engine', () => {
   it('fails gracefully when Worker image or canvas capabilities are absent', async () => {
     vi.stubGlobal('createImageBitmap', undefined)
     await expect(runEncoding(1, async () => staticFixture('quadrants.png'), resolveEncodeOptions(), hooks())).rejects.toMatchObject({ code: 'WORKER_FAILED' })
+  })
+  it('rejects source dimensions before native bitmap allocation with product-specific details', async () => {
+    const create = native([]), bytes = staticFixture('quadrants.png')
+    const view = new DataView(bytes)
+    view.setUint32(16, 3000); view.setUint32(20, 2000)
+    await expect(runEncoding(2, async () => bytes, resolveEncodeOptions(), hooks(), GIF_CREATION_LIMITS)).rejects.toMatchObject({
+      code: 'RESOURCE_LIMIT', detail: { kind: 'output-side', width: 3000, height: 2000, frameCount: 2, actual: 3000, limit: 2048 },
+    })
+    expect(create).not.toHaveBeenCalled()
+    expect(canvases).toHaveLength(0)
+  })
+  it('rejects an excessive product workload before any quantization, encoding or Canvas allocation', async () => {
+    const bitmaps = Array.from({ length: 4 }, () => new Bitmap(2048, 2048))
+    native(bitmaps)
+    const jobHooks = hooks()
+    await expect(runEncoding(4, async () => staticFixture('quadrants.png'), resolveEncodeOptions(), jobHooks, GIF_CREATION_LIMITS)).rejects.toMatchObject({
+      code: 'RESOURCE_LIMIT', detail: { kind: 'workload', width: 2048, height: 2048, frameCount: 4, actual: 16_777_216, limit: 15_360_000 },
+    })
+    expect(bitmaps.every(bitmap => bitmap.close.mock.calls.length === 1)).toBe(true)
+    expect(canvases).toHaveLength(0)
+    expect(jobHooks.progress.mock.calls.every(([progress]) => progress.phase === 'scanning')).toBe(true)
   })
 })

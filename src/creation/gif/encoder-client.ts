@@ -1,7 +1,7 @@
 import type { VirtualFile } from '../../input/virtual-file'
 import { countRuntimeEvent, trackRuntimeResource } from '../../media/runtime-diagnostics'
-import { MEDIA_RESOURCE_LIMITS } from '../../media/resource-policy'
-import { EncodeError, resolveEncodeOptions, type EncodedGif, type EncodeOptions, type EncodeProgress } from './model'
+import { assertSourceLimits, resolveEncodeLimits } from './gif-validation'
+import { EncodeError, resolveEncodeOptions, type EncodedGif, type EncodeLimits, type EncodeOptions, type EncodeProgress } from './model'
 import type { EncoderResponse, EncoderWorkerPort } from './protocol'
 
 interface Job {
@@ -23,6 +23,7 @@ interface Job {
 export interface EncodeConfiguration {
   readonly signal?: AbortSignal
   readonly onProgress?: (progress: EncodeProgress) => void
+  readonly limits?: EncodeLimits
 }
 
 /** A creation-only service. Source handles stay caller-owned; only one read is in flight. */
@@ -40,10 +41,8 @@ export class StaticGifEncoder {
     await this.cancelActive()
     if (id !== this.generation || config?.signal?.aborted) throw new EncodeError('CANCELLED')
     const resolved = resolveEncodeOptions(options)
-    // Experimental parser/metadata ceilings, not proposed M8A2 product defaults.
-    if (!files.length || files.length > 10_000 || files.some(file => !Number.isSafeInteger(file.size)
-      || file.size <= 0 || file.size > MEDIA_RESOURCE_LIMITS.maxEncodedBytes)
-      || !Number.isSafeInteger(files.reduce((sum, file) => sum + file.size, 0))) throw new EncodeError('RESOURCE_LIMIT')
+    const limits = resolveEncodeLimits(config?.limits)
+    assertSourceLimits(files.map(file => file.size), limits)
     let worker: EncoderWorkerPort
     try { worker = this.createWorker() }
     catch (cause) { throw new EncodeError('WORKER_FAILED', { cause }) }
@@ -62,7 +61,7 @@ export class StaticGifEncoder {
       worker.onmessageerror = () => this.finish(job, new EncodeError('WORKER_FAILED'))
       job.signal?.addEventListener('abort', job.abort, { once: true })
       this.arm(job)
-      try { worker.postMessage({ type: 'start', id, sizes: files.map(file => file.size), options: resolved }) }
+      try { worker.postMessage({ type: 'start', id, sizes: files.map(file => file.size), options: resolved, limits }) }
       catch (cause) { this.finish(job, new EncodeError('WORKER_FAILED', { cause })) }
     })
   }
@@ -93,7 +92,7 @@ export class StaticGifEncoder {
       return
     }
     this.arm(job)
-    if (message.type === 'error') { this.finish(job, new EncodeError(message.code)); return }
+    if (message.type === 'error') { this.finish(job, new EncodeError(message.code, message.detail ? { detail: message.detail } : undefined)); return }
     if (message.type === 'result') {
       if (!(message.result.data instanceof ArrayBuffer) || !Number.isSafeInteger(message.result.byteLength)
         || message.result.byteLength <= 0 || message.result.byteLength > message.result.data.byteLength

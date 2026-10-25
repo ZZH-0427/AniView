@@ -1,12 +1,13 @@
-/** Experimental types only. Viewer/MediaSession do not depend on creation. */
-export type EncodeErrorCode = 'UNSUPPORTED_INPUT' | 'ANIMATED_INPUT' | 'DECODE_FAILED'
+/** Creation-owned types. Viewer/MediaSession do not depend on encoding. */
+export type EncodeErrorCode = 'UNSUPPORTED_INPUT' | 'ANIMATED_INPUT' | 'CORRUPT_SOURCE' | 'DECODE_FAILED'
   | 'RESOURCE_LIMIT' | 'QUANTIZATION_FAILED' | 'ENCODING_FAILED' | 'CANCELLED' | 'WORKER_FAILED' | 'FILE_READ_FAILED'
 
 const messages: Record<EncodeErrorCode, string> = {
-  UNSUPPORTED_INPUT: 'Use static JPEG, PNG or WebP source images.',
-  ANIMATED_INPUT: 'Milestone 8A supports static source images only.',
+  UNSUPPORTED_INPUT: 'GIF creation currently accepts static JPEG, PNG and WebP images only.',
+  ANIMATED_INPUT: 'GIF creation currently accepts static JPEG, PNG and WebP images only.',
+  CORRUPT_SOURCE: 'A source image is corrupted or incomplete.',
   DECODE_FAILED: 'A source image could not be decoded.',
-  RESOURCE_LIMIT: 'This experimental encoding job exceeds its resource limits.',
+  RESOURCE_LIMIT: 'This encoding job exceeds its resource limits.',
   QUANTIZATION_FAILED: 'A frame could not be reduced to a GIF palette.',
   ENCODING_FAILED: 'The GIF could not be encoded.',
   CANCELLED: 'GIF encoding was cancelled.',
@@ -15,10 +16,26 @@ const messages: Record<EncodeErrorCode, string> = {
 }
 
 export class EncodeError extends Error {
-  constructor(readonly code: EncodeErrorCode, options?: ErrorOptions) {
+  readonly detail: EncodeErrorDetail | undefined
+  constructor(readonly code: EncodeErrorCode, options?: ErrorOptions & { readonly detail?: EncodeErrorDetail }) {
     super(messages[code], options)
     this.name = 'EncodeError'
+    this.detail = options?.detail
   }
+}
+
+export type EncodeErrorDetail =
+  | { readonly kind: 'source-count' | 'source-bytes'; readonly actual: number; readonly limit: number }
+  | { readonly kind: 'output-side' | 'output-pixels' | 'workload'; readonly actual: number; readonly limit: number;
+      readonly width: number; readonly height: number; readonly frameCount: number }
+
+export interface EncodeLimits {
+  readonly minFrames: number
+  readonly maxFrames: number
+  readonly maxSourceBytes: number
+  readonly maxOutputSide: number
+  readonly maxOutputPixels: number
+  readonly maxFramePixelWork: number
 }
 
 export interface EncodeOptions {

@@ -3,6 +3,7 @@ import type { VirtualFile } from '../../input/virtual-file'
 import { StaticGifEncoder } from './encoder-client'
 import { resolveEncodeOptions, type EncodedGif } from './model'
 import type { EncoderRequest, EncoderResponse, EncoderWorkerPort } from './protocol'
+import { GIF_CREATION_LIMITS } from './gif-validation'
 
 class TestWorker implements EncoderWorkerPort {
   onmessage: EncoderWorkerPort['onmessage'] = null
@@ -177,6 +178,28 @@ describe('experimental GIF encoder transport', () => {
     const encoder = new StaticGifEncoder(() => { throw new Error('denied') })
     await expect(encoder.encode([source()])).rejects.toMatchObject({ code: 'WORKER_FAILED' })
     await encoder.cancel()
+  })
+  it('rejects excessive product count/bytes before Worker creation or source reads', async () => {
+    const { encoder, workers } = setup(), read = vi.fn(async () => new ArrayBuffer(4))
+    const config = { limits: GIF_CREATION_LIMITS }
+    await expect(encoder.encode(Array.from({ length: 201 }, () => source(read)), {}, config)).rejects.toMatchObject({
+      code: 'RESOURCE_LIMIT', detail: { kind: 'source-count', actual: 201, limit: 200 },
+    })
+    await expect(encoder.encode([{ ...source(read), size: 8 * 1024 * 1024 }, { ...source(read), size: 8 * 1024 * 1024 + 1 }], {}, config)).rejects.toMatchObject({
+      code: 'RESOURCE_LIMIT', detail: { kind: 'source-bytes', actual: 16 * 1024 * 1024 + 1, limit: 16 * 1024 * 1024 },
+    })
+    expect(workers).toHaveLength(0)
+    expect(read).not.toHaveBeenCalled()
+  })
+  it('passes the exact product byte boundary to the Worker and preserves error detail', async () => {
+    const { encoder, workers } = setup()
+    const outcome = encoder.encode([{ ...source(), size: 8 * 1024 * 1024 }, { ...source(), size: 8 * 1024 * 1024 }], {}, { limits: GIF_CREATION_LIMITS }).catch(error => error)
+    await tick()
+    const worker = workers[0]!, detail = { kind: 'output-side' as const, width: 3000, height: 1000, frameCount: 2, actual: 3000, limit: 2048 }
+    expect(worker.messages[0]).toMatchObject({ type: 'start', limits: GIF_CREATION_LIMITS })
+    worker.emit({ type: 'error', id: worker.id, code: 'RESOURCE_LIMIT', detail })
+    expect(await outcome).toMatchObject({ code: 'RESOURCE_LIMIT', detail })
+    expect(worker.terminated).toBe(1)
   })
   it.each([{ frameDurationMs: 19 }, { frameDurationMs: Infinity }, { alphaThreshold: 256 }, { loop: { kind: 'repeat' as const, repeats: 0 } }])(
     'rejects invalid options %j', options => { expect(() => resolveEncodeOptions(options)).toThrow() },

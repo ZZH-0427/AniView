@@ -1,6 +1,7 @@
 /** Engineering-only entry; never imported by the application or normal build. */
-import { StaticGifEncoder } from './encoder-client'
-import { EncodeError, type EncodedGif, type EncodeOptions, type EncodeProgress } from './model'
+import { StaticGifEncoder } from '../../creation/gif/encoder-client'
+import { EncodeError, type EncodedGif, type EncodeOptions, type EncodeProgress } from '../../creation/gif/model'
+import { SPIKE_ENCODER_LIMITS } from '../../creation/gif/gif-validation'
 import { browserFile } from '../../input/browser-file'
 import type { VirtualFile } from '../../input/virtual-file'
 import { GIFAnimationDecoder } from '../../formats/gif/gif-animation-decoder'
@@ -115,6 +116,7 @@ async function encode(files: readonly VirtualFile[], options: Partial<EncodeOpti
   const heartbeat = setInterval(() => { const now = performance.now(); maxHeartbeatGapMs = Math.max(maxHeartbeatGapMs, now - lastBeat); lastBeat = now; heartbeatCount++; document.querySelector('#heartbeat')!.textContent = `Heartbeat: ${heartbeatCount}` }, 16)
   try {
     const result = await activeEncoder.encode(files, options, {
+      limits: SPIKE_ENCODER_LIMITS,
       ...(signal ? { signal } : {}),
       onProgress(value) {
         assert(value.currentFrame >= 0 && value.currentFrame <= value.totalFrames, 'Progress range')
@@ -210,7 +212,7 @@ async function runCore(checks: CheckResult[], artifacts: Artifact[]) {
     await expectError([virtual(await response.blob(), name)], name === 'ZIP' ? 'UNSUPPORTED_INPUT' : 'ANIMATED_INPUT')
     checks.push({ name: `reject ${name}` })
   }
-  for (const [bytes, code] of [[new Uint8Array([71,73,70,56,57,97,0,0]), 'ANIMATED_INPUT'], [new Uint8Array([255,216,255,0,0,0]), 'DECODE_FAILED']] as const) {
+  for (const [bytes, code] of [[new Uint8Array([71,73,70,56,57,97,0,0]), 'ANIMATED_INPUT'], [new Uint8Array([255,216,255,0,0,0]), 'CORRUPT_SOURCE']] as const) {
     await expectError([virtual(new Blob([bytes]), 'wrong-name.png')], code)
     checks.push({ name: `reject ${code === 'ANIMATED_INPUT' ? 'GIF' : 'corrupted JPEG'}` })
   }
@@ -220,7 +222,7 @@ async function runCore(checks: CheckResult[], artifacts: Artifact[]) {
   checks.push({ name: 'reject APNG animation metadata before static decode' })
 
   const cancelFiles = await sources(10, 320, 240, 'flat'), controller = new AbortController()
-  const cancelled = activeEncoder.encode(cancelFiles, {}, { signal: controller.signal, onProgress(value) { if (value.phase === 'quantizing') controller.abort() } })
+  const cancelled = activeEncoder.encode(cancelFiles, {}, { limits: SPIKE_ENCODER_LIMITS, signal: controller.signal, onProgress(value) { if (value.phase === 'quantizing') controller.abort() } })
   try { await cancelled; throw new Error('Cancelled job resolved') } catch (error) { assert(error instanceof EncodeError && error.code === 'CANCELLED', 'Cancellation error') }
   await activeEncoder.cancel()
   const afterCancel = (await encode(solids)).result; await decoded(afterCancel, () => {})

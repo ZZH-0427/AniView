@@ -4,7 +4,8 @@ import type { VirtualFile } from '../../input/virtual-file'
 import { MediaError } from '../../media/errors'
 import { assertMediaDimensions, assertMediaEncodedSize } from '../../media/resource-policy'
 import { GifencWriter, quantizeGifFrame } from './gifenc-adapter'
-import { EncodeError, resolveEncodeOptions, type EncodeOptions, type EncodeProgress, type EncodedGif } from './model'
+import { assertCanvasLimits, resolveEncodeLimits, SPIKE_ENCODER_LIMITS } from './gif-validation'
+import { EncodeError, resolveEncodeOptions, type EncodeLimits, type EncodeOptions, type EncodeProgress, type EncodedGif } from './model'
 
 interface EncodingHooks {
   progress(progress: EncodeProgress): void
@@ -13,16 +14,16 @@ interface EncodingHooks {
 }
 interface SourceDimensions { readonly width: number; readonly height: number }
 const MAX_OUTPUT_BYTES = 64 * 1024 * 1024
-const MAX_FRAME_PIXEL_WORK = 1024 * 1024 * 1024 / 4
 
 function decodeError(cause: unknown): EncodeError {
   if (cause instanceof EncodeError) return cause
   if (cause instanceof RangeError) return new EncodeError('RESOURCE_LIMIT', { cause })
   if (cause instanceof MediaError && ['RESOURCE_LIMIT_EXCEEDED', 'OUT_OF_MEMORY'].includes(cause.code)) return new EncodeError('RESOURCE_LIMIT', { cause })
+  if (cause instanceof MediaError && cause.code === 'CORRUPTED_FILE') return new EncodeError('CORRUPT_SOURCE', { cause })
   return new EncodeError('DECODE_FAILED', { cause })
 }
 
-async function identify(data: ArrayBuffer): Promise<StaticImageFormat> {
+async function identify(data: ArrayBuffer, limits: EncodeLimits, sourceCount: number): Promise<StaticImageFormat> {
   try {
     assertMediaEncodedSize(data.byteLength)
     const file: VirtualFile = {
@@ -32,15 +33,22 @@ async function identify(data: ArrayBuffer): Promise<StaticImageFormat> {
     const format = await new BinaryFormatDetector().detect(file)
     if ('animated' in format && format.animated) throw new EncodeError('ANIMATED_INPUT')
     if (format.kind !== 'jpeg' && format.kind !== 'png' && format.kind !== 'webp') throw new EncodeError('UNSUPPORTED_INPUT')
-    inspectStaticDimensions(data, format.kind)
+    inspectStaticDimensions(data, format.kind, (width, height) => {
+      assertCanvasLimits(width, height, sourceCount, limits)
+      assertMediaDimensions(width, height)
+    })
     return format.kind
   } catch (cause) { throw decodeError(cause) }
 }
 
 /** Sequential, Worker-only encoding. No decoded source survives its iteration. */
-export async function runEncoding(sourceCount: number, readSource: (index: number) => Promise<ArrayBuffer>, rawOptions: EncodeOptions, hooks: EncodingHooks): Promise<EncodedGif> {
+export async function runEncoding(sourceCount: number, readSource: (index: number) => Promise<ArrayBuffer>, rawOptions: EncodeOptions, hooks: EncodingHooks, rawLimits: EncodeLimits = SPIKE_ENCODER_LIMITS): Promise<EncodedGif> {
   const options = resolveEncodeOptions(rawOptions)
-  if (!Number.isSafeInteger(sourceCount) || sourceCount < 1 || sourceCount > 10_000) throw new EncodeError('RESOURCE_LIMIT')
+  const limits = resolveEncodeLimits(rawLimits)
+  if (!Number.isSafeInteger(sourceCount) || sourceCount < limits.minFrames || sourceCount > limits.maxFrames) {
+    throw new EncodeError('RESOURCE_LIMIT', { detail: { kind: 'source-count', actual: sourceCount,
+      limit: sourceCount < limits.minFrames ? limits.minFrames : limits.maxFrames } })
+  }
   if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas !== 'function') throw new EncodeError('WORKER_FAILED')
   const started = performance.now()
   let decodeMs = 0, quantizeMs = 0, writeMs = 0, sourceBytes = 0
@@ -59,7 +67,7 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
     try { data = await readSource(index) }
     catch (cause) { throw cause instanceof EncodeError ? cause : new EncodeError('FILE_READ_FAILED', { cause }) }
     await hooks.checkpoint()
-    const format = await identify(data)
+    const format = await identify(data, limits, sourceCount)
     await hooks.checkpoint()
     let bitmap: ImageBitmap | undefined
     try {
@@ -73,6 +81,12 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
       return { bitmap, byteLength: data.byteLength }
     } catch (cause) {
       if (bitmap) { bitmap.close(); liveBitmaps-- }
+      // This call receives a newly constructed local Blob, never an unloaded
+      // element or detached bitmap. The native InvalidStateError therefore
+      // identifies unusable source bytes, not a Viewer/image lifecycle state.
+      if (!bitmap && cause instanceof DOMException && cause.name === 'InvalidStateError') {
+        throw new EncodeError('CORRUPT_SOURCE', { cause })
+      }
       throw decodeError(cause)
     }
   }
@@ -83,13 +97,21 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
     for (let i = 0; i < sourceCount; i++) {
       await hooks.checkpoint()
       const opened = await open(i)
-      try { dimensions.push({ width: opened.bitmap.width, height: opened.bitmap.height }); sourceBytes += opened.byteLength }
+      try {
+        dimensions.push({ width: opened.bitmap.width, height: opened.bitmap.height })
+        sourceBytes += opened.byteLength
+        if (sourceBytes > limits.maxSourceBytes) throw new EncodeError('RESOURCE_LIMIT', {
+          detail: { kind: 'source-bytes', actual: sourceBytes, limit: limits.maxSourceBytes },
+        })
+      }
       finally { closeBitmap(opened.bitmap) }
       progress('scanning', i + 1)
     }
     const width = Math.max(...dimensions.map(value => value.width)), height = Math.max(...dimensions.map(value => value.height))
+    // Product policy runs before generic native safety checks to retain useful
+    // canvas/workload details for a recoverable creation error.
+    assertCanvasLimits(width, height, sourceCount, limits)
     try { assertMediaDimensions(width, height) } catch (cause) { throw decodeError(cause) }
-    if (width * height * sourceCount > MAX_FRAME_PIXEL_WORK) throw new EncodeError('RESOURCE_LIMIT')
     canvas = new OffscreenCanvas(width, height)
     const context = canvas.getContext('2d', { willReadFrequently: true })
     if (!context) throw new EncodeError('WORKER_FAILED')

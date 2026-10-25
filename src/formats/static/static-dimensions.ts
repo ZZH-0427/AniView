@@ -6,13 +6,14 @@ export interface ImageDimensions { readonly width: number; readonly height: numb
 
 const corrupted = (): never => { throw new MediaError('CORRUPTED_FILE') }
 const text = (bytes: Uint8Array, offset: number, length: number) => String.fromCharCode(...bytes.subarray(offset, offset + length))
-const dimensions = (width: number, height: number): ImageDimensions => {
-  assertMediaDimensions(width, height)
-  return { width, height }
-}
-
 /** Only container dimensions are inspected. Native codecs still validate/decode pixels. */
-export function inspectStaticDimensions(data: ArrayBuffer, format: StaticImageFormat): ImageDimensions {
+export function inspectStaticDimensions(data: ArrayBuffer, format: StaticImageFormat,
+  validateDimensions: (width: number, height: number) => void = assertMediaDimensions): ImageDimensions {
+  const dimensions = (width: number, height: number): ImageDimensions => {
+    if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width <= 0 || height <= 0) corrupted()
+    validateDimensions(width, height)
+    return { width, height }
+  }
   const bytes = new Uint8Array(data), view = new DataView(data)
   if (format === 'png') {
     if (bytes.length < 33 || ![137, 80, 78, 71, 13, 10, 26, 10].every((v, i) => bytes[i] === v)

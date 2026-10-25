@@ -29,8 +29,11 @@ are preserved without assigning a separate invented component version.
 The standalone experimental build must distribute the complete retained
 gifenc texts, together with the notices for other components it bundles.
 The v0.1.0 production `public/third-party-notices.txt` remains unchanged.
+For Milestone 8A2, the V0.2 branch promotes this exact version to a runtime
+dependency of the lazy creator and appends its full license/header notices to
+the feature-branch public collection. The published v0.1.0 artifact is unchanged.
 The central inventory has a separate
-[experimental component section](../../THIRD_PARTY_NOTICES.md#v02-experimental-gif-encoder).
+[development component section](../../THIRD_PARTY_NOTICES.md#v02-development-gif-creator).
 
 ## Exact package provenance
 

@@ -21,11 +21,14 @@
     "test:soak": "node tools/stability/run-browser.mjs soak",
     "spike:gif": "vite --port 4198 --strictPort",
     "build:gif-spike": "vite build --config tools/gif-encoder/vite.config.mjs",
-    "test:gif-spike": "node tools/gif-encoder/run-browser.mjs"
+    "test:gif-spike": "node tools/gif-encoder/run-browser.mjs",
+    "test:creation": "node tools/creation/run-browser.mjs",
+    "preview:creation": "node tools/creation/preview.mjs"
   },
   "dependencies": {
     "@zip.js/zip.js": "2.23.0",
     "apng-js": "1.1.5",
+    "gifenc": "1.0.3",
     "omggif": "1.0.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
@@ -39,7 +42,6 @@
     "eslint": "^10.13.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
-    "gifenc": "1.0.3",
     "globals": "^17.13.0",
     "typescript": "6.0",
     "typescript-eslint": "^8.72.0",

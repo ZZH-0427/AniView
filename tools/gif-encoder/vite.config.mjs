@@ -14,12 +14,8 @@ export default defineConfig({
   plugins: [{
     name: 'spike-third-party-notices',
     async generateBundle() {
-      const parts = await Promise.all([
-        'public/third-party-notices.txt',
-        'third_party/licenses/gifenc/LICENSE.md',
-        'third_party/licenses/gifenc/SOURCE-HEADER-NOTICES',
-      ].map(path => readFile(path, 'utf8')))
-      this.emitFile({ type: 'asset', fileName: 'third-party-notices.txt', source: parts.join('\n\n') })
+      const source = await readFile('public/third-party-notices.txt', 'utf8')
+      this.emitFile({ type: 'asset', fileName: 'third-party-notices.txt', source })
     },
   }],
 })
