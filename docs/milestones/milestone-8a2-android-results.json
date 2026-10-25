@@ -1,0 +1,98 @@
+{
+  "reportedOn": "2026-10-25",
+  "implementationCommit": "970c8615a7eb22e8a6764641f07e23c1519379db",
+  "evidenceType": "user-reported Android product UI and local download acceptance with issues",
+  "browserMapping": "User confirmed snapshots 1 and 5 are Quark; snapshots 2, 3 and 4 are Edge.",
+  "reportedIssues": [
+    "Initial loading of larger source images feels slow.",
+    "Quark downloads are not directly visible in the phone gallery; Edge downloads are visible.",
+    "Quark silently replaces previous GIF downloads when all use the same suggested filename; Edge does not."
+  ],
+  "results": [
+    {
+      "browser": "Quark",
+      "status": "success",
+      "diagnostics": { "generations": 1, "cancellations": 0, "lastOutputBytes": 245426 },
+      "metrics": {
+        "decodeMs": 423.90000000596046, "quantizeMs": 343.1000000536442, "writeMs": 184.4000000655651,
+        "totalMs": 2641.5, "peakBitmaps": 1, "peakRgbaFrames": 1, "peakFrameBytes": 4194304,
+        "outputBytes": 245426, "outputCapacity": 262144, "frameCount": 10, "width": 1024, "height": 1024, "sourceBytes": 2101068
+      },
+      "resources": {
+        "workersCreated": 1, "workersTerminated": 1, "activeWorkers": 0, "peakWorkers": 1,
+        "bitmapsCreated": 1, "bitmapsClosed": 1, "activeBitmaps": 0, "peakBitmaps": 1,
+        "archiveSessionsOpened": 0, "archiveSessionsClosed": 0, "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 0, "entryExtractionsCompleted": 0, "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0, "decoderErrors": 0, "staticDecodeErrors": 0, "archiveErrors": 0, "cleanupErrors": 0
+      }
+    },
+    {
+      "browser": "Edge",
+      "status": "success",
+      "diagnostics": { "generations": 1, "cancellations": 0, "lastOutputBytes": 245426 },
+      "metrics": {
+        "decodeMs": 581.1999999284744, "quantizeMs": 356.5000000298023, "writeMs": 198.00000002980232,
+        "totalMs": 3966.899999976158, "peakBitmaps": 1, "peakRgbaFrames": 1, "peakFrameBytes": 4194304,
+        "outputBytes": 245426, "outputCapacity": 262144, "frameCount": 10, "width": 1024, "height": 1024, "sourceBytes": 2101068
+      },
+      "resources": {
+        "workersCreated": 1, "workersTerminated": 1, "activeWorkers": 0, "peakWorkers": 1,
+        "bitmapsCreated": 0, "bitmapsClosed": 0, "activeBitmaps": 0, "peakBitmaps": 0,
+        "archiveSessionsOpened": 0, "archiveSessionsClosed": 0, "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 0, "entryExtractionsCompleted": 0, "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0, "decoderErrors": 0, "staticDecodeErrors": 0, "archiveErrors": 0, "cleanupErrors": 0
+      }
+    },
+    {
+      "browser": "Edge",
+      "status": "success",
+      "diagnostics": { "generations": 1, "cancellations": 0, "lastOutputBytes": 212197 },
+      "metrics": {
+        "decodeMs": 597.999999910593, "quantizeMs": 320.90000000596046, "writeMs": 110.00000002980232,
+        "totalMs": 9957.59999999404, "peakBitmaps": 1, "peakRgbaFrames": 1, "peakFrameBytes": 307200,
+        "outputBytes": 212197, "outputCapacity": 262144, "frameCount": 40, "width": 320, "height": 240, "sourceBytes": 981199
+      },
+      "resources": {
+        "workersCreated": 1, "workersTerminated": 1, "activeWorkers": 0, "peakWorkers": 1,
+        "bitmapsCreated": 0, "bitmapsClosed": 0, "activeBitmaps": 0, "peakBitmaps": 0,
+        "archiveSessionsOpened": 0, "archiveSessionsClosed": 0, "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 0, "entryExtractionsCompleted": 0, "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0, "decoderErrors": 0, "staticDecodeErrors": 0, "archiveErrors": 0, "cleanupErrors": 0
+      }
+    },
+    {
+      "browser": "Edge",
+      "status": "success",
+      "diagnostics": { "generations": 1, "cancellations": 0, "lastOutputBytes": 1352629 },
+      "metrics": {
+        "decodeMs": 279.10000002384186, "quantizeMs": 432.69999998807907, "writeMs": 215.89999994635582,
+        "totalMs": 1612.7999999821186, "peakBitmaps": 1, "peakRgbaFrames": 1, "peakFrameBytes": 8701040,
+        "outputBytes": 1352629, "outputCapacity": 1492992, "frameCount": 2, "width": 1220, "height": 1783, "sourceBytes": 3854676
+      },
+      "resources": {
+        "workersCreated": 1, "workersTerminated": 1, "activeWorkers": 0, "peakWorkers": 1,
+        "bitmapsCreated": 0, "bitmapsClosed": 0, "activeBitmaps": 0, "peakBitmaps": 0,
+        "archiveSessionsOpened": 0, "archiveSessionsClosed": 0, "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 0, "entryExtractionsCompleted": 0, "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0, "decoderErrors": 0, "staticDecodeErrors": 0, "archiveErrors": 0, "cleanupErrors": 0
+      }
+    },
+    {
+      "browser": "Quark",
+      "status": "success",
+      "diagnostics": { "generations": 1, "cancellations": 0, "lastOutputBytes": 212197 },
+      "metrics": {
+        "decodeMs": 531.6999999284744, "quantizeMs": 359.60000002384186, "writeMs": 95.29999989271164,
+        "totalMs": 6254.0999999940395, "peakBitmaps": 1, "peakRgbaFrames": 1, "peakFrameBytes": 307200,
+        "outputBytes": 212197, "outputCapacity": 262144, "frameCount": 40, "width": 320, "height": 240, "sourceBytes": 981199
+      },
+      "resources": {
+        "workersCreated": 1, "workersTerminated": 1, "activeWorkers": 0, "peakWorkers": 1,
+        "bitmapsCreated": 0, "bitmapsClosed": 0, "activeBitmaps": 0, "peakBitmaps": 0,
+        "archiveSessionsOpened": 0, "archiveSessionsClosed": 0, "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 0, "entryExtractionsCompleted": 0, "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0, "decoderErrors": 0, "staticDecodeErrors": 0, "archiveErrors": 0, "cleanupErrors": 0
+      }
+    }
+  ]
+}

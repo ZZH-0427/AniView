@@ -10,7 +10,11 @@ import { GIF_CREATION_LIMITS } from './gif/gif-validation'
 const tick = () => new Promise<void>(resolve => setTimeout(resolve, 0))
 const file = (name = 'quadrants.png', size?: number): VirtualFile => {
   const data = staticFixture(name)
-  return { name, size: size ?? data.byteLength, source: 'file', read: async (start, end) => data.slice(start, end) }
+  return { name, size: size ?? data.byteLength, source: 'file', read: async (start = 0, end = size ?? data.byteLength) => {
+    const bytes = new Uint8Array(end - start)
+    bytes.set(new Uint8Array(data).subarray(start, Math.min(end, data.byteLength)))
+    return bytes.buffer
+  } }
 }
 const output = (): EncodedGif => ({ data: new Uint8Array([71, 73, 70, 56, 57, 97]).buffer, byteLength: 6,
   metrics: { width: 2, height: 1, frameCount: 2, sourceBytes: 20, outputBytes: 6, outputCapacity: 6,
@@ -173,7 +177,19 @@ describe('independent CreationSession', () => {
     expect(revokeUrl).not.toHaveBeenCalled()
     await finish(session, encoder)
     expect(session.getSnapshot().result!.url).not.toBe(first.url)
+    expect(session.getSnapshot().result!.filename).not.toBe(first.filename)
     expect(revokeUrl).toHaveBeenCalledExactlyOnceWith(first.url)
+  })
+  it('allocates fresh save names without replacing or republishing the result Blob/URL', async () => {
+    const { session, encoder, createUrl, revokeUrl } = await ready()
+    await finish(session, encoder)
+    const before = session.getSnapshot(), result = before.result!
+    const names = [result.filename, session.nextDownloadName(), session.nextDownloadName()]
+    expect(new Set(names).size).toBe(3)
+    expect(session.getSnapshot()).toBe(before)
+    expect(session.getSnapshot().result!.blob).toBe(result.blob)
+    expect(createUrl).toHaveBeenCalledOnce()
+    expect(revokeUrl).not.toHaveBeenCalled()
   })
   it('clears sources/result, revokes URL and leaves settings intact', async () => {
     const { session, encoder, revokeUrl } = await ready()

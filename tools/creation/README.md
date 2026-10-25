@@ -17,7 +17,8 @@ node tools/creation/run-browser.mjs
 The runner starts a loopback server and a fresh Edge profile, generates original
 static sources, and drives the visible product controls. It checks file input,
 append/duplicates/reorder/remove/drop, settings, Worker progress, Cancel→rerun,
-existing-Viewer preview, actual browser download, URL lifecycle, limits, recovery,
+existing-Viewer preview, repeated/new-result browser downloads with distinct
+filenames and preserved earlier bytes, URL lifecycle, limits, recovery,
 320/390/768/1280 layouts and ownership cleanup. It closes its own server/browser.
 
 Product workloads include 200×320×240, 10×1024², two/three 2048² frames and a
@@ -74,7 +75,11 @@ In Android Edge and Quark:
    rows up/down and remove one. Check the duration and finite/forever loop controls.
 2. Generate; confirm progress, metadata, Preview via AniView playback and return
    without losing the creation project. Use **Download GIF** and confirm a normal
-   save/download flow. If convenient, reopen the saved GIF in the ordinary Viewer.
+   save/download flow. Download the same result twice and a new result once;
+   confirm distinct names and that earlier saved GIFs remain available. If
+   convenient, reopen the saved GIF in the ordinary Viewer. Gallery visibility
+   depends on the browser/device; inspect browser downloads or Files separately
+   from whether the image appears in the gallery.
 3. Extract/select the 40 small images, run Generate→Cancel→Generate again. Then
    run the ten larger images only if the small workload succeeds. Stop escalation
    after a tab reload/crash; do not repeat a dangerous pressure case.

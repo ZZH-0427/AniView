@@ -7,6 +7,8 @@ import { StaticGifEncoder, type EncodeConfiguration } from './gif/encoder-client
 import { EncodeError, type EncodedGif, type EncodeOptions } from './gif/model'
 import { GIF_CREATION_LIMITS } from './gif/gif-validation'
 import { DEFAULT_CREATION_SETTINGS, isCreationBusy, normalizeCreationSettings } from './creation-types'
+import { createGifDownloadNamer } from './download-name'
+import { detectCreationSource } from './source-detection'
 import type { CreationResult, CreationSettings, CreationSnapshot, CreationSource } from './creation-types'
 
 interface CreationEncoder {
@@ -55,6 +57,7 @@ export class CreationSession {
   private cancellation: Promise<void> = Promise.resolve()
   private disposal: Promise<void> | undefined
   private readonly releases = new Set<Promise<void>>()
+  readonly nextDownloadName = createGifDownloadNamer()
   getSnapshot = () => this.state
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   constructor(dependencies: Dependencies = {}) {
@@ -82,18 +85,20 @@ export class CreationSession {
   async add(files: readonly VirtualFile[]): Promise<void> {
     if (!files.length || this.disposed || isCreationBusy(this.state.status)) return
     const id = ++this.generation
-    this.publish({ status: 'adding', error: undefined, notice: '' })
+    const checkingStarted = performance.now()
+    this.publish({ status: 'adding', addingProgress: { current: 0, total: files.length }, error: undefined, notice: '' })
     this.adding = (async () => {
       const sources: CreationSource[] = [...this.state.sources]
       let total = this.state.totalSourceBytes
       const rejected: VirtualFile[] = [], reasons = new Set<string>()
-      for (const file of files) {
+      for (const [index, file] of files.entries()) {
         if (this.disposed || id !== this.generation) break
+        this.publish({ addingProgress: { current: index + 1, total: files.length } })
         if (sources.length >= GIF_CREATION_LIMITS.maxFrames) { rejected.push(file); reasons.add('The list allows up to 200 images.'); continue }
         if (!Number.isSafeInteger(file.size) || file.size <= 0) { rejected.push(file); reasons.add('An image could not be read.'); continue }
         if (total + file.size > GIF_CREATION_LIMITS.maxSourceBytes) { rejected.push(file); reasons.add('Source images must total 16 MiB or less.'); continue }
         try {
-          const detected = await this.detector.detect(file)
+          const detected = await detectCreationSource(file, this.detector)
           if (this.disposed || id !== this.generation) break
           if ((detected.kind !== 'jpeg' && detected.kind !== 'png' && detected.kind !== 'webp') || detected.animated) {
             rejected.push(file); reasons.add(unsupported); continue
@@ -103,7 +108,8 @@ export class CreationSession {
         } catch (cause) { rejected.push(file); reasons.add(creationErrorMessage(cause)) }
       }
       if (this.disposed || id !== this.generation) { await this.release(files); return }
-      this.publish({ sources, totalSourceBytes: total, status: 'idle',
+      this.publish({ sources, totalSourceBytes: total, status: 'idle', addingProgress: undefined,
+        diagnostics: { ...this.state.diagnostics, sourceCheckMs: performance.now() - checkingStarted },
         notice: rejected.length ? `${rejected.length} image${rejected.length === 1 ? '' : 's'} not added. ${[...reasons].join(' ')}` : '' })
       await this.release(rejected)
     })()
@@ -148,7 +154,7 @@ export class CreationSession {
       } })
       if (this.disposed || id !== this.generation || abort.signal.aborted) return
       const blob = new Blob([new Uint8Array(output.data, 0, output.byteLength)], { type: 'image/gif' })
-      const result: CreationResult = { blob, url: this.createUrl(blob), metadata: { ...settings, width: output.metrics.width, height: output.metrics.height,
+      const result: CreationResult = { blob, url: this.createUrl(blob), filename: this.nextDownloadName(), metadata: { ...settings, width: output.metrics.width, height: output.metrics.height,
         frameCount: output.metrics.frameCount, bytes: output.byteLength }, metrics: output.metrics }
       const previous = this.state.result
       this.publish({ result, status: 'success', diagnostics: { ...this.state.diagnostics, lastOutputBytes: output.byteLength } })
@@ -174,7 +180,7 @@ export class CreationSession {
     await this.adding
     if (this.disposed) return
     const old = this.state
-    this.publish({ sources: [], result: undefined, totalSourceBytes: 0, status: 'idle', error: undefined, progress: undefined, notice: '' })
+    this.publish({ sources: [], result: undefined, totalSourceBytes: 0, status: 'idle', error: undefined, progress: undefined, addingProgress: undefined, notice: '' })
     if (old.result) this.revokeUrl(old.result.url)
     await this.release(old.sources.map(source => source.file))
   }

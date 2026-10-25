@@ -12,6 +12,7 @@ export interface CreationSource { readonly id: string; readonly file: VirtualFil
 export interface CreationResult {
   readonly blob: Blob
   readonly url: string
+  readonly filename: string
   readonly metadata: CreationSettings & { readonly width: number; readonly height: number; readonly frameCount: number; readonly bytes: number }
   readonly metrics: EncodeMetrics
 }
@@ -22,11 +23,12 @@ export interface CreationSnapshot {
   readonly settings: CreationSettings
   readonly status: CreationStatus
   readonly progress?: EncodeProgress | undefined
+  readonly addingProgress?: { readonly current: number; readonly total: number } | undefined
   readonly result?: CreationResult | undefined
   readonly error?: string | undefined
   readonly notice: string
   readonly totalSourceBytes: number
-  readonly diagnostics: { readonly generations: number; readonly cancellations: number; readonly lastOutputBytes: number }
+  readonly diagnostics: { readonly generations: number; readonly cancellations: number; readonly lastOutputBytes: number; readonly sourceCheckMs?: number }
 }
 
 export const DEFAULT_CREATION_SETTINGS: CreationSettings = { frameDurationMs: 500, loopForever: true, playCount: 1 }

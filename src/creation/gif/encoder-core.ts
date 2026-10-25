@@ -52,6 +52,12 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
   if (typeof createImageBitmap !== 'function' || typeof OffscreenCanvas !== 'function') throw new EncodeError('WORKER_FAILED')
   const started = performance.now()
   let decodeMs = 0, quantizeMs = 0, writeMs = 0, sourceBytes = 0
+  let sourceReadMs = 0, identifyMs = 0, composeMs = 0, checkpointMs = 0, checkpointCount = 0
+  const checkpoint = async () => {
+    const start = performance.now()
+    try { await hooks.checkpoint() }
+    finally { checkpointMs += performance.now() - start; checkpointCount++ }
+  }
   let liveBitmaps = 0, peakBitmaps = 0, peakRgbaFrames = 0
   let canvas: OffscreenCanvas | undefined
   let writer: GifencWriter | undefined
@@ -64,11 +70,15 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
 
   const open = async (index: number) => {
     let data: ArrayBuffer
+    const readStart = performance.now()
     try { data = await readSource(index) }
     catch (cause) { throw cause instanceof EncodeError ? cause : new EncodeError('FILE_READ_FAILED', { cause }) }
-    await hooks.checkpoint()
+    finally { sourceReadMs += performance.now() - readStart }
+    await checkpoint()
+    const identifyStart = performance.now()
     const format = await identify(data, limits, sourceCount)
-    await hooks.checkpoint()
+    identifyMs += performance.now() - identifyStart
+    await checkpoint()
     let bitmap: ImageBitmap | undefined
     try {
       const start = performance.now()
@@ -76,7 +86,7 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
       decodeMs += performance.now() - start
       liveBitmaps++
       peakBitmaps = Math.max(peakBitmaps, liveBitmaps)
-      await hooks.checkpoint()
+      await checkpoint()
       assertMediaDimensions(bitmap.width, bitmap.height)
       return { bitmap, byteLength: data.byteLength }
     } catch (cause) {
@@ -95,7 +105,7 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
   try {
     progress('scanning', 0)
     for (let i = 0; i < sourceCount; i++) {
-      await hooks.checkpoint()
+      await checkpoint()
       const opened = await open(i)
       try {
         dimensions.push({ width: opened.bitmap.width, height: opened.bitmap.height })
@@ -117,27 +127,31 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
     if (!context) throw new EncodeError('WORKER_FAILED')
     writer = new GifencWriter(options)
     for (let i = 0; i < sourceCount; i++) {
-      await hooks.checkpoint()
+      await checkpoint()
       progress('decoding', i)
       const { bitmap } = await open(i)
+      const composeStart = performance.now()
       try {
         const expected = dimensions[i]!
         if (bitmap.width !== expected.width || bitmap.height !== expected.height) throw new EncodeError('DECODE_FAILED')
         context.clearRect(0, 0, width, height)
         context.drawImage(bitmap, Math.floor((width - bitmap.width) / 2), Math.floor((height - bitmap.height) / 2))
       } finally { closeBitmap(bitmap) }
-      await hooks.checkpoint()
+      composeMs += performance.now() - composeStart
+      await checkpoint()
       // Block scope is deliberate: ImageData/RGBA and indexed pixels are no
       // longer referenced when the next source read/decode starts.
       {
+        const readbackStart = performance.now()
         const rgba = context.getImageData(0, 0, width, height).data
+        composeMs += performance.now() - readbackStart
         peakRgbaFrames = Math.max(peakRgbaFrames, 1)
         progress('quantizing', i)
-        await hooks.checkpoint()
+        await checkpoint()
         const quantizeStart = performance.now()
         const frame = quantizeGifFrame(rgba, options.colors, options.alphaThreshold)
         quantizeMs += performance.now() - quantizeStart
-        await hooks.checkpoint()
+        await checkpoint()
         progress('encoding', i)
         const writeStart = performance.now()
         writer.write(frame, width, height)
@@ -146,7 +160,7 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
       }
       progress('encoding', i + 1)
     }
-    await hooks.checkpoint()
+    await checkpoint()
     progress('finalizing', sourceCount)
     const finishStart = performance.now()
     const result = writer.finish()
@@ -154,6 +168,7 @@ export async function runEncoding(sourceCount: number, readSource: (index: numbe
     if (result.byteLength > MAX_OUTPUT_BYTES) throw new EncodeError('RESOURCE_LIMIT')
     return { data: result.data, byteLength: result.byteLength, metrics: {
       decodeMs, quantizeMs, writeMs, totalMs: performance.now() - started,
+      sourceReadMs, identifyMs, composeMs, checkpointMs, checkpointCount,
       peakBitmaps, peakRgbaFrames, peakFrameBytes: width * height * 4,
       outputBytes: result.byteLength, outputCapacity: result.capacity,
       frameCount: sourceCount, width, height, sourceBytes,

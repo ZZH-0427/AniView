@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { Icon } from '../../components/Icon'
 import { IconButton } from '../../components/IconButton'
 import type { CreationSession } from '../../creation/creation-session'
-import type { CreationResult, CreationSnapshot } from '../../creation/creation-types'
+import type { CreationResult, CreationSnapshot, CreationSource } from '../../creation/creation-types'
 import { isCreationBusy } from '../../creation/creation-types'
 import { droppedFiles } from '../../input/drag-drop'
 import { takeFileSelection } from '../../input/file-input'
@@ -17,7 +17,7 @@ const validPlayCount = (value: string) => value.trim() !== '' && Number.isIntege
 function operationMessage(snapshot: CreationSnapshot) {
   const progress = snapshot.progress
   switch (snapshot.status) {
-    case 'adding': return 'Checking source images…'
+    case 'adding': return snapshot.addingProgress ? `Checking source images ${snapshot.addingProgress.current} / ${snapshot.addingProgress.total}…` : 'Checking source images…'
     case 'preparing': return progress ? `Preparing images ${progress.currentFrame} / ${progress.totalFrames}…` : 'Preparing images…'
     case 'encoding': return `Encoding ${Math.min((progress?.currentFrame ?? 0) + 1, progress?.totalFrames ?? snapshot.sources.length)} / ${progress?.totalFrames ?? snapshot.sources.length}`
     case 'finalizing': return 'Finalizing GIF…'
@@ -27,6 +27,26 @@ function operationMessage(snapshot: CreationSnapshot) {
     default: return ''
   }
 }
+
+// Worker progress changes frequently, while the source handles stay identical.
+// Keep the 200-row source list out of those progress-only render passes.
+const SourceList = memo(function SourceList({ sources, busy, session }: {
+  sources: readonly CreationSource[]; busy: boolean; session: CreationSession
+}) {
+  return <ol className="creator-source-list" data-testid="creation-source-list" aria-label="Animation source order">
+    {sources.map((source, index) => <li key={source.id} className="creator-source-row" data-testid="creation-source-row"
+      data-source-id={source.id} aria-label={`Image ${index + 1}: ${source.file.name}`}>
+      <span className="creator-position" aria-hidden="true">{index + 1}</span>
+      <div className="creator-source-info"><p className="creator-filename" title={source.file.name}>{source.file.name}</p>
+        <p className="creator-source-meta">{source.format.toUpperCase()} · {formatBytes(source.file.size)}</p></div>
+      <div className="creator-row-actions">
+        <IconButton icon="arrow-up" label="Move up" data-action="up" disabled={busy || index === 0} onClick={() => session.move(source.id, 'up')} />
+        <IconButton icon="arrow-down" label="Move down" data-action="down" disabled={busy || index === sources.length - 1} onClick={() => session.move(source.id, 'down')} />
+        <IconButton icon="close" label="Remove" data-action="remove" disabled={busy} onClick={() => session.remove(source.id)} />
+      </div>
+    </li>)}
+  </ol>
+})
 
 /** Creation owns handles/settings only. Preview delegates to the existing Viewer. */
 export default function CreateGif({ session, onBack, onPreview }: {
@@ -121,19 +141,7 @@ export default function CreateGif({ session, onBack, onPreview }: {
       <div className="creator-budget" aria-label="Creation source limits">
         <p>{sources.length} / 200 images</p><p>{(snapshot.totalSourceBytes / 1024 / 1024).toFixed(2)} MiB / 16 MiB</p>
       </div>
-      {sources.length ? <ol className="creator-source-list" data-testid="creation-source-list" aria-label="Animation source order">
-        {sources.map((source, index) => <li key={source.id} className="creator-source-row" data-testid="creation-source-row"
-          data-source-id={source.id} aria-label={`Image ${index + 1}: ${source.file.name}`}>
-          <span className="creator-position" aria-hidden="true">{index + 1}</span>
-          <div className="creator-source-info"><p className="creator-filename" title={source.file.name}>{source.file.name}</p>
-            <p className="creator-source-meta">{source.format.toUpperCase()} · {formatBytes(source.file.size)}</p></div>
-          <div className="creator-row-actions">
-            <IconButton icon="arrow-up" label="Move up" data-action="up" disabled={busy || index === 0} onClick={() => session.move(source.id, 'up')} />
-            <IconButton icon="arrow-down" label="Move down" data-action="down" disabled={busy || index === sources.length - 1} onClick={() => session.move(source.id, 'down')} />
-            <IconButton icon="close" label="Remove" data-action="remove" disabled={busy} onClick={() => session.remove(source.id)} />
-          </div>
-        </li>)}
-      </ol> : <div className="creator-empty">
+      {sources.length ? <SourceList sources={sources} busy={busy} session={session} /> : <div className="creator-empty">
         <Icon name="create" /><p>Create an animated GIF from static images.</p><p>JPEG · PNG · WebP</p>
       </div>}
       <p className="creator-drop-hint">Drop image files here to append them.</p>
@@ -190,9 +198,11 @@ export default function CreateGif({ session, onBack, onPreview }: {
       </dl>
       <div className="creator-result-actions">
         <IconButton icon="play" label="Preview" text="Preview" data-testid="creation-preview" disabled={busy} onClick={() => onPreview(result)} />
-        <a className="creator-download" href={result.url} download="aniview-animation.gif" data-testid="creation-download"
+        <a className="creator-download" href={result.url} download={result.filename} data-testid="creation-download"
+          onClick={event => { event.currentTarget.download = session.nextDownloadName() }}
           aria-label="Download GIF" title="Download GIF"><Icon name="download" /><span>Download GIF</span></a>
       </div>
+      <p className="creator-note">Find saved GIFs in your browser downloads or Files. Gallery visibility depends on your browser and device.</p>
     </section>}
 
     <CreationDiagnostics snapshot={snapshot} />

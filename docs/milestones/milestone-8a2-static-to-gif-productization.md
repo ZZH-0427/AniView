@@ -1,8 +1,9 @@
 # Milestone 8A2 — Static images to GIF productization
 
-Status: **PENDING ANDROID VALIDATION**. Implementation and desktop product gates
-pass; this milestone requires new Android Edge and Quark product UI and download
-acceptance. The earlier 8A1 encoder acceptance does not substitute for it.
+Status: **PENDING ANDROID VALIDATION**. Both Android browsers have now passed
+the product workflow by user report, with slow loading and a Quark filename
+overwrite issue identified. The download and scheduling follow-up below passes
+desktop gates and awaits focused phone confirmation before this milestone closes.
 Development stays on `feat/v0.2-static-to-gif`. No main merge, production Pages
 deployment, version bump, V0.2 tag/release or 8B conversion work is included.
 The published v0.1.0 baseline remains
@@ -50,6 +51,12 @@ source order, committed settings and result after joining Viewer teardown.
 - Desktop drops admit files only, excluding directories, text and URL navigation.
 - Binary JPEG, PNG and static WebP only; GIF, APNG and animated WebP are rejected
   with a clear static-source message. Wrong extensions follow their bytes.
+- Admission detection uses one temporary prefix of at most 64 KiB per source,
+  with original reads for distant PNG chunk headers. Parsing still belongs to
+  BinaryFormatDetector; late APNG metadata is not skipped. The prefix is dropped
+  after each source, not cached across the list. Actual Checking N / Total is
+  shown while reading. Small/large PNG examples reduce native provider reads
+  from 4 to 1/2 respectively.
 - Duplicate files remain separate frames. Stable IDs protect ordering and stale
   work. Up/Down and Remove have accessible icon actions, clamped end controls and
   at least 44×44 CSS-pixel targets. There are no full-resolution source thumbnails.
@@ -114,8 +121,11 @@ StrictMode effect replay does not dispose a live workspace.
 On success, only the valid transferred byte range becomes a `Blob(image/gif)`.
 The capacity-sized ArrayBuffer and Worker are not retained in session state.
 The result shows dimensions, frames, stored delay, total-play behavior and size.
-An actual `<a download="aniview-animation.gif">` uses the session-owned object
-URL. New success revokes the old URL; Clear and leaving/unmounting revoke it as
+An actual download anchor uses the session-owned object URL. Each result gets
+a neutral `aniview-animation-<time>-<nonce>-<counter>.gif` suggestion; every normal
+click assigns a fresh suggestion synchronously before native download handling.
+It creates no additional Blob/URL and publishes no click-time session state.
+New success revokes the old URL; Clear and leaving/unmounting revoke it as
 well. A failed replacement retains the last successful result. Removing a source
 does not delete its underlying device file. Duplicate VirtualFile handles are
 released only after their last source reference is removed.
@@ -148,8 +158,11 @@ the notices. Published v0.1.0 assets stay untouched. AniView retains `UNLICENSED
 
 Formal installed environment: Node **v24.22.1**, npm **11.19.1**, executables under
 `D:\tool\nodejs`. Clean `npm ci --prefer-offline --fetch-retries=0
---fetch-timeout=30000`, lint, typecheck, tests and build pass. **46 test files /
-622 tests**, including all 552 prior tests, with 70 added. Existing tests were
+--fetch-timeout=30000` passed for the implementation; the follow-up does not change
+dependencies or lockfile. Current lint, typecheck, **49 files / 646 tests** and
+build pass. This preserves the initial product's 622 tests and adds 24 regressions
+for task yielding, source reads and save names (94 added over the 552-test baseline).
+Existing tests were
 moved where appropriate and expected error categories updated deliberately;
 none was removed or skipped.
 
@@ -167,11 +180,12 @@ saved GIFs, and writes reports/screenshots only under ignored `.tools/creation/`
 Original procedural source generators provide flat/anime-style, gradient and
 high-color samples. No external artwork or large generated fixture is committed.
 
-Installed **Edge 156** passed all **18 product groups**, including actual file
+Installed **Edge 156** passed all **19 product groups**, including actual file
 selection/add-more/reorder/remove, desktop file-only drop, real progress,
 duration/loop mappings, Cancel→rerun, Back during encoding, Preview Play/Pause/
-step and return state, and a genuine browser download. The saved
-`aniview-animation.gif` matched the result bytes exactly. Saved GIF pixels also
+step and return state, and genuine browser downloads. Saving one result twice,
+then a different result, produced **three different filenames**; all bytes matched
+their results and both earlier files remained unchanged. Saved GIF pixels also
 confirmed source order, centering, transparent padding, alpha 127/128 and correct
 full-frame disposal. The source list stays bounded at 200 rows and scrolls.
 
@@ -191,17 +205,19 @@ playback are outside this timing. Every row ended at **active Workers = 0**.
 
 | Sources | Outcome | Time ms | GIF bytes | Peak RGBA frames |
 | --- | --- | ---: | ---: | ---: |
-| 200×320×240 | Success | 3151.3 | 1,061,230 | 1 |
-| 10×1024² | Success | 418.1 | 245,426 | 1 |
-| 2×2048² | Success | 249.2 | 117,107 | 1 |
-| 3×2048² | Success | 481.3 | 176,555 | 1 |
-| 4×2048² | Controlled rejection | 47.0 wall | — | No quantization/encoding started |
+| 200×320×240 | Success | 1037.0 | 1,061,230 | 1 |
+| 10×1024² | Success | 297.6 | 245,426 | 1 |
+| 2×2048² | Success | 212.9 | 117,107 | 1 |
+| 3×2048² | Success | 329.9 | 176,555 | 1 |
+| 4×2048² | Controlled rejection | 49.6 wall | — | No quantization/encoding started |
 
 The 3×2048² result stays within the existing 15,360,000 frame-pixel budget;
 4×2048² exceeds it and emitted scanning progress only. No workload limit was
 increased or lowered to hide a failure. The worst main-thread heartbeat gap was
-**40.2 ms** during the 200-row/progress case; other successful workload maxima
-were 17.0–17.6 ms. This is not a phone responsiveness or RSS measurement.
+**18.7 ms**. The original desktop run at `970c861` recorded 3151.3 ms / 40.2 ms
+for the 200-frame total/heartbeat; the follow-up memoizes the unchanged source
+list during progress updates and changes task yielding. These are individual
+desktop observations, not an isolated causal estimate or a phone speed claim.
 
 Product probes ended at **18 Workers created / 18 terminated / active 0 / peak
 1**, **493/493** source transfers detached and **12/12** created object URLs
@@ -234,13 +250,13 @@ Node gzip measurements of the tested build:
 
 | Asset | Raw bytes | gzip bytes |
 | --- | ---: | ---: |
-| Normal initial JS | 289,876 | 87,854 |
-| Creator lazy JS | 25,273 | 7,924 |
-| Encoder Worker | 23,305 | 8,928 |
+| Normal initial JS | 289,876 | 87,856 |
+| Creator lazy JS | 27,887 | 8,717 |
+| Encoder Worker | 24,191 | 9,240 |
 | Creator lazy CSS | 6,095 | 1,727 |
 | Initial CSS | 10,198 | 2,900 |
 
-Normal JS grows **1,112 B raw / 372 B gzip** from v0.1.0. Startup network
+Normal JS grows **1,112 B raw / 374 B gzip** from v0.1.0. Startup network
 instrumentation fetched only initial JS/CSS; neither the creator chunk nor
 encoder Worker loaded until the creation action/job. gifenc's standalone ESM
 artifact is 9,098 B / 3,926 B gzip; it is included in the Worker, not added to
@@ -279,8 +295,73 @@ the system picker permits it, but not a blocker. Stop escalating on tab reload
 or memory pressure. The prior encoder-only Android results are not counted as
 this product UI/download acceptance.
 
+## Android product results and follow-up
+
+The user reported both Edge and Quark passed the requested product workflow,
+then identified slow initial loading, Quark downloads missing from the gallery
+and silent replacement of older same-name GIFs in Quark. Edge's downloads were
+visible in the gallery and did not exhibit the overwrite behavior. These are
+user-reported observations; no browser-name workaround is introduced.
+Five original snapshots and the user's confirmed browser mapping are retained
+in [the Android results](milestone-8a2-android-results.json).
+
+| Browser | Sources | Encode total ms | GIF bytes | Active Workers at snapshot |
+| --- | --- | ---: | ---: | ---: |
+| Quark | 10×1024² | 2641.5 | 245,426 | 0 |
+| Edge | 10×1024² | 3966.9 | 245,426 | 0 |
+| Edge | 40×320×240 | 9957.6 | 212,197 | 0 |
+| Edge | 2×1220×1783, user-selected | 1612.8 | 1,352,629 | 0 |
+| Quark | 40×320×240 | 6254.1 | 212,197 | 0 |
+
+All snapshots show one peak RGBA/bitmap, balanced Worker counts and zero cleanup/
+decode/archive errors. Main-thread bitmap counters are separate from Worker
+bitmap ownership and do not independently prove Worker bitmap cleanup. The raw
+generation/cancellation counts are retained without inferring omitted runs.
+These are neither measured heap/RSS peaks nor a controlled browser speed ranking.
+
+For the 40-frame phone runs, measured decode+quantize+write sum to about one
+second, leaving substantial time outside the original phase counters. No claim
+is made that all that difference is timer delay or image decoding. The follow-up:
+
+1. Uses a reusable MessageChannel task boundary at each existing checkpoint,
+   with a timer fallback and both ports closed in Worker finally. Cancellation,
+   native resource cleanup, two passes and one-RGBA ownership remain unchanged.
+   This avoids the nested timer minimum delay documented by the
+   [HTML timers specification](https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#timers).
+2. Adds `sourceReadMs` (Worker request/main provider read/transfer round trips),
+   `identifyMs`, `composeMs`, `checkpointMs` and `checkpointCount`. Source admission
+   time before Generate is separately recorded as `diagnostics.sourceCheckMs`.
+   Blob construction/native decode remain inside decodeMs. Picker work before
+   the application receives its File handles is outside these counters.
+3. Reduces admission reads with a bounded prefix and memoizes source-list rows
+   while actual Worker progress continues updating the operation display.
+4. Replaces fixed save names with per-result/per-click suggestions and adds an
+   ordinary result note directing users to browser downloads/Files.
+
+A local 100-successive-task microbenchmark observed timers 453.6 ms versus
+MessageChannel 0.7 ms. Separate same-file Edge observations were 40-small
+231.7→199.6 ms and 10-large 409.7→281.0 ms; output bytes stayed 212,197/245,426.
+Native decode and other costs also varied, so these changes are not all
+attributed to the scheduler and no Android improvement is claimed before retest.
+
+The file name is a browser suggestion; save behavior remains implementation
+defined by the [HTML download rules](https://html.spec.whatwg.org/multipage/links.html#downloading-resources).
+The web application cannot force native Android gallery indexing or select the
+MediaStore Images destination; Android distinguishes media and download storage
+collections ([Android shared media](https://developer.android.com/training/data-storage/shared/media)).
+Gallery visibility is therefore documented separately from successful file
+download. Users can inspect browser downloads/Files and, if desired, move files
+to Pictures using their file manager. Immediate gallery indexing is not promised.
+
+The result-present hint and Preview/Download controls were visually checked at
+320/1280 px after the fix. Quark still needs to confirm that different and
+repeated saves coexist without replacing older files. Both browsers need a
+focused generation/preview/cancel retest of the updated task scheduling; the
+earlier full UI acceptance is retained rather than discarded.
+
 ## Decision
 
-**Milestone 8A2: PENDING ANDROID VALIDATION.** The feature branch implementation
-is ready for the new Android product check; no product pass, phone download
-success or V0.2 production availability is claimed yet. Do not start 8B.
+**Milestone 8A2: PENDING ANDROID VALIDATION.** Full mobile functionality was
+reported passing, but the follow-up needs targeted confirmation of Quark save
+names and the updated scheduling/read timings before closure. No V0.2 production
+availability is claimed. Do not start 8B.

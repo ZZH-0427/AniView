@@ -2,6 +2,7 @@ import { runEncoding } from './encoder-core'
 import { EncodeError } from './model'
 import { assertSourceLimits, resolveEncodeLimits } from './gif-validation'
 import type { EncoderRequest, EncoderResponse } from './protocol'
+import { createWorkerTaskYield } from './worker-task-yield'
 
 interface Job {
   readonly id: number
@@ -15,6 +16,7 @@ const send = (response: EncoderResponse, transfer: Transferable[] = []) => globa
 async function start(request: Extract<EncoderRequest, { type: 'start' }>) {
   if (job) { send({ type: 'error', id: request.id, code: 'WORKER_FAILED' }); return }
   const current: Job = { id: request.id, sizes: request.sizes, cancelled: false, pending: undefined }
+  const taskYield = createWorkerTaskYield()
   job = current
   try {
     const limits = resolveEncodeLimits(request.limits)
@@ -26,7 +28,8 @@ async function start(request: Extract<EncoderRequest, { type: 'start' }>) {
     }), request.options, {
       progress: progress => send({ type: 'progress', id: current.id, progress }),
       checkpoint: async () => {
-        await new Promise(resolve => setTimeout(resolve, 0))
+        if (current.cancelled) throw new EncodeError('CANCELLED')
+        await taskYield.yield()
         if (current.cancelled) throw new EncodeError('CANCELLED')
       },
     }, limits)
@@ -36,6 +39,7 @@ async function start(request: Extract<EncoderRequest, { type: 'start' }>) {
     send({ type: 'error', id: current.id, code: cause instanceof EncodeError ? cause.code : 'WORKER_FAILED',
       ...(cause instanceof EncodeError && cause.detail ? { detail: cause.detail } : {}) })
   } finally {
+    taskYield.close()
     current.pending = undefined
     job = undefined
   }

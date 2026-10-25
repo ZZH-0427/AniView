@@ -58,6 +58,12 @@ export interface EncodeMetrics {
   readonly quantizeMs: number
   readonly writeMs: number
   readonly totalMs: number
+  /** Source request/response wait, including main-thread File/Blob reads. */
+  readonly sourceReadMs?: number
+  readonly identifyMs?: number
+  readonly composeMs?: number
+  readonly checkpointMs?: number
+  readonly checkpointCount?: number
   readonly peakBitmaps: number
   readonly peakRgbaFrames: number
   readonly peakFrameBytes: number
