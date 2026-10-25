@@ -44,3 +44,19 @@ See the [release licensing audit](docs/releases/licensing-audit.md) for source
 provenance, exact WebP artifacts and the distinction between runtime and build
 tooling. Dependency licenses do not grant rights to user-selected images or ZIP
 contents; those remain subject to their respective owners' terms.
+
+## V0.2 experimental GIF encoder
+
+Milestone 8A1 evaluates the following additional component in a standalone
+technical spike. It is separate from the v0.1.0 Viewer inventory above and is
+not imported by the ordinary Viewer startup or deployed to production Pages.
+
+| Component | Audited version | Declared license | Experimental use | Retained license/source |
+| --- | --- | --- | --- | --- |
+| gifenc | 1.0.3 | MIT | Dedicated Worker GIF quantization, palette mapping and encoding | [LICENSE.md](third_party/licenses/gifenc/LICENSE.md), [source-header acknowledgements](third_party/licenses/gifenc/SOURCE-HEADER-NOTICES) |
+
+The experimental distributable must accompany gifenc with these full retained
+texts and any notices for other bundled components. The existing v0.1.0 public
+notice aggregate is unchanged. See the [spike licensing audit](docs/spikes/gif-encoder-licensing.md)
+for the exact published-package evidence. AniView's own package remains
+`UNLICENSED`; gifenc's terms apply independently.
