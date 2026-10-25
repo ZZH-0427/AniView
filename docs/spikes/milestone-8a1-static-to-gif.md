@@ -1,7 +1,8 @@
 # Milestone 8A1 — Static frames to GIF encoder spike
 
-Status: **PENDING ANDROID VALIDATION**. This is an isolated V0.2 experiment,
-not a creation feature. No M8A2 product work is included. The feature branch is
+Status: **Milestone 8A1 PASSED (2026-10-25)**. Desktop gates and new user-reported
+Android Edge/Quark acceptance passed. Encoder verdict: **ACCEPT WITH LIMITATIONS**.
+This is an isolated V0.2 experiment, not a creation feature. No M8A2 product work is included. The feature branch is
 `feat/v0.2-static-to-gif`; main, the v0.1.0 tag and production Pages stay at
 `4a3dc69542ca2923744904cd10ddbf1a35f36ff9`.
 
@@ -174,9 +175,9 @@ new encoding path.
 ## Evidence and decision
 
 The executable desktop suite produces `.tools/gif-encoder/report.json` and
-comparison artifacts. Android Edge and Quark are **not yet tested** for M8A1;
-the milestone cannot be marked PASSED and M8A2 must not begin until that gate
-is resolved.
+comparison artifacts. The new real-device Android Edge and Quark gate passed by
+user report on 2026-10-25. The Android evidence below is specific to this spike;
+it does not reuse the earlier v0.1 Viewer acceptance.
 
 Dependency provenance and full license retention are documented in
 [the gifenc spike licensing audit](gif-encoder-licensing.md). AniView itself stays
@@ -304,28 +305,83 @@ deployment workflow, v0.1.0 tag or release was changed.
 
 ### Candidate M8A2 limits and encoder verdict
 
-Desktop-only initial recommendations, **not final product policy** and subject
-to the pending Android measurements:
+Initial recommendations, **not final product policy**. The broader ceilings are
+desktop evidence; the smaller phone workloads below do not validate every ceiling:
 
 | Candidate | Proposed ceiling | Actual basis |
 | --- | ---: | --- |
 | Sources | 200 | 10/50/100/200 at 320×240 all completed with one decoded frame |
 | Output pixels | 4,194,304 | Two 2048² frames completed; not 200 large frames |
 | Output side | 2,048 | Largest tested side, deliberately narrower than Viewer metadata limit |
-| Aggregate source bytes | 16 MiB | 16,780,148-byte metadata-heavy WebP workload passed; needs phone confirmation |
-| Frame-pixel workload | 15,360,000 | 200×320×240 measured; 10×1024² is below this |
+| Aggregate source bytes | 16 MiB | 16,780,148-byte metadata-heavy WebP workload passed on desktop; not phone-validated |
+| Frame-pixel workload | 15,360,000 | 200×320×240 measured on desktop; Android also passed 10×1024² below this |
 
-These limits apply together, so 200×4 MP is excluded. Real-phone results may
-require lower or device-independent defaults. The small Android acceptance set
-will not prove that all recommended desktop ceilings are safe on phones.
+These limits apply together, so 200×4 MP is excluded. Both phone browsers passed
+40×320×240 and 10×1024², but not 200 frames, 2048² sources or 16 MiB of source
+bytes. M8A2 must confirm its final defaults instead of promoting all desktop
+ceilings to proven phone limits.
 
-Encoder verdict: **ACCEPT WITH LIMITATIONS**, provisionally for a flat-color
-first creation experiment, conditional on Android Edge and Quark stability.
+Encoder verdict: **ACCEPT WITH LIMITATIONS**, for a flat-color first creation
+workflow. Android Edge and Quark have passed the required small-scale spike.
 The gradient banding prevents a general high-quality encoding claim; if smooth
 gradients or photographic fidelity are required for the first product, this
 candidate should be rejected for that requirement and a separate encoder
 selection undertaken. No alternate encoder is installed here.
 
-**Milestone 8A1 remains PENDING ANDROID VALIDATION. M8A2 is not started and is
-not yet cleared to start.** A phone pass cannot be inferred from desktop speed,
-logical memory proxies or the existing v0.1 Viewer acceptance.
+## Android acceptance (2026-10-25)
+
+The user explicitly reported both browsers passed and supplied four result JSON
+snapshots from the isolated experimental build of implementation commit
+`13e35f5f466336bbd52a1970a34d9cf2feed8c8f`. Original numeric values and complete
+reported user agents are retained in
+[the Android results](milestone-8a1-android-results.json). These are user-reported
+real-device results, not an independently observed mobile browser session.
+
+The local page was initially unreachable from the phone. The same preview was
+restarted outside the restricted agent environment, without changing Windows
+firewall rules or production hosting; the subsequent user runs succeeded. This
+sequence does not prove a specific network-level cause of the earlier failure.
+
+| Browser | Workload | Decode ms | Quantize ms | Write ms | Encode total ms | GIF bytes | Max heartbeat gap ms |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Quark 10.2.0.995 / Chrome 123 UA | 40×320×240 | 262.6 | 209.8 | 73.4 | 1590.0 | 210,513 | 17.5 |
+| Quark 10.2.0.995 / Chrome 123 UA | 10×1024² | 257.8 | 275.9 | 158.8 | 1107.6 | 183,622 | 16.6 |
+| Edge Android 153 | 40×320×240 | 194.6 | 107.9 | 46.5 | 512.0 | 144,521 | 17.1 |
+| Edge Android 153 | 10×1024² | 267.9 | 228.7 | 138.8 | 792.6 | 183,622 | 18.1 |
+
+Every snapshot reported PASS, `peakRgbaFrames = peakBitmaps = 1`,
+`outputCapacity = 262144`, `activeWorkers = 0`, `peakWorkers = 1`, and zero
+decoder/static/archive/cleanup errors. Per-frame RGBA proxies were 307,200 B for
+the small workload and 4,194,304 B for the larger one. Heartbeat counts were
+101/73 for Quark and 34/51 for Edge respectively, supporting continued main-thread
+event-loop activity during encoding. Total includes reads, Canvas work and
+yield/scheduling overhead as well as the three measured phases; it excludes
+test-source generation and GIF decode-back.
+
+Workers created/terminated were 2/2 in both supplied Quark snapshots, 2/2 in the
+small Edge snapshot and 8/8 in the large Edge snapshot. These are page/session
+counters: they are retained as supplied, not added across snapshots or interpreted
+as evidence of a particular number of cancellations. Main-thread bitmap counters
+are zero because native encoder bitmaps live in the Worker; those counters alone
+do not establish native bitmap cleanup. The per-job peak proxies and desktop
+Worker instrumentation remain the applicable ownership evidence.
+
+Source bytes were 726,622/871,043 in Quark and 754,774/1,782,609 in Edge. Sources
+are generated by each browser's native Canvas encoder; these are not identical
+encoded inputs across engines. Output sizes and timings are individual observed
+runs, not a controlled browser ranking or a universal encoding-speed promise.
+The Edge UA's Android 10/K fields are preserved without inferring a physical
+device model or actual OS version from reduced user-agent fields.
+
+No crash, reload, memory-pressure issue or other abnormality was reported with
+the user's pass. Separate manual touch observations and Cancel→rerun outcomes
+were not individually enumerated, so no extra mobile cancellation measurement
+is inferred. Cancellation, stale results and cleanup remain covered by the
+desktop/browser/unit gates. No Android heap/RSS measurement, 200-frame phone
+stress or 4 MP phone encoding pass is claimed.
+
+**Milestone 8A1: PASSED.**
+
+**Ready for Milestone 8A2 — Multiple Static Images → Animated GIF Productization.**
+M8A2 has not started. The feature branch remains isolated; no merge, production
+deployment, new tag or release is included in this closure.
