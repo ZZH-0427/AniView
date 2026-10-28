@@ -1,16 +1,18 @@
 # Milestone 8B1 — Unified animation frame stream and encoder spikes
 
-Status (2026-10-29): **desktop engineering gates passed; fresh Android acceptance pending**.
+Status (2026-10-29): **Milestone 8B1 PASSED**. Desktop engineering gates passed;
+fresh Android Edge and Quark acceptance was confirmed by the user.
 This is an architecture gate on `feat/v0.2-static-to-gif`, following completed
 8A2. It adds no product conversion UI. `main`, the `v0.1.0` tag and production
 Pages remain outside this work; their released application baseline is
 `4a3dc69542ca2923744904cd10ddbf1a35f36ff9`.
 
-Provisional engineering verdicts are **WebP: ACCEPT WITH LIMITATIONS**,
-**APNG: ACCEPT WITH LIMITATIONS**, and **canonical architecture: Yes**. These
-are not an 8B1 closure or permission to start 8B2: Android Edge and Quark must
-pass the new production-preview tests first. WebP's documented identical-frame
-coalescing also prevents a blanket claim of exact source frame-count retention.
+Engineering verdicts are **WebP: ACCEPT WITH LIMITATIONS**,
+**APNG: ACCEPT WITH LIMITATIONS**, and **canonical architecture: ACCEPT / Yes**.
+Both required Android browsers passed the new production-preview gate.
+**Ready for Milestone 8B2 — GIF / WebP / APNG Inter-conversion Productization.**
+Milestone 8B2 has not started. WebP's documented identical-frame coalescing
+prevents a blanket claim of exact source frame-count retention.
 
 ## Reproduce and evidence scope
 
@@ -99,7 +101,7 @@ converters and no duplicate Player or decoder architecture.
 
 Total-play and delay mappings are checked by actual decode-back, alongside the
 primary [WebP container specification](https://developers.google.com/speed/webp/docs/riff_container)
-and [PNG Third Edition animation chunks](https://www.w3.org/TR/png-3/#11AnimationChunks).
+and [PNG Third Edition animation chunks](https://www.w3.org/TR/png-3/).
 
 ```text
 borrowed VirtualFile
@@ -577,15 +579,23 @@ source container chunks are promised in converted output.
 
 ## Fresh Android gate and remaining decisions
 
-Fresh **Android Edge and Quark** results are required. Previous 8A1 encoder,
-8A2 Creator or desktop runs do not substitute for this gate. Run the production
-engineering preview without HMR and record, per browser, conversion outcome,
-timing, output size, logical in-flight peak, native/output-buffer metrics,
-heartbeat responsiveness, cancellation/rerun and all-closed resource counts.
-Include GIF/APNG/WebP sources, WebP/APNG targets, timing/loop/alpha checks,
-many-frame and large-frame workloads supported by the experimental guard.
-If a required Android browser lacks CompressionStream deflate or is unstable
-under the measured guard, the relevant encoder verdict must be revisited.
+Fresh **Android Edge and Quark** evidence has been received for the production
+engineering preview without HMR. The small and medium sets each exercise
+GIF→WebP, GIF→APNG, APNG→WebP and WebP→APNG. Quark's small set includes four
+complete PASS records; its medium set has overall PASS with a partially pasted
+middle. The user reports completing all three Edge portions but cannot provide
+the full JSON because of the phone's text limit. No missing measurements are
+filled from another browser or inferred as independently executed tests.
+
+The [Android validation record](milestone-8b1-android-validation.md) separates
+complete numeric evidence, partial Quark evidence and the Edge user report.
+The user subsequently confirmed Edge small/medium PASS, Worker deflate=true
+and final activeWorkers/activeBitmaps/cleanupErrors=0. Both browsers' cancel /
+small-rerun and stability checks were reported without issues, including no
+jank, page reload or crash. This closes the fresh Android gate. Missing Edge
+timing/output numbers and missing Quark middle fields remain unreported;
+the acceptance is user-reported device evidence, not an independent remote
+execution. Earlier 8A1/8A2 evidence was not substituted.
 
 Known limitations remain explicit:
 
@@ -606,6 +616,6 @@ Known limitations remain explicit:
 The common canonical frame stream is **suitable as the shared conversion
 backbone for GIF/APNG/WebP and future video work**: it separates source
 composition, ownership/backpressure and target encoding. This conclusion does
-not choose a video codec/muxer or implement video support. No 8B2 product work
-starts before the new Android gate passes. Any later product description must
-carry the measured WebP coalescing limitation forward.
+not choose a video codec/muxer or implement video support. The required Android
+gate has now passed; later productization must carry the measured WebP
+coalescing limitation forward. No 8B2 product work was performed here.

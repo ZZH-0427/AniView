@@ -101,9 +101,11 @@ any reload and the Worker/resource cleanup result.
 
 The JSON reports the actual Worker `CompressionStream('deflate')` capability.
 An unsupported target returns `TARGET_ENCODER_UNSUPPORTED`, with no silent
-compression fallback. **Real Android Edge and Quark acceptance is pending**;
-desktop results and the earlier 8A2 Android results do not replace it. QQ is
-optional additional evidence, not an 8B1 gate.
+compression fallback. **Fresh Android Edge and Quark acceptance passed on
+2026-10-29**, using the production preview above. See the curated
+[Android evidence record](../../docs/spikes/milestone-8b1-android-validation.md)
+for complete/partial Quark JSON and Edge's compact user confirmation; absent
+phone measurements are not invented. QQ remains optional additional evidence.
 
 ## Reading the metrics
 
@@ -150,8 +152,9 @@ The direct bridge memory cases are **10/50/100/200 × 320×240** and **two frame
 at 1024², 1920×1080 and 2048². Those measured opaque procedural workloads and
 sampled allocator checkpoints are not a proof for every image pattern or an
 unmeasured transient maximum. Full browser cases add alpha/scenes and conversion
-checks, but large-image fidelity remains sampled. Real Android memory and
-capability acceptance must still be supplied separately.
+checks, but large-image fidelity remains sampled. The required Android
+small/medium capability and cleanup gate passed; whole-process RAM and large
+Android-frame limits were not measured by that smoke test.
 
 The current spike guards are at most 200 frames, 2048 per side, 4,194,304 canvas
 pixels, 15,360,000 frame-pixels and 64 MiB source/output limits. They are
