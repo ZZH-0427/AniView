@@ -14,6 +14,15 @@ export interface WebPModule {
   _aniview_webp_timestamp(context: number): number
   _aniview_webp_reset(context: number): void
   _aniview_webp_destroy(context: number): void
+  _aniview_webp_encoder_create(width: number, height: number, frames: number, plays: number): number
+  _aniview_webp_encoder_destroy(context: number): void
+  _aniview_webp_encoder_input(context: number): number
+  _aniview_webp_encoder_add(context: number, timestamp: number): number
+  _aniview_webp_encoder_finish(context: number, endTimestamp: number): number
+  _aniview_webp_encoder_output(context: number): number
+  _aniview_webp_encoder_output_size(context: number): number
+  _aniview_webp_encoder_count(): number
+  _aniview_webp_live_alloc_bytes(): number
 }
 export default function createModule(options: {
   locateFile(path: string): string

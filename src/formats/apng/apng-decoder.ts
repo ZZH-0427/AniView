@@ -3,7 +3,7 @@ import { MediaError } from '../../media/errors'
 import { countRuntimeEvent, trackRuntimeResource } from '../../media/runtime-diagnostics'
 import type { APNGRequest, APNGResponse } from './apng-worker-protocol'
 
-type Command = { type: 'open'; data: ArrayBuffer } | { type: 'next' | 'reset' | 'close' }
+type Command = { type: 'open'; data: ArrayBuffer; canonicalRGBA?: boolean } | { type: 'next' | 'reset' | 'close' }
 interface Pending {
   readonly id: number
   readonly resolve: (value: APNGResponse) => void
@@ -18,7 +18,7 @@ export class APNGDecoder {
   private pending: Pending | undefined
   private disposed = false
   private id = 0
-  constructor() {
+  constructor(private readonly options: { readonly canonicalRGBA?: boolean } = {}) {
     if (typeof Worker === 'undefined') throw new MediaError('APNG_RUNTIME_UNAVAILABLE')
     try { this.worker = new Worker(new URL('./apng-decoder.worker.ts', import.meta.url), { type: 'module' }) }
     catch (cause) { throw new MediaError('WORKER_FAILED', { cause }) }
@@ -39,7 +39,7 @@ export class APNGDecoder {
     if (file.size > 64 * 1024 * 1024) throw new MediaError('RESOURCE_LIMIT_EXCEEDED')
     let data: ArrayBuffer
     try { data = await file.read() } catch (cause) { throw new MediaError('FILE_READ_FAILED', { cause }) }
-    return this.request({ type: 'open', data }, [data])
+    return this.request({ type: 'open', data, ...(this.options.canonicalRGBA ? { canonicalRGBA: true } : {}) }, [data])
   }
   next() { return this.request({ type: 'next' }) }
   reset() { return this.request({ type: 'reset' }) }

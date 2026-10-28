@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AniView conversion architecture spike</title><link rel="icon" href="data:,">
+<style>:root{font:16px/1.5 system-ui;color-scheme:light dark}body{max-width:65rem;margin:auto;padding:1rem}button{min-height:44px;margin:.3rem;padding:.5rem 1rem;font:inherit}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#7772;padding:1rem}output{display:block;min-height:3rem}</style></head>
+<body><h1>Animation conversion architecture spike</h1>
+<p>Engineering harness only. Original procedural sources pass through existing AniView decoders and dedicated target encoders. No uploads, user conversion controls or product download workflow are provided.</p>
+<p>Use a production preview without Vite HMR. Run the small set first; stop escalation after a reload or memory-pressure failure. Ownership counters require <code>?debug=1</code>.</p>
+<button id="run-small">Run small: four directions · 6 × 64×48</button>
+<button id="run-medium">Run medium: four directions · 40 × 320×240</button>
+<button id="cancel" disabled>Cancel</button>
+<output id="progress">Ready</output><p id="heartbeat">Conversion heartbeat: waiting</p>
+<pre id="result">The small and medium sets each test GIF → WebP, GIF → APNG, APNG → WebP, and WebP → APNG. Copy this result after completion.</pre>
+<p><a href="%BASE_URL%third-party-notices.txt">Third-party notices</a></p>
+<script type="module" src="../../src/spikes/conversion/harness.ts"></script></body></html>

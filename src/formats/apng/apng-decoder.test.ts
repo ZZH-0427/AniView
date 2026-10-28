@@ -12,6 +12,15 @@ class FakeWorker {
   constructor() { FakeWorker.latest = this }
 }
 afterEach(() => vi.unstubAllGlobals())
+it('opts in to canonical RGBA only for an explicitly requested conversion transport', async () => {
+  vi.stubGlobal('Worker', FakeWorker)
+  const transport = new APNGDecoder({ canonicalRGBA: true }), buffer = new ArrayBuffer(4)
+  const pending = transport.open({ name: 'test-only', size: 4, source: 'file', read: async () => buffer })
+  await Promise.resolve()
+  expect(FakeWorker.latest.postMessage).toHaveBeenCalledWith({ id: 1, type: 'open', data: buffer, canonicalRGBA: true }, [buffer])
+  FakeWorker.latest.onmessage?.({ data: { id: 1, type: 'ready', metadata: { width: 1, height: 1, frameCount: 1, loopCount: 1 }, readyMs: 0 } })
+  await pending; transport.dispose()
+})
 it('transfers input, rejects pending on termination and ignores late responses', async () => {
   vi.stubGlobal('Worker', FakeWorker)
   const transport = new APNGDecoder()
