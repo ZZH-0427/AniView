@@ -1,11 +1,13 @@
 # Milestone 8A2 — Static images to GIF productization
 
-Status: **PENDING FINAL USER-FLOW CONFIRMATION**. Android encoding is **PASS**
+Status: **PASSED**. Android encoding is **PASS**
 in Edge and Quark, with QQ providing additional compatibility PASS evidence.
 Cancel → rerun, resource cleanup and the near-ceiling real-media workload are
 confirmed. Preview and single Download retain their earlier user-reported PASS.
-The **only remaining blocker is Android repeated-download preservation after
-the filename fix**, especially in Quark; desktop evidence does not close it.
+The final real Android confirmation closes **Repeated Download preservation:
+PASS**: unique generated filenames, earlier files retained, non-zero sizes and
+normal file opening. **Multiple Static Images → Animated GIF is feature-complete
+on the V0.2 feature branch.** There are no remaining 8A2 blockers.
 Development stays on `feat/v0.2-static-to-gif`. No main merge, production Pages
 deployment, version bump, V0.2 tag/release or 8B conversion work is included.
 The published v0.1.0 baseline remains
@@ -168,9 +170,26 @@ for task yielding, source reads and save names (94 added over the 552-test basel
 Existing tests were
 moved where appropriate and expected error categories updated deliberately;
 none was removed or skipped. The later local lifecycle investigation passed
-**50 files / 658 tests**, lint, typecheck and build, adding 12 diagnostic tests.
-These are previously executed checks, not newly claimed runs for this
-documentation-only closeout; temporary lifecycle source changes remain local.
+**50 files / 658 tests**, lint, typecheck and build, including 12 temporary
+recorder-only tests. Final closeout withdrew that recorder and archived those
+12 tests with it; they were not product regressions. **All 646 established
+product/spike tests remain present and enabled.**
+
+After cleanup, the formal Node 24 environment freshly passed **npm ci**, lint,
+typecheck, **49 files / 646 tests**, and production build. An initial Windows
+native-module lock prevented npm ci; stopping the identified project Vite
+process released it, and the complete sequence then passed. No dependency,
+lockfile, type/lint rule or resource limit was changed to obtain the result.
+
+Fresh post-cleanup desktop acceptance in installed Edge 156 also passed all
+**19 product groups**, five workloads and three quality samples. Create GIF,
+Generate, actual Cancel → rerun, Preview controls/return and real downloads
+passed. Saving one result twice and a different result once produced three
+distinct names with exact bytes and preserved both earlier files. Ownership
+ended at **18/18 Workers terminated, active 0, peak 1**, **493/493** source
+transfers detached, **12/12** result URLs revoked, and zero browser errors.
+These fresh desktop checks supplement, rather than repeat, the accepted Android
+evidence; cleanup does not change any product behavior.
 
 Session tests cover ordered append/add-more/remove/clear/move, duplicates,
 200-count and 16 MiB boundaries, duration normalization and total-play mappings,
@@ -369,8 +388,9 @@ to Pictures using their file manager. Immediate gallery indexing is not promised
 
 The result-present hint and Preview/Download controls were visually checked at
 320/1280 px after the fix. The earlier full Android UI acceptance is retained.
-The new real-device results below close encoding and cancellation validation;
-Quark's post-fix repeated-save preservation is not inferred from those results.
+The real-device results below close encoding and cancellation validation.
+Repeated-save preservation has its own subsequent explicit Android confirmation,
+recorded separately below.
 
 ### Final real-user-media validation
 
@@ -408,6 +428,7 @@ cleanupErrors = 0
 **The verified sequential, single-worker, bounded-memory encoding architecture
 remained intact on real Android browsers.** These are application ownership and
 workload observations, not OS RSS/heap or GPU-memory measurements.
+**Productization preserved the verified 8A1 bounded-memory architecture.**
 
 QQ and Edge diagnostics explicitly recorded **cancellations = 1**, followed by
 successful generation. **Cancel → rerun: real Android PASS**; there is no pending
@@ -433,16 +454,41 @@ background behavior. These asynchronous stage and total timings are not
 automatically CPU-only measurements either. No phone speed ranking or numeric
 performance regression is inferred from an interrupted wall-clock interval.
 
-### Final user-flow reconciliation
+### Final Android download confirmation
 
-| Check | Android status | Evidence / limitation |
+**Repeated Download preservation: PASS.** The user's final real Android
+confirmation reports download-directory screenshot evidence and actual file
+opening checks:
+
+- Multiple downloads produced distinct GIF files with unique generated filenames.
+- Earlier downloaded files remained present; no overwrite or removal was observed.
+- Downloaded GIF files had non-zero sizes and opened normally.
+
+This closes the final user-flow blocker after the filename fix. It is
+user-provided real-device evidence, not a claim of independently operating the
+phone or inspecting an image unavailable to this session. No private filename,
+media content or screenshot is added as a permanent product example.
+
+### Final product-flow reconciliation
+
+| Check | Status | Evidence |
 | --- | --- | --- |
 | Generate | PASS | Final Edge/Quark real-user-media results; QQ additional PASS |
+| Add more images | PASS | Earlier Edge/Quark full workflow and desktop product regression |
+| Remove | PASS | Earlier full workflow and desktop ordered-source checks |
+| Move Up / Move Down | PASS | Source ordering validated in the full workflow and desktop regression |
+| Clear | PASS | Full workflow and source/result cleanup regression |
+| Global frame duration | PASS | Full workflow; boundary/normalization/output-delay checks |
+| Loop forever | PASS | Full workflow and encoded repeat-extension checks |
+| Finite play count | PASS | Full workflow; once/finite total-play mappings |
+| Progress | PASS | Real Worker progress and monotonic work counters |
 | Cancel → rerun | PASS | QQ and Edge cancellation counter followed by successful generation |
 | Preview | PASS, user-reported | Earlier Edge/Quark complete requested product workflow, including Preview and return |
-| Download | PASS, user-reported | Actual saves reported in Edge/Quark; gallery visibility is browser/device-dependent |
-| Repeated download preserving earlier files | **PENDING FINAL USER-FLOW CONFIRMATION** | Distinct filenames and preserved bytes verified on desktop Edge; no explicit post-fix Android confirmation yet |
-| Completion resource cleanup | PASS | Active Workers 0, balanced created/terminated counts, cleanupErrors 0 |
+| Single Download | PASS, user-reported | Actual saves reported in Edge/Quark; gallery visibility is browser/device-dependent |
+| Repeated Download preservation | **PASS** | Final Android confirmation: distinct files, earlier files retained, non-zero sizes and normal opening; desktop byte-preservation regression also passes |
+| Result lifecycle cleanup | PASS | Replacement/Clear/Back URL revocation and ownership regression |
+| Worker cleanup | PASS | Real Android active Workers 0, balanced created/terminated counts, cleanupErrors 0 |
+| Error recovery | PASS | Controlled failure retains usable source/session state; subsequent generation succeeds in product regression |
 | Production-preview background lifecycle | Reported normal | Edge and Quark B; development A reproduces HMR reload, investigation CLOSED |
 
 The lifecycle comparison has no QQ production-preview evidence, so QQ is not
@@ -450,6 +496,45 @@ added to that comparison. Exact Android lifecycle repetition counts and a
 separate Blob-present result were not supplied; no fabricated counts or new
 lifecycle blocker are introduced. No crash/reload was reported in the B
 production-preview comparison.
+
+## Final diagnostics audit and cleanup
+
+Every previously uncommitted path was reviewed before cleanup. **A** denotes a
+retained product-worthy diagnostic/tool correction; **B** denotes temporary
+investigation instrumentation. No blind reset or blanket checkout was used.
+
+| Category | Audited path | Final disposition |
+| --- | --- | --- |
+| B | `src/app/App.tsx` | Removed temporary panel/mount/navigation tracing; original committed App restored |
+| B | `src/app/MediaApp.tsx` | Removed the observation-only screen hook |
+| B | `src/creation/CreatorWorkspace.tsx` | Removed the observation-only hook; original Session ownership unchanged |
+| B | `src/main.tsx` | Removed temporary boot initialization and HMR event tracing |
+| B | `src/components/DiagnosticsPanel.css` | Removed the temporary panel style |
+| B | `tools/creation/browser.mjs` | Removed the investigation-only background-throttling option; original acceptance helper restored |
+| A | `tools/creation/preview.mjs` | Retained the accurate “production preview (no HMR)” fixture-link wording; serving behavior unchanged |
+| B | `src/app/lifecycle-diagnostics.ts` | Removed from runtime; original retained in local ignored archive |
+| B | `src/app/lifecycle-diagnostics.test.ts` | Archived its 12 temporary recorder tests; all 646 product/spike tests retained |
+| B | `src/app/use-lifecycle-screen.ts` | Removed from runtime and locally archived |
+| B | `src/components/LifecycleDiagnostics.tsx` | Removed temporary UI and locally archived |
+| B | `tools/lifecycle/README.md` | Locally archived as investigation-only tooling |
+| B | `tools/lifecycle/run-browser.mjs` | Locally archived; not retained as a product acceptance tool |
+| B | `docs/milestones/milestone-8a2-lifecycle-android-results.json` | Local event evidence archived; causal excerpts remain in the closed investigation document |
+
+The seven untracked temporary files were moved individually into ignored
+`.tools/lifecycle/archive/`; the captured reports remain local. Investigation
+LAN services were stopped after the device test window. No raw dump, test banner,
+boot counter, sessionStorage journal, HMR-specific hook or lifecycle panel remains
+in the product runtime. Restored source and the browser helper match committed
+product code exactly.
+
+Existing **Creation diagnostics under `?debug=1`** remain unchanged: generation
+and cancellation counts, last output bytes, source-check timing, encode timing
+breakdown, peak RGBA frames, Worker created/terminated/active counts and cleanup
+errors. They are local-only numeric diagnostics with no filenames, media pixels,
+remote upload or product behavior change. Their existing tests and the final
+desktop acceptance exercise generation, cancellation and ownership cleanup.
+This preserves useful formal diagnostics without promoting the investigation
+recorder into a permanent Creator feature.
 
 ## Known limitations and release state
 
@@ -468,11 +553,15 @@ V0.2 deployment, tag, GitHub Release or 8B work is part of this closeout.
 **Milestone 8A1: PASSED.** Its encoder verdict remains **gifenc: ACCEPT WITH
 LIMITATIONS**.
 
-**Milestone 8A2: PENDING FINAL USER-FLOW CONFIRMATION.** Android encoding,
-cancellation, cleanup and lifecycle investigation are closed. The **single
-remaining blocker** is real Android confirmation that repeated downloads after
-the filename fix preserve the earlier saved files, especially in Quark. Preview
-and single Download retain their user-reported PASS; they are not extra blockers.
+**Milestone 8A2: PASSED.** Generate, Cancel → rerun, Preview, Single Download,
+Repeated Download preservation, cleanup and production-preview lifecycle
+acceptance are complete. The lifecycle investigation remains **CLOSED** and
+requires no product recovery or persistence change.
 
-No V0.2 production availability or full milestone completion is claimed while
-this one user-flow confirmation is outstanding. **Milestone 8B has not started.**
+**Multiple Static Images → Animated GIF is feature-complete on the V0.2 feature
+branch.** The implementation preserves the verified sequential, single-worker,
+bounded-memory architecture from Milestone 8A1. Known GIF quality and resource
+limitations remain documented. **Remaining blockers: None.**
+
+**V0.2 itself is not released.** No main merge, production deployment, tag or
+GitHub Release is implied. **Milestone 8B has not started.**

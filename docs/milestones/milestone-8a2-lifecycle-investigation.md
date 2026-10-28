@@ -4,15 +4,17 @@ Status: **CLOSED**.
 
 Final classification: **Development-server-only Vite/HMR reload behavior**.
 **Product fix required for Milestone 8A2: No.** The production-preview comparison
-was reported normal in Android Edge and Quark. The only remaining milestone
-user-flow blocker is documented in the [8A2 productization status](milestone-8a2-static-to-gif-productization.md):
-Android repeated-download preservation, not lifecycle recovery.
+was reported normal in Android Edge and Quark. The final Android repeated-download
+confirmation has since closed the separate user-flow gate: the
+[8A2 productization status](milestone-8a2-static-to-gif-productization.md) is now
+**PASSED**, with no remaining blockers.
 
 Investigation started **2026-10-28** on `feat/v0.2-static-to-gif`, based on
-`a038491`. This is the closed investigation's documentation record. Diagnostic
-source additions remain temporary local working-tree changes, excluded from
-the documentation commit, release and GitHub Pages deployment. No media
-persistence or product recovery behavior has been implemented.
+`a038491`. This is the closed investigation's documentation record. Final
+closeout audited and withdrew the temporary source instrumentation, hooks,
+panel and recorder-only tests. Original investigation tools and evidence are
+retained only in ignored local `.tools/lifecycle/` archives, not in the product
+runtime or release. No media persistence or product recovery was implemented.
 
 ## Current finding
 
@@ -26,7 +28,7 @@ is warranted by these results.
 Exact per-environment attempt counts and separate generated-result outcomes were
 not supplied; no standardized ten-cycles-plus-Blob completion is invented. This
 is a coverage note, not an open lifecycle blocker. The original approximately
-four reports from the earlier static4198 service remain retrospectively
+four reports from an earlier port4198 session remain retrospectively
 unattributed; they are not silently relabelled HMR events.
 
 | Android Browser | Vite Dev/HMR | Production Preview |
@@ -49,17 +51,19 @@ to `false`. Blur only clears the drag overlay. No Creator visibility/pagehide/
 freeze handler navigates Home. Preview Close returns to Creator. Unmount cleanup
 disposes its existing owner but does not invoke the Back callback.
 
-**The previous Android address at port 4198 already served a static production
-build**, through `tools/creation/preview.mjs` reading `dist`. It was not a Vite
-development server. An old fixture-page link saying “development build” was
-misleading and has been corrected to “production preview (no HMR)”. If the four
-observations occurred on that service, HMR cannot be their direct explanation.
+**Port 4198 alone does not identify the server mode.** An earlier documented
+launch used `tools/creation/preview.mjs` to serve static `dist`, whereas final
+cleanup found a project Vite development process also using port 4198. The four
+earlier uninstrumented observations cannot be assigned a cause from the URL
+alone. An old static-fixture link saying “development build” was misleading;
+its wording is now “production preview (no HMR)”. This does not alter the
+instrumented A/B comparison or its development-only classification.
 
-## Temporary evidence collection
+## Temporary evidence collection (historical; removed)
 
-Collection starts before React mounts and only with `?debug=1`. Lifecycle
-diagnostics remain available on Home, Creator and preview so a return Home does
-not remove the evidence panel. It records:
+During the investigation, collection started before React mounted and only with
+`?debug=1`. Lifecycle diagnostics were available on Home, Creator and preview so
+a return Home did not remove the evidence panel. The temporary recorder captured:
 
 - `visibilitychange` with `document.visibilityState`;
 - `pagehide` / `pageshow` with their `persisted` flags;
@@ -71,22 +75,21 @@ not remove the evidence panel. It records:
 - Vite update/full-reload/connect/disconnect/invalidate **event names only**;
 - a boot count for instrumented documents in this tab and origin.
 
-The bounded journal uses **diagnostic-only sessionStorage**, key
+The bounded journal used **diagnostic-only sessionStorage**, key
 `aniview.debug.lifecycle.v1`, at most 128 events and 32 KiB with UTF-16 accounting.
-It preserves evidence across reloads; it does not restore a screen, settings,
-sources or Blob. StrictMode effect replay and repeated starts do not increment
-the document boot count. Ports are separate origins with separate counters.
-Storage denial or quota failure falls back to in-memory diagnostics and is
-explicitly displayed. Stored records are rebuilt from allowlisted fields.
+It preserved evidence across reloads and never restored a screen, settings,
+sources or Blob. StrictMode effect replay and repeated starts did not increment
+the document boot count. Ports had separate origin counters. Storage failure
+fell back to memory-only diagnostics; stored records used allowlisted fields.
 
-There are no filenames, paths, URLs, media bytes or HMR payloads in the app
-journal, and no diagnostic upload, beacon, polling or analytics. No unload or
-beforeunload listener was added. Normal pages without the debug query neither
-collect lifecycle records nor touch diagnostic storage.
+The journal contained no filenames, paths, URLs, media bytes or HMR payloads;
+there was no upload, beacon, polling or analytics. No unload/beforeunload listener
+was added. The recorder, its sessionStorage writes and the extra UI have now been
+removed entirely. Formal numeric Creation diagnostics remain unchanged.
 
-## Controlled environments
+## Controlled investigation environments (historical)
 
-Both use the same working tree and installed Node.js 24.22.1 / npm 11.19.1.
+Both used the same working tree and installed Node.js 24.22.1 / npm 11.19.1.
 
 | Environment | Command | Dedicated port | HMR |
 | --- | --- | --- | --- |
@@ -98,18 +101,22 @@ the preview HTML contains only production hashed assets. The static preview is
 not a Vite development server. The `/AniView/` base remains intact. No Pages,
 main branch, tag or release was updated.
 
-Current LAN links (replace the IP if the computer changes network):
+Recorded investigation links (the dedicated investigation services were stopped
+during final cleanup; the current product no longer includes Lifecycle diagnostics):
 
 - Development: `http://192.168.31.225:4199/AniView/?debug=1`
 - Production preview: `http://192.168.31.225:4200/AniView/?debug=1`
 
 ## Evidence status
 
-Lint, TypeScript, **50 test files / 658 tests**, and the production build pass.
-The 12 new recorder tests cover lifecycle events, persisted flags, reload
+During investigation, lint, TypeScript, **50 test files / 658 tests**, and the
+production build passed. The 12 temporary recorder tests covered events, flags, reload
 history/boot counting, unsupported APIs, storage failures, bounded retention,
-sanitization, disabled debug and listener cleanup. Existing encoder, session,
-viewer and resource-limit tests remain present.
+sanitization, disabled debug and listener cleanup. Those tests were archived with
+the withdrawn recorder; they were not product regressions. Final cleanup freshly
+passed npm ci, lint, typecheck, **49 files / 646 product/spike tests**, build and
+all **19 desktop product groups**. All existing encoder, session, Viewer and
+resource-limit tests remain present, enabled and unchanged.
 
 Fresh **desktop Edge 156** results (canonical completed run):
 
@@ -160,8 +167,8 @@ not added to the canonical counts above.
 The user supplied four initial Home snapshots, two Quark anomaly summaries and
 later Edge development anomaly records, followed by explicit confirmation that
 both production-preview browser tests had no issue. The received evidence is
-summarized inline below; full local diagnostic copies remain uncommitted and
-are not required to read this documentation record.
+summarized inline below; full diagnostic copies are retained only in the ignored
+local archive and are not required to read this documentation record.
 The anomaly Raw JSON copies are truncated and repeat earlier prefixes; they
 are not treated as complete or independent raw histories.
 
@@ -212,8 +219,9 @@ denominator, per-environment ten-round completion or independent Blob-present
 outcome is invented. The subsequent user report resolves the production-outcome
 question: **Quark B and Edge B were normal**. This supports the development-only
 classification for the currently reproduced issue and removes it as a confirmed
-product-defect blocker. It does not independently prove that every standardized
-acceptance step was completed or close the entire Milestone 8A2.
+product-defect blocker. That lifecycle result alone did not close the whole
+milestone; the subsequent separate Android repeated-download confirmation has
+now closed the last user-flow gate. Overall 8A2 is PASSED.
 
 No source edits or LAN service restarts were made during the device test window.
 
@@ -224,6 +232,8 @@ HMR.** The development server is for development, debugging and rapid iteration;
 it is not the final Android page-lifecycle or release acceptance environment.
 The following development/production comparison is retained as the reproduction
 procedure for this now-closed investigation, not an outstanding acceptance gate.
+It describes the historical instrumented build; the panel/hooks are absent from
+the final product build and the investigation runner is locally archived.
 
 Do not edit source files or restart either service during the comparison.
 Keep phone and computer on the same Wi-Fi and keep the computer awake.
@@ -295,8 +305,10 @@ expected result of that architecture.
 **Decision: CLOSED — Development-server-only Vite/HMR reload behavior.
 Use static production preview for further product acceptance; do not modify
 product behavior to compensate for development HMR reloads.** No change to
-navigation or recovery is recommended. Temporary instrumentation stays local
-and uncommitted; no release or Pages deployment is made with these diagnostics.
+navigation or recovery is recommended. Temporary boot counters, HMR event tracing,
+screen hooks, lifecycle UI, event journal and 12 recorder-only tests have been
+withdrawn and locally archived. They are not retained as a permanent Creator
+feature; no release or Pages deployment includes them.
 **Product fix required for Milestone 8A2: No.** No IndexedDB persistence, OPFS,
 CreationSession persistence, route recovery or Service Worker state persistence
 is warranted or implemented for this issue.
@@ -306,9 +318,10 @@ new dependency or persistence-based recovery was introduced.
 
 **This reproduced lifecycle issue is not a Milestone 8A2 product blocker.**
 The root-cause investigation is closed. Exact Android attempt counts and the
-separate Blob-present outcome remain unquantified coverage notes, not additional
-blockers. Overall 8A2 status is **PENDING FINAL USER-FLOW CONFIRMATION**, solely
-for Android repeated-download preservation as described in the productization
-record. Milestone 8A1 remains **PASSED**, with **gifenc: ACCEPT WITH LIMITATIONS**.
+separate Blob-present outcome remain unquantified historical coverage notes,
+not additional blockers. Final Android evidence confirms repeated-download
+preservation, so overall **Milestone 8A2: PASSED**. Milestone 8A1 remains **PASSED**,
+with **gifenc: ACCEPT WITH LIMITATIONS**. Useful formal Creation diagnostics
+remain local-only; no CreationSession persistence is required or introduced.
 No main merge, V0.2 deployment, tag or Release has been made; main, v0.1.0 and
 production GitHub Pages (AniView v0.1.0) remain unchanged. 8B has not started.

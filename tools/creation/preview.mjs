@@ -17,7 +17,7 @@ const safePath = (root, suffix) => {
 const index = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AniView local creation samples</title>
 <style>body{font:16px/1.6 system-ui;max-width:48rem;margin:auto;padding:1rem}a{display:block;min-height:44px;padding:.4rem}code{overflow-wrap:anywhere}</style>
 <h1>Local GIF creation samples</h1><p>Original programmatically generated images for local Android acceptance. Download a ZIP, extract it with the phone's Files app, then choose the extracted static images in Create GIF. These ZIPs are fixture delivery only; the creator does not accept ZIP input.</p>
-<a href="${base}">Open AniView development build</a>
+<a href="${base}">Open AniView production preview (no HMR)</a>
 <a href="mobile-40.zip" download>Download 40 × 320×240 static PNGs</a>
 <a href="mobile-10-large.zip" download>Download 10 × 1024² static PNGs</a>
 <a href="mixed-static.zip" download>Download mixed JPEG / PNG / WebP</a>
