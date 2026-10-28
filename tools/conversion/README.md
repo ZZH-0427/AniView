@@ -41,6 +41,7 @@ After the separate engineering build, run the complete installed-Edge suite:
 node tools/conversion/run-browser.mjs
 node tools/conversion/check-canonical.mjs
 node tools/conversion/benchmark.mjs
+node tools/conversion/benchmark.mjs --sparse
 node tools/webp-wasm/encoder-check.mjs
 ```
 

@@ -30,6 +30,7 @@ node node_modules/vite/bin/vite.js build --config tools/conversion/vite.config.m
 node tools/conversion/run-browser.mjs
 node tools/conversion/check-canonical.mjs
 node tools/conversion/benchmark.mjs
+node tools/conversion/benchmark.mjs --sparse
 node tools/webp-wasm/encoder-check.mjs
 
 # LAN production-build preview, without the Vite client or HMR.
@@ -95,6 +96,10 @@ interface CanonicalAnimationFrame {
 source blend operation escapes into an encoder. The same `convertAnimation`
 coordinator handles every matrix entry; there are no source/target pair-specific
 converters and no duplicate Player or decoder architecture.
+
+Total-play and delay mappings are checked by actual decode-back, alongside the
+primary [WebP container specification](https://developers.google.com/speed/webp/docs/riff_container)
+and [PNG Third Edition animation chunks](https://www.w3.org/TR/png-3/#11AnimationChunks).
 
 ```text
 borrowed VirtualFile
@@ -458,6 +463,23 @@ photographic or noisy data.
 | WebP → APNG | 1920×1080 | 2 | 14.3 | 35.2 | 87.1 | 30,921 |
 | APNG → WebP | 2048×2048 | 2 | 40.4 | 89.2 | 177.9 | 36,458 |
 | WebP → APNG | 2048×2048 | 2 | 25.5 | 69.3 | 129.4 | 60,297 |
+
+The additional large sparse test (`sparse-report.json`) uses a transparent
+2048×2048 canvas, two frames and a 5×5 moving object. Both targets passed:
+
+| Source → target | Decode ms | Encode ms | Total ms | Output bytes |
+| --- | ---: | ---: | ---: | ---: |
+| APNG → WebP | 45.2 | 105.3 | 201.5 | 146 |
+| APNG → APNG | 38.4 | 56.5 | 117.1 | 32,975 |
+
+Both retained one 16,777,216-byte canonical frame in flight, with final active
+Workers/bitmaps zero. WebP encoder capacity was 80,740,352 bytes and sampled
+live allocation peaked at 67,119,240 bytes, returning to zero. APNG output
+capacity was 65,536 bytes, the largest compressed chunk 4,137 bytes and the
+largest frame's compressed byte count 16,350; extra filter scratch remained one
+byte. Heartbeat maxima were 17.7 / 16.8 ms. Large fidelity remains sampled,
+as in the other large cases. This measures the full-frame APNG size cost and
+upstream WebP rectangle optimization; it does not rank the formats generally.
 
 ### Encoder allocation proxies
 
