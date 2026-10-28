@@ -1,9 +1,11 @@
 # Milestone 8A2 — Static images to GIF productization
 
-Status: **PENDING ANDROID VALIDATION**. Both Android browsers have now passed
-the product workflow by user report, with slow loading and a Quark filename
-overwrite issue identified. The download and scheduling follow-up below passes
-desktop gates and awaits focused phone confirmation before this milestone closes.
+Status: **PENDING FINAL USER-FLOW CONFIRMATION**. Android encoding is **PASS**
+in Edge and Quark, with QQ providing additional compatibility PASS evidence.
+Cancel → rerun, resource cleanup and the near-ceiling real-media workload are
+confirmed. Preview and single Download retain their earlier user-reported PASS.
+The **only remaining blocker is Android repeated-download preservation after
+the filename fix**, especially in Quark; desktop evidence does not close it.
 Development stays on `feat/v0.2-static-to-gif`. No main merge, production Pages
 deployment, version bump, V0.2 tag/release or 8B conversion work is included.
 The published v0.1.0 baseline remains
@@ -159,12 +161,16 @@ the notices. Published v0.1.0 assets stay untouched. AniView retains `UNLICENSED
 Formal installed environment: Node **v24.22.1**, npm **11.19.1**, executables under
 `D:\tool\nodejs`. Clean `npm ci --prefer-offline --fetch-retries=0
 --fetch-timeout=30000` passed for the implementation; the follow-up does not change
-dependencies or lockfile. Current lint, typecheck, **49 files / 646 tests** and
-build pass. This preserves the initial product's 622 tests and adds 24 regressions
+dependencies or lockfile. At the committed encoder/download follow-up `a038491`,
+lint, typecheck, **49 files / 646 tests** and build passed. This preserves the
+initial product's 622 tests and adds 24 regressions
 for task yielding, source reads and save names (94 added over the 552-test baseline).
 Existing tests were
 moved where appropriate and expected error categories updated deliberately;
-none was removed or skipped.
+none was removed or skipped. The later local lifecycle investigation passed
+**50 files / 658 tests**, lint, typecheck and build, adding 12 diagnostic tests.
+These are previously executed checks, not newly claimed runs for this
+documentation-only closeout; temporary lifecycle source changes remain local.
 
 Session tests cover ordered append/add-more/remove/clear/move, duplicates,
 200-count and 16 MiB boundaries, duration normalization and total-play mappings,
@@ -246,7 +252,8 @@ of high-fidelity photographic/gradient export is made.
 
 ### Bundle
 
-Node gzip measurements of the tested build:
+Node gzip measurements of the tested product follow-up `a038491`, before the
+temporary local lifecycle instrumentation:
 
 | Asset | Raw bytes | gzip bytes |
 | --- | ---: | ---: |
@@ -267,16 +274,22 @@ distributed separately and not imported as JavaScript.
 
 ## Android product acceptance procedure
 
-Use the local-only fixture server after building/generating fixtures:
+**Android product acceptance must use a production preview build without Vite
+HMR.** The Vite development server is appropriate for development, debugging
+and rapid iteration, but is not the final Android page-lifecycle or release
+acceptance environment. See the [closed lifecycle investigation](milestone-8a2-lifecycle-investigation.md).
+
+Use the local-only static fixture server after generating fixtures:
 
 ```powershell
-npm run preview:creation -- --host 0.0.0.0 --port 4198
+npm run build
+npm run preview:creation -- --host 0.0.0.0 --port 4200
 ```
 
 This must run outside the restricted agent environment for phone access; the
 8A1 connectivity fix did not require firewall rule changes. Connect phone and
 computer to the same trusted Wi-Fi. Open
-`http://<computer-LAN-IP>:4198/AniView/?debug=1`.
+`http://<computer-LAN-IP>:4200/AniView/?debug=1`.
 
 Original fixture downloads are available locally at
 `/AniView/validation/creation/`: 40×320×240 PNGs, 10×1024² PNGs and a mixed static
@@ -342,7 +355,8 @@ A local 100-successive-task microbenchmark observed timers 453.6 ms versus
 MessageChannel 0.7 ms. Separate same-file Edge observations were 40-small
 231.7→199.6 ms and 10-large 409.7→281.0 ms; output bytes stayed 212,197/245,426.
 Native decode and other costs also varied, so these changes are not all
-attributed to the scheduler and no Android improvement is claimed before retest.
+attributed to the scheduler. These desktop measurements do not establish an
+Android speed improvement or a controlled cross-device comparison.
 
 The file name is a browser suggestion; save behavior remains implementation
 defined by the [HTML download rules](https://html.spec.whatwg.org/multipage/links.html#downloading-resources).
@@ -354,14 +368,111 @@ download. Users can inspect browser downloads/Files and, if desired, move files
 to Pictures using their file manager. Immediate gallery indexing is not promised.
 
 The result-present hint and Preview/Download controls were visually checked at
-320/1280 px after the fix. Quark still needs to confirm that different and
-repeated saves coexist without replacing older files. Both browsers need a
-focused generation/preview/cancel retest of the updated task scheduling; the
-earlier full UI acceptance is retained rather than discarded.
+320/1280 px after the fix. The earlier full Android UI acceptance is retained.
+The new real-device results below close encoding and cancellation validation;
+Quark's post-fix repeated-save preservation is not inferred from those results.
+
+### Final real-user-media validation
+
+The user's final closeout evidence confirms **Android Edge: PASS**, **Android
+Quark: PASS**, and **Android QQ: additional compatibility PASS**. QQ supplements
+the existing Edge/Quark matrix; it is not a newly defined release gate. These
+results use **real user media**, predominantly about 1220–1522 px wide and
+1280–2048 px high. They are not a uniform standard fixture or controlled
+cross-browser benchmark. Successful reported source sets include:
+
+| Real-user source set | Frame-pixel workload | Result |
+| --- | ---: | --- |
+| 8 × 1280×1280 | 13,107,200 | Success |
+| 4 × 1280×1842 | 9,431,040 | Success |
+| 5 × 1451×2048, QQ | 14,858,240 | Success |
+| 3 × 1522×2048 | 9,351,168 | Success |
+| 4 × 1220×1729 | 8,437,520 | Success |
+| 2 × 1220×1783 | 4,350,520 | Success |
+
+Only the QQ mapping explicitly supplied for the near-ceiling case is assigned
+here; no additional browser/workload mapping or unreported timings are invented.
+The original five timed snapshots above remain historical evidence, not a
+substitute for or exhaustive raw record of this later closeout confirmation.
+
+The real Android diagnostic results consistently show:
+
+```text
+peakRgbaFrames = 1
+peakWorkers = 1
+activeWorkers after completion = 0
+workersCreated == workersTerminated
+cleanupErrors = 0
+```
+
+**The verified sequential, single-worker, bounded-memory encoding architecture
+remained intact on real Android browsers.** These are application ownership and
+workload observations, not OS RSS/heap or GPU-memory measurements.
+
+QQ and Edge diagnostics explicitly recorded **cancellations = 1**, followed by
+successful generation. **Cancel → rerun: real Android PASS**; there is no pending
+cancellation-validation gate.
+
+QQ's `1451 × 2048 × 5 = 14,858,240` frame-pixels is about 96.7% of the existing
+15,360,000 ceiling. **Real-device evidence supports the current workload ceiling;
+no limit adjustment is required by this validation.** Every product limit above
+remains unchanged.
+
+### Interpreting Android source-check timing
+
+Some Android `diagnostics.sourceCheckMs` readings reached tens of seconds during
+foreground/background switching and copying diagnostic information. This is a
+**wall-clock measurement**, which can include provider waits, browser background
+scheduling, user interaction pauses and development-server lifecycle events.
+It is not pure image-check CPU time and does not establish a performance
+regression by itself.
+
+Interpret encoding performance primarily through `metrics.totalMs`, `decodeMs`,
+`quantizeMs`, `writeMs` and `sourceReadMs`, together with the actual foreground/
+background behavior. These asynchronous stage and total timings are not
+automatically CPU-only measurements either. No phone speed ranking or numeric
+performance regression is inferred from an interrupted wall-clock interval.
+
+### Final user-flow reconciliation
+
+| Check | Android status | Evidence / limitation |
+| --- | --- | --- |
+| Generate | PASS | Final Edge/Quark real-user-media results; QQ additional PASS |
+| Cancel → rerun | PASS | QQ and Edge cancellation counter followed by successful generation |
+| Preview | PASS, user-reported | Earlier Edge/Quark complete requested product workflow, including Preview and return |
+| Download | PASS, user-reported | Actual saves reported in Edge/Quark; gallery visibility is browser/device-dependent |
+| Repeated download preserving earlier files | **PENDING FINAL USER-FLOW CONFIRMATION** | Distinct filenames and preserved bytes verified on desktop Edge; no explicit post-fix Android confirmation yet |
+| Completion resource cleanup | PASS | Active Workers 0, balanced created/terminated counts, cleanupErrors 0 |
+| Production-preview background lifecycle | Reported normal | Edge and Quark B; development A reproduces HMR reload, investigation CLOSED |
+
+The lifecycle comparison has no QQ production-preview evidence, so QQ is not
+added to that comparison. Exact Android lifecycle repetition counts and a
+separate Blob-present result were not supplied; no fabricated counts or new
+lifecycle blocker are introduced. No crash/reload was reported in the B
+production-preview comparison.
+
+## Known limitations and release state
+
+GIF remains limited to **256 colors**, **no dithering** and **1-bit transparency**.
+Visible gradient banding/color shifts and hard edges replacing semi-transparent
+edges remain expected quality limitations. Timing is global per-frame duration
+only; there is no crop/resize editing. All source-count, encoded-byte, output-size
+and frame-pixel resource limits remain as documented above.
+
+Work stays on `feat/v0.2-static-to-gif`. **main is unchanged**, the **v0.1.0 tag
+is unchanged**, and **production GitHub Pages remains AniView v0.1.0**. No merge,
+V0.2 deployment, tag, GitHub Release or 8B work is part of this closeout.
 
 ## Decision
 
-**Milestone 8A2: PENDING ANDROID VALIDATION.** Full mobile functionality was
-reported passing, but the follow-up needs targeted confirmation of Quark save
-names and the updated scheduling/read timings before closure. No V0.2 production
-availability is claimed. Do not start 8B.
+**Milestone 8A1: PASSED.** Its encoder verdict remains **gifenc: ACCEPT WITH
+LIMITATIONS**.
+
+**Milestone 8A2: PENDING FINAL USER-FLOW CONFIRMATION.** Android encoding,
+cancellation, cleanup and lifecycle investigation are closed. The **single
+remaining blocker** is real Android confirmation that repeated downloads after
+the filename fix preserve the earlier saved files, especially in Quark. Preview
+and single Download retain their user-reported PASS; they are not extra blockers.
+
+No V0.2 production availability or full milestone completion is claimed while
+this one user-flow confirmation is outstanding. **Milestone 8B has not started.**
