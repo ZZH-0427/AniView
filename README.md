@@ -24,11 +24,11 @@ demo above remains v0.1.0. V0.2 is not released.
 [8C1 MP4/H.264 technical spike](docs/spikes/milestone-8c1-animation-to-mp4.md),
 which passed desktop and fresh Android Edge/Quark acceptance with documented
 limitations. Milestone 8C2 adds **MP4 (H.264)** to the existing conversion target
-selector, with native video Preview and unique downloads. Desktop product checks
-pass; fresh Android product acceptance is pending again after the user reopened
-the test round. MP4 exports one
+selector, with native video Preview and unique downloads. Milestone 8C2 passed
+desktop and fresh Android Edge/Quark product acceptance using explicitly approved
+USB loopback testing. MP4 exports one
 cycle, without audio, composited on white; odd dimensions receive white padding.
-It requires HTTPS and usable browser-native video encoding; availability and
+It requires a secure context (normally HTTPS) and usable browser-native video encoding; availability and
 H.264 profile vary by device. See the [8C2 product record](docs/milestones/milestone-8c2-animation-to-mp4-productization.md).
 Production-preview instructions are in [tools/video](tools/video/README.md).
 V0.2 remains unreleased, the live demo remains v0.1.0, and 8D1 has not started.

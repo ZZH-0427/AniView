@@ -1,11 +1,10 @@
 # Milestone 8C2 — Animation → MP4 productization
 
-Status: **REOPENED — PENDING ANDROID VALIDATION**, 2026-10-31.
-Desktop product acceptance passes; fresh Android product acceptance is incomplete
-and is required again after the user's explicit request to restart testing.
+Status: **PASSED**, 2026-10-31. Desktop product acceptance and fresh Android
+Edge/Quark product acceptance pass, including explicit post-close confirmation.
 Branch: `feat/v0.2-animation-to-video`. V0.2 is not released. Main, v0.1.0
 and production Pages remain outside this feature's deployment scope. 8D1 has not
-started. The resumed gate and phone coverage are in the [Android record](milestone-8c2-android-validation.md).
+started. Actual phone evidence and its transport scope are in the [Android record](milestone-8c2-android-validation.md).
 
 ## Product and ownership
 
@@ -130,21 +129,25 @@ Mediabunny. Conversion UI has one lazy MP4 runtime edge; native preview has its
 own lazy chunk. Mediabunny stays in the video Worker. Exact emitted raw/gzip
 sizes are recorded by the build report and the Android candidate record.
 
-## Licensing and remaining gate
+## Licensing and accepted scope
 
 Mediabunny 1.65.0 remains pinned, MPL-2.0, with no upstream modification. Retained
 license/source-availability notices now describe product use as well as the spike.
 Corresponding published source remains linked. No dependency or lockfile change.
 AniView remains UNLICENSED; native codec/AVC rights remain separate questions.
 
-Fresh Android Edge/Quark product smoke is incomplete and is required again;
-neither is recorded as a completed 8C2 phone test pass. QQ is not tested.
-The previous waiver was superseded by the user's request to restart this round.
-Mobile product coverage remains the pending acceptance gate.
-The user explicitly approved a USB loopback replacement for the unavailable
-public HTTPS route. Actual Edge/Quark secure-context and Worker AVC capability
-preflights pass; this is not yet a product-flow test pass. See the Android record
-for exact origins and the remaining manual gate. The application build is unchanged.
+Fresh Android Edge155/Quark10.2 product acceptance passes on Redmi K70 Ultra:
+three source directions, native controls/Back, repeated playable downloads,
+medium Cancel/rerun, source/ZIP preservation and odd-size padding in both.
+Last odd-file outputs are 15,488 bytes / avc1.42000d (Edge) and 14,548 bytes /
+avc1.64000d (Quark); both peak canonical RGBA/VideoFrames are 1, with zero active
+video/decoder Workers and balanced frames. Queue peaks are 2 and 0 respectively.
+Post-close active resources/URLs/cleanup errors are explicitly user-confirmed zero;
+the distinction from supplied success JSON is retained in the Android record.
+QQ is not tested. The previous waiver was superseded by these actual results.
+The user authorized USB loopback HTTP instead of unavailable public HTTPS;
+real-phone secure-context/Worker AVC preflight passed, and no Android public-HTTPS
+coverage is claimed. The application build is unchanged. Test services are closed.
 8C1's two historical Edge cancellation failures remain root-cause unknown, with
 focused reruns passing. A new product Worker failure must be investigated.
 Native capabilities/profile, downloads and temporary HTTPS availability vary.

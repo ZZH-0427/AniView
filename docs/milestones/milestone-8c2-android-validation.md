@@ -1,13 +1,63 @@
 # Milestone 8C2 — Android product validation
 
-Status: **REOPENED — PENDING ANDROID VALIDATION, 2026-10-31**.
-This is not a completed Android test pass. Edge: no complete 8C2 acceptance result
-recorded. Quark: testing interrupted by an inaccessible preview. QQ: not tested.
+Status: **PASSED, 2026-10-31**. Fresh product acceptance completed on actual
+Android Edge155 and Quark10.2.0.995, Redmi K70 Ultra. QQ: not tested.
+Implementation candidate: `31813b2`; same frozen production build, no HMR.
+The user-authorized transport was USB loopback HTTP, not public HTTPS.
+The earlier waiver was superseded by the reopened round and these actual results.
 
-The user previously waived this gate, then explicitly requested a fresh test
-round. That waiver is superseded: fresh Edge and Quark product acceptance is
-required again. Existing desktop passes remain valid; no phone pass, download
-verification, cleanup result or browser compatibility finding is invented.
+## Final product results
+
+The user reports both browsers passed all requested product checks: GIF/APNG/WebP
+to MP4, native Preview Play/Pause/seek and available fullscreen, Preview Back
+retaining results, Back/Next preserving original source/ZIP, white alpha,
+distinct repeated downloads with both files retained/playable, medium Cancel
+then successful rerun, and no observed stutter, reload, crash or other anomaly.
+Both browsers additionally passed the odd-dimension test: 319×241 source gives
+320×242 output, padding note, complete image without stretch/crop.
+
+The supplied success snapshots are from the final odd-file Session, not aggregate
+counters for all tested files. Its zero cancellation count does not measure the
+separately reported medium-file Cancel test. No aggregate job count is inferred.
+
+| Final odd-file snapshot | Quark | Edge |
+| --- | ---: | ---: |
+| Status / target / error | success / mp4 / null | success / mp4 / null |
+| Source width × height / frames | 319×241 / 10 | 319×241 / 10 |
+| MP4 bytes | 14,548 | 15,488 |
+| Actual codec | avc1.64000d | avc1.42000d |
+| Peak canonical RGBA / VideoFrames | 1 / 1 | 1 / 1 |
+| Max encode queue | 0 | 2 |
+| Active decoder / encoder / video Workers | 0 / 0 / 0 | 0 / 0 / 0 |
+| Owned VideoFrames / balanced | 0 / true | 0 / true |
+| Cleanup errors / WASM live allocations | 0 / 0 | 0 / 0 |
+| Retained result URLs | 1 | 1 |
+| Active Workers / archive sessions / bitmaps | 1 / 1 / 0 | 1 / 1 / 0 |
+
+One result URL and one archive Worker/session are expected while retaining a
+result and ZIP. In a separate explicit follow-up, the user confirmed both browsers
+showed zero activeWorkers/activeBitmaps/activeArchiveSessions after Back/Close all,
+and zero active decoder/encoder/video Workers, ownedVideoFrames, activeObjectUrls
+and cleanupErrors in lastConversionCleanup. This post-close numeric state is
+**user-confirmed**, not independently read via remote debugging; no additional raw
+post-close JSON was supplied. A read-only debugger attempt was unavailable and
+was not used to claim a pass.
+
+### User-supplied final Summary JSON
+
+Quark:
+
+```json
+{"status":"success","target":"mp4","deflate":true,"jobId":2,"conversionsStarted":1,"conversionsCompleted":1,"cancellations":0,"activeDecoderWorkers":0,"activeEncoderWorkers":0,"peakRgbaFrames":0,"lastOutputBytes":14548,"activeObjectUrls":1,"cleanupErrors":0,"wasmLiveAllocBytes":0,"videoConversionsStarted":1,"videoConversionsCompleted":1,"videoCancellations":0,"activeVideoWorkers":0,"peakCanonicalRgbaFrames":1,"peakVideoFrames":1,"maxEncodeQueue":0,"ownedVideoFrames":0,"videoFramesBalanced":true,"lastMp4Bytes":14548,"lastCodec":"avc1.64000d","activeWorkers":1,"activeArchiveSessions":1,"activeBitmaps":0,"source":{"width":319,"height":241,"frameCount":10,"framePixels":768790},"limits":{"maxFrames":200,"maxSide":2048,"maxPixels":4194304,"maxFramePixels":15360000,"maxSourceBytes":67108864,"maxOutputBytes":67108864,"maxDurationUs":30000000},"error":null}
+```
+
+Edge:
+
+```json
+{"status":"success","target":"mp4","deflate":true,"jobId":2,"conversionsStarted":1,"conversionsCompleted":1,"cancellations":0,"activeDecoderWorkers":0,"activeEncoderWorkers":0,"peakRgbaFrames":0,"lastOutputBytes":15488,"activeObjectUrls":1,"cleanupErrors":0,"wasmLiveAllocBytes":0,"videoConversionsStarted":1,"videoConversionsCompleted":1,"videoCancellations":0,"activeVideoWorkers":0,"peakCanonicalRgbaFrames":1,"peakVideoFrames":1,"maxEncodeQueue":2,"ownedVideoFrames":0,"videoFramesBalanced":true,"lastMp4Bytes":15488,"lastCodec":"avc1.42000d","activeWorkers":1,"activeArchiveSessions":1,"activeBitmaps":0,"source":{"width":319,"height":241,"frameCount":10,"framePixels":768790},"limits":{"maxFrames":200,"maxSide":2048,"maxPixels":4194304,"maxFramePixels":15360000,"maxSourceBytes":67108864,"maxOutputBytes":67108864,"maxDurationUs":30000000},"error":null}
+```
+
+## Transport history and scope
 
 After the forced PC shutdown, the same frozen candidate `31813b2` was restored
 and independently checked over HTTPS on desktop. During the later outage, local
@@ -25,7 +75,7 @@ exercise Cancel/Back during actual held native mux finalization.
 
 ## Candidate and delivery
 
-### Current USB round — explicitly authorized by the user
+### Completed USB round — explicitly authorized by the user
 
 After public tunnel access failed and changing networks was unavailable, the user
 explicitly approved USB loopback testing instead of public HTTPS. The same frozen
@@ -33,9 +83,9 @@ implementation candidate `31813b2` is used; artifact hashes are unchanged. This
 round uses **HTTP loopback as a trustworthy local context, not public HTTPS**.
 There is no certificate bypass, insecure-origin flag, HMR or product-code change.
 
-Current product URL: `http://127.0.0.1:4224/AniView/?debug=1` on the connected
+Test product URL: `http://127.0.0.1:4224/AniView/?debug=1` on the connected
 Android phone, using USB reverse port4224. Keep the PC running and the USB cable
-connected. Google SDK Platform-Tools37.0.1 is isolated in ignored local tooling;
+connected when reproducing. Google SDK Platform-Tools37.0.1 is isolated in ignored local tooling;
 its dedicated ADB daemon uses host port5041. Project dependencies are unchanged.
 
 Preflight on the actual Redmi K70 Ultra:
@@ -50,8 +100,13 @@ USB reverse rule were closed. The checked configs are the unchanged 320×240,
 500kbps, quality/no-preference AVC candidates from the accepted capability policy.
 These are real-phone capability checks only: they do **not** claim completed MP4
 encoding, native Preview, file saving, source preservation or product acceptance.
-Fresh manual Edge/Quark results below remain required. Prior public-HTTPS
+The separate fresh manual product results are recorded above. Prior public-HTTPS
 desktop evidence is retained separately; no Android HTTPS test is invented.
+
+After final post-close confirmation, reverse port4224, the dedicated ADB daemon
+and local preview were stopped. These test URLs are now historical. No phone
+media, application security settings, project dependencies or production hosting
+were changed by this closure.
 
 Samples for this USB round:
 
@@ -126,6 +181,7 @@ playable, medium Cancel→rerun, source/ZIP preservation, responsiveness and any
 reload/crash. Include short Summary JSON and cleanup fields, never media/filenames.
 A new product Worker failure requires investigation; report code/stage and stop.
 
-The user reopened the original fresh-Android gate. Milestone 8C2: PENDING ANDROID
-VALIDATION. Both complete fresh phone results must be recorded before PASSED.
+Both fresh product results and explicit post-close confirmations are recorded.
+**Milestone 8C2: PASSED.** This is actual acceptance after reopening, not the former
+waiver. Main, v0.1.0 and production Pages remain unchanged.
 V0.2 is not released. Milestone 8D1 has not started.
