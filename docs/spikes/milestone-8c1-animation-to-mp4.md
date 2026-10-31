@@ -240,7 +240,7 @@ tests remain unchanged; no full-frame-only alternate decoder was introduced.
 
 Ordinary entry is identical to pre-spike: **291,139 raw /88,248 gzip bytes**.
 The ordinary build emits no video Worker or Mediabunny chunk; nothing in product
-navigation imports this experiment. Engineering entry **24,603 raw /7,401 gzip bytes**, video Worker
+navigation imports this experiment. Engineering entry **24,600 raw /7,411 gzip bytes**, video Worker
 **300,299 raw /77,574 gzip bytes**; same-symbol isolated Mediabunny probe279,614 raw /73,445 gzip bytes.
 The latter is a representative independent bundle, not an exact additive
 allocation of shared minifier bytes. Worker bundles contain the imported MP4
