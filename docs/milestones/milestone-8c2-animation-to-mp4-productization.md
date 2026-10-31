@@ -141,6 +141,10 @@ Fresh Android Edge/Quark product smoke is incomplete and is required again;
 neither is recorded as a completed 8C2 phone test pass. QQ is not tested.
 The previous waiver was superseded by the user's request to restart this round.
 Mobile product coverage remains the pending acceptance gate.
+The user explicitly approved a USB loopback replacement for the unavailable
+public HTTPS route. Actual Edge/Quark secure-context and Worker AVC capability
+preflights pass; this is not yet a product-flow test pass. See the Android record
+for exact origins and the remaining manual gate. The application build is unchanged.
 8C1's two historical Edge cancellation failures remain root-cause unknown, with
 focused reruns passing. A new product Worker failure must be investigated.
 Native capabilities/profile, downloads and temporary HTTPS availability vary.

@@ -103,6 +103,31 @@ Use the [8C2 product record](../../docs/milestones/milestone-8c2-animation-to-mp
 and [fresh Android checklist](../../docs/milestones/milestone-8c2-android-validation.md).
 Freeze the build while awaiting phone results. Do not deploy it to Pages.
 
+## USB loopback acceptance alternative
+
+When the user explicitly chooses USB instead of public HTTPS, retain the frozen
+production build and use official Android SDK Platform-Tools. The current local
+tool copy is37.0.1 under ignored `.tools/mp4-product/usb-tools/platform-tools/`.
+The phone must enable USB debugging and manually authorize this PC. For a
+dedicated ADB daemon on port5041 and one connected phone:
+
+```powershell
+adb -P 5041 devices
+adb -P 5041 reverse tcp:4224 tcp:4224
+```
+
+Open `http://127.0.0.1:4224/AniView/?debug=1` on the phone. Verify actual page and
+Worker secure contexts and native capability before acceptance; loopback HTTP
+is not public HTTPS. Do not disable certificate checks or browser security flags.
+The build/preview remains ordinary production without HMR; all selected media
+stays on the phone. Keep USB connected during tests. Afterwards remove this
+reverse rule and stop only the dedicated test daemon:
+
+```powershell
+adb -P 5041 reverse --remove tcp:4224
+adb -P 5041 kill-server
+```
+
 ## Focused finalization diagnostics
 
 The original Android build is frozen. Build the diagnostic variant into its own

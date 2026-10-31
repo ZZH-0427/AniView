@@ -25,6 +25,42 @@ exercise Cancel/Back during actual held native mux finalization.
 
 ## Candidate and delivery
 
+### Current USB round — explicitly authorized by the user
+
+After public tunnel access failed and changing networks was unavailable, the user
+explicitly approved USB loopback testing instead of public HTTPS. The same frozen
+implementation candidate `31813b2` is used; artifact hashes are unchanged. This
+round uses **HTTP loopback as a trustworthy local context, not public HTTPS**.
+There is no certificate bypass, insecure-origin flag, HMR or product-code change.
+
+Current product URL: `http://127.0.0.1:4224/AniView/?debug=1` on the connected
+Android phone, using USB reverse port4224. Keep the PC running and the USB cable
+connected. Google SDK Platform-Tools37.0.1 is isolated in ignored local tooling;
+its dedicated ADB daemon uses host port5041. Project dependencies are unchanged.
+
+Preflight on the actual Redmi K70 Ultra:
+
+| Browser | Page/Worker secure context | Worker VideoEncoder/VideoFrame | H.264 candidate support |
+| --- | --- | --- | --- |
+| Edge155 | true / true, product origin port4224 | available | all three accepted candidates |
+| Quark10.2.0.995 | true / true, isolated loopback preflight port4227 | available | all three accepted candidates |
+
+The temporary Quark preflight returned to the product page and its server/extra
+USB reverse rule were closed. The checked configs are the unchanged 320×240,
+500kbps, quality/no-preference AVC candidates from the accepted capability policy.
+These are real-phone capability checks only: they do **not** claim completed MP4
+encoding, native Preview, file saving, source preservation or product acceptance.
+Fresh manual Edge/Quark results below remain required. Prior public-HTTPS
+desktop evidence is retained separately; no Android HTTPS test is invented.
+
+Samples for this USB round:
+
+- `http://127.0.0.1:4224/AniView/validation/mp4/small.zip`
+- `http://127.0.0.1:4224/AniView/validation/mp4/medium.zip`
+- `http://127.0.0.1:4224/AniView/validation/mp4/odd.zip`
+
+### Historical HTTPS setup
+
 Branch: `feat/v0.2-animation-to-video`. Ordinary production build under
 `/AniView/`, no HMR, served through temporary trusted HTTPS. The build/server are
 frozen during acceptance. The current URL accompanies the test request because
