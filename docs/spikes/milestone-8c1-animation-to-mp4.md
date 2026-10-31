@@ -284,3 +284,10 @@ encoding/playback/alpha/cancellation/cleanup evidence, documented in the
 [Android protocol](milestone-8c1-android-validation.md). No inference from
 successful desktop capability probes or old mobile converter tests. Until that
 gate passes: **Milestone 8C1: PENDING ANDROID VALIDATION**. No 8C2/8D1 work.
+
+Follow-up: fresh numeric phone logs now confirm real successful encodes in all
+three source formats and zero active resources in both browsers. Edge also
+recorded **two APNG `WORKER_FAILED` jobs**, which remain unresolved. Quark's
+summary has no failures. Native-playback/visual observations and the two detailed
+failure rows are still needed. Provisional desktop verdicts above are not a
+completed Android acceptance verdict. The frozen phone build is unchanged.

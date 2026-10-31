@@ -3,6 +3,11 @@
 Status: **PENDING ANDROID VALIDATION**. Prior 8A/8B phone results do not establish
 WebCodecs AVC encoding or native MP4 playback support.
 
+New Android numeric results have now been received. Edge recorded two APNG jobs
+with `WORKER_FAILED`, so the acceptance gate remains open. Do not discard those
+failures because other jobs succeeded. Manual native-playback/visual observations
+and the two failure rows have been requested; no full-suite rerun was requested.
+
 ## Engineering preview
 
 Production build, `/AniView/` subpath, no HMR, no Pages deployment. Temporary
@@ -46,16 +51,63 @@ manual and must be reported separately from automatic decode-back.
 
 | Check | Android Edge | Android Quark |
 | --- | --- | --- |
-| Trusted HTTPS / secure context / no HMR | Pending | Pending |
-| Worker VideoEncoder + VideoFrame APIs | Pending | Pending |
-| Supported exact AVC configuration | Pending | Pending |
-| Actual GIF/APNG/WebP →MP4, small + medium | Pending | Pending |
+| Trusted HTTPS / secure context / no HMR | Reported true /false | Reported true /false |
+| Worker VideoEncoder + VideoFrame APIs | Reported present; real encodes completed | Reported present; real encodes completed |
+| Supported exact AVC configuration | Reported supported; full chosen config not supplied | Reported supported; full chosen config not supplied |
+| Actual GIF/APNG/WebP →MP4, small + medium | Successes in all formats; two APNG Worker failures unresolved; per-size confirmation pending | Successes in all formats; no recorded failures; per-size confirmation pending |
 | Native video playback | Pending | Pending |
 | White alpha composite / odd dimensions | Pending | Pending |
-| VFR timestamps, durations, total duration | Pending | Pending |
-| Encode + actual-finalizing cancel →rerun | Pending | Pending |
+| VFR timestamps, durations, total duration | Successful jobs: maximum errors7 /7 /10µs | Successful jobs: maximum errors7 /7 /10µs |
+| Encode + actual-finalizing cancel →rerun | Both cancellation flags true; manual rerun confirmation pending | Both cancellation flags true; manual rerun confirmation pending |
 | Responsiveness / no reload or crash | Pending | Pending |
-| Zero cleanup/resource counters after Close | Pending | Pending |
+| Zero cleanup/resource counters after Close | Confirmed by Summary JSON | Confirmed by Summary JSON |
+
+## Received numeric evidence
+
+These are user-reported real Android observations of the frozen `3c156ce` build,
+not desktop emulation. Browser versions were not supplied in this reply. Counts
+aggregate multiple runs/retries, rather than identifying individual workloads.
+
+| Observation | Edge | Quark |
+| --- | ---: | ---: |
+| Jobs started /completed /cancelled /failed | 17 /11 /4 /2 | 17 /10 /7 /0 |
+| Completed GIF /APNG /WebP jobs | 2 /3 /6 | 2 /3 /5 |
+| Actual MP4 codec strings | `avc1.42000d`, `avc1.420020` | `avc1.64000d`, `avc1.640020` |
+| Maximum sampled mean RGB error /p95 | 1.2446614583 /2 | 0.7604166667 /2 |
+| Maximum encodeQueueSize /owned VideoFrames | 2 /1 | 2 /1 |
+| Owned frames balanced /active frames | true /0 | true /0 |
+| Visible heartbeat maximum gap | 38ms | 60.7ms |
+| Workers created /terminated | 48 /48 | 44 /44 |
+| Active decoder /encoder /runtime Workers | 0 /0 /0 | 0 /0 /0 |
+| Active bitmaps /archives /object URLs | 0 /0 /0 | 0 /0 /0 |
+| Decoder /cleanup errors | 0 /0 | 0 /0 |
+
+Edge's failure list is exactly two `{source:"apng",error:"WORKER_FAILED"}` rows.
+These are transport-level categories, not evidence of an unsupported H.264
+configuration. The summary lacks failing phase, size, request/event detail, and
+last accepted frame. It cannot distinguish a Worker-script fetch failure, Worker
+crash/message failure, timeout or harness interaction. Zero decoderErrors alone
+does not identify the cause. The provider previously returned transient408s;
+that is a hypothesis to investigate, not an established Android root cause.
+
+## Focused follow-up without changing the phone build
+
+The accepted artifact hashes were preserved. Installed desktop Edge repeated the
+exact APNG small/medium/odd cases three times each: **9/9 successful**, followed
+by both actual button-driven cancellation→WebP reruns succeeding. All resources
+cleared. This does not dismiss or reproduce the Android failures.
+
+A separate loopback-only proxy intentionally returned408 for the fixture Worker,
+then for the video Worker. Each produced `WORKER_FAILED`, zero decoderErrors,
+null last accepted metrics and complete cleanup; removing each injected fault
+allowed the same APNG job to succeed. This demonstrates the generic error can
+have an infrastructure cause, **not** that the actual phone failures did.
+Controlled artifacts stay ignored under `.tools/video/worker-load-control/`.
+
+No codec, source decoder, session ownership, limits or served engineering assets
+were changed in response to these logs. The next step depends on the two real
+FAIL rows and the user's native-playback/visual observations. 8C1 remains
+**PENDING ANDROID VALIDATION**; 8C2/8D1 have not started.
 
 Requested reply: browser/version if convenient; small/medium three-format results;
 native playback and alpha/padding appearance; both cancel→rerun results; any
