@@ -149,7 +149,7 @@ No analytics, uploads or third-party media processing were introduced.
 
 Formal environment: installed Windows Node 24.22.1/npm 11.19.1 in
 `D:\tool\nodejs`. `npm ci`, lint, typecheck, tests and build passed.
-**58 files / 749 tests**: 26 new, all prior 723 preserved.
+**58 files / 750 tests**: 27 new, all prior 723 preserved.
 
 Actual installed desktop Edge product suite passed **22 checks**, including:
 six directions; static exclusion/wrong extension; true result timing/plays;

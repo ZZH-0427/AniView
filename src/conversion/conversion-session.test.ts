@@ -105,4 +105,11 @@ describe('conversion product ownership', () => {
     await f.session.prepare(); await f.session.start()
     expect(f.session.getSnapshot().error).toBe('TARGET_ENCODE_FAILED'); expect(f.createUrl).not.toHaveBeenCalled(); await f.session.dispose()
   })
+  it('classifies result URL allocation failure as output failure and keeps the source intact', async () => {
+    const f = fixture(); f.createUrl.mockImplementation(() => { throw Error('URL allocation failed') })
+    await f.session.prepare(); await f.session.start()
+    expect(f.session.getSnapshot().error).toBe('TARGET_ENCODE_FAILED')
+    expect(f.session.getSnapshot().diagnostics.activeObjectUrls).toBe(0)
+    await f.session.dispose(); expect(f.release).not.toHaveBeenCalled()
+  })
 })

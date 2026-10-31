@@ -47,11 +47,11 @@ export function conversionErrorMessage(code: ConversionErrorCode, target: Conver
     case 'CANCELLED': return 'Conversion cancelled. Your source and target are retained.'
   }
 }
-function errorCode(cause: unknown): ConversionErrorCode {
+function errorCode(cause: unknown, fallback: ConversionErrorCode = 'SOURCE_DECODE_FAILED'): ConversionErrorCode {
   if (cause instanceof ConversionError) return cause.code
   if (cause instanceof MediaError && (cause.code === 'RESOURCE_LIMIT_EXCEEDED' || cause.code === 'OUT_OF_MEMORY')) return 'RESOURCE_LIMIT'
   if (cause instanceof MediaError && cause.code === 'WORKER_FAILED') return 'WORKER_FAILED'
-  return 'SOURCE_DECODE_FAILED'
+  return fallback
 }
 export const resultVirtualFile = (result: ConversionProductResult): VirtualFile => ({ name: result.filename, size: result.blob.size,
   source: 'file', mimeType: result.blob.type, read: (start, end) => result.blob.slice(start, end).arrayBuffer() })
@@ -196,7 +196,7 @@ export class ConversionSession {
           peakRgbaFrames: Math.max(this.state.diagnostics.peakRgbaFrames, output.peakRgbaFrames), wasmLiveAllocBytes: output.metrics.wasmLiveAllocBytes ?? 0 } })
         this.revoke(previous)
       } catch (cause) {
-        if (this.valid(id)) this.publish({ status: abort.signal.aborted ? 'cancelled' : 'error', error: abort.signal.aborted ? undefined : errorCode(cause) })
+        if (this.valid(id)) this.publish({ status: abort.signal.aborted ? 'cancelled' : 'error', error: abort.signal.aborted ? undefined : errorCode(cause, 'TARGET_ENCODE_FAILED') })
       } finally { if (this.abort === abort) this.abort = undefined }
     })()
     return this.task
