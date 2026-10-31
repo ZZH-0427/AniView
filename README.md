@@ -17,7 +17,8 @@ Conversion supports six cross-format directions, Preview and unique repeated
 downloads. It keeps the original source and ZIP session. Same-format targets
 are disabled. Limits and format tradeoffs are described in the
 [8B2 productization record](docs/milestones/milestone-8b2-animation-conversion-productization.md).
-Fresh 8B2 Android acceptance is pending; the public demo above remains v0.1.0.
+Milestone 8B2 passed fresh Android Edge/Quark product acceptance; the public
+demo above remains v0.1.0. V0.2 is not released.
 
 ## Features and Supported Formats
 

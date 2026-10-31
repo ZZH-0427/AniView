@@ -1,8 +1,9 @@
 # Milestone 8B2 — Animation conversion productization
 
-Status (2026-10-31): **PENDING ANDROID VALIDATION**. Implementation, desktop
-product checks and existing regressions passed. Fresh Android Edge and Quark
-product acceptance is still required; 8B1 engineering results do not substitute.
+Status (2026-10-31): **Milestone 8B2 PASSED**. Implementation, desktop product
+checks, existing regressions and fresh Android Edge/Quark product acceptance
+passed. GIF / Animated WebP / APNG inter-conversion is feature-complete on
+the V0.2 branch. 8B1 engineering results were not substituted for this UI gate.
 V0.2 is NOT released. Development stays on `feat/v0.2-static-to-gif`.
 No main merge, Pages deployment, tag, release or 8C/video work is included.
 
@@ -175,12 +176,12 @@ keyboard navigation to Remove. Escape/Tab/fullscreen/layout checks remain.
 
 ## Bundle and licensing
 
-Measured uncommitted validation build (bytes / default gzip bytes):
+Measured Android-accepted candidate `2d5c2cc` (bytes / default gzip bytes):
 
 | Artifact | 8B1 bytes | 8B2 bytes | 8B2 gzip |
 | --- | ---: | ---: | ---: |
-| Ordinary entry | 289,955 | 291,139 | 88,246 |
-| Conversion UI/session/coordinator lazy chunk | Test-only entry 24,044 | 23,183 | 7,277 |
+| Ordinary entry | 289,955 | 291,139 | 88,248 |
+| Conversion UI/session/coordinator lazy chunk | Test-only entry 24,044 | 23,210 | 7,283 |
 | Shared-target encoder Worker | 45,991 | 45,991 | 16,013 |
 | Shared WebP WASM | 394,132 | 394,132 | 159,999 |
 
@@ -198,7 +199,7 @@ Package manifest/lockfile are unchanged. `npm ci` succeeded but audit now report
 `npm audit --omit=dev` reports zero. No automatic dependency/major-version fix
 was applied; this tooling advisory remains a separate maintenance limitation.
 
-## Fresh Android acceptance — pending
+## Fresh Android acceptance — passed
 
 Use **production preview without HMR**, never dev or public v0.1.0:
 
@@ -220,10 +221,21 @@ reload/crash, capability, cancellation, download preservation and cleanup.
 
 | Browser | Six directions | Preview/back/download | Cancel/rerun | Repeat-save preservation | Outcome |
 | --- | --- | --- | --- | --- | --- |
-| Android Edge | Pending | Pending | Pending | Pending | Not yet accepted |
-| Android Quark | Pending | Pending | Pending | Pending | Not yet accepted |
+| Android Edge | PASS | PASS | PASS | PASS | User-reported acceptance |
+| Android Quark | PASS | PASS | PASS | PASS | User-reported acceptance |
 | Android QQ | Not tested | Not tested | Not tested | Not tested | Optional |
 
-8B2 remains **PENDING ANDROID VALIDATION** until these new product results are
-received. 8B1 phone tests only covered the engineering harness, not this UI.
+The [Android acceptance record](milestone-8b2-android-validation.md) preserves
+the four supplied summary snapshots and compact final confirmation. Every
+snapshot has deflate=true, peakRgbaFrames=1 and zero active conversion
+decoder/encoder Workers, bitmaps and cleanup errors. Each medium snapshot
+records Cancel followed by success. The retained archive Worker and result URL
+are expected while the source ZIP/result remain open. The user explicitly
+confirmed all six directions, three-format Preview/back navigation, both saved
+files reopening, and active Workers/bitmaps/archive sessions zero after all-close
+in both browsers. No stalls, page reload or crash was reported.
+
+This is new user-operated phone product evidence, not independent automation or
+reused 8B1 testing. Missing per-direction timings/diagnostics are not invented.
+The formal gate is closed. No codec, UI or build was changed during acceptance.
 Milestone 8C has not started.
