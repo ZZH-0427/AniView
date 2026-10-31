@@ -74,3 +74,23 @@ The photometric thresholds (mean ≤8 / p95 ≤30 channel units at 256 RGB sampl
 frame) are experimental, not a perceptual-quality guarantee. Deliberate
 pixel-frequency chroma/alpha stress is reported separately as a fidelity
 limitation. All results require the interpretation in the [spike report](../../docs/spikes/milestone-8c1-animation-to-mp4.md).
+
+## Focused finalization diagnostics
+
+The original Android build is frozen. Build the diagnostic variant into its own
+directory and run controlled desktop checks without replacing that artifact:
+
+```powershell
+npm run build:video-spike -- --base=/AniView/followup/ --outDir=.tools/video-followup-site
+node tools/video/check-finalize-diagnostics.mjs
+```
+
+The check serves only generated files on an OS-assigned loopback port. It tests
+all source formats at small/medium sizes, three real finalizing cancel→reruns,
+and explicit synthetic startup/timeout faults. The1s accelerated timeout exists
+only inside that lab browser; the application timeout remains120s. Runtime
+observations are numeric only. The phone variant can be copied into the isolated
+preview's `followup/` namespace while verifying every original artifact hash stays
+unchanged; use the explicit `experiments/video/index.html?debug=1` path there.
+Phone requests should target only the second cancellation test and copy the new
+Failure JSON on failure. See the [Android record](../../docs/spikes/milestone-8c1-android-validation.md).

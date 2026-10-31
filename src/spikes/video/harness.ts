@@ -1,7 +1,7 @@
 import { AnimationVideoJob } from '../../video/convert'
-import { VideoWorkerClient } from '../../video/worker-client'
+import { VideoWorkerClient, type VideoWorkerFailureEvidence } from '../../video/worker-client'
 import { VideoError } from '../../video/model'
-import type { VideoMetrics, ProbeResult } from '../../video/model'
+import type { VideoMetrics, ProbeResult, VideoFinalizePhase } from '../../video/model'
 import { openAnimationFrameSource } from '../../conversion/frame-source'
 import type { ConversionFormat } from '../../conversion/model'
 import type { FixtureScene } from '../conversion/fixtures'
@@ -13,6 +13,10 @@ import encoderWorkerUrl from '../../video/encoder.worker.ts?worker&url'
 interface CaseOptions { source: ConversionFormat; width: number; height: number; count: number; scene?: FixtureScene; photo?: boolean; softEdges?: boolean;
   durations?: number[]; playCount?: number; cancelAt?: 'encode' | 'finalize-held' }
 type CaseReport = Record<string, unknown>
+type CasePhase='fixture'|'source-open'|'source-next'|'encoder-open'|'encoding'|'finalizing'|'held-finalizing'|'complete'
+interface WorkerObservation {role:'fixture'|'encoder'|'held-encoder';trigger:string;operation:string|null;moduleBooted:boolean;requestId:number|null;elapsedMs:number}
+interface Investigation {jobId:number;phase:CasePhase;finalizePhase:VideoFinalizePhase|null;acceptedFrames:number;finalizeHeld:boolean;worker:WorkerObservation|null}
+const diagnosticVersion='finalize-trace-1',debug=new URLSearchParams(location.search).get('debug')==='1'
 const results: CaseReport[] = [], job = new AnimationVideoJob(), urls: string[] = []
 const counters = { jobsStarted: 0, jobsCompleted: 0, cancellations: 0, activeDecoderWorkers: 0, activeEncoderWorkers: 0, cleanupErrors: 0 }
 let active: AbortController | undefined, suite = 0
@@ -20,34 +24,45 @@ let lastProbe:ProbeResult|undefined
 const status = document.querySelector<HTMLOutputElement>('#progress')!, resultElement = document.querySelector<HTMLElement>('#result')!, videos = document.querySelector<HTMLElement>('#videos')!
 function summary(){
   // The full rows are already local numeric reports; this aggregation keeps phone copy short.
-  const rows=results as {status?:string;options?:CaseOptions;error?:string;finalizeHeld?:boolean;probe?:{apiPresent:boolean;selected:unknown};
+  const rows=results as {status?:string;options?:CaseOptions;error?:string;finalizeHeld?:boolean;investigation?:Investigation;probe?:{apiPresent:boolean;selected:unknown};
     metrics?:VideoMetrics;validation?:{codec:string|null;meanRgbError:number;p95RgbError:number;maxTimestampErrorUs:number;maxDurationErrorUs:number;totalDurationErrorUs:number};heartbeat?:{maxGapMs:number}}[]
   const passed=rows.filter(r=>r.status==='PASS'),max=(select:(r:typeof passed[number])=>number)=>Math.max(0,...passed.map(select))
-  return{secureContext:isSecureContext,hmr:import.meta.env.DEV,apiPresent:lastProbe?.apiPresent??null,configSupported:lastProbe?lastProbe.selected!==null:null,
+  return{diagnosticVersion,secureContext:isSecureContext,hmr:import.meta.env.DEV,apiPresent:lastProbe?.apiPresent??null,configSupported:lastProbe?lastProbe.selected!==null:null,
     sources:Object.fromEntries(['gif','apng','webp'].map(s=>[s,passed.filter(r=>r.options?.source===s).length])),
     codecs:[...new Set(passed.map(r=>r.validation?.codec))],...counters,activeObjectUrls:urls.length,
-    failures:rows.filter(r=>r.status==='FAIL').map(r=>({source:r.options?.source,error:r.error})),
+    failures:rows.filter(r=>r.status==='FAIL').map(r=>({source:r.options?.source,error:r.error,cancelAt:r.options?.cancelAt,investigation:r.investigation})),
     encodeCancelled:rows.some(r=>r.error==='CANCELLED'&&r.options?.cancelAt==='encode'),finalizingCancelled:rows.some(r=>r.error==='CANCELLED'&&r.finalizeHeld),
     maxTimestampErrorUs:max(r=>r.validation?.maxTimestampErrorUs??0),maxDurationErrorUs:max(r=>r.validation?.maxDurationErrorUs??0),maxTotalDurationErrorUs:max(r=>r.validation?.totalDurationErrorUs??0),
     meanRgbErrorMax:max(r=>r.validation?.meanRgbError??0),p95RgbErrorMax:max(r=>r.validation?.p95RgbError??0),maxEncodeQueue:max(r=>r.metrics?.maxEncodeQueue??0),
     ownedVideoFramesActive:max(r=>r.metrics?.activeVideoFrames??0),ownedFramesBalanced:passed.every(r=>r.metrics?.framesCreated===r.metrics?.framesClosed),
     peakOwnedVideoFrames:max(r=>r.metrics?.peakVideoFrames??0),heartbeatMaxGapMs:Math.max(0,...rows.map(r=>r.heartbeat?.maxGapMs??0)),resources:runtimeDiagnostics.getSnapshot()}
 }
-const publish = () => { if (new URLSearchParams(location.search).get('debug') === '1') {document.querySelector('#summary')!.textContent=JSON.stringify(summary());resultElement.textContent = JSON.stringify({
+function staticWorkerResponses(){
+  return ['fixture','encoder','held-encoder','apng-decoder'].flatMap(role=>{
+    const entries=performance.getEntriesByType('resource').filter(e=>{const u=new URL(e.name);return u.origin===location.origin&&u.pathname.startsWith(import.meta.env.BASE_URL+'assets/'+role+'.worker-')})
+    const last=entries.at(-1);if(!last)return[]
+    const status='responseStatus' in last&&typeof last.responseStatus==='number'?last.responseStatus:null
+    return[{role,status,durationMs:last.duration}]
+  })
+}
+const publish = () => { if (debug) {document.querySelector('#summary')!.textContent=JSON.stringify(summary());document.querySelector('#failures')!.textContent=JSON.stringify({diagnosticVersion,failures:summary().failures,staticWorkerResponses:staticWorkerResponses()});resultElement.textContent = JSON.stringify({
   environment: { secureContext: isSecureContext, hmr: import.meta.env.DEV, origin: location.origin, browser: navigator.userAgent },
   counters, activeObjectUrls: urls.length, results, resources: runtimeDiagnostics.getSnapshot(),
 }, null, 2) } }
 function clear() { for (const video of videos.querySelectorAll('video')) { video.pause(); video.removeAttribute('src'); video.load() } videos.replaceChildren(); urls.splice(0).forEach(url => URL.revokeObjectURL(url)); publish() }
 function cancel() { suite++; active?.abort(); job.cancel() }
-async function sourceFixture(options: CaseOptions, signal: AbortSignal, photoData?:ArrayBuffer): Promise<VirtualFile> {
+async function sourceFixture(options: CaseOptions, signal: AbortSignal, photoData?:ArrayBuffer,onFailure?:(e:WorkerObservation)=>void): Promise<VirtualFile> {
   const worker = new Worker(new URL('./fixture.worker.ts', import.meta.url), { type: 'module' }), release = trackRuntimeResource('worker')
   try {
     const result = await new Promise<{ data: ArrayBuffer; byteLength: number }>((resolve, reject) => {
+      let booted=false;const started=performance.now()
+      const failed=(trigger:'error-event'|'message-error')=>{onFailure?.({role:'fixture',trigger,operation:'generate',moduleBooted:booted,requestId:null,elapsedMs:performance.now()-started});cleanup();reject(new VideoError('WORKER_FAILED'))}
       const abort = () => reject(new VideoError('CANCELLED'))
       signal.addEventListener('abort', abort, { once: true })
       const cleanup = () => signal.removeEventListener('abort', abort)
-      worker.onmessage = (e: MessageEvent<{ type: string; data: ArrayBuffer; byteLength: number }>) => { cleanup(); if (e.data.type !== 'fixture') reject(new VideoError('VIDEO_FRAME_FAILED')); else resolve(e.data) }
-      worker.onerror = e => { e.preventDefault(); cleanup(); reject(new VideoError('WORKER_FAILED')) }
+      worker.onmessage = (e: MessageEvent<{ type: string; data: ArrayBuffer; byteLength: number }>) => {if(e.data.type==='fixture-boot'){booted=true;return} cleanup(); if (e.data.type !== 'fixture') reject(new VideoError('VIDEO_FRAME_FAILED')); else resolve(e.data) }
+      worker.onerror = e => { e.preventDefault();failed('error-event') }
+      worker.onmessageerror=()=>failed('message-error')
       if(signal.aborted){cleanup();reject(new VideoError('CANCELLED'));return}
       worker.postMessage({ format: options.source, photoData, photo: options.photo ?? false, softEdges: options.softEdges ?? false, options: { width: options.width, height: options.height, count: options.count,
         scene: options.scene ?? 'flat', playCount: options.playCount ?? 2, durations: options.durations ?? [27,100,41,500,20,250,33] } },photoData?[photoData]:[])
@@ -63,6 +78,10 @@ function preview(data: ArrayBuffer, source: ConversionFormat) {
 }
 async function runCase(options: CaseOptions, originalBytes?: number[], photoBytes?:number[]) {
   active?.abort(); const controller = new AbortController(); active = controller; counters.jobsStarted++
+  const jobId=counters.jobsStarted
+  let phase:CasePhase='fixture',failurePhase:CasePhase|undefined,acceptedFrames=0,workerFailure:WorkerObservation|null=null
+  let finalizePhase:VideoFinalizePhase|null=null
+  const observe=(e:WorkerObservation)=>{workerFailure=e;failurePhase=phase}
   let heartbeat = 0, maxGapMs = 0, previous = performance.now(), finalizeHeld = false, lastMetrics: VideoMetrics | undefined
   const timer = setInterval(() => { const now = performance.now(); if (document.visibilityState === 'visible') { heartbeat++; maxGapMs = Math.max(maxGapMs, now - previous) } previous = now }, 16)
   const check = () => { if (controller.signal.aborted) throw new VideoError('CANCELLED') }
@@ -71,12 +90,14 @@ async function runCase(options: CaseOptions, originalBytes?: number[], photoByte
   try {
     status.textContent = 'Generating local source fixture…'
     const bytes = originalBytes && new Uint8Array(originalBytes)
-    const file = bytes ? { name: 'original-conformance-fixture', size: bytes.byteLength, source: 'file' as const, read: async () => bytes.slice().buffer } : await sourceFixture(options, controller.signal,photoBytes?new Uint8Array(photoBytes).buffer:undefined)
+    const file = bytes ? { name: 'original-conformance-fixture', size: bytes.byteLength, source: 'file' as const, read: async () => bytes.slice().buffer } : await sourceFixture(options, controller.signal,photoBytes?new Uint8Array(photoBytes).buffer:undefined,debug?observe:undefined)
     check(); const fixtureMs = performance.now() - started
     const abort = () => job.cancel(); controller.signal.addEventListener('abort', abort, { once: true })
     try {
       const result = await job.run(async signal => {
+        phase='source-open'
         const source = await openAnimationFrameSource(file, options.source, signal); counters.activeDecoderWorkers++
+        const next=source.next.bind(source);source.next=()=>{phase='source-next';return next()}
         const close = source.close.bind(source); let released = false
         source.close = async () => { try { await close() } finally { if (!released) { released = true; counters.activeDecoderWorkers-- } } }
         return source
@@ -88,23 +109,25 @@ async function runCase(options: CaseOptions, originalBytes?: number[], photoByte
         const url = new URL(options.cancelAt === 'finalize-held' ? heldWorkerUrl : encoderWorkerUrl, import.meta.url)
         const client = new VideoWorkerClient(url, u => {
           const w = new Worker(u, { type: 'module' })
-          w.addEventListener('message', (event: MessageEvent<{ type: string; metrics?: VideoMetrics }>) => {
+          w.addEventListener('message', (event: MessageEvent<{ type: string; metrics?: VideoMetrics;phase?:VideoFinalizePhase }>) => {
             if(event.data.type==='accepted')lastMetrics=event.data.metrics
-            if(event.data.type==='finalize-held'){finalizeHeld=true;job.cancel()}
+            if(event.data.type==='finalize-phase'&&event.data.phase)finalizePhase=event.data.phase
+            if(event.data.type==='finalize-held'){finalizeHeld=true;phase='held-finalizing';job.cancel()}
           }); return w
-        })
-        return { open: client.open.bind(client), addFrame: client.addFrame.bind(client), finish: client.finish.bind(client), dispose: (reason?: VideoError) => {
+        },debug?(e:VideoWorkerFailureEvidence)=>observe({role:options.cancelAt==='finalize-held'?'held-encoder':'encoder',...e}):undefined)
+        return { open: metadata=>{phase='encoder-open';return client.open(metadata)}, addFrame:async frame=>{phase='encoding';const result=await client.addFrame(frame);acceptedFrames++;return result}, finish:()=>{phase='finalizing';return client.finish()}, dispose: (reason?: VideoError) => {
           client.dispose(reason); if(!disposed){disposed=true;counters.activeEncoderWorkers--}
         } }
       })
-      check();lastProbe=result.probe; const {data,...numeric}=result; preview(data,options.source); counters.jobsCompleted++
+      check();phase='complete';lastProbe=result.probe; const {data,...numeric}=result; preview(data,options.source); counters.jobsCompleted++
       row={status:'PASS',options,fixtureMs,...numeric,qualityScope:'256 evenly spaced RGB pixels per decoded frame; source is decoded canonical after white composite',
         qualityAssessment:result.validation.meanRgbError<=8&&result.validation.p95RgbError<=30?'WITHIN_SPIKE_THRESHOLD':'CHROMA_FIDELITY_LIMITATION'}
     } finally { controller.signal.removeEventListener('abort',abort) }
   } catch (cause) {
     const code=cause instanceof VideoError?cause.code:'VIDEO_FRAME_FAILED'
     if(code==='CANCELLED')counters.cancellations++
-    row={status:code==='CANCELLED'?'CANCELLED':'FAIL',options,error:code,finalizeHeld,lastObservedMetrics:lastMetrics??null}
+    row={status:code==='CANCELLED'?'CANCELLED':'FAIL',options,error:code,finalizeHeld,lastObservedMetrics:lastMetrics??null,
+      ...(debug?{investigation:{jobId,phase:failurePhase??phase,finalizePhase,acceptedFrames,finalizeHeld,worker:workerFailure} satisfies Investigation}:{})}
   } finally { clearInterval(timer); if(active===controller)active=undefined }
   row.heartbeat={count:heartbeat,maxGapMs};row.resources=runtimeDiagnostics.getSnapshot();row.counters={...counters};results.push(row)
   status.textContent=String(row.status);publish();return row
@@ -128,7 +151,7 @@ async function probe() {
   catch(e){if(e instanceof VideoError&&['VIDEO_API_UNAVAILABLE','VIDEO_CONFIG_UNSUPPORTED'].includes(e.code))lastProbe={apiPresent:e.code!=='VIDEO_API_UNAVAILABLE',selected:null,candidates:[]};results.push({stage:'capability',error:e instanceof VideoError?e.code:'WORKER_FAILED'})}
   finally{worker.dispose();counters.activeEncoderWorkers--;publish()}
 }
-document.querySelector('#environment')!.textContent=`Secure context: ${isSecureContext}; HMR: ${import.meta.env.DEV}; origin: ${location.origin}`
+document.querySelector('#environment')!.textContent=`Secure context: ${isSecureContext}; HMR: ${import.meta.env.DEV}; diagnostics: ${diagnosticVersion}; origin: ${location.origin}`
 document.querySelector('#probe')!.addEventListener('click',()=>{void probe()})
 document.querySelector('#small')!.addEventListener('click',()=>{void runSet()})
 document.querySelector('#medium')!.addEventListener('click',()=>{void runSet(true)})

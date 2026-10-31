@@ -24,6 +24,7 @@ export const emptyVideoMetrics = (): VideoMetrics => ({ framesCreated: 0, frames
   maxEncodeQueue: 0, maxMuxPendingBytes: 0, encodedBytes: 0, outputBytes: 0, compositeMs: 0, frameConstructionMs: 0,
   encodeCallMs: 0, encodePhaseWallMs: 0, finalizeMs: 0, inspectionMs: 0, temporaryRgbaFrames: 0, packets: 0, targetHighWaterBytes: 0, decoderConfigReceived: false })
 export interface VideoTiming { readonly timestampUs: number; readonly durationUs: number }
+export type VideoFinalizePhase='flushing'|'flushed'|'mux-finalizing'|'inspecting'
 export interface VideoValidation {
   readonly codec: string | null; readonly width: number; readonly height: number; readonly frameCount: number
   readonly audioTracks: number; readonly maxTimestampErrorUs: number; readonly maxDurationErrorUs: number

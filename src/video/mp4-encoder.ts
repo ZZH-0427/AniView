@@ -4,7 +4,7 @@ import { compositeWhite, sampleRgb } from './pixels'
 import { VideoTimeline } from './timeline'
 import { probeAvc } from './capability'
 import { codedSize, emptyVideoMetrics, VIDEO_LIMITS, VideoError } from './model'
-import type { ProbeResult, VideoResult, VideoTiming, VideoValidation } from './model'
+import type { ProbeResult, VideoResult, VideoTiming, VideoValidation, VideoFinalizePhase } from './model'
 
 export class MP4Encoder {
   readonly metrics = emptyVideoMetrics()
@@ -25,7 +25,8 @@ export class MP4Encoder {
   private firstEncodeAt:number|undefined
   private readonly size: { width: number; height: number }
   constructor(private readonly metadata: CanonicalAnimationMetadata,
-    createOutput = (target: BufferTarget) => new Output({ format: new Mp4OutputFormat({ fastStart: false }), target })) {
+    createOutput = (target: BufferTarget) => new Output({ format: new Mp4OutputFormat({ fastStart: false }), target }),
+    private readonly onFinalizePhase?:(phase:VideoFinalizePhase)=>void) {
     this.size = codedSize(metadata)
     this.output = createOutput(this.target)
     this.target.on('write', ({ end }) => {
@@ -35,6 +36,7 @@ export class MP4Encoder {
     this.output.addVideoTrack(this.packetSource) // No frameRate metadata: preserve VFR.
   }
   private check() { if (this.closed) throw new VideoError('CANCELLED'); if (this.error) throw this.error }
+  private phase(phase:VideoFinalizePhase){try{this.onFinalizePhase?.(phase)}catch{/* A diagnostic observer must not change encoding. */}}
   async open() {
     this.probe = await probeAvc(this.size.width, this.size.height)
     if (!this.probe.apiPresent) throw new VideoError('VIDEO_API_UNAVAILABLE')
@@ -103,18 +105,22 @@ export class MP4Encoder {
     this.check()
     if (!this.encoder || this.timing.length !== this.metadata.frameCount) throw new VideoError('VIDEO_ENCODE_FAILED')
     const start = performance.now()
+    this.phase('flushing')
     try { await this.encoder.flush() } catch { this.check(); throw new VideoError('VIDEO_ENCODE_FAILED') }
+    this.phase('flushed')
     // Wall phase includes waits for following source frames; it is not native CPU time.
     this.metrics.encodePhaseWallMs=performance.now()-this.firstEncodeAt!
     this.encoder.close(); this.encoder = undefined
     await this.packetChain; this.check()
     if (!this.metrics.decoderConfigReceived || this.metrics.packets !== this.timing.length) throw new VideoError('VIDEO_ENCODE_FAILED')
     this.packetSource.close()
+    this.phase('mux-finalizing')
     try { await this.output.finalize() } catch (cause) { throw cause instanceof VideoError ? cause : new VideoError('VIDEO_MUX_FAILED') }
     this.check(); this.metrics.finalizeMs = performance.now() - start
     const data = this.target.buffer
     if (!data || data.byteLength > VIDEO_LIMITS.maxOutputBytes) throw new VideoError('VIDEO_OUTPUT_TOO_LARGE')
     this.metrics.outputBytes = data.byteLength
+    this.phase('inspecting')
     const inspect = performance.now(), validation = await this.inspect(data)
     this.metrics.inspectionMs = performance.now() - inspect
     return { data, metrics: { ...this.metrics }, config: this.config, probe: this.probe, validation, timing: this.timing }

@@ -1,6 +1,7 @@
 import { createFixtureFrame } from '../conversion/fixtures'
 import type { FixtureOptions } from '../conversion/fixtures'
 import type { AnimationEncoder, ConversionFormat } from '../../conversion/model'
+globalThis.postMessage({type:'fixture-boot'})
 globalThis.addEventListener('message', (event: MessageEvent<{ format: ConversionFormat; options: FixtureOptions; photo?: boolean; softEdges?: boolean; photoData?:ArrayBuffer }>) => {
   void (async () => {
     let encoder: AnimationEncoder | undefined

@@ -31,6 +31,11 @@ beforeEach(()=>{Object.assign(fake,{configured:0,closed:0,frameClosed:0,configur
 afterEach(()=>vi.unstubAllGlobals())
 const meta={width:2,height:2,frameCount:1,playCount:0},frame=()=>({index:0,durationMs:27,rgba:new Uint8Array(16).fill(255).buffer})
 describe('public-API MP4 adapter lifecycle (real browser tests verify the real mux)',()=>{
+  it('reports finalization phases in order and ignores observer exceptions',async()=>{
+    const phases:string[]=[],e=new MP4Encoder(meta,undefined,p=>{phases.push(p);throw Error('observer')})
+    await e.open();await e.addFrame(frame());await e.finish();await e.dispose()
+    expect(phases).toEqual(['flushing','flushed','mux-finalizing','inspecting']);expect(fake.closed).toBe(1)
+  })
   it('encodes once, closes frames and native codec, writes only video and inspects actual output',async()=>{
     const e=new MP4Encoder(meta);await e.open();await e.addFrame(frame());const r=await e.finish();await e.dispose()
     expect(r.metrics).toMatchObject({framesCreated:2,framesClosed:2,activeVideoFrames:0,peakVideoFrames:1,packets:1})

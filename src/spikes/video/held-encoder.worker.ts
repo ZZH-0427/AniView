@@ -5,12 +5,14 @@ import { VideoError } from '../../video/model'
 import type { VideoRequest, VideoResponse } from '../../video/protocol'
 let encoder: MP4Encoder | undefined, queue = Promise.resolve()
 const send = (r: VideoResponse, transfer: Transferable[] = []) => globalThis.postMessage(r, { transfer })
+send({id:0,type:'boot'})
 globalThis.addEventListener('message', (event: MessageEvent<VideoRequest>) => {
   const r=event.data
   queue=queue.then(async()=>{
     if(r.type==='open'){
       encoder=new MP4Encoder(r.metadata,(target:BufferTarget)=>new Output({format:new Mp4OutputFormat({fastStart:false}),target,
-        onFinalize:()=>new Promise<void>(()=>{globalThis.postMessage({type:'finalize-held',state:'finalizing'})})}))
+        onFinalize:()=>new Promise<void>(()=>{globalThis.postMessage({type:'finalize-held',state:'finalizing'})})}),
+        phase=>globalThis.postMessage({type:'finalize-phase',phase}))
       send({id:r.id,type:'ready',probe:await encoder.open()});return
     }
     if(!encoder)throw new VideoError('VIDEO_ENCODER_INIT_FAILED')

@@ -4,6 +4,7 @@ import type { VideoRequest, VideoResponse } from './protocol'
 let encoder: MP4Encoder | undefined
 const send = (value: VideoResponse, transfer: Transferable[] = []) => globalThis.postMessage(value, { transfer })
 let queue = Promise.resolve()
+send({id:0,type:'boot'})
 globalThis.addEventListener('message', (event: MessageEvent<VideoRequest>) => {
   const r = event.data
   queue = queue.then(async () => {

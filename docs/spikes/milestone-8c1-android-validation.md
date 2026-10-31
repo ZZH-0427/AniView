@@ -5,8 +5,10 @@ WebCodecs AVC encoding or native MP4 playback support.
 
 New Android numeric results have now been received. Edge recorded two APNG jobs
 with `WORKER_FAILED`, so the acceptance gate remains open. Do not discard those
-failures because other jobs succeeded. Manual native-playback/visual observations
-and the two failure rows have been requested; no full-suite rerun was requested.
+failures because other jobs succeeded. The user subsequently confirmed all
+playback/visual/recovery checks were normal and localized both failures to the
+**second cancellation test (held finalization)**. The original failure rows are
+no longer available; do not request them again or invent their contents.
 
 ## Engineering preview
 
@@ -54,12 +56,12 @@ manual and must be reported separately from automatic decode-back.
 | Trusted HTTPS / secure context / no HMR | Reported true /false | Reported true /false |
 | Worker VideoEncoder + VideoFrame APIs | Reported present; real encodes completed | Reported present; real encodes completed |
 | Supported exact AVC configuration | Reported supported; full chosen config not supplied | Reported supported; full chosen config not supplied |
-| Actual GIF/APNG/WebP →MP4, small + medium | Successes in all formats; two APNG Worker failures unresolved; per-size confirmation pending | Successes in all formats; no recorded failures; per-size confirmation pending |
-| Native video playback | Pending | Pending |
-| White alpha composite / odd dimensions | Pending | Pending |
+| Actual GIF/APNG/WebP →MP4, small + medium | Confirmed normal; two failures isolated to held-finalization test | Confirmed normal; no recorded failures |
+| Native video playback | User confirmed normal | User confirmed normal |
+| White alpha composite / odd dimensions | User confirmed normal | User confirmed normal |
 | VFR timestamps, durations, total duration | Successful jobs: maximum errors7 /7 /10µs | Successful jobs: maximum errors7 /7 /10µs |
-| Encode + actual-finalizing cancel →rerun | Both cancellation flags true; manual rerun confirmation pending | Both cancellation flags true; manual rerun confirmation pending |
-| Responsiveness / no reload or crash | Pending | Pending |
+| Encode + actual-finalizing cancel →rerun | User confirmed recovery; two held-test failures remain unresolved | User confirmed normal; both cancellation flags true |
+| Responsiveness / no reload or crash | User confirmed normal | User confirmed normal |
 | Zero cleanup/resource counters after Close | Confirmed by Summary JSON | Confirmed by Summary JSON |
 
 ## Received numeric evidence
@@ -104,12 +106,51 @@ allowed the same APNG job to succeed. This demonstrates the generic error can
 have an infrastructure cause, **not** that the actual phone failures did.
 Controlled artifacts stay ignored under `.tools/video/worker-load-control/`.
 
-No codec, source decoder, session ownership, limits or served engineering assets
-were changed in response to these logs. The next step depends on the two real
-FAIL rows and the user's native-playback/visual observations. 8C1 remains
-**PENDING ANDROID VALIDATION**; 8C2/8D1 have not started.
+This first follow-up did not change codec policy, source decoders, session
+ownership, limits or served engineering assets. The user's later clarification
+is recorded above. 8C1 remains **PENDING ANDROID VALIDATION**; 8C2/8D1 have not started.
 
-Requested reply: browser/version if convenient; small/medium three-format results;
-native playback and alpha/padding appearance; both cancel→rerun results; any
-stalls/reloads/crashes; one final Summary JSON per browser. Do not repeat old
-8B tests. Do not mark 8C1 PASSED until this table has real evidence.
+## Targeted diagnostic preview — `finalize-trace-1`
+
+Original files at the original URL remain byte-identical to their accepted hash
+manifest. A separate production build is served under `/AniView/followup/`:
+
+`https://cruel-tires-retire.loca.lt/AniView/followup/experiments/video/index.html?debug=1`
+
+This adds only local failure evidence: job/phase, Worker role and module boot
+marker, active request operation/id/elapsed time, accepted-frame count, and
+native-flush/mux stage. It preserves the original120s request timeout, cancellation
+mechanism, codecs, frame ownership and limits. Source decoders, Player,
+MediaSession and CreationSession are unchanged. Diagnostic callbacks are optional
+and exceptions cannot alter transport cleanup or encoding. No exception text,
+filenames, URLs or media are included. Failure JSON may show numeric response
+statuses for known static Worker resources when the browser exposes them;
+missing/zero status is not proof of an HTTP failure. No automatic retry hides
+failures and no diagnostics are uploaded or persisted.
+
+New controls in installed desktop Edge prove:
+
+- Small and medium each succeed through all three source formats.
+- Three actual held-finalization cancellations occur after20 accepted frames,
+  at `phase:held-finalizing`, `finalizePhase:mux-finalizing`, followed by successful
+  WebP reruns. Resources return to zero.
+- Intentionally refusing the fixture or held-encoder script identifies that
+  role with `error-event`, `moduleBooted:false`, zero accepted frames.
+- A separate test deliberately suppresses the held marker and accelerates the
+  **lab-only** timeout to1s. It reports `request-timeout`, `operation:finish`,
+  `moduleBooted:true`,20 accepted frames, `finalizePhase:mux-finalizing`, and cleans
+  up. This is an injected control, not a reproduction of the phone cause.
+
+802 unit tests in64 files pass (750 original +52 new); lint, typecheck, ordinary
+and separate production builds pass. The separate HTTPS page was independently
+checked with normal certificate validation, real encoding/readback/native
+playback and zero application errors. These observations do not settle the
+historical Edge failures.
+
+Requested focused reply: in **Edge**, press **Test held finalization cancel →
+rerun** three times, waiting for the automatic WebP result/PASS before each next
+press. In **Quark**, one run verifies the diagnostic build. No small/medium/odd
+or other earlier acceptance needs repeating. On any FAIL, copy **Failure JSON**
+immediately and stop that browser's repeat; otherwise Close results and copy
+Summary JSON. The summary must identify `diagnosticVersion:finalize-trace-1`.
+The technical gate remains pending until this targeted observation is evaluated.
