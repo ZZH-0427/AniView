@@ -7,10 +7,11 @@ import { ViewerHeader, PlaybackControls, FileNavigation, ViewportControls } from
 import { ViewerDiagnostics } from '../../components/DiagnosticsPanel'
 import './viewer.css'
 
-export function Viewer({ file, onClose, transition, position, count, onPrevious, onNext, onRemove }: {
+export function Viewer({ file, onClose, transition, position, count, onPrevious, onNext, onRemove, onConvert }: {
   file: VirtualFile; onClose: () => void; transition: { current: Promise<void> }
   position: number; count: number; onPrevious: () => void; onNext: () => void
   onRemove: () => void
+  onConvert?: (() => void) | undefined
 }) {
   const canvas = useRef<HTMLCanvasElement>(null)
   const surface = useRef<HTMLDivElement>(null)
@@ -68,7 +69,14 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
       <ViewerHeader name={file.name}
         metadata={info && `${info.format.toUpperCase()} · ${info.width} × ${info.height}${animated ? ` · ${info.frames ?? '?'} frames` : ''}`}
         fullscreenAvailable={fullscreen.available} fullscreen={fullscreen.fullscreen} onFullscreen={fullscreen.toggle}
-        onClose={onClose} onRemove={onRemove} />
+        onClose={onClose} onRemove={onRemove} onConvert={animated && ready && onConvert ? () => {
+          void (async () => {
+            if (document.fullscreenElement) {
+              try { await document.exitFullscreen() } catch { setError('Please exit fullscreen before converting.'); return }
+            }
+            onConvert()
+          })()
+        } : undefined} />
     </header>
     <div className="viewer-surface" data-testid="media-surface" ref={surface} tabIndex={0}
       aria-label="Image view. Drag to pan; pinch or use the wheel to zoom."

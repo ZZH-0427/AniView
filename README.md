@@ -9,6 +9,16 @@ Animated WebP, APNG and GIF playback on mobile and desktop.
 
 Choose local images or a ZIP archive. Media processing happens in your browser.
 
+## V0.2 Feature Branch — Unreleased
+
+The `feat/v0.2-static-to-gif` branch adds static-image GIF creation and
+**Viewer → More → Convert animation** for GIF, Animated WebP and APNG.
+Conversion supports six cross-format directions, Preview and unique repeated
+downloads. It keeps the original source and ZIP session. Same-format targets
+are disabled. Limits and format tradeoffs are described in the
+[8B2 productization record](docs/milestones/milestone-8b2-animation-conversion-productization.md).
+Fresh 8B2 Android acceptance is pending; the public demo above remains v0.1.0.
+
 ## Features and Supported Formats
 
 | Media | Supported formats |

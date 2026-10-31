@@ -1,0 +1,23 @@
+.conversion-page { width: min(100%, 54rem); margin: auto; padding: clamp(1rem, 4vw, 2.5rem); display: grid; gap: 1.2rem; overflow-wrap: anywhere; }
+.conversion-page h1 { font-size: clamp(1.4rem, 5vw, 2.1rem); letter-spacing: -.025em; }
+.conversion-header { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+.conversion-card { margin: 0; min-width: 0; padding: 1rem; border: 1px solid #d2dce7; border-radius: .8rem; background: white; }
+.conversion-filename { margin-block: .6rem; overflow-wrap: anywhere; }
+.conversion-metadata { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 7rem), 1fr)); gap: .8rem 1.5rem; margin-block: 1rem 0; }
+.conversion-metadata div { min-width: 0; }
+.conversion-metadata dt { color: #536378; font-size: .85rem; }
+.conversion-metadata dd { margin: .25rem 0 0; font-variant-numeric: tabular-nums; }
+.conversion-targets { display: flex; flex-wrap: wrap; gap: .65rem; }
+.conversion-targets legend { padding-inline: .3rem; font-weight: 600; }
+.conversion-targets label { display: flex; align-items: center; gap: .5rem; min-height: 48px; padding: .7rem; border: 1px solid #acb8c6; border-radius: .5rem; flex: 1 1 9rem; }
+.conversion-targets label:has(:checked) { border-color: #285581; background: #e7eef7; }
+.conversion-targets label:has(:disabled) { color: #677484; background: #f4f6f8; }
+.conversion-targets input { accent-color: #285581; width: 1.15rem; height: 1.15rem; flex: none; }
+.conversion-targets small { display: block; font-size: .75rem; }
+.conversion-actions { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; }
+.conversion-primary { background: #285581; color: white; border-color: #285581; }
+.conversion-note { color: #536378; font-size: .9rem; }
+.conversion-download { display: inline-flex; align-items: center; min-height: 44px; padding: .55rem .9rem; border: 1px solid #acb8c6; border-radius: .5rem; color: #285581; }
+.conversion-download[aria-disabled=true] { opacity: .5; }
+.conversion-error { color: #9d2938; }
+.conversion-page progress { width: 100%; }

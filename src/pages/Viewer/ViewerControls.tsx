@@ -1,16 +1,17 @@
 import { IconButton } from '../../components/IconButton'
 import { ViewerMoreMenu } from '../../components/ViewerMoreMenu'
 
-export function ViewerHeader({ name, metadata, fullscreenAvailable, fullscreen, onFullscreen, onClose, onRemove }: {
+export function ViewerHeader({ name, metadata, fullscreenAvailable, fullscreen, onFullscreen, onClose, onRemove, onConvert }: {
   name: string; metadata: string | undefined; fullscreenAvailable: boolean; fullscreen: boolean
   onFullscreen: () => void; onClose: () => void; onRemove: () => void
+  onConvert?: (() => void) | undefined
 }) {
   return <>
     <div className="viewer-heading"><span className="viewer-brand">AniView</span><h1 title={name}>{name}</h1></div>
     <div className="viewer-header-actions">
       {fullscreenAvailable && <IconButton icon={fullscreen ? 'exit-fullscreen' : 'fullscreen'}
         label={fullscreen ? 'Exit Fullscreen' : 'Fullscreen'} onClick={onFullscreen} />}
-      <ViewerMoreMenu onRemove={onRemove} />
+      <ViewerMoreMenu onRemove={onRemove} onConvert={onConvert} />
       <IconButton icon="close" label="Close" onClick={onClose} />
     </div>
     {metadata && <p className="viewer-metadata">{metadata}</p>}

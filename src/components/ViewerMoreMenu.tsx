@@ -4,9 +4,10 @@ import { Icon } from './Icon'
 import { IconButton } from './IconButton'
 
 /** One local disclosure; removing a list item retains the existing direct action. */
-export function ViewerMoreMenu({ onRemove, onOpenChange }: {
+export function ViewerMoreMenu({ onRemove, onOpenChange, onConvert }: {
   onRemove: () => void
   onOpenChange?: (open: boolean) => void
+  onConvert?: (() => void) | undefined
 }) {
   const [open, setOpen] = useState(false)
   const container = useRef<HTMLDivElement>(null)
@@ -37,7 +38,11 @@ export function ViewerMoreMenu({ onRemove, onOpenChange }: {
     }
     if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); close(); return }
     if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
-      event.preventDefault(); item.current?.focus({ preventScroll: true }); return
+      event.preventDefault()
+      const items = Array.from(container.current?.querySelectorAll<HTMLButtonElement>('[role=menuitem]') ?? [])
+      const index = items.findIndex(button => button === document.activeElement)
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (index + (event.key === 'ArrowUp' ? -1 : 1) + items.length) % items.length
+      items[next]?.focus({ preventScroll: true }); return
     }
     if (event.key !== 'Tab') return
     // Unmounting a focused item before the browser's default Tab can lose its
@@ -60,7 +65,9 @@ export function ViewerMoreMenu({ onRemove, onOpenChange }: {
     <IconButton ref={trigger} icon="more" label="More" data-testid="viewer-more-trigger" aria-haspopup="menu" aria-expanded={open}
       aria-controls={menuId} onClick={() => setOpen(value => !value)} />
     {open && <div className="viewer-more-popover" id={menuId} data-testid="viewer-more-menu" role="menu" aria-label="More actions">
-      <button ref={item} type="button" className="viewer-more-remove" role="menuitem" aria-label="Remove from list"
+      {onConvert && <button ref={item} type="button" className="viewer-more-remove" role="menuitem" aria-label="Convert animation"
+        onClick={() => { close(); onConvert() }}><Icon name="create" /><span>Convert animation</span></button>}
+      <button ref={onConvert ? undefined : item} type="button" className="viewer-more-remove" role="menuitem" aria-label="Remove from list"
         onClick={() => { close(); onRemove() }}><Icon name="remove" /><span>Remove from list</span></button>
     </div>}
   </div>

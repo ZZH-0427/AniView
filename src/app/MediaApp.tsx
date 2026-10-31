@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import type { VirtualFile } from '../input/virtual-file'
 import { Home } from '../pages/Home/Home'
 import { Viewer } from '../pages/Viewer/Viewer'
 import { ImageInput } from '../components/ImageInput'
@@ -8,9 +9,11 @@ import { droppedFiles } from '../input/drag-drop'
 import { currentSessionItem, nextFile, previousFile, removeCurrentFile } from '../media/media-session'
 import { useMediaSource } from './use-media-source'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
+const ConversionWorkspace = lazy(() => import('../conversion/ConversionWorkspace'))
 
 export function MediaApp({ onCreate }: { onCreate?: () => void }) {
   const [dragging, setDragging] = useState(false)
+  const [conversion, setConversion] = useState<VirtualFile>()
   const transition = useRef(Promise.resolve())
   const { session, notice, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
   const current = currentSessionItem(session)
@@ -20,7 +23,7 @@ export function MediaApp({ onCreate }: { onCreate?: () => void }) {
     let depth = 0
     const hasFiles = (event: DragEvent) => Array.from(event.dataTransfer?.types ?? []).includes('Files')
     const enter = (event: DragEvent) => {
-      if (!hasFiles(event)) return
+      if (!hasFiles(event) || conversion) return
       event.preventDefault(); depth++; setDragging(true)
     }
     const over = (event: DragEvent) => {
@@ -30,7 +33,7 @@ export function MediaApp({ onCreate }: { onCreate?: () => void }) {
     const leave = () => { if (depth > 0 && --depth === 0) setDragging(false) }
     const drop = (event: DragEvent) => {
       event.preventDefault(); depth = 0; setDragging(false)
-      if (event.dataTransfer) addFiles(droppedFiles(event.dataTransfer))
+      if (event.dataTransfer && !conversion) addFiles(droppedFiles(event.dataTransfer))
     }
     const reset = () => { depth = 0; setDragging(false) }
     window.addEventListener('dragenter', enter)
@@ -44,9 +47,11 @@ export function MediaApp({ onCreate }: { onCreate?: () => void }) {
       window.removeEventListener('dragleave', leave); window.removeEventListener('drop', drop)
       window.removeEventListener('dragend', reset); window.removeEventListener('blur', reset)
     }
-  }, [addFiles])
+  }, [addFiles, conversion])
 
-  return <div className={`media-app${current ? ' has-media' : ''}${archive ? ' has-archive' : ''}`}>
+  return <div className={`media-app${current && !conversion ? ' has-media' : ''}${archive && !conversion ? ' has-archive' : ''}`}>
+    {conversion ? <Suspense fallback={<p role="status">Opening converter…</p>}><ConversionWorkspace file={conversion} transition={transition}
+      onBack={() => setConversion(undefined)} /></Suspense> : <>
     {archive && <ArchiveSummary key={archive.status === 'open' ? archive.session.id : `${archive.status}:${archive.name}`}
       archive={archive} onClose={clear} count={session.items.length} />}
     {current ? <>
@@ -62,9 +67,10 @@ export function MediaApp({ onCreate }: { onCreate?: () => void }) {
       <Viewer key={current.id} file={current.file} transition={transition} onClose={clear}
         position={session.currentIndex + 1} count={session.items.length}
         onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
-        onRemove={() => changeSession(removeCurrentFile)} />
+        onRemove={() => changeSession(removeCurrentFile)} onConvert={() => { setDragging(false); setConversion(current.file) }} />
     </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} />}
     {notice && <p className="session-notice" role="status">{notice}</p>}
+    </>}
     <RuntimeDiagnosticsPanel />
     {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}
   </div>
