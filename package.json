@@ -23,12 +23,16 @@
     "build:gif-spike": "vite build --config tools/gif-encoder/vite.config.mjs",
     "test:gif-spike": "node tools/gif-encoder/run-browser.mjs",
     "test:creation": "node tools/creation/run-browser.mjs",
-    "preview:creation": "node tools/creation/preview.mjs"
+    "preview:creation": "node tools/creation/preview.mjs",
+    "build:video-spike": "vite build --config tools/video/vite.config.mjs",
+    "preview:video-spike": "node tools/video/preview.mjs",
+    "test:video-spike": "node tools/video/run-browser.mjs"
   },
   "dependencies": {
     "@zip.js/zip.js": "2.23.0",
     "apng-js": "1.1.5",
     "gifenc": "1.0.3",
+    "mediabunny": "1.65.0",
     "omggif": "1.0.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
