@@ -25,8 +25,8 @@ demo above remains v0.1.0. V0.2 is not released.
 which passed desktop and fresh Android Edge/Quark acceptance with documented
 limitations. Milestone 8C2 adds **MP4 (H.264)** to the existing conversion target
 selector, with native video Preview and unique downloads. Desktop product checks
-pass; 8C2 was accepted with the fresh Android product gate waived by the user
-(phone testing incomplete). MP4 exports one
+pass; fresh Android product acceptance is pending again after the user reopened
+the test round. MP4 exports one
 cycle, without audio, composited on white; odd dimensions receive white padding.
 It requires HTTPS and usable browser-native video encoding; availability and
 H.264 profile vary by device. See the [8C2 product record](docs/milestones/milestone-8c2-animation-to-mp4-productization.md).

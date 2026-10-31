@@ -1,11 +1,11 @@
 # Milestone 8C2 — Animation → MP4 productization
 
-Status: **PASSED WITH USER-WAIVED ANDROID VALIDATION**, 2026-10-31.
+Status: **REOPENED — PENDING ANDROID VALIDATION**, 2026-10-31.
 Desktop product acceptance passes; fresh Android product acceptance is incomplete
-and was explicitly waived by the user after the temporary HTTPS outage.
+and is required again after the user's explicit request to restart testing.
 Branch: `feat/v0.2-animation-to-video`. V0.2 is not released. Main, v0.1.0
 and production Pages remain outside this feature's deployment scope. 8D1 has not
-started. The waiver and remaining phone coverage are in the [Android record](milestone-8c2-android-validation.md).
+started. The resumed gate and phone coverage are in the [Android record](milestone-8c2-android-validation.md).
 
 ## Product and ownership
 
@@ -137,10 +137,10 @@ license/source-availability notices now describe product use as well as the spik
 Corresponding published source remains linked. No dependency or lockfile change.
 AniView remains UNLICENSED; native codec/AVC rights remain separate questions.
 
-Fresh Android Edge/Quark product smoke is incomplete, with its gate waived by the
-user; neither is recorded as a completed 8C2 phone test pass. QQ is not tested.
-Temporary preview/tunnel services were stopped. Mobile product coverage remains
-a known limitation despite administrative milestone acceptance.
+Fresh Android Edge/Quark product smoke is incomplete and is required again;
+neither is recorded as a completed 8C2 phone test pass. QQ is not tested.
+The previous waiver was superseded by the user's request to restart this round.
+Mobile product coverage remains the pending acceptance gate.
 8C1's two historical Edge cancellation failures remain root-cause unknown, with
 focused reruns passing. A new product Worker failure must be investigated.
 Native capabilities/profile, downloads and temporary HTTPS availability vary.

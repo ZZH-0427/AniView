@@ -1,13 +1,13 @@
 # Milestone 8C2 — Android product validation
 
-Status: **CLOSED BY USER WAIVER, 2026-10-31**.
+Status: **REOPENED — PENDING ANDROID VALIDATION, 2026-10-31**.
 This is not a completed Android test pass. Edge: no complete 8C2 acceptance result
 recorded. Quark: testing interrupted by an inaccessible preview. QQ: not tested.
 
-The user explicitly ended further testing and asked to mark acceptance passed.
-The milestone is therefore accepted with its fresh Android gate waived by the
-user. Existing desktop passes remain valid; no phone pass, download verification,
-cleanup result or browser compatibility finding is invented from this decision.
+The user previously waived this gate, then explicitly requested a fresh test
+round. That waiver is superseded: fresh Edge and Quark product acceptance is
+required again. Existing desktop passes remain valid; no phone pass, download
+verification, cleanup result or browser compatibility finding is invented.
 
 After the forced PC shutdown, the same frozen candidate `31813b2` was restored
 and independently checked over HTTPS on desktop. During the later outage, local
@@ -15,7 +15,8 @@ preview returned HTTP 200 while the external HTTPS connection reset (ECONNRESET)
 including a replacement hostname. Quark reported “页面无法访问”. The underlying
 network/provider cause was not established; this does not prove an application
 conversion defect or complete its phone acceptance. Temporary services were
-stopped at the user's instruction; the following URLs/checklist are historical.
+stopped at the user's instruction. On reopening, the old URLs remain historical;
+use only the newly verified URL supplied with the current test request.
 
 This gate concerns actual product controls, native Preview, saved files and source
 preservation. Prior 8C1 engineering acceptance does not replace it. Do not repeat
@@ -89,7 +90,6 @@ playable, medium Cancel→rerun, source/ZIP preservation, responsiveness and any
 reload/crash. Include short Summary JSON and cleanup fields, never media/filenames.
 A new product Worker failure requires investigation; report code/stage and stop.
 
-The original fresh-Android gate above was waived by the user's later explicit
-instruction. Milestone 8C2: PASSED WITH USER-WAIVED ANDROID VALIDATION. Actual
-8C2 Android product coverage remains incomplete and must not be reported as tested.
+The user reopened the original fresh-Android gate. Milestone 8C2: PENDING ANDROID
+VALIDATION. Both complete fresh phone results must be recorded before PASSED.
 V0.2 is not released. Milestone 8D1 has not started.
