@@ -11,23 +11,30 @@ import { openAnimationFrameSource } from './frame-source'
 import { inspectConversionOutput } from './output-inspection'
 import { CONVERSION_LIMITS, ConversionError, validateCanonicalMetadata } from './model'
 import type { AnimationFrameSource, CanonicalAnimationMetadata, ConversionErrorCode, ConversionFormat, EncoderMetrics } from './model'
+import { VideoError } from '../video/model'
+import type { VideoErrorCode, VideoMetrics } from '../video/model'
+import type { VideoConversionRuntime } from './video-runtime-contract'
+import { recordConversionCleanup } from '../media/conversion-cleanup'
 
-export const formatLabel = (format: ConversionFormat) => format === 'webp' ? 'Animated WebP' : format.toUpperCase()
+export type ConversionTarget=ConversionFormat|'mp4'
+export type ProductConversionError=ConversionErrorCode|VideoErrorCode
+export const formatLabel = (format: ConversionTarget) => format === 'webp' ? 'Animated WebP' : format.toUpperCase()
 export const conversionBusy = (status: string) => ['preparing', 'converting', 'verifying', 'cancelling'].includes(status)
-export interface ConversionMetadata extends CanonicalAnimationMetadata { readonly durationMs: number | null }
-export interface ConversionProductResult {
-  readonly blob: Blob; readonly url: string; readonly filename: string; readonly format: ConversionFormat
-  readonly metadata: ConversionMetadata; readonly metrics: EncoderMetrics
-}
+export interface ConversionMetadata extends CanonicalAnimationMetadata { readonly durationMs: number | null;readonly codec?:string }
+interface ResultBase {readonly blob:Blob;readonly url:string;readonly filename:string}
+export type ConversionProductResult=(ResultBase&{readonly format:ConversionFormat;readonly metadata:ConversionMetadata;readonly metrics:EncoderMetrics})
+  |(ResultBase&{readonly format:'mp4';readonly metadata:ConversionMetadata&{readonly durationMs:number;readonly codec:string};readonly metrics:VideoMetrics})
 const initialDiagnostics = () => ({ conversionsStarted: 0, conversionsCompleted: 0, cancellations: 0,
   activeDecoderWorkers: 0, activeEncoderWorkers: 0, peakRgbaFrames: 0, lastOutputBytes: 0,
-  activeObjectUrls: 0, cleanupErrors: 0, wasmLiveAllocBytes: 0 })
+  activeObjectUrls: 0, cleanupErrors: 0, wasmLiveAllocBytes: 0,
+  videoConversionsStarted:0,videoConversionsCompleted:0,videoCancellations:0,activeVideoWorkers:0,
+  peakCanonicalRgbaFrames:0,peakVideoFrames:0,maxEncodeQueue:0,ownedVideoFrames:0,videoFramesBalanced:null as boolean|null,lastMp4Bytes:0,lastCodec:null as string|null })
 export interface ConversionSnapshot {
   readonly status: 'preparing' | 'ready' | 'converting' | 'verifying' | 'cancelling' | 'cancelled' | 'success' | 'error'
   readonly source?: ConversionMetadata | undefined; readonly sourceFormat?: ConversionFormat | undefined
-  readonly target: ConversionFormat; readonly deflate: boolean | null; readonly jobId: number
+  readonly target: ConversionTarget; readonly deflate: boolean | null; readonly jobId: number
   readonly progress?: ConversionProgress | undefined; readonly result?: ConversionProductResult | undefined
-  readonly error?: ConversionErrorCode | undefined; readonly diagnostics: ReturnType<typeof initialDiagnostics>
+  readonly error?: ProductConversionError | undefined; readonly diagnostics: ReturnType<typeof initialDiagnostics>
 }
 interface Dependencies {
   readonly detector?: FormatDetector
@@ -35,8 +42,9 @@ interface Dependencies {
   readonly inspect?: typeof inspectConversionOutput
   readonly createUrl?: (blob: Blob) => string
   readonly revokeUrl?: (url: string) => void
+  readonly loadVideo?:()=>Promise<VideoConversionRuntime>
 }
-export function conversionErrorMessage(code: ConversionErrorCode, target: ConversionFormat = 'apng') {
+export function conversionErrorMessage(code: ProductConversionError, target: ConversionTarget = 'apng') {
   switch (code) {
     case 'RESOURCE_LIMIT': return 'This animation is too large to convert safely in the browser.'
     case 'SOURCE_UNSUPPORTED': return 'Choose a GIF, animated WebP or APNG animation.'
@@ -45,10 +53,15 @@ export function conversionErrorMessage(code: ConversionErrorCode, target: Conver
     case 'TARGET_ENCODE_FAILED': return 'The output animation could not be created or verified. Try again.'
     case 'WORKER_FAILED': return 'Animation processing stopped unexpectedly. Try again.'
     case 'CANCELLED': return 'Conversion cancelled. Your source and target are retained.'
+    case 'VIDEO_API_UNAVAILABLE':case 'VIDEO_CONFIG_UNSUPPORTED':case 'VIDEO_ENCODER_UNSUPPORTED':return 'MP4 encoding is not supported in this browser. Use a secure HTTPS page and a browser with video encoding support.'
+    case 'VIDEO_ENCODER_INIT_FAILED':return 'The video encoder could not start. Try again or use another browser.'
+    case 'VIDEO_OUTPUT_TOO_LARGE':return 'The MP4 is too large to save safely in the browser.'
+    case 'VIDEO_MUX_FAILED':return 'The MP4 could not be finalized. Your source is unchanged; try again.'
+    case 'VIDEO_ENCODE_FAILED':case 'VIDEO_FRAME_FAILED':case 'VIDEO_VALIDATION_FAILED':return 'The MP4 could not be created or verified. Try again.'
   }
 }
-function errorCode(cause: unknown, fallback: ConversionErrorCode = 'SOURCE_DECODE_FAILED'): ConversionErrorCode {
-  if (cause instanceof ConversionError) return cause.code
+function errorCode(cause: unknown, fallback: ProductConversionError = 'SOURCE_DECODE_FAILED'): ProductConversionError {
+  if (cause instanceof ConversionError||cause instanceof VideoError) return cause.code
   if (cause instanceof MediaError && (cause.code === 'RESOURCE_LIMIT_EXCEEDED' || cause.code === 'OUT_OF_MEMORY')) return 'RESOURCE_LIMIT'
   if (cause instanceof MediaError && cause.code === 'WORKER_FAILED') return 'WORKER_FAILED'
   return fallback
@@ -66,6 +79,7 @@ export class ConversionSession {
   private readonly createUrl: (blob: Blob) => string
   private readonly revokeUrl: (url: string) => void
   private readonly job: ConversionJob
+  private readonly loadVideo:()=>Promise<VideoConversionRuntime>
   private generation = 0
   private abort: AbortController | undefined
   private preparing: Promise<void> | undefined
@@ -77,6 +91,7 @@ export class ConversionSession {
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener) } }
   constructor(readonly file: VirtualFile, dependencies: Dependencies = {}) {
     this.detector = dependencies.detector ?? new BinaryFormatDetector()
+    this.loadVideo=dependencies.loadVideo??(()=>import('../video/product-conversion'))
     this.inspect = dependencies.inspect ?? inspectConversionOutput
     this.createUrl = dependencies.createUrl ?? (blob => URL.createObjectURL(blob))
     this.revokeUrl = dependencies.revokeUrl ?? (url => URL.revokeObjectURL(url))
@@ -107,7 +122,7 @@ export class ConversionSession {
     this.state = { ...this.state, ...patch }
     if (!this.disposed) for (const listener of this.listeners) listener()
   }
-  private count(key: keyof ReturnType<typeof initialDiagnostics>, delta: number) {
+  private count(key: 'activeDecoderWorkers'|'activeEncoderWorkers'|'activeObjectUrls'|'cleanupErrors'|'conversionsStarted'|'conversionsCompleted'|'cancellations'|'activeVideoWorkers'|'videoConversionsStarted'|'videoConversionsCompleted'|'videoCancellations', delta: number) {
     this.publish({ diagnostics: { ...this.state.diagnostics, [key]: this.state.diagnostics[key] + delta } })
   }
   private valid(id: number) { return !this.disposed && id === this.generation }
@@ -143,9 +158,9 @@ export class ConversionSession {
     })()
     return this.preparing
   }
-  selectTarget(target: ConversionFormat) {
+  selectTarget(target: ConversionTarget) {
     if (this.disposed || conversionBusy(this.state.status) || !this.state.source || target === this.state.sourceFormat
-      || !['gif', 'webp', 'apng'].includes(target) || (target === 'apng' && !this.state.deflate)) return
+      ||this.state.deflate===null|| !['gif', 'webp', 'apng','mp4'].includes(target) || (target === 'apng' && !this.state.deflate)) return
     if (target === this.state.target) return
     const previous = this.state.result
     this.publish({ target, result: undefined, status: 'ready', error: undefined, progress: undefined })
@@ -162,6 +177,7 @@ export class ConversionSession {
     this.task = (async () => {
       let durationMs = 0, expectedOutputDuration = 0
       try {
+        if(target==='mp4'){await this.startVideo(id,abort,sourceFormat,source);return}
         const output = await this.job.run(this.file, sourceFormat, target, {
           inspectFrame: frame => {
             durationMs += frame.durationMs
@@ -196,25 +212,64 @@ export class ConversionSession {
           peakRgbaFrames: Math.max(this.state.diagnostics.peakRgbaFrames, output.peakRgbaFrames), wasmLiveAllocBytes: output.metrics.wasmLiveAllocBytes ?? 0 } })
         this.revoke(previous)
       } catch (cause) {
-        if (this.valid(id)) this.publish({ status: abort.signal.aborted ? 'cancelled' : 'error', error: abort.signal.aborted ? undefined : errorCode(cause, 'TARGET_ENCODE_FAILED') })
+        if (this.valid(id)) this.publish({ status: abort.signal.aborted ? 'cancelled' : 'error', error: abort.signal.aborted ? undefined : errorCode(cause, target==='mp4'?'VIDEO_ENCODE_FAILED':'TARGET_ENCODE_FAILED') })
       } finally { if (this.abort === abort) this.abort = undefined }
     })()
     return this.task
+  }
+  private async startVideo(id:number,abort:AbortController,format:ConversionFormat,source:ConversionMetadata){
+    this.count('videoConversionsStarted',1)
+    // Dynamic imports cannot be aborted, but no work may start after cancellation.
+    let stop!:()=>void
+    const interrupted=new Promise<never>((_,reject)=>{stop=()=>reject(new VideoError('CANCELLED'));abort.signal.addEventListener('abort',stop,{once:true});if(abort.signal.aborted)stop()})
+    let runtime:VideoConversionRuntime
+    try{runtime=await Promise.race([this.loadVideo(),interrupted])}finally{abort.signal.removeEventListener('abort',stop)}
+    if(!this.valid(id)||abort.signal.aborted)return
+    const observe=(metrics:VideoMetrics)=>{
+      if(!this.valid(id))return
+      this.publish({diagnostics:{...this.state.diagnostics,peakVideoFrames:Math.max(this.state.diagnostics.peakVideoFrames,metrics.peakVideoFrames),
+        maxEncodeQueue:Math.max(this.state.diagnostics.maxEncodeQueue,metrics.maxEncodeQueue),ownedVideoFrames:metrics.activeVideoFrames,
+        videoFramesBalanced:metrics.framesCreated===metrics.framesClosed}})
+    }
+    const output=await runtime.run(signal=>this.pipeline.source(this.file,format,signal),abort.signal,{
+      worker:active=>{this.count('activeVideoWorkers',active?1:-1);if(!active)this.publish({diagnostics:{...this.state.diagnostics,ownedVideoFrames:0,videoFramesBalanced:null}})},
+      metrics:observe,
+      progress:progress=>{if(this.valid(id))this.publish({progress,diagnostics:{...this.state.diagnostics,peakCanonicalRgbaFrames:Math.max(this.state.diagnostics.peakCanonicalRgbaFrames,progress.phase==='encoding'?1:0)}})},
+      phase:phase=>{if(this.valid(id)&&phase==='inspecting')this.publish({status:'verifying'})},
+    })
+    if(!this.valid(id)||abort.signal.aborted)return
+    const v=output.validation
+    if(!v.codec?.startsWith('avc1.')||!Number.isFinite(v.durationUs)||v.durationUs<=0||v.audioTracks!==0
+      ||v.width!==source.width+source.width%2||v.height!==source.height+source.height%2||v.frameCount!==source.frameCount)throw new VideoError('VIDEO_VALIDATION_FAILED')
+    const metadata:ConversionMetadata&{durationMs:number;codec:string}={width:v.width,height:v.height,frameCount:v.frameCount,playCount:1,durationMs:v.durationUs/1000,codec:v.codec}
+    const blob=new Blob([output.data],{type:'video/mp4'}),namer=createAnimationDownloadNamer(this.file.name,'mp4'),previous=this.state.result
+    const result:ConversionProductResult={format:'mp4',blob,url:this.createUrl(blob),filename:namer(),metadata,metrics:output.metrics}
+    this.namer=namer;observe(output.metrics)
+    const last=output.timing.at(-1)
+    this.publish({status:'success',result,source:{...source,durationMs:last?(last.timestampUs+last.durationUs)/1000:null},diagnostics:{...this.state.diagnostics,
+      conversionsCompleted:this.state.diagnostics.conversionsCompleted+1,videoConversionsCompleted:this.state.diagnostics.videoConversionsCompleted+1,
+      lastOutputBytes:blob.size,lastMp4Bytes:blob.size,lastCodec:v.codec,activeObjectUrls:this.state.diagnostics.activeObjectUrls+1,
+      peakCanonicalRgbaFrames:Math.max(this.state.diagnostics.peakCanonicalRgbaFrames,output.peakCanonicalRgbaFrames)}})
+    this.revoke(previous)
   }
   async cancel() {
     if (this.disposed || !this.task || !['converting', 'verifying'].includes(this.state.status)) return
     ++this.generation; this.abort?.abort(); this.job.cancel()
     this.publish({ status: 'cancelling' }); this.count('cancellations', 1)
+    if(this.state.target==='mp4')this.count('videoCancellations',1)
     await this.task
     if (!this.disposed) this.publish({ status: 'cancelled', error: undefined, progress: undefined })
   }
   nextDownloadName() { return this.namer?.() ?? '' }
   dispose(): Promise<void> {
     if (this.disposal) return this.disposal
+    const interruptedVideo=this.state.target==='mp4'&&!!this.task&&['converting','verifying'].includes(this.state.status)
     this.disposed = true; ++this.generation; this.abort?.abort(); this.job.cancel()
+    if(interruptedVideo){this.count('cancellations',1);this.count('videoCancellations',1)}
     this.disposal = (async () => {
       await this.preparing; await this.task
       this.revoke(this.state.result); this.publish({ result: undefined }); this.listeners.clear()
+      recordConversionCleanup(this.state.diagnostics)
     })()
     return this.disposal
   }

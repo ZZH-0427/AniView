@@ -39,7 +39,7 @@ describe('public-API MP4 adapter lifecycle (real browser tests verify the real m
   it('encodes once, closes frames and native codec, writes only video and inspects actual output',async()=>{
     const e=new MP4Encoder(meta);await e.open();await e.addFrame(frame());const r=await e.finish();await e.dispose()
     expect(r.metrics).toMatchObject({framesCreated:2,framesClosed:2,activeVideoFrames:0,peakVideoFrames:1,packets:1})
-    expect(r.validation).toMatchObject({frameCount:1,audioTracks:0,totalDurationErrorUs:0});expect(fake.closed).toBe(1);expect(fake.disposed).toBe(1)
+    expect(r.validation).toMatchObject({durationUs:27000,frameCount:1,audioTracks:0,totalDurationErrorUs:0});expect(fake.closed).toBe(1);expect(fake.disposed).toBe(1)
   })
   it('classifies configure failure and still permits disposal',async()=>{
     fake.configureError=true;const e=new MP4Encoder(meta);await expect(e.open()).rejects.toMatchObject({code:'VIDEO_ENCODER_INIT_FAILED'});await e.dispose();expect(fake.closed).toBe(1)

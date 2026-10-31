@@ -8,7 +8,7 @@ send({id:0,type:'boot'})
 globalThis.addEventListener('message', (event: MessageEvent<VideoRequest>) => {
   const r = event.data
   queue = queue.then(async () => {
-    if (r.type === 'open') { if (encoder) throw new VideoError('VIDEO_ENCODER_INIT_FAILED'); encoder = new MP4Encoder(r.metadata); send({ id: r.id, type: 'ready', probe: await encoder.open() }); return }
+    if (r.type === 'open') { if (encoder) throw new VideoError('VIDEO_ENCODER_INIT_FAILED'); encoder = new MP4Encoder(r.metadata,undefined,phase=>send({id:0,type:'phase',phase})); send({ id: r.id, type: 'ready', probe: await encoder.open() }); return }
     if (!encoder) throw new VideoError('VIDEO_ENCODER_INIT_FAILED')
     if (r.type === 'frame') { await encoder.addFrame(r.frame); send({ id: r.id, type: 'accepted', metrics: { ...encoder.metrics } }); return }
     const result = await encoder.finish(); await encoder.dispose(); encoder = undefined

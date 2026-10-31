@@ -16,6 +16,11 @@ class WorkerDouble {
 beforeEach(()=>vi.stubGlobal('Worker',WorkerDouble));afterEach(()=>{vi.useRealTimers();vi.unstubAllGlobals()})
 const meta={width:2,height:2,frameCount:2,playCount:0}
 describe('video Worker hard-stop and ownership',()=>{
+  it('reports a real inspection phase without resolving the pending finish or disabling cancellation',async()=>{
+    const phases:string[]=[],c=new VideoWorkerClient(undefined,undefined,undefined,p=>phases.push(p)),task=c.finish()
+    WorkerDouble.latest.reply({id:0,type:'phase',phase:'inspecting'});expect(phases).toEqual(['inspecting'])
+    c.dispose(new VideoError('CANCELLED'));await expect(task).rejects.toMatchObject({code:'CANCELLED'})
+  })
   it('does not resolve an open request with a module boot marker',async()=>{
     const c=new VideoWorkerClient(),w=WorkerDouble.latest,p=c.open(meta);let resolved=false
     void p.then(()=>{resolved=true});w.reply({id:0,type:'boot'});await Promise.resolve();expect(resolved).toBe(false)

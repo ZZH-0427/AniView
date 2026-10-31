@@ -1269,14 +1269,14 @@ Copyright (c) 2018-2021 Miller Cy Chan
 End of V0.2 gifenc notices.
 
 
-===== Mediabunny 1.65.0 / MPL-2.0 (V0.2 isolated video spike) =====
+===== Mediabunny 1.65.0 / MPL-2.0 (V0.2 lazy MP4 conversion) =====
 ﻿Mediabunny 1.65.0 — unmodified upstream MPL-2.0 source.
 Copyright (c) 2026-present, Vanilagy and contributors
 Upstream: https://github.com/Vanilagy/mediabunny
 Exact published source package: https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz
 This npm package includes its corresponding TypeScript source (src/) and LICENSE.
 AniView does not modify upstream covered files. The package is fixed to 1.65.0 in package.json/package-lock.json.
-This branch uses public Output / BufferTarget / EncodedVideoPacketSource / Input APIs only in the isolated 8C1 video experiment.
+This branch uses public Output / BufferTarget / EncodedVideoPacketSource / Input APIs in the 8C1 video experiment and the lazy 8C2 MP4 conversion Worker.
 Not included in the published AniView v0.1.0 release or ordinary application startup.
 MPL source-availability notice: recipients may obtain the covered Source Code Form from the exact source package above under MPL-2.0; the complete license is retained alongside this notice.
 Mediabunny's license does not grant H.264/AVC patent rights. Browser/OS native codec availability and redistribution rights are separate questions.

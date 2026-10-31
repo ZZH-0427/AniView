@@ -63,8 +63,10 @@ v0.1.0 artifacts remain unchanged. See the [spike licensing audit](docs/spikes/g
 for the exact published-package evidence. AniView's own package remains
 `UNLICENSED`; gifenc's terms apply independently.
 
-## V0.2 isolated animation-to-video spike
+## V0.2 animation-to-video conversion
 
-Mediabunny **1.65.0** is pinned for Milestone 8C1 under **MPL-2.0**. It is used only by the isolated video Worker and its MP4 readback. No covered upstream file is modified. The ordinary application does not import it.
+Mediabunny **1.65.0** is pinned under **MPL-2.0**. Milestone 8C2 reuses the accepted
+8C1 video Worker and MP4 readback in the lazy MP4 conversion path. No covered
+upstream file is modified. Ordinary Viewer startup does not load it.
 
 The [complete license](third_party/licenses/mediabunny/LICENSE) and [source-availability notice](third_party/licenses/mediabunny/NOTICE) accompany the feature-branch notice artifact. Exact corresponding TypeScript source is available in the [published 1.65.0 source package](https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz). Native browser H.264 codecs are not supplied by AniView or Mediabunny; this notice does not grant AVC patent rights or settle later product-release obligations. This experimental dependency is not part of the published v0.1.0 release.

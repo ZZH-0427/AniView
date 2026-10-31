@@ -15,7 +15,7 @@ export function createGifDownloadNamer(now: () => number = Date.now, nonce = dow
 }
 
 /** Same per-activation naming strategy for conversion, with a safe source basename. */
-export function createAnimationDownloadNamer(name: string, extension: 'gif' | 'webp' | 'png', now: () => number = Date.now, nonce = downloadNonce()) {
+export function createAnimationDownloadNamer(name: string, extension: 'gif' | 'webp' | 'png' | 'mp4', now: () => number = Date.now, nonce = downloadNonce()) {
   const base = (name.split(/[\\/]/).at(-1) ?? '').replace(/\.[^.]*$/, '').slice(0, 100)
   const safe = [...base].filter(char => char.charCodeAt(0) >= 32).join('').replace(/[<>:"/\\|?*]/g, '-').replace(/[. ]+$/, '') || 'animation'
   return createDownloadNamer(`${safe}-aniview`, extension, now, nonce)

@@ -152,7 +152,7 @@ export class MP4Encoder {
       const last = this.timing.at(-1)!, duration = Math.round(await input.computeDuration() * 1e6)
       let cumulative = 0, p95 = 0
       for (; p95 < 255; p95++) { cumulative += histogram[p95]!; if (cumulative >= channels * .95) break }
-      const result = { codec: (await track.getDecoderConfig())?.codec ?? null, width: await track.getDisplayWidth(), height: await track.getDisplayHeight(), frameCount: rows.length,
+      const result = { durationUs:duration,codec: (await track.getDecoderConfig())?.codec ?? null, width: await track.getDisplayWidth(), height: await track.getDisplayHeight(), frameCount: rows.length,
         audioTracks: (await input.getAudioTracks()).length, maxTimestampErrorUs: maxTimestamp, maxDurationErrorUs: maxDuration,
         totalDurationErrorUs: Math.abs(duration - last.timestampUs - last.durationUs), meanRgbError: sum / Math.max(1, channels), p95RgbError: p95, maxRgbError: maximum, perFrame: rows }
       // 57,600Hz MP4 timebase: tolerate <3 ticks, never a lost 1ms frame.

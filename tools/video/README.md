@@ -75,6 +75,34 @@ frame) are experimental, not a perceptual-quality guarantee. Deliberate
 pixel-frequency chroma/alpha stress is reported separately as a fidelity
 limitation. All results require the interpretation in the [spike report](../../docs/spikes/milestone-8c1-animation-to-mp4.md).
 
+## 8C2 product acceptance
+
+The product reuses the accepted pipeline through ConversionSession. Build normal
+`dist` and generate the existing isolated Workers for the test-only fixtures and
+actual native mux hold. Copy their generated assets into `.tools/video-site/assets`
+(the existing engineering preview); none belongs in product `dist`:
+
+```powershell
+npm run build
+npm run build:video-spike -- --outDir=.tools/mp4-product-workers
+Copy-Item .tools/mp4-product-workers/assets/* .tools/video-site/assets -Force
+node tools/video/run-product.mjs
+node tools/video/product-preview.mjs --port 4224 --host 0.0.0.0
+```
+
+The automated test starts loopback-only servers itself and closes them. The final
+command starts the phone preview without `--test-workers`: ordinary product
+build, generated sample ZIPs, no HMR or engineering holds. Expose port4224 using
+the temporary HTTPS tooling above, then validate the actual product over HTTPS:
+
+```powershell
+node tools/video/check-product-preview.mjs https://<current-host>/AniView/?debug=1
+```
+
+Use the [8C2 product record](../../docs/milestones/milestone-8c2-animation-to-mp4-productization.md)
+and [fresh Android checklist](../../docs/milestones/milestone-8c2-android-validation.md).
+Freeze the build while awaiting phone results. Do not deploy it to Pages.
+
 ## Focused finalization diagnostics
 
 The original Android build is frozen. Build the diagnostic variant into its own

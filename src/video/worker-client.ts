@@ -1,6 +1,6 @@
 import { trackRuntimeResource } from '../media/runtime-diagnostics'
 import type { CanonicalAnimationFrame, CanonicalAnimationMetadata } from '../conversion/model'
-import { VideoError } from './model'
+import { VideoError, type VideoFinalizePhase } from './model'
 import type { VideoRequest, VideoResponse } from './protocol'
 import workerUrl from './encoder.worker.ts?worker&url'
 type Command = Omit<Extract<VideoRequest, { type: 'open' }>, 'id'> | Omit<Extract<VideoRequest, { type: 'frame' }>, 'id'> | { type: 'finish' }
@@ -20,12 +20,13 @@ export class VideoWorkerClient {
   private moduleBooted=false
   private readonly createdAt=performance.now()
   constructor(url = new URL(workerUrl, import.meta.url), createWorker = (u: URL) => new Worker(u, { type: 'module' }),
-    private readonly onFailure?:(evidence:VideoWorkerFailureEvidence)=>void) {
+    private readonly onFailure?:(evidence:VideoWorkerFailureEvidence)=>void,private readonly onPhase?:(phase:VideoFinalizePhase)=>void) {
     try { this.worker = createWorker(url) } catch { throw new VideoError('VIDEO_ENCODER_UNSUPPORTED') }
     this.release = trackRuntimeResource('worker')
     this.worker.onmessage = (event: MessageEvent<VideoResponse>) => {
       const p = this.pending, r = event.data
       if(r.type==='boot'){this.moduleBooted=true;return}
+      if(r.type==='phase'){try{this.onPhase?.(r.phase)}catch{/* An observer cannot alter ownership. */}return}
       if (!p || p.id !== r.id) return
       this.pending = undefined; clearTimeout(p.timer)
       if (r.type === 'error') p.reject(new VideoError(r.code)); else p.resolve(r)
