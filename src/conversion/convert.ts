@@ -40,6 +40,15 @@ const defaults: ConversionDependencies = { source: openAnimationFrameSource, enc
 /** A single generic source→target broker. It never draws or copies RGBA pixels. */
 export async function convertAnimation(file: VirtualFile, sourceFormat: ConversionFormat, target: ConversionFormat,
   options: ConversionOptions = {}, dependencies: ConversionDependencies = defaults): Promise<ConversionResult> {
+  return convertFrameSource(file, target, options, {
+    source: (input, signal) => dependencies.source(input, sourceFormat, signal),
+    encoder: () => dependencies.encoder(),
+  })
+}
+
+/** Shared canonical broker; source adapters do not need a fabricated animation format. */
+export async function convertFrameSource(file: VirtualFile, target: ConversionFormat, options: ConversionOptions,
+  dependencies: { source(file: VirtualFile, signal?: AbortSignal): Promise<AnimationFrameSource>; encoder(): EncoderTransport }): Promise<ConversionResult> {
   const started = performance.now(), signal = options.signal
   let source: AnimationFrameSource | undefined, encoder: EncoderTransport | undefined
   let peakRgbaFrames = 0, peakFrameBytes = 0, transferredFrames = 0, inFlight = 0
@@ -54,7 +63,7 @@ export async function convertAnimation(file: VirtualFile, sourceFormat: Conversi
     check()
     if (file.size > CONVERSION_LIMITS.maxSourceBytes) throw new ConversionError('RESOURCE_LIMIT')
     publish('opening', 0, 0)
-    source = await dependencies.source(file, sourceFormat, signal); check()
+    source = await dependencies.source(file, signal); check()
     const metadata = source.metadata
     validateCanonicalMetadata(metadata)
     encoder = dependencies.encoder()

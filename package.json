@@ -26,7 +26,10 @@
     "preview:creation": "node tools/creation/preview.mjs",
     "build:video-spike": "vite build --config tools/video/vite.config.mjs",
     "preview:video-spike": "node tools/video/preview.mjs",
-    "test:video-spike": "node tools/video/run-browser.mjs"
+    "test:video-spike": "node tools/video/run-browser.mjs",
+    "build:video-source-spike": "vite build --config tools/video-source/vite.config.mjs",
+    "preview:video-source-spike": "node tools/video-source/preview.mjs",
+    "test:video-source-spike": "node tools/video-source/run-browser.mjs"
   },
   "dependencies": {
     "@zip.js/zip.js": "2.23.0",
