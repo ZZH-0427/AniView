@@ -22,7 +22,8 @@ demo above remains v0.1.0. V0.2 is not released.
 
 `feat/v0.2-animation-to-video` additionally contains the isolated
 [8C1 MP4/H.264 technical spike](docs/spikes/milestone-8c1-animation-to-mp4.md),
-pending new Android acceptance. It adds no video export control to the product.
+which passed desktop and fresh Android Edge/Quark acceptance with documented
+limitations. It adds no video export control to the product; 8C2/8D1 have not started.
 Engineering build/test/HTTPS preview instructions are in [tools/video](tools/video/README.md).
 
 ## Features and Supported Formats

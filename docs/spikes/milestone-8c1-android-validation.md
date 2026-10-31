@@ -1,10 +1,10 @@
 # Milestone 8C1 — Android validation
 
-Status: **PENDING ANDROID VALIDATION**. Prior 8A/8B phone results do not establish
-WebCodecs AVC encoding or native MP4 playback support.
+Status: **PASSED — accepted with documented limitations**. Fresh 8C1 tests, not
+prior 8A/8B results, establish the observed WebCodecs AVC and native MP4 paths.
 
 New Android numeric results have now been received. Edge recorded two APNG jobs
-with `WORKER_FAILED`, so the acceptance gate remains open. Do not discard those
+with `WORKER_FAILED`, initially leaving the acceptance gate open. Do not discard those
 failures because other jobs succeeded. The user subsequently confirmed all
 playback/visual/recovery checks were normal and localized both failures to the
 **second cancellation test (held finalization)**. The original failure rows are
@@ -60,7 +60,7 @@ manual and must be reported separately from automatic decode-back.
 | Native video playback | User confirmed normal | User confirmed normal |
 | White alpha composite / odd dimensions | User confirmed normal | User confirmed normal |
 | VFR timestamps, durations, total duration | Successful jobs: maximum errors7 /7 /10µs | Successful jobs: maximum errors7 /7 /10µs |
-| Encode + actual-finalizing cancel →rerun | User confirmed recovery; two held-test failures remain unresolved | User confirmed normal; both cancellation flags true |
+| Encode + actual-finalizing cancel →rerun | Initial encode cancel confirmed; finalization retest3/3, no failures; historical two failures retained below | Initial encode cancel confirmed; finalization retest1/1, no failures |
 | Responsiveness / no reload or crash | User confirmed normal | User confirmed normal |
 | Zero cleanup/resource counters after Close | Confirmed by Summary JSON | Confirmed by Summary JSON |
 
@@ -108,7 +108,7 @@ Controlled artifacts stay ignored under `.tools/video/worker-load-control/`.
 
 This first follow-up did not change codec policy, source decoders, session
 ownership, limits or served engineering assets. The user's later clarification
-is recorded above. 8C1 remains **PENDING ANDROID VALIDATION**; 8C2/8D1 have not started.
+is recorded above. At that point 8C1 remained pending; 8C2/8D1 had not started.
 
 ## Targeted diagnostic preview — `finalize-trace-1`
 
@@ -153,4 +153,55 @@ press. In **Quark**, one run verifies the diagnostic build. No small/medium/odd
 or other earlier acceptance needs repeating. On any FAIL, copy **Failure JSON**
 immediately and stop that browser's repeat; otherwise Close results and copy
 Summary JSON. The summary must identify `diagnosticVersion:finalize-trace-1`.
-The technical gate remains pending until this targeted observation is evaluated.
+The request above is retained as the test protocol; completed results follow.
+
+## Completed focused Android results and acceptance
+
+The user reports **Edge3/3 and Quark1/1 passed** on the separate frozen
+`finalize-trace-1` production build (`cbf6fec`). Counts match the requested single
+button path exactly: Edge6 jobs =3 cancellations +3 completed WebP reruns; Quark2
+jobs =1 cancellation +1 completed rerun. Both report no failures. The false
+`encodeCancelled` field in these focused summaries is expected: this page did
+not rerun the first cancellation test; that gate was already confirmed in the
+original full test on both browsers.
+
+| Focused observation | Edge | Quark |
+| --- | ---: | ---: |
+| Held-finalization cancel →rerun attempts | 3/3 pass | 1/1 pass |
+| Jobs /completed /cancelled /failed | 6 /3 /3 /0 | 2 /1 /1 /0 |
+| secureContext /HMR /API /configSupported | true /false /true /true | true /false /true /true |
+| Actual rerun MP4 codec | `avc1.42000d` | `avc1.64000d` |
+| Finalizing cancellation observed | true | true |
+| Timestamp /frame-duration /total-duration max error | 7 /7 /10µs | 7 /7 /10µs |
+| Sampled mean RGB error max /p95 | 0.1993489583 /0 | 0.3364583333 /1 |
+| Encode queue /owned-frame peak | 2 /1 | 2 /1 |
+| Owned frames balanced /active | true /0 | true /0 |
+| Visible heartbeat maximum gap | 24.6ms | 23.4ms |
+| Workers created /terminated | 18 /18 | 6 /6 |
+| Active decoder /encoder /runtime Workers | 0 /0 /0 | 0 /0 /0 |
+| Active bitmaps /archives /object URLs /cleanup errors | 0 /0 /0 /0 | 0 /0 /0 /0 |
+
+Exact compact user-reported summaries:
+
+```json
+{"diagnosticVersion":"finalize-trace-1","secureContext":true,"hmr":false,"apiPresent":true,"configSupported":true,"sources":{"gif":0,"apng":0,"webp":3},"codecs":["avc1.42000d"],"jobsStarted":6,"jobsCompleted":3,"cancellations":3,"activeDecoderWorkers":0,"activeEncoderWorkers":0,"cleanupErrors":0,"activeObjectUrls":0,"failures":[],"encodeCancelled":false,"finalizingCancelled":true,"maxTimestampErrorUs":7,"maxDurationErrorUs":7,"maxTotalDurationErrorUs":10,"meanRgbErrorMax":0.19934895833333333,"p95RgbErrorMax":0,"maxEncodeQueue":2,"ownedVideoFramesActive":0,"ownedFramesBalanced":true,"peakOwnedVideoFrames":1,"heartbeatMaxGapMs":24.600000023841858,"resources":{"workersCreated":18,"workersTerminated":18,"activeWorkers":0,"peakWorkers":2,"bitmapsCreated":0,"bitmapsClosed":0,"activeBitmaps":0,"peakBitmaps":0,"archiveSessionsOpened":0,"archiveSessionsClosed":0,"activeArchiveSessions":0,"entryExtractionsStarted":0,"entryExtractionsCompleted":0,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":0,"cleanupErrors":0}}
+```
+
+```json
+{"diagnosticVersion":"finalize-trace-1","secureContext":true,"hmr":false,"apiPresent":true,"configSupported":true,"sources":{"gif":0,"apng":0,"webp":1},"codecs":["avc1.64000d"],"jobsStarted":2,"jobsCompleted":1,"cancellations":1,"activeDecoderWorkers":0,"activeEncoderWorkers":0,"cleanupErrors":0,"activeObjectUrls":0,"failures":[],"encodeCancelled":false,"finalizingCancelled":true,"maxTimestampErrorUs":7,"maxDurationErrorUs":7,"maxTotalDurationErrorUs":10,"meanRgbErrorMax":0.33645833333333336,"p95RgbErrorMax":1,"maxEncodeQueue":2,"ownedVideoFramesActive":0,"ownedFramesBalanced":true,"peakOwnedVideoFrames":1,"heartbeatMaxGapMs":23.399999976158142,"resources":{"workersCreated":6,"workersTerminated":6,"activeWorkers":0,"peakWorkers":2,"bitmapsCreated":0,"bitmapsClosed":0,"activeBitmaps":0,"peakBitmaps":0,"archiveSessionsOpened":0,"archiveSessionsClosed":0,"activeArchiveSessions":0,"entryExtractionsStarted":0,"entryExtractionsCompleted":0,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":0,"cleanupErrors":0}}
+```
+
+Combined with the complete three-format small/medium, native playback,
+alpha/padding, initial cancellation and recovery checks already confirmed by the
+user, this satisfies the fresh Android acceptance gate. Browser versions and
+process/GPU memory were not measured in these replies. The original two Edge
+Worker failures remain historical **not reproduced / root cause unconfirmed**;
+the lost details do not support claiming a codec bug, an infrastructure cause,
+or a bug fix. Diagnostic-only revisions did not establish a corrective fix.
+Their successful repeated cancellation/rerun path and zero leaks are the closure
+evidence; retain the incident as a productization risk if it recurs.
+
+**Milestone 8C1: PASSED.** The technical architecture is accepted with documented
+limits for productization. 8C2 and8D1 have not started. The temporary preview and
+tunnel are closed after recording these completed phone results; the URLs above
+are historical test origins, not product endpoints or promised live services.

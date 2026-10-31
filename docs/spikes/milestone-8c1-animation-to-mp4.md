@@ -1,8 +1,10 @@
 # Milestone 8C1 — Animation → MP4/H.264 technical spike
 
-**PENDING ANDROID VALIDATION.** Desktop implementation/validation complete;
-real Android Edge and Quark results are required before architecture acceptance.
-8C2 and 8D1 have not started. V0.2 is not released.
+**Milestone 8C1: PASSED — architecture accepted with limitations.** Desktop and
+fresh Android Edge/Quark acceptance are complete, including the focused
+held-finalization cancellation retest. Historical failed attempts and uncertain
+causality are retained in the Android record. 8C2 and8D1 have not started.
+V0.2 is not released.
 
 ## Branch and dependency provenance
 
@@ -240,15 +242,19 @@ tests remain unchanged; no full-frame-only alternate decoder was introduced.
 
 Ordinary entry is identical to pre-spike: **291,139 raw /88,248 gzip bytes**.
 The ordinary build emits no video Worker or Mediabunny chunk; nothing in product
-navigation imports this experiment. Engineering entry **24,600 raw /7,411 gzip bytes**, video Worker
-**300,299 raw /77,574 gzip bytes**; same-symbol isolated Mediabunny probe279,614 raw /73,445 gzip bytes.
+navigation imports this experiment. Original frozen engineering entry was24,600
+raw /7,411 gzip bytes and video Worker300,299 raw /77,574 gzip bytes. The final
+separate diagnostic build has entry **26,551 raw /8,075 gzip bytes**, video Worker
+**300,509 raw /77,644 gzip bytes**, held-test Worker300,625 raw /77,677 gzip bytes;
+same-symbol isolated Mediabunny probe279,614 raw /73,445 gzip bytes.
 The latter is a representative independent bundle, not an exact additive
 allocation of shared minifier bytes. Worker bundles contain the imported MP4
 APIs; no whole application-wide Mediabunny preload. The held-finalize Worker is
 engineering-only. Existing WebP WASM394,132 bytes is reused for source handling.
 
-Clean `npm ci`, lint, typecheck, **64 test files /796 tests**, ordinary production
-build and isolated spike build pass. **750 prior tests preserved +46 new tests**.
+Clean `npm ci`, lint, typecheck, ordinary production and isolated spike builds
+pass. The initial implementation had796 tests; final diagnostic regression
+coverage is **64 files /802 tests:750 prior tests preserved +52 new tests**.
 Viewer7 core groups, Creator19 checks and six-direction conversion22 checks pass
 in installed Edge. Project dependency lock changed only for the pinned package
 and two declaration packages. npm audit reports zero runtime advisories; twelve
@@ -261,7 +267,7 @@ annotated tag object `498f596377c6ba13cdc300a695b2b49370982811`, Pages deploymen
 push, release, main merge, tag, product video UI or download flow was performed.
 No WebM/VP8/VP9/AV1 encoding path or capability claim.
 
-## Remaining gate and provisional verdicts
+## Completed acceptance and component verdicts
 
 Implementation commit: `3998b60` (full research parent `ff7aafd`). A temporary
 HTTPS Localtunnel preview was independently checked in installed desktop Edge:
@@ -273,17 +279,15 @@ The upstream access page is external tunnel infrastructure, not AniView UI.
 The free gateway can transiently return408 and its hostname can expire. This
 does not replace real phone evidence or claim release-grade hosting.
 
-Canonical→Video adapter: **ACCEPT WITH LIMITATIONS** (desktop evidence).
+Canonical→Video adapter: **ACCEPT WITH LIMITATIONS** (desktop and real Android evidence).
 WebCodecs AVC: **ACCEPT WITH LIMITATIONS** (platform support / lossy4:2:0 / native
 memory opacity). Mediabunny MP4: **ACCEPT WITH LIMITATIONS** (buffered output,
 Worker termination needed in finalization). Overall architecture: **ACCEPT WITH
-LIMITATIONS, provisional pending real Android evidence**.
+LIMITATIONS**.
 
-The remaining mandatory gate is fresh secure-context Android Edge +Quark
-encoding/playback/alpha/cancellation/cleanup evidence, documented in the
-[Android protocol](milestone-8c1-android-validation.md). No inference from
-successful desktop capability probes or old mobile converter tests. Until that
-gate passes: **Milestone 8C1: PENDING ANDROID VALIDATION**. No 8C2/8D1 work.
+Fresh secure-context Android Edge +Quark encoding/playback/alpha/cancellation/
+cleanup evidence is complete in the [Android record](milestone-8c1-android-validation.md).
+This acceptance uses real8C1 phone results, not desktop probes or old8A/8B tests.
 
 Follow-up: fresh numeric phone logs now confirm real successful encodes in all
 three source formats and zero active resources in both browsers. Edge also
@@ -295,5 +299,26 @@ failure rows were lost. The original phone build remains unchanged; a separate
 `finalize-trace-1` diagnostic preview now distinguishes Worker startup, request
 failure/timeout, native flush and mux finalization. Its focused controls and
 HTTPS test pass;802 tests pass after six added diagnostic regression tests.
-See the Android record for the single-path follow-up. No fix/root cause is
-claimed from missing evidence;8C1 remains pending and8C2/8D1 have not started.
+The final focused phone test passed **Edge3/3 and Quark1/1**, with no failures,
+balanced owned frames and zero active Workers/bitmaps/archives/object URLs or
+cleanup errors. Edge18/18 and Quark6/6 Workers terminated. Focused maximum
+heartbeat gaps were24.6ms /23.4ms; timing errors7 /7 /10µs in both. The first
+cancel test was not repeated (its false flag in the focused summary is expected);
+both browsers had already passed it in the complete test.
+
+The old two Edge errors are **not reproduced / root cause unconfirmed**, not
+fixed or retrospectively attributed to the tunnel. Keep this uncertainty as a
+known productization risk, with local failure diagnostics available. Quark's
+actual AVC MP4 profile is High (`avc1.64000d` /`640020`), while Edge reports
+Baseline (`avc1.42000d` /`420020`), per the
+[AVC profile table](https://www.rfc-editor.org/rfc/rfc6184.html#section-8.1).
+The exact chosen phone configuration was not supplied; do not infer whether a
+fallback candidate was selected or the native encoder adjusted its profile.
+Universal Baseline output compatibility is not established by these tests.
+
+Temporary HTTPS preview/tunnel are closed after this completed acceptance;
+public Pages remains v0.1.0. **Milestone 8C1: PASSED.**
+
+Animation →MP4/H.264 technical architecture is accepted for productization with
+the documented limits. Ready for Milestone8C2 —Animation →MP4 Productization.
+**Milestone8C2 has not started. Milestone8D1 has not started.** Stop at this gate.
