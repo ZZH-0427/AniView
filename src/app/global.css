@@ -10,10 +10,15 @@
 * { box-sizing: border-box; }
 
 body { margin: 0; min-width: 0; }
+.localized-app { --app-viewport-height: calc(100svh - 3rem); }
+.language-utility { position: sticky; top: 0; z-index: 5; height: 3rem; padding: 0.125rem 0.75rem; display: flex; justify-content: flex-end; align-items: center; background: #f4f6f8; border-bottom: 1px solid #e8ecf1; }
+.language-switcher { display: inline-flex; gap: 0.5rem; align-items: center; min-width: 0; color: #536378; font-size: 0.8rem; }
+.language-switcher select { font: inherit; min-height: 44px; max-width: 9rem; padding: 0.4rem; border: 1px solid #acb8c6; border-radius: 0.5rem; color: #243449; background: white; }
+.language-switcher select:focus-visible { outline: 3px solid #2765b0; outline-offset: 1px; }
 
 .home {
   width: min(100%, 64rem);
-  min-height: 100svh;
+  min-height: var(--app-viewport-height, 100svh);
   margin-inline: auto;
   padding: clamp(1.25rem, 5vw, 4rem);
   display: flex;

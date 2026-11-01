@@ -9,13 +9,15 @@ import { droppedFiles } from '../input/drag-drop'
 import { currentSessionItem, nextFile, previousFile, removeCurrentFile } from '../media/media-session'
 import { useMediaSource } from './use-media-source'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
+import { useI18n } from '../i18n'
 const ConversionWorkspace = lazy(() => import('../conversion/ConversionWorkspace'))
 
 export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;onConvertVideo?:()=>void }) {
+  const { t, text } = useI18n()
   const [dragging, setDragging] = useState(false)
   const [conversion, setConversion] = useState<VirtualFile>()
   const transition = useRef(Promise.resolve())
-  const { session, notice, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
+  const { session, notice, noticeMessage, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
   const current = currentSessionItem(session)
 
   // File drops anywhere in the app must never replace the page with a local file.
@@ -50,17 +52,17 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
   }, [addFiles, conversion])
 
   return <div className={`media-app${current && !conversion ? ' has-media' : ''}${archive && !conversion ? ' has-archive' : ''}`}>
-    {conversion ? <Suspense fallback={<p role="status">Opening converter…</p>}><ConversionWorkspace file={conversion} transition={transition}
+    {conversion ? <Suspense fallback={<p role="status">{t('common.openingConverter')}</p>}><ConversionWorkspace file={conversion} transition={transition}
       onBack={() => setConversion(undefined)} /></Suspense> : <>
     {archive && <ArchiveSummary key={archive.status === 'open' ? archive.session.id : `${archive.status}:${archive.name}`}
       archive={archive} onClose={clear} count={session.items.length} />}
     {current ? <>
-      <nav className="session-controls" aria-label="Image list">
-        <details className="session-options"><summary>Image list options</summary>
+      <nav className="session-controls" aria-label={t('session.list')}>
+        <details className="session-options"><summary>{t('session.options')}</summary>
         <div className="session-actions">
           <ImageInput append={!archive} onFiles={addFiles} />
           <ArchiveInput onOpen={openArchive} />
-          <button onClick={clear}>Clear session</button>
+          <button onClick={clear}>{t('session.clear')}</button>
         </div>
         </details>
       </nav>
@@ -69,9 +71,9 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
         onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
         onRemove={() => changeSession(removeCurrentFile)} onConvert={() => { setDragging(false); setConversion(current.file) }} />
     </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} {...(onConvertVideo?{onConvertVideo}:{})}/>}
-    {notice && <p className="session-notice" role="status">{notice}</p>}
+    {notice && <p className="session-notice" role="status">{text(noticeMessage ?? { key: 'errors.generic' })}</p>}
     </>}
     <RuntimeDiagnosticsPanel />
-    {dragging && <div className="drop-overlay" aria-hidden="true">Drop images here</div>}
+    {dragging && <div className="drop-overlay" aria-hidden="true">{t('home.dropImages')}</div>}
   </div>
 }

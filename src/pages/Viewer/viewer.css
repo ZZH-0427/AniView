@@ -1,4 +1,4 @@
-.media-app.has-media { height: 100svh; min-height: 28rem; max-width: 72rem; margin-inline: auto; display: flex; flex-direction: column; }
+.media-app.has-media { height: var(--app-viewport-height, 100svh); min-height: 28rem; max-width: 72rem; margin-inline: auto; display: flex; flex-direction: column; }
 .media-app.has-media > .session-controls, .media-app.has-media > .archive-summary, .media-app.has-media > .diagnostics-panel { flex: none; }
 .media-app.has-media > .session-controls { width: 100%; padding: 0.25rem 0.75rem 0; }
 .media-app.has-media .session-options summary { padding-block: 0.5rem; font-size: 0.8rem; color: #536378; }
@@ -13,6 +13,7 @@
 .viewer h1 { font-size: clamp(1rem, 2.5vw, 1.3rem); font-weight: 650; letter-spacing: -0.02em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .viewer-brand { display: none; color: #536378; font-size: 0.72rem; letter-spacing: 0.04em; }
 .viewer-header-actions { display: flex; align-items: center; gap: 0.15rem; }
+.viewer-language { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
 .viewer-metadata { grid-column: 1 / -1; color: #536378; font-size: 0.76rem; line-height: 1.5; }
 .viewer .icon-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem; flex: none; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; border: 1px solid transparent; border-radius: 0.6rem; background: transparent; color: #344a61; }
 .viewer .icon-button svg { display: block; width: 22px; height: 22px; flex: none; }

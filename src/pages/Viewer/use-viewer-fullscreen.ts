@@ -1,7 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import type { RefObject } from 'react'
 
-interface FullscreenState { available: boolean; fullscreen: boolean; hidden: boolean; notice: string }
+interface FullscreenState { available: boolean; fullscreen: boolean; hidden: boolean; notice: '' | 'unavailable' | 'exitFailed' }
 const serverState: FullscreenState = { available: false, fullscreen: false, hidden: false, notice: '' }
 
 /** External browser state and one inactivity timer, independent from animation renders. */
@@ -68,14 +68,14 @@ class ViewerFullscreen {
     const request = document.fullscreenElement === element ? document.exitFullscreen() : element.requestFullscreen?.()
     void request?.catch(() => {
       if (!this.connected) return
-      this.update({ notice: 'Fullscreen is unavailable right now. You can keep viewing here.' }); this.reveal()
+      this.update({ notice: 'unavailable' }); this.reveal()
     })
   }
   exit = () => {
     if (document.fullscreenElement === this.element())
       void document.exitFullscreen().catch(() => {
         if (!this.connected) return
-        this.update({ notice: 'Please use your browser controls to leave fullscreen.' }); this.reveal()
+        this.update({ notice: 'exitFailed' }); this.reveal()
       })
   }
 }

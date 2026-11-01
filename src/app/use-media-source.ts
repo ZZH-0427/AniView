@@ -5,10 +5,12 @@ import { appendFiles, clearMediaSession, createMediaSession, MAX_SESSION_ITEMS }
 import type { MediaSession } from '../media/media-session'
 import { MediaError } from '../media/errors'
 import { countRuntimeEvent } from '../media/runtime-diagnostics'
+import type { Message } from '../i18n/messages'
+import { mediaMessage } from '../i18n/media-errors'
 
 export type ArchiveState = { status: 'opening'; name: string }
   | { status: 'open'; name: string; session: ArchiveSession; chunkMs: number }
-  | { status: 'error'; name: string; message: string }
+  | { status: 'error'; name: string; message: string; errorMessage?: Message }
 type SourceChoice = { kind: 'archive'; file: File }
   | { kind: 'loose'; files: readonly VirtualFile[] } | { kind: 'clear' }
 type SourceRequest = SourceChoice & { id: number }
@@ -16,12 +18,13 @@ type SourceRequest = SourceChoice & { id: number }
 const addition = (session: MediaSession, files: readonly VirtualFile[]) => {
   const result = appendFiles(session, files)
   return { session: result.session, notice: result.truncated
-    ? `Only the first ${result.added} files were added. The list holds up to ${MAX_SESSION_ITEMS} images.` : '' }
+    ? `Only the first ${result.added} files were added. The list holds up to ${MAX_SESSION_ITEMS} images.` : '',
+    noticeMessage: result.truncated ? { key: 'session.truncated', params: { added: result.added, max: MAX_SESSION_ITEMS } } satisfies Message : undefined }
 }
 
 /** UI source replacement waits for keyed Viewer cleanup before releasing ZIP ownership. */
 export function useMediaSource(transition: { current: Promise<void> }) {
-  const [state, setState] = useState(() => ({ session: createMediaSession(), notice: '' }))
+  const [state, setState] = useState<{ session: MediaSession; notice: string; noticeMessage?: Message | undefined }>(() => ({ session: createMediaSession(), notice: '' }))
   const [archive, setArchive] = useState<ArchiveState>()
   const [request, setRequest] = useState<SourceRequest>()
   const mode = useRef<'loose' | 'archive' | 'switching'>('loose')
@@ -76,7 +79,8 @@ export function useMediaSource(transition: { current: Promise<void> }) {
       if (!isCurrent()) return
       mode.current = 'loose'
       setArchive({ status: 'error', name: request.kind === 'archive' ? request.file.name : '',
-        message: cause instanceof MediaError ? cause.message : 'This archive could not be opened. Please try another ZIP.' })
+        message: cause instanceof MediaError ? cause.message : 'This archive could not be opened. Please try another ZIP.',
+        errorMessage: mediaMessage(cause, 'errors.archive') })
     })
     return () => abort?.abort()
   }, [request, transition])

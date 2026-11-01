@@ -5,7 +5,9 @@ import type {VirtualFile} from '../input/virtual-file'
 import {VideoConversionSession} from './video-conversion-session'
 import ConvertVideo from './ConvertVideo'
 import {usePreviewReturn} from '../components/use-preview-return'
+import {useI18n} from '../i18n'
 export default function VideoConversionWorkspace({onBack}:{onBack:()=>void}){
+ const {t}=useI18n()
  const [session]=useState(()=>new VideoConversionSession())
  const snapshot=useSyncExternalStore(session.subscribe,session.getSnapshot,session.getSnapshot)
  const [preview,setPreview]=useState<VirtualFile>(),[closing,setClosing]=useState(false),[leaving,setLeaving]=useState(false)
@@ -16,7 +18,7 @@ export default function VideoConversionWorkspace({onBack}:{onBack:()=>void}){
  const close=()=>{setClosing(true);setPreview(undefined)}
  if(preview)return <div className="media-app has-media"><Viewer file={preview} transition={transition} position={1} count={1}
   onPrevious={()=>{}} onNext={()=>{}} onClose={close} onRemove={close}/></div>
- if(closing||leaving)return <p role="status">Closing preview…</p>
+ if(closing||leaving)return <p role="status">{t('common.closingPreview')}</p>
  return <><ConvertVideo session={session} snapshot={snapshot} previewButtonRef={previewButton} onBack={()=>{setLeaving(true);void session.dispose().then(()=>{if(mounted.current)onBack()})}}
   onPreview={()=>{const result=session.getSnapshot().result;if(result){rememberPreview();setPreview({name:result.filename,size:result.blob.size,mimeType:result.blob.type,source:'file',read:(start,end)=>result.blob.slice(start,end).arrayBuffer()})}}}/><RuntimeDiagnosticsPanel/></>
 }

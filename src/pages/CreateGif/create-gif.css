@@ -1,4 +1,4 @@
-.gif-creator { width: min(100%, 64rem); min-height: 100svh; margin-inline: auto; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.85rem; overflow-wrap: anywhere; }
+.gif-creator { width: min(100%, 64rem); min-height: var(--app-viewport-height, 100svh); margin-inline: auto; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.85rem; overflow-wrap: anywhere; }
 .creator-header { display: flex; align-items: center; gap: 0.5rem; min-width: 0; padding-block: 0.3rem; }
 .creator-eyebrow { color: #536378; font-size: 0.72rem; font-weight: 600; }
 .creator-header h1 { font-size: 1.55rem; letter-spacing: -0.025em; }

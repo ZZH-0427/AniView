@@ -4,12 +4,14 @@ import { Viewer } from '../pages/Viewer/Viewer'
 import { ConversionSession, resultVirtualFile } from './conversion-session'
 import ConvertAnimation from '../pages/ConvertAnimation/ConvertAnimation'
 import { usePreviewReturn } from '../components/use-preview-return'
+import { useI18n } from '../i18n'
 const VideoResultPreview=lazy(()=>import('./VideoResultPreview'))
 
 /** MediaApp retains the borrowed source and archive; only the result belongs here. */
 export default function ConversionWorkspace({ file, transition, onBack }: {
   file: VirtualFile; transition: { current: Promise<void> }; onBack: () => void
 }) {
+  const { t } = useI18n()
   const [session] = useState(() => new ConversionSession(file))
   const snapshot = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot)
   const [preview, setPreview] = useState<{kind:'animation';file:VirtualFile}|{kind:'video';url:string}>()
@@ -33,10 +35,10 @@ export default function ConversionWorkspace({ file, transition, onBack }: {
     return () => { active = false }
   }, [closingPreview, transition])
   const closePreview = () => { setClosingPreview(true); setPreview(undefined) }
-  if(preview?.kind==='video')return <Suspense fallback={<p role="status">Opening video preview…</p>}><VideoResultPreview url={preview.url} onBack={closePreview}/></Suspense>
+  if(preview?.kind==='video')return <Suspense fallback={<p role="status">{t('common.openingPreview')}</p>}><VideoResultPreview url={preview.url} onBack={closePreview}/></Suspense>
   if (preview) return <div className="media-app has-media"><Viewer file={preview.file} transition={transition} position={1} count={1}
     onPrevious={() => {}} onNext={() => {}} onRemove={closePreview} onClose={closePreview} /></div>
-  if (closingPreview) return <p role="status">Closing preview…</p>
+  if (closingPreview) return <p role="status">{t('common.closingPreview')}</p>
   return <ConvertAnimation session={session} snapshot={snapshot} previewButtonRef={previewButton} onBack={() => {
     void session.dispose().then(() => { if (mounted.current) onBack() })
   }} onPreview={() => { const result=snapshot.result;if(result){rememberPreview();setPreview(result.format==='mp4'?{kind:'video',url:result.url}:{kind:'animation',file:resultVirtualFile(result)})} }} />

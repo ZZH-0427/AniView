@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useId, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { Icon } from './Icon'
 import { IconButton } from './IconButton'
+import { useI18n } from '../i18n'
 
 /** One local disclosure; removing a list item retains the existing direct action. */
 export function ViewerMoreMenu({ onRemove, onOpenChange, onConvert }: {
@@ -10,6 +11,7 @@ export function ViewerMoreMenu({ onRemove, onOpenChange, onConvert }: {
   onConvert?: (() => void) | undefined
 }) {
   const [open, setOpen] = useState(false)
+  const { t } = useI18n()
   const container = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const item = useRef<HTMLButtonElement>(null)
@@ -62,13 +64,13 @@ export function ViewerMoreMenu({ onRemove, onOpenChange, onConvert }: {
   return <div className="viewer-more-menu" ref={container} onKeyDown={keydown} onBlur={event => {
     if (open && !event.currentTarget.contains(event.relatedTarget)) setOpen(false)
   }}>
-    <IconButton ref={trigger} icon="more" label="More" data-testid="viewer-more-trigger" aria-haspopup="menu" aria-expanded={open}
+    <IconButton ref={trigger} icon="more" label={t('viewer.more')} data-testid="viewer-more-trigger" aria-haspopup="menu" aria-expanded={open}
       aria-controls={menuId} onClick={() => setOpen(value => !value)} />
-    {open && <div className="viewer-more-popover" id={menuId} data-testid="viewer-more-menu" role="menu" aria-label="More actions">
-      {onConvert && <button ref={item} type="button" className="viewer-more-remove" role="menuitem" aria-label="Convert animation"
-        onClick={() => { close(); onConvert() }}><Icon name="create" /><span>Convert animation</span></button>}
-      <button ref={onConvert ? undefined : item} type="button" className="viewer-more-remove" role="menuitem" aria-label="Remove from list"
-        onClick={() => { close(); onRemove() }}><Icon name="remove" /><span>Remove from list</span></button>
+    {open && <div className="viewer-more-popover" id={menuId} data-testid="viewer-more-menu" role="menu" aria-label={t('viewer.moreActions')}>
+      {onConvert && <button ref={item} type="button" className="viewer-more-remove" role="menuitem" aria-label={t('viewer.convert')}
+        onClick={() => { close(); onConvert() }}><Icon name="create" /><span>{t('viewer.convert')}</span></button>}
+      <button ref={onConvert ? undefined : item} type="button" className="viewer-more-remove" role="menuitem" aria-label={t('viewer.remove')}
+        onClick={() => { close(); onRemove() }}><Icon name="remove" /><span>{t('viewer.remove')}</span></button>
     </div>}
   </div>
 }

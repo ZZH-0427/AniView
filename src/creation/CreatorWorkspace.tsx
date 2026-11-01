@@ -6,11 +6,13 @@ import type { CreationResult } from './creation-types'
 import { isCreationBusy } from './creation-types'
 import type { VirtualFile } from '../input/virtual-file'
 import { usePreviewReturn } from '../components/use-preview-return'
+import { useI18n } from '../i18n'
 
 interface Preview { readonly result: CreationResult; readonly file: VirtualFile }
 
 /** A creation lifetime survives result preview; its source list never enters MediaSession. */
 export default function CreatorWorkspace({ onBack }: { onBack: () => void }) {
+  const { t } = useI18n()
   const [session] = useState(() => new CreationSession())
   const [preview, setPreview] = useState<Preview>()
   const [closingPreview, setClosingPreview] = useState(false)
@@ -41,7 +43,7 @@ export default function CreatorWorkspace({ onBack }: { onBack: () => void }) {
   if (preview) return <div className="media-app has-media"><Viewer file={preview.file} transition={transition} position={1} count={1}
     onPrevious={() => {}} onNext={() => {}} onRemove={() => { setClosingPreview(true); setPreview(undefined) }}
     onClose={() => { setClosingPreview(true); setPreview(undefined) }} /></div>
-  if (closingPreview) return <p role="status">Closing preview…</p>
+  if (closingPreview) return <p role="status">{t('common.closingPreview')}</p>
   return <CreateGif session={session} previewButtonRef={previewButton} onBack={() => {
     void session.dispose().then(() => { if (mounted.current) onBack() })
   }} onPreview={result => {

@@ -1,3 +1,5 @@
+import {translate} from '../i18n/messages'
+import type {Locale} from '../i18n/locale'
 import { BinaryFormatDetector } from '../formats/binary-detector'
 import type { FormatDetector } from '../formats/detector'
 import type { VirtualFile } from '../input/virtual-file'
@@ -44,20 +46,21 @@ interface Dependencies {
   readonly revokeUrl?: (url: string) => void
   readonly loadVideo?:()=>Promise<VideoConversionRuntime>
 }
-export function conversionErrorMessage(code: ProductConversionError, target: ConversionTarget = 'apng') {
+export function conversionErrorMessage(code: ProductConversionError, target: ConversionTarget = 'apng', locale: Locale = 'en') {
   switch (code) {
-    case 'RESOURCE_LIMIT': return 'This animation is too large to convert safely in the browser.'
-    case 'SOURCE_UNSUPPORTED': return 'Choose a GIF, animated WebP or APNG animation.'
-    case 'SOURCE_DECODE_FAILED': return 'The source animation could not be read or decoded. Try another file.'
-    case 'TARGET_ENCODER_UNSUPPORTED': return `${formatLabel(target)} encoding is not supported in this browser.`
-    case 'TARGET_ENCODE_FAILED': return 'The output animation could not be created or verified. Try again.'
-    case 'WORKER_FAILED': return 'Animation processing stopped unexpectedly. Try again.'
-    case 'CANCELLED': return 'Conversion cancelled. Your source and target are retained.'
-    case 'VIDEO_API_UNAVAILABLE':case 'VIDEO_CONFIG_UNSUPPORTED':case 'VIDEO_ENCODER_UNSUPPORTED':return 'MP4 encoding is not supported in this browser. Use a secure HTTPS page and a browser with video encoding support.'
-    case 'VIDEO_ENCODER_INIT_FAILED':return 'The video encoder could not start. Try again or use another browser.'
-    case 'VIDEO_OUTPUT_TOO_LARGE':return 'The MP4 is too large to save safely in the browser.'
-    case 'VIDEO_MUX_FAILED':return 'The MP4 could not be finalized. Your source is unchanged; try again.'
-    case 'VIDEO_ENCODE_FAILED':case 'VIDEO_FRAME_FAILED':case 'VIDEO_VALIDATION_FAILED':return 'The MP4 could not be created or verified. Try again.'
+    case 'RESOURCE_LIMIT': return translate(locale,'errors.animationLimit')
+    case 'SOURCE_UNSUPPORTED': return translate(locale,'errors.animationSource')
+    case 'SOURCE_DECODE_FAILED': return translate(locale,'errors.animationDecode')
+    case 'TARGET_ENCODER_UNSUPPORTED': return translate(locale,'errors.encoderUnsupported',{format:formatLabel(target)})
+    case 'TARGET_ENCODE_FAILED': return translate(locale,'errors.encode')
+    case 'WORKER_FAILED': return translate(locale,'errors.animationWorker')
+    case 'CANCELLED': return translate(locale,'errors.animationCancelled')
+    case 'VIDEO_API_UNAVAILABLE':case 'VIDEO_CONFIG_UNSUPPORTED':case 'VIDEO_ENCODER_UNSUPPORTED':return translate(locale,'errors.mp4Unsupported')
+    case 'VIDEO_ENCODER_INIT_FAILED':return translate(locale,'errors.mp4Init')
+    case 'VIDEO_OUTPUT_TOO_LARGE':return translate(locale,'errors.mp4Limit')
+    case 'VIDEO_MUX_FAILED':return translate(locale,'errors.mp4Mux')
+    case 'VIDEO_ENCODE_FAILED':case 'VIDEO_FRAME_FAILED':case 'VIDEO_VALIDATION_FAILED':return translate(locale,'errors.mp4Encode')
+    default: return translate(locale, 'errors.encode')
   }
 }
 function errorCode(cause: unknown, fallback: ProductConversionError = 'SOURCE_DECODE_FAILED'): ProductConversionError {

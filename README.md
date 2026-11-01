@@ -45,6 +45,15 @@ technical architecture is retained. **8D2 passed fresh Android Edge/Quark produc
 see the [product record](docs/milestones/milestone-8d2-video-to-animation-productization.md).
 These changes are not yet on the public demo.
 
+This unreleased branch also offers **English / 简体中文** through the page's
+language selector, including Viewer fullscreen. It uses a saved language choice,
+then the first browser language, then English; any `zh` language selects the
+available Simplified Chinese translation. Only `aniview.locale` is stored locally.
+Switching language retains the open workspace, settings, jobs and results.
+Browser-native pickers/video controls follow the browser or OS language.
+See the [localization record](docs/milestones/milestone-m9a1c-v0.2-localization.md)
+for the pending Android acceptance gate.
+
 ## Features and Supported Formats
 
 | Media | Supported formats |

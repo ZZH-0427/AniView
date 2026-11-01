@@ -12,11 +12,13 @@ import { MediaError } from '../../media/errors'
 import type { AnimationSequence } from '../../media/animation'
 import { requireViewerCapabilities } from '../../media/viewer-capabilities'
 import { countRuntimeEvent } from '../../media/runtime-diagnostics'
+import { mediaMessage } from '../../i18n/media-errors'
+import { translateMessage } from '../../i18n/messages'
+import type { Message } from '../../i18n/messages'
 
 const emptyCache = { cacheBytes: 0, cachedFrames: 0, peakBytes: 0, peakFrames: 0, maxBytes: 0, underruns: 0 }
 interface MediaInfo { kind: 'static' | 'animation'; format: string; width: number; height: number; frames?: number | undefined }
-export const viewerErrorMessage = (cause: unknown) => cause instanceof MediaError
-  ? cause.message : 'Unable to display this image. Please try another file.'
+export const viewerErrorMessage = (cause: unknown) => translateMessage('en', mediaMessage(cause))
 
 /** One keyed media lifetime: source/Player ownership and rendering stay outside UI controls. */
 export function useViewerMedia(file: VirtualFile, transition: { current: Promise<void> },
@@ -24,8 +26,8 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
   const playerRef = useRef<AnimationPlayer | undefined>(undefined)
   const viewportRef = useRef<ViewportController | undefined>(undefined)
   const [status, setStatus] = useState('loading')
-  const [phase, setPhase] = useState(file.source === 'archive' ? 'Loading ZIP entry…' : 'Opening file…')
-  const [error, setError] = useState('')
+  const [phase, setPhase] = useState<'archive' | 'opening' | 'decoding'>(file.source === 'archive' ? 'archive' : 'opening')
+  const [error, setError] = useState<Message>()
   const [info, setInfo] = useState<MediaInfo>()
   const [frame, setFrame] = useState(0)
   const [busy, setBusy] = useState(false)
@@ -49,7 +51,7 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
     const precedingCleanup = transition.current
     const report = (cause: unknown) => {
       if (!active) return
-      setStatus('error'); setError(viewerErrorMessage(cause))
+      setStatus('error'); setError(mediaMessage(cause))
     }
     const opening = (async () => {
       try {
@@ -79,7 +81,7 @@ export function useViewerMedia(file: VirtualFile, transition: { current: Promise
         const detachPointers = attachViewportGestures(parent, viewport)
         detachGestures = () => { detachPointers(); window.removeEventListener('resize', resize) }
         const media = await openMedia(file, { signal: abort.signal, onPhase: next => {
-          if (active) setPhase(next === 'decoding' ? 'Decoding…' : file.source === 'archive' ? 'Loading ZIP entry…' : 'Opening file…')
+          if (active) setPhase(next === 'decoding' ? 'decoding' : file.source === 'archive' ? 'archive' : 'opening')
         } })
         if (!active) {
           countRuntimeEvent('staleResultsDiscarded')

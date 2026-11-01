@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { VirtualFile } from '../../input/virtual-file'
-import { useViewerMedia, viewerErrorMessage } from './use-viewer-media'
+import { useViewerMedia } from './use-viewer-media'
 import { useViewerFullscreen } from './use-viewer-fullscreen'
 import { hasControlFocus, viewerShortcut } from './viewer-shortcuts'
 import { ViewerHeader, PlaybackControls, FileNavigation, ViewportControls } from './ViewerControls'
 import { ViewerDiagnostics } from '../../components/DiagnosticsPanel'
 import './viewer.css'
+import { useI18n } from '../../i18n'
+import { mediaMessage } from '../../i18n/media-errors'
 
 export function Viewer({ file, onClose, transition, position, count, onPrevious, onNext, onRemove, onConvert }: {
   file: VirtualFile; onClose: () => void; transition: { current: Promise<void> }
@@ -13,6 +15,7 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
   onRemove: () => void
   onConvert?: (() => void) | undefined
 }) {
+  const { t, text } = useI18n()
   const canvas = useRef<HTMLCanvasElement>(null)
   const surface = useRef<HTMLDivElement>(null)
   const container = useRef<HTMLElement>(null)
@@ -24,9 +27,9 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
   const step = useCallback((direction: 'previous' | 'next') => {
     const player = playerRef.current
     if (!player || player.state === 'error') return
-    setError('')
+    setError(undefined)
     void (direction === 'previous' ? player.stepBackward() : player.stepForward())
-      .catch(cause => setError(viewerErrorMessage(cause)))
+      .catch(cause => setError(mediaMessage(cause)))
   }, [playerRef, setError])
   const togglePlayback = useCallback(() => {
     const player = playerRef.current
@@ -59,29 +62,30 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
     return () => window.removeEventListener('keydown', keydown)
   }, [animated, count, fullscreen, onNext, onPrevious, position, ready, step, togglePlayback, viewportRef])
 
-  const message = status === 'loading' ? media.phase : reconstructing ? 'Reconstructing previous frame…'
-    : busy ? 'Decoding…' : media.buffering ? 'Buffering…' : status === 'playing' ? 'Playing' : status === 'paused' ? 'Paused' : status === 'ended' ? 'Finished' : status === 'ready' ? 'Ready' : ''
+  const message = status === 'loading' ? t(media.phase === 'decoding' ? 'viewer.decoding' : media.phase === 'archive' ? 'viewer.loadingZip' : 'viewer.opening')
+    : reconstructing ? t('viewer.reconstructing') : busy ? t('viewer.decoding') : media.buffering ? t('viewer.buffering')
+      : status === 'playing' ? t('viewer.playing') : status === 'paused' ? t('viewer.paused') : status === 'ended' ? t('viewer.finished') : status === 'ready' ? t('viewer.ready') : ''
   return <main className={`viewer${fullscreen.hidden ? ' viewer-controls-hidden' : ''}`} ref={container} tabIndex={-1}
     onPointerMove={fullscreen.reveal} onPointerDown={fullscreen.reveal}>
     <header className="viewer-chrome viewer-header" onPointerEnter={() => fullscreen.hold('pointer', true)}
       onPointerLeave={() => fullscreen.hold('pointer', false)} onFocus={() => fullscreen.hold('focus', true)}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) fullscreen.hold('focus', false) }}>
       <ViewerHeader name={file.name}
-        metadata={info && `${info.format.toUpperCase()} · ${info.width} × ${info.height}${animated ? ` · ${info.frames ?? '?'} frames` : ''}`}
+        metadata={info && `${info.format.toUpperCase()} · ${info.width} × ${info.height}${animated ? ` · ${t('viewer.frames', { count: info.frames ?? '?' })}` : ''}`}
         fullscreenAvailable={fullscreen.available} fullscreen={fullscreen.fullscreen} onFullscreen={fullscreen.toggle}
         onClose={onClose} onRemove={onRemove} onConvert={animated && ready && onConvert ? () => {
           void (async () => {
             if (document.fullscreenElement) {
-              try { await document.exitFullscreen() } catch { setError('Please exit fullscreen before converting.'); return }
+              try { await document.exitFullscreen() } catch { setError({ key: 'viewer.exitBeforeConvert' }); return }
             }
             onConvert()
           })()
         } : undefined} />
     </header>
     <div className="viewer-surface" data-testid="media-surface" ref={surface} tabIndex={0}
-      aria-label="Image view. Drag to pan; pinch or use the wheel to zoom."
+      aria-label={t('viewer.surface')}
       onPointerDown={event => event.currentTarget.focus({ preventScroll: true })}>
-      <canvas ref={canvas} aria-label="Image canvas" />
+      <canvas ref={canvas} aria-label={t('viewer.canvas')} />
     </div>
     <div className="viewer-chrome viewer-bottom"
       onPointerEnter={() => fullscreen.hold('pointer', true)} onPointerLeave={() => fullscreen.hold('pointer', false)}
@@ -89,21 +93,21 @@ export function Viewer({ file, onClose, transition, position, count, onPrevious,
         if (!event.currentTarget.contains(event.relatedTarget)) fullscreen.hold('focus', false)
       }}>
       <div className="viewer-progress">
-        <p data-testid="playback-state" className="visually-hidden">{status}</p>
+        <p data-testid="playback-state" data-state={status} className="visually-hidden">{t(status === 'loading' ? 'viewer.state.loading' : status === 'playing' ? 'viewer.state.playing' : status === 'paused' ? 'viewer.state.paused' : status === 'ended' ? 'viewer.state.ended' : status === 'error' ? 'viewer.state.error' : 'viewer.state.ready')}</p>
         <p role="status" data-testid="viewer-operation">{message}</p>
-        {animated && <p data-testid="current-frame">Frame {frame} / {info.frames ?? '?'}</p>}
+        {animated && <p data-testid="current-frame">{t('viewer.framePosition', { current: frame, total: info.frames ?? '?' })}</p>}
       </div>
       {animated && <PlaybackControls status={status} ready={ready} busy={busy} frame={frame} total={info.frames}
         onStep={step} onToggle={togglePlayback} onReplay={() => {
-          setError(''); void playerRef.current?.replay().catch(cause => setError(viewerErrorMessage(cause)))
+          setError(undefined); void playerRef.current?.replay().catch(cause => setError(mediaMessage(cause)))
         }} />}
       <FileNavigation position={position} count={count} onPrevious={onPrevious} onNext={onNext} />
       <ViewportControls ready={ready} scale={view?.scale} minimum={view?.minScale} maximum={view?.maxScale} mode={view?.mode}
         onZoom={factor => viewportRef.current?.zoomBy(factor)} onFit={() => viewportRef.current?.fit()} onActual={() => viewportRef.current?.actual()} />
-      <p role="alert">{error}</p>
-      <p role="status">{fullscreen.notice}</p>
+      <p role="alert">{error && text(error)}</p>
+      <p role="status">{fullscreen.notice && t(fullscreen.notice === 'unavailable' ? 'viewer.fullscreenFailed' : 'viewer.fullscreenExitFailed')}</p>
       <ViewerDiagnostics metrics={media.metrics} stepMetrics={media.stepMetrics} view={view} info={info} />
-      <p className="viewer-privacy">Files are processed locally in your browser.</p>
+      <p className="viewer-privacy">{t('common.privacy')}</p>
     </div>
   </main>
 }
