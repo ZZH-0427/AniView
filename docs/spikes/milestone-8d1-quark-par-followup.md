@@ -1,6 +1,9 @@
 # 8D1 Quark PAR follow-up — 2026-11-01
 
-Status: **PAR FIX PHONE VERIFIED / FUNCTIONAL AND CLEANUP PASS / TIMER REVIEW PENDING**.
+Status: **PASSED — PAR correction phone verified; acceptance closed with limitations**.
+Final user clarification closed the raw timer question as a non-blocker and the
+subsequent8D2 instruction explicitly accepts8D1. Investigation history remains
+below; no new8D1 phone run or export analysis is required.
 Original candidate: `8d1-c8c7e145cf58`. New candidate: `8d1-122e82b97f04`.
 Overall8D1 is not passed;8D2 has not started. V0.2 is not released.
 
@@ -127,5 +130,7 @@ to backgrounding or silently treated as measured foreground blocking. The
 original harness has only setInterval elapsed gaps, no visibility/long-task trace.
 The existing export's largest-gap row is requested for localized evidence review.
 
-Overall8D1 remains pending that responsiveness evidence classification, not PAR
-or another codec rerun. Keep both candidates, main, v0.1.0 and Pages unchanged.
+That historical pending classification was closed by the user's final observation
+of no real interaction freeze and interrupted test continuation. Preserve the raw
+number without attributing an unmeasured scheduling cause. Overall8D1 PASSED with
+limitations; no production release follows from that acceptance.

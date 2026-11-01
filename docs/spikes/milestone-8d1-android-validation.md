@@ -1,6 +1,10 @@
 # Milestone 8D1 — Android validation
 
-Status: **FUNCTIONAL/CLEANUP PASS — Quark foreground timer anomaly review pending.**
+Status: **PASSED — user-reported real-phone acceptance, with documented limitations.**
+Final user clarification closed the timer question as a non-blocker: no actual
+jank was observed; other activity interrupted continuation of the test. Preserve
+the original value without claiming an independently established scheduling cause.
+The following investigation history does not require further8D1 testing.
 Date: 2026-11-01. Results below are user-reported physical Android browser runs,
 not remotely observed phone sessions.
 
@@ -205,5 +209,5 @@ evidence and a scope decision; no FFmpeg fallback. Any wrong B-frame/VFR visual
 identity, grid/count/tail/orientation error, leak or progressive crash prevents
 overall PASS. No Android gaps are silently filled from desktop.
 
-**Milestone 8D1: PENDING TIMING-ANOMALY CLASSIFICATION. Functional and cleanup gates passed.**
+**Milestone 8D1: PASSED — ACCEPT WITH LIMITATIONS.**
 **Milestone 8D2 has not started. V0.2 NOT RELEASED.**

@@ -31,7 +31,19 @@ cycle, without audio, composited on white; odd dimensions receive white padding.
 It requires a secure context (normally HTTPS) and usable browser-native video encoding; availability and
 H.264 profile vary by device. See the [8C2 product record](docs/milestones/milestone-8c2-animation-to-mp4-productization.md).
 Production-preview instructions are in [tools/video](tools/video/README.md).
-V0.2 remains unreleased, the live demo remains v0.1.0, and 8D1 has not started.
+V0.2 remains unreleased and the live demo remains v0.1.0.
+
+`feat/v0.2-video-to-animation` adds **Home → Convert video** for MP4/H.264 and
+opaque VP9 WebM. Preview the video, choose a clip, FPS and output long side, then
+convert to GIF, Animated WebP or APNG. Estimates use the same sampling plan as
+conversion. Results open in AniView Preview and download with distinct filenames.
+This needs secure HTTPS and usable browser-native video decoding. Limits include
+150 sampled frames,30-second clips,720 maximum output long side and bounded
+frame-pixel work; smaller sources are not enlarged. Audio is ignored; HDR,
+transparent video and other video codecs are not supported. The accepted8D1
+technical architecture is retained. **8D2 Android product acceptance is pending**;
+see the [product record](docs/milestones/milestone-8d2-video-to-animation-productization.md).
+These changes are not yet on the public demo.
 
 ## Features and Supported Formats
 

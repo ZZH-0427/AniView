@@ -2,7 +2,13 @@
 
 ## 1. Status
 
-**FUNCTIONAL/CLEANUP PHONE PASS — QUARK TIMER REVIEW PENDING.** Date: 2026-11-01.
+**PASSED — ACCEPT WITH LIMITATIONS.** Date: 2026-11-01.
+
+Closure: the user's final clarification retained the36.7s raw timer value but
+reported no actual interaction freeze and closed that item as a non-blocker.
+No unobserved timer/clock cause is invented. The subsequent explicit8D2 task
+confirms8D1 acceptance. Historical investigation notes below are retained as
+evidence; no additional phone test is requested by this record.
 The initial Quark PAR failure has been corrected and retested. All functional
 and cleanup groups now pass on both phone browsers; only the unexplained Quark
 timer outlier remains under review.8D2 has not started.
@@ -402,7 +408,7 @@ support a scope decision; it must not trigger an FFmpeg fallback.
 
 ## 39. Final verdict
 
-**Milestone 8D1: PENDING TIMING-ANOMALY CLASSIFICATION.**
+**Milestone 8D1: PASSED — ACCEPT WITH LIMITATIONS.**
 The framework and desktop engineering gate are complete. Original candidate
 `8d1-c8c7e145cf58` remains unchanged; the separately frozen PAR follow-up is
 `8d1-122e82b97f04`, with23 PASS/1 cancellation and clean resources in both phone

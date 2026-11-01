@@ -157,11 +157,11 @@
     }
   },
   "responsiveness": {
-    "status": "FOREGROUND_TIMER_GAP_UNEXPLAINED",
+    "status": "CLOSED_BY_USER_NO_OBSERVED_UI_STALL",
     "userConfirmation": "Quark stayed in the foreground; no tens-of-seconds inability to click or scroll. Both browsers had no visible jank.",
     "backgroundExplanationConfirmed": false,
-    "nextEvidence": "Read the largest-gap row from the existing local diagnostic export; do not rerun conversion or change the candidate.",
+    "userFinalDisposition": "Original tab closed. User says this was not an anomaly, was doing other things and did not promptly continue the next test; requested milestone summary and then explicitly accepted8D1 in the8D2 task. Raw timing cause not independently reconstructed.",
     "foregroundOnlyGapMs": null
   },
-  "milestone": "FUNCTIONAL_AND_CLEANUP_PASSED_TIMER_GAP_REVIEW_PENDING"
+  "milestone": "PASSED_WITH_LIMITATIONS"
 }
