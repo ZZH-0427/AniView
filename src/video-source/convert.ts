@@ -16,9 +16,11 @@ export async function convertVideoToAnimation(file:VirtualFile,target:Conversion
   options:ConversionOptions&{onSourceMetrics?:(metrics:VideoSourceMetrics)=>void;
     onPreflight?:(inspection:VideoInspection,plan:SamplingPlan,expectedDurationMs:number)=>void;
     onEncoderFrameSent?:()=>void;
-    onSourceClosed?:(cleanup:VideoSourceAdapter['cleanup'],metrics:VideoSourceMetrics)=>void}={}){
+    onSourceClosed?:(cleanup:VideoSourceAdapter['cleanup'],metrics:VideoSourceMetrics)=>void;
+    onWorker?:(kind:'source'|'encoder',active:boolean)=>void}={}){
   const controller=new AbortController(),abort=()=>controller.abort()
   let expired=false,source:VideoSourceAdapter|undefined
+  const observe=(kind:'source'|'encoder',active:boolean)=>{try{options.onWorker?.(kind,active)}catch{/* Observation never owns conversion. */}}
   const timer=setTimeout(()=>{expired=true;controller.abort()},VIDEO_INPUT_LIMITS.deadlineMs)
   options.signal?.addEventListener('abort',abort,{once:true})
   if(options.signal?.aborted)controller.abort()
@@ -26,6 +28,7 @@ export async function convertVideoToAnimation(file:VirtualFile,target:Conversion
     const result=await convertFrameSource(file,target,{...options,signal:controller.signal},{
       source:async(input,signal)=>{
         source=new VideoSourceAdapter(input,signal,options.onSourceMetrics)
+        observe('source',true)
         try{const info=await source.open();const candidate=createSamplingPlan(info,selection);
           const expected=validateTargetTiming(candidate,target);const plan=await source.configure(selection);
           options.onPreflight?.(info,plan,expected);return source}
@@ -33,12 +36,14 @@ export async function convertVideoToAnimation(file:VirtualFile,target:Conversion
       },
       encoder:()=>{
         const client=new EncoderWorkerClient()
+        let released=false
+        observe('encoder',true)
         return{capabilities:client.capabilities,open:(format,metadata)=>client.open(format,metadata),
           async addFrame(frame){
             const pending=client.addFrame(frame)
             try{options.onEncoderFrameSent?.()}catch(error){client.dispose();await pending.catch(()=>{});throw error}
             return pending
-          },finish:()=>client.finish(),dispose:()=>client.dispose()}
+          },finish:()=>client.finish(),dispose:()=>{try{client.dispose()}finally{if(!released){released=true;observe('encoder',false)}}}}
       },
     })
     if(!source?.inspection)throw new VideoInputError('VIDEO_DECODE_FAILED')
@@ -46,6 +51,7 @@ export async function convertVideoToAnimation(file:VirtualFile,target:Conversion
   }catch(error){if(expired)throw new VideoInputError('VIDEO_JOB_DEADLINE');throw error}
   finally{
     clearTimeout(timer);options.signal?.removeEventListener('abort',abort);await source?.close()
+    if(source)observe('source',false)
     if(source)try{options.onSourceClosed?.({...source.cleanup},source.metrics)}catch{/* Evidence cannot alter disposal. */}
   }
 }

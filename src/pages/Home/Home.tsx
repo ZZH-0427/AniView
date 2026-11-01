@@ -3,10 +3,11 @@ import { ArchiveInput } from '../../components/ArchiveInput'
 import type { VirtualFile } from '../../input/virtual-file'
 import { IconButton } from '../../components/IconButton'
 
-export function Home({ onOpen, onArchive, onCreate }: {
+export function Home({ onOpen, onArchive, onCreate,onConvertVideo }: {
   onOpen: (files: readonly VirtualFile[]) => void
   onArchive: (file: File) => void
   onCreate?: () => void
+  onConvertVideo?:()=>void
 }) {
   return (
     <main className="home">
@@ -24,6 +25,7 @@ export function Home({ onOpen, onArchive, onCreate }: {
         <ArchiveInput onOpen={onArchive} />
         {onCreate && <div className="home-create-entry"><IconButton icon="create" label="Create GIF" text="Create GIF"
           data-testid="create-gif-entry" onClick={onCreate} /></div>}
+        {onConvertVideo&&<div className="home-create-entry"><IconButton icon="video" label="Convert video" text="Convert video" data-testid="convert-video-entry" onClick={onConvertVideo}/></div>}
         <p className="drop-hint">Drag &amp; drop images here. You can select several at once.</p>
       </section>
 

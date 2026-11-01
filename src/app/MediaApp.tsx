@@ -11,7 +11,7 @@ import { useMediaSource } from './use-media-source'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
 const ConversionWorkspace = lazy(() => import('../conversion/ConversionWorkspace'))
 
-export function MediaApp({ onCreate }: { onCreate?: () => void }) {
+export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;onConvertVideo?:()=>void }) {
   const [dragging, setDragging] = useState(false)
   const [conversion, setConversion] = useState<VirtualFile>()
   const transition = useRef(Promise.resolve())
@@ -68,7 +68,7 @@ export function MediaApp({ onCreate }: { onCreate?: () => void }) {
         position={session.currentIndex + 1} count={session.items.length}
         onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
         onRemove={() => changeSession(removeCurrentFile)} onConvert={() => { setDragging(false); setConversion(current.file) }} />
-    </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} />}
+    </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} {...(onConvertVideo?{onConvertVideo}:{})}/>}
     {notice && <p className="session-notice" role="status">{notice}</p>}
     </>}
     <RuntimeDiagnosticsPanel />

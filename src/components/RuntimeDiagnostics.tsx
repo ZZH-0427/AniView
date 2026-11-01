@@ -1,11 +1,13 @@
 import { useSyncExternalStore } from 'react'
 import { runtimeDiagnostics } from '../media/runtime-diagnostics'
 import { conversionCleanup } from '../media/conversion-cleanup'
+import {videoAnimationCleanup} from '../video-conversion/cleanup'
 import { DiagnosticsGroup, DiagnosticsPanel, RawDiagnostics } from './DiagnosticsPanel'
 
 export function RuntimeDiagnosticsPanel() {
   const snapshot = useSyncExternalStore(runtimeDiagnostics.subscribe, runtimeDiagnostics.getSnapshot, runtimeDiagnostics.getSnapshot)
   const lastConversionCleanup=useSyncExternalStore(conversionCleanup.subscribe,conversionCleanup.getSnapshot,conversionCleanup.getSnapshot)
+  const lastVideoAnimationCleanup=useSyncExternalStore(videoAnimationCleanup.subscribe,videoAnimationCleanup.getSnapshot,videoAnimationCleanup.getSnapshot)
   return <DiagnosticsPanel title="Resource diagnostics">
     <div className="diagnostics-groups">
       <DiagnosticsGroup title="Resources" values={[
@@ -26,6 +28,6 @@ export function RuntimeDiagnosticsPanel() {
         { label: 'Archive', value: snapshot.archiveErrors }, { label: 'Cleanup', value: snapshot.cleanupErrors },
       ]} />
     </div>
-    <RawDiagnostics items={[{ testId: 'runtime-metrics', value: {...snapshot,...(lastConversionCleanup?{lastConversionCleanup}:{})} }]} />
+    <RawDiagnostics items={[{ testId: 'runtime-metrics', value: {...snapshot,...(lastConversionCleanup?{lastConversionCleanup}:{}),...(lastVideoAnimationCleanup?{lastVideoAnimationCleanup}:{})} }]} />
   </DiagnosticsPanel>
 }

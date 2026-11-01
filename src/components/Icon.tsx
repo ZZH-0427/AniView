@@ -3,7 +3,7 @@ import type { ReactNode, SVGProps } from 'react'
 export type IconName = 'play' | 'pause' | 'step-back' | 'step-forward' | 'replay'
   | 'previous-file' | 'next-file' | 'zoom-in' | 'zoom-out' | 'fit' | 'actual-size'
   | 'fullscreen' | 'exit-fullscreen' | 'close' | 'more' | 'remove'
-  | 'create' | 'add' | 'arrow-up' | 'arrow-down' | 'download'
+  | 'create' | 'add' | 'arrow-up' | 'arrow-down' | 'download' | 'video'
 
 const artwork: Record<IconName, ReactNode> = {
   play: <path d="m9 5 10 7-10 7Z" />,
@@ -23,6 +23,7 @@ const artwork: Record<IconName, ReactNode> = {
   more: <><circle cx="12" cy="5" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="12" cy="19" r="1" /></>,
   remove: <><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 10v7m4-7v7" /></>,
   create: <><rect x="3" y="5" width="14" height="14" rx="2" /><path d="m8 9 5 3-5 3ZM20 3v6m-3-3h6" /></>,
+  video:<><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m10 8 6 4-6 4ZM3 8h3m-3 8h3m12-8h3m-3 8h3"/></>,
   add: <path d="M12 5v14M5 12h14" />,
   'arrow-up': <path d="m5 12 7-7 7 7M12 5v14" />,
   'arrow-down': <path d="m5 12 7 7 7-7M12 5v14" />,
