@@ -69,6 +69,28 @@ prescribed source timeline, not from the decoder's reported frame identity.
 Source/target numeric fingerprints compare existing GIF tolerance or exact
 WebP/APNG composed RGBA at selected sample times. No raw frame history is kept.
 
+## PAR compatibility follow-up
+
+The Android Quark probe exposed missing display PAR at native decode output.
+The adapter now admits only a coherent track-declared PAR plus complete,
+unadjusted visible frame, then uses existing full-frame draw into track-derived
+dimensions. No library patch, extra Canvas/frame or resource-limit change.
+`Run PAR matrix` checks that fixture against all three existing encoders.
+See [evidence and the targeted phone protocol](../../docs/spikes/milestone-8d1-quark-par-followup.md).
+
+To preserve an existing acceptance artifact, build/serve a separate candidate:
+
+```powershell
+npm run build:video-source-spike -- --outDir .tools/video-source-par-site
+node tools/video-source/preview.mjs --root .tools/video-source-par-site --port 4232
+node tools/video-source/run-browser.mjs --root .tools/video-source-par-site --output .tools/video-source/par-desktop
+node tools/video-source/test-par-compat.mjs
+```
+
+The final command uses a test-only native decoder metadata-omission shim and
+real encoder/decode-back oracles; it is desktop regression evidence, not a
+production decoder replacement or Android test result.
+
 The actual 90kHz-vs-µs boundary experiment is documented in the spike record.
 Both source relative PTS and the requested grid use round-half-up integer µs;
 selection remains previous/active, not nearest. Quantization is at most0.5µs.

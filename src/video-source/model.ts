@@ -47,6 +47,7 @@ export interface VideoSourceMetrics {
   capability: {apiPresent:boolean;secureContext:boolean|null;containerReadable:boolean|null;videoTrack:boolean|null;
     codec:string|null;configSupported:boolean|null;decoderInitialized:boolean|null;firstDecoded:boolean;firstDraw:boolean;firstReadback:boolean}
   observedSourceSamples: number; observedSourcePixels: number; observablePrerollSamples: number; prerollSeconds: number
+  trackParFallbackSamples: number
   activeSamples: number; peakSamples: number; samplesAcquired: number; samplesClosed: number
   explicitVideoFrames: number; peakExplicitVideoFrames: number
   activeCanvases: number; peakCanvases: number; activeImageData: number; peakImageData: number
@@ -59,6 +60,7 @@ export const emptySourceMetrics = (): VideoSourceMetrics => ({
   stoppedAt:null,capability:{apiPresent:false,secureContext:null,containerReadable:null,videoTrack:null,codec:null,
     configSupported:null,decoderInitialized:null,firstDecoded:false,firstDraw:false,firstReadback:false},
   sampleMs:0, drawMs:0, readbackMs:0, observedSourceSamples:0, observedSourcePixels:0, observablePrerollSamples:0,
+  trackParFallbackSamples:0,
   prerollSeconds:0, activeSamples:0, peakSamples:0, samplesAcquired:0, samplesClosed:0,
   explicitVideoFrames:0, peakExplicitVideoFrames:0, activeCanvases:0, peakCanvases:0,
   activeImageData:0, peakImageData:0, ownedRgba:0, peakOwnedRgba:0, peakFrameBytes:0, awaitingAck:0,

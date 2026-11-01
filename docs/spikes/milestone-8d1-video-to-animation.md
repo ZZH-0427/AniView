@@ -6,6 +6,9 @@
 Fresh phone testing has now started: Edge passed; Quark stopped on the PAR
 fixture with VIDEO_SOURCE_LIMIT during probing. Overall PASS and 8D2 remain blocked
 on that investigation and Quark's remaining coverage. See the Android record below.
+Follow-up: native PAR loss is confirmed; a guarded adapter correction is desktop
+verified in candidate8d1-122e82b97f04. Its targeted phone retest is still pending;
+see the [complete evidence and correction](milestone-8d1-quark-par-followup.md).
 V0.2 is **NOT RELEASED**.
 
 ## 2. Branch
@@ -254,8 +257,9 @@ source sample/Canvas/ImageData/RGBA/ACK and cleanup errors0; soft close confirme
 **PARTIAL / FAIL — user-reported Quark10.2 / Chromium123 / Android16.** Same frozen
 build:10 successes, no cancellation; par.mp4→APNG fails VIDEO_SOURCE_LIMIT in
 probing. AVC/VP9 six directions, VFR, B-frame, rotation and portrait passed.
-Workers41/41 and all reported cleanup counters0; soft close confirmed. No
-confirmed Quark native geometry or root cause is available from Summary alone.
+Workers41/41 and all reported cleanup counters0; soft close confirmed. Follow-up
+numeric diagnostics confirm native output loses the requested PAR; the adapter
+normalization is implemented but pending a new phone retest.
 
 ## 24. Android coverage gaps
 
@@ -315,6 +319,8 @@ reported (e.g.1s at15 FPS decodes≈999.994913ms); photographic APNG is larger
 ## 31. Tests
 
 **70 test files /876 tests: original821 preserved +55 new.**
+This is the original candidate baseline. The PAR correction adds13 guard tests:
+**71 files /889 tests passed**; original tests remain unchanged.
 Clean npm ci, lint, typecheck, all unit tests and ordinary build pass with installed
 Node24.22.1/npm11.19.1. New tests cover grid/tail/rounding, same-FPS identity,
 origin/resize/guards/color/profile/matrix, sampler ownership and cancellation,
@@ -375,7 +381,9 @@ for Android time, quality and stability observations.
 
 ## 37. VP9 verdict
 
-**ACCEPT WITH LIMITATIONS — desktop only; Android pending.**
+**ACCEPT WITH LIMITATIONS — original candidate passed on Android Edge and Quark.**
+Both phone reports completed VP9→GIF/WebP/APNG before the unrelated AVC PAR
+failure. New candidate's targeted geometry checks remain pending.
 A phone failure must report actual capability/config/first-decode stage and
 support a scope decision; it must not trigger an FFmpeg fallback.
 
@@ -383,10 +391,10 @@ support a scope decision; it must not trigger an FFmpeg fallback.
 
 | Component | Verdict |
 | --- | --- |
-| Mediabunny Input | ACCEPT WITH LIMITATIONS — desktop verified, Android pending |
+| Mediabunny Input | ACCEPT WITH LIMITATIONS — desktop/phone codec slices verified; native PAR compatibility pending |
 | VideoSampleSink | ACCEPT WITH LIMITATIONS — presentation stream verified; hidden work unobservable |
 | Sampling | ACCEPT WITH LIMITATIONS — µs normalization refinement verified |
-| Orientation/resize | ACCEPT WITH LIMITATIONS — real rotation/PAR/portrait; phone quality pending |
+| Orientation/resize | ACCEPT WITH LIMITATIONS — Edge passed; Quark PAR correction/resize retest pending |
 | RGBA extraction | ACCEPT WITH LIMITATIONS — Worker path verified; native copies unknown |
 | Video→Canonical adapter | ACCEPT WITH LIMITATIONS — ownership/ACK/cleanup verified on desktop |
 | Overall architecture | ACCEPT WITH LIMITATIONS provisionally; overall milestone not passed |
@@ -394,8 +402,9 @@ support a scope decision; it must not trigger an FFmpeg fallback.
 ## 39. Final verdict
 
 **Milestone 8D1: PENDING ANDROID VALIDATION.**
-The framework and desktop engineering gate are complete. The frozen candidate
-is `8d1-c8c7e145cf58` (code/test checkpoint `c8fec6b`).
+The framework and desktop engineering gate are complete. Original candidate
+`8d1-c8c7e145cf58` remains unchanged; the separately frozen PAR follow-up is
+`8d1-122e82b97f04`, with targeted phone acceptance pending.
 The wireless HTTPS preview was checked on desktop with normal certificate
 validation, actual AVC/VP9 Worker decoding, HMR false,320/390/1280-width layouts,
 and clean teardown. It is not phone or GitHub Pages validation.
@@ -403,8 +412,9 @@ Ignored raw evidence/frozen asset hashes live under `.tools/video-source/`.
 
 ## 40. Next state
 
-Investigate Quark PAR using a separate numeric probe without altering the frozen
-candidate. Then complete only the outstanding acceptance against an identified
-candidate; retain the Edge results as evidence for their original build.
+Complete the linked targeted retest against8d1-122e82b97f04; retain older Edge
+and Quark results as evidence for their original build. Keep both frozen artifacts
+unchanged during acceptance. Native PAR loss has been diagnosed; the guarded
+adapter correction is desktop verified, not yet phone verified.
 Do not run or infer those tests on their behalf now. Main, v0.1.0 and production
 remain unchanged. **Milestone 8D2 has not started. V0.2 NOT RELEASED.**

@@ -6,6 +6,8 @@ import type { FrameEvidence, SamplingPlan, SourcePhase, VideoInspection, VideoSo
 import { createSamplingPlan, frameTime, normalizeTimeline } from './sampling-plan'
 import { PresentationSampler } from './presentation-sampler'
 import { mp4EditedEnd } from './mp4-timeline-guard'
+import {validateSampleGeometry} from './sample-geometry'
+import type {TrackSampleGeometry} from './sample-geometry'
 
 export type RangeReader=(start:number,end:number)=>Promise<Uint8Array>
 export class VideoSource {
@@ -23,7 +25,7 @@ export class VideoSource {
   private firstQuery=0
   private decodeStarted=0
   private codedArea=0
-  private expectedDisplay:{width:number;height:number}|undefined
+  private expectedGeometry:TrackSampleGeometry|undefined
   constructor(private readonly read:RangeReader,private readonly size:number,private readonly publish:(metrics:VideoSourceMetrics)=>void=()=>{}){}
   private check(){if(this.closed)throw new VideoInputError('CANCELLED')}
   private phase(phase:SourcePhase){this.metrics.phase=phase;this.publish(this.metrics)}
@@ -34,8 +36,7 @@ export class VideoSource {
     validateSampleColor(sample.colorSpace)
     validateCodedSize(Math.ceil(sample.displayWidth),Math.ceil(sample.displayHeight))
     if(sample.format&&/P10|P12|F16/.test(sample.format))throw new VideoInputError('VIDEO_CODEC_UNSUPPORTED')
-    if(this.expectedDisplay&&(Math.abs(sample.displayWidth-this.expectedDisplay.width)>1||Math.abs(sample.displayHeight-this.expectedDisplay.height)>1))
-      throw new VideoInputError('VIDEO_SOURCE_LIMIT')
+    if(this.expectedGeometry&&validateSampleGeometry(this.expectedGeometry,sample))this.metrics.trackParFallbackSamples++
     if(this.plan&&sample.timestamp<this.firstQuery)this.metrics.observablePrerollSamples++
     if(this.metrics.observablePrerollSamples===1&&this.metrics.phase==='preroll')this.publish(this.metrics)
     if(this.metrics.observedSourceSamples>VIDEO_INPUT_LIMITS.maxObservedSamples
@@ -90,7 +91,7 @@ export class VideoSource {
     // The Android library copy can use display-sized surfaces; pathological PAR
     // must not bypass the source-allocation guard through a tiny coded image.
     validateCodedSize(Math.ceil(geometry.displayWidth),Math.ceil(geometry.displayHeight))
-    this.expectedDisplay={width:geometry.displayWidth,height:geometry.displayHeight}
+    this.expectedGeometry={codedWidth,codedHeight,...geometry}
     this.check()
     this.metrics.openMs=performance.now()-started;this.phase('probing')
     const probeStart=performance.now(),probeTime=Math.max(0,firstPacketTimestamp)

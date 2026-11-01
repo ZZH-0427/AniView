@@ -3,9 +3,10 @@ import {spawn,execFileSync} from 'node:child_process'
 import {mkdir,writeFile} from 'node:fs/promises'
 import {resolve} from 'node:path'
 import {launchBrowser,sleep} from '../conversion/browser.mjs'
-const dir=resolve('.tools/video-source/desktop'),port='4231',url='http://127.0.0.1:'+port+'/AniView/experiments/video-source/?debug=1'
+const arg=(n,d)=>process.argv.includes(n)?process.argv[process.argv.indexOf(n)+1]:d
+const dir=resolve(arg('--output','.tools/video-source/desktop')),port=arg('--port','4231'),url='http://127.0.0.1:'+port+'/AniView/experiments/video-source/?debug=1'
 await mkdir(dir,{recursive:true})
-const server=spawn(process.execPath,['tools/video-source/preview.mjs','--port',port],{windowsHide:true,stdio:'ignore'})
+const server=spawn(process.execPath,['tools/video-source/preview.mjs','--port',port,'--root',arg('--root','.tools/video-source-site')],{windowsHide:true,stdio:'ignore'})
 let browser
 const report={scope:'Installed desktop Edge production build; not Android',cases:[],errors:[]}
 try{

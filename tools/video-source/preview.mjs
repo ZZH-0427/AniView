@@ -4,7 +4,7 @@ import {createReadStream} from 'node:fs'
 import {stat,readFile} from 'node:fs/promises'
 import {resolve,relative,sep,extname} from 'node:path'
 const arg=(n,d)=>process.argv.includes(n)?process.argv[process.argv.indexOf(n)+1]:d
-const root=resolve('.tools/video-source-site'),fixtures=resolve('.tools/video-source/fixtures'),base='/AniView/'
+const root=resolve(arg('--root','.tools/video-source-site')),fixtures=resolve('.tools/video-source/fixtures'),base='/AniView/'
 const names=new Set(['manifest.json',...JSON.parse(await readFile(resolve(fixtures,'manifest.json'),'utf8')).fixtures.map(f=>f.name)])
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript','.css':'text/css','.wasm':'application/wasm','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.webm':'video/webm'}
 const server=createServer(async(req,res)=>{try{

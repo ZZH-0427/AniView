@@ -20,7 +20,7 @@ let controller:AbortController|undefined,generation=0,group=0
 let selected:VirtualFile|undefined,inspection:VideoInspection|undefined,lastOutput:{data:ArrayBuffer;byteLength:number}|undefined,resultUrl:string|undefined
 let activeUrls=0,manifestPromise:Promise<{fixtures:FixtureRecord[]}>|undefined
 let activeRun:Promise<Record<string,unknown>>|undefined,groupBusy=false
-function controls(){for(const id of['input','target','start','end','fps','size','convert','run-h264','run-vp9','run-correctness','run-resize','run-150','run-cancel']){
+function controls(){for(const id of['input','target','start','end','fps','size','convert','run-h264','run-vp9','run-par','run-correctness','run-resize','run-150','run-cancel']){
   const control=element<HTMLInputElement|HTMLButtonElement|HTMLSelectElement>(id);control.disabled=!!controller||groupBusy
 }}
 const virtual=(data:ArrayBuffer,byteLength=data.byteLength):VirtualFile=>({name:'local-video-test',size:byteLength,source:'file',read:async(start=0,end=byteLength)=>data.slice(start,end)})
@@ -61,6 +61,7 @@ function summaryValue(){
     peakCanonicalRgba:Math.max(0,...successful.map(r=>Number(r.peakRgbaFrames))),
     maxObservedSourceSamples:Math.max(0,...metrics.map(m=>m.observedSourceSamples)),
     maxObservedSourcePixels:Math.max(0,...metrics.map(m=>m.observedSourcePixels)),
+    trackParFallbackSamples:Math.max(0,...metrics.map(m=>m.trackParFallbackSamples)),
     heartbeatMaxGapMs:Math.max(0,...rows.map(r=>Number(r.heartbeatMaxGapMs??0))),
     lastSourceCleanup:metrics.at(-1)?{activeSamples:metrics.at(-1)!.activeSamples,activeCanvases:metrics.at(-1)!.activeCanvases,
       activeImageData:metrics.at(-1)!.activeImageData,ownedRgba:metrics.at(-1)!.ownedRgba,awaitingAck:metrics.at(-1)!.awaitingAck,
@@ -134,6 +135,7 @@ async function runGroup(kind:string){
   groupBusy=true;controls()
   const cases:{name:string;target:ConversionFormat;options?:RunOptions}[]=[]
   if(kind==='h264'||kind==='vp9')for(const target of formats)cases.push({name:kind==='h264'?'cfr.mp4':'vp9.webm',target})
+  else if(kind==='par')for(const target of formats)cases.push({name:'par.mp4',target})
   else if(kind==='correctness'){
     cases.push({name:'vfr.mp4',target:'apng',options:{fps:20,endUs:1_030_000}},
       {name:'bframes.mp4',target:'webp',options:{fps:10,endUs:2_000_000}},
@@ -187,7 +189,7 @@ element('target').onchange=()=>{
   select.replaceChildren(...values.map(value=>new Option(String(value),String(value))))
   select.value=String(values.includes(old)?old:target==='gif'?10:15);updatePlan()
 }
-for(const kind of['h264','vp9','correctness','resize','150','cancel'])bind('run-'+kind,()=>runGroup(kind))
+for(const kind of['h264','vp9','par','correctness','resize','150','cancel'])bind('run-'+kind,()=>runGroup(kind))
 bind('convert',()=>{assert(selected,'SELECT_VIDEO');return run(selected,'local-input',element<HTMLSelectElement>('target').value as ConversionFormat,selection())})
 bind('cancel',cancel)
 bind('close',()=>{cancel();clearOutput();render()})

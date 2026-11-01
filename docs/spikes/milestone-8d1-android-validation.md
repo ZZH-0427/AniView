@@ -67,19 +67,19 @@ Edge's extra successful benchmark row is a repeat, not a missing case. Quark's
 six AVC/VP9 conversions and first four correctness cases (VFR, B-frame, rotation,
 portrait) passed. No aggregate success is inferred for cases after its PAR failure.
 
-The source adapter has a strict absolute display-size guard on yielded samples.
-PAR track geometry is128×48 from coded64×48. A native sample can legitimately use
-a different size with the same display ratio; alternatively a browser/library
-path might lose PAR. Summary does not include actual native/sample geometry,
-so these remain hypotheses rather than a confirmed root cause. The standards
-distinction is documented in [WebCodecs VideoDecoderConfig](https://www.w3.org/TR/webcodecs/#videodecoderconfig).
-No resource limit, upstream library, or conversion behavior has been changed.
+The follow-up now confirms native PAR loss: requested/supported display128×48,
+but native decoder callback and library sample both display64×48. Their aspect
+ratios differ, so a harmless proportional representation is ruled out. The
+separate Canvas→VideoFrame constructor preserves128×48. Sample close1/1,
+iterator return, Input disposal and Worker termination all succeeded. The
+original source-limit error was the adapter's geometry mismatch guard, not
+evidence of memory exhaustion. See the [root cause and guarded adapter fix](milestone-8d1-quark-par-followup.md).
 
 ### Isolated follow-up — par-geometry-1
 
 [Separate one-frame numeric probe](https://internal-wanna-lopez-natural.trycloudflare.com/AniView/par-followup/index.html)
 
-Run **Run PAR probe** once in Quark, then **Copy JSON**. Edge is optional for a
+**Completed in Quark.** Original probe instructions were: Run PAR probe once, then Copy JSON. Edge was optional for a
 same-device comparison. This reads only the original named tiny PAR fixture.
 It records track/config, first native decoder frame, yielded library sample,
 display ratio and Canvas→VideoFrame display-size preservation. A diagnostic
@@ -91,9 +91,28 @@ sample close, iterator return, Input dispose and Worker termination are recorded
 `tools/video-source/par-geometry-probe.mjs` builds only a separate follow-up
 directory; the original frozen candidate and its30 checksums stay unchanged.
 Desktop Edge156 trusted-HTTPS verification passed. It is not Quark evidence.
-Do not re-run full acceptance until the geometry evidence is classified. If a
-change to Mediabunny behavior is required, stop and report under the task's
-explicit dependency rule; do not patch node_modules or silently weaken guards.
+Classification and the adapter-only correction are recorded in the linked
+follow-up. No Mediabunny source/behavior patch, dependency change or resource-limit
+increase was necessary. Native decoder config support alone remains insufficient.
+
+## Current candidate — targeted retest pending
+
+Build **8d1-122e82b97f04** is separate from the unchanged original artifact.
+It permits only a complete, unadjusted native frame with explicit coherent
+track PAR; existing public draw maps it to track-derived output dimensions.
+All other ambiguous size/crop mismatches remain rejected.
+
+[Targeted retest entry](https://departments-til-caps-listening.trycloudflare.com/AniView/experiments/video-source/?debug=1)
+
+- Edge: Run PAR matrix → Run correctness → Close results → Copy summary.
+  Expected12 PASS,0 cancellation, failures empty.
+- Quark: Run PAR matrix → Run correctness → Run1080p resize → Run150-frame test
+  → Run cancel→rerun → Close results → Copy summary.
+  Expected17 PASS,1 cancellation, failures empty.
+
+Report responsiveness/reload/crash and the final cleanup fields. Native/GPU
+memory remains UNKNOWN. Older results are retained for their exact build; the
+new candidate's phone correction/remaining groups are not yet verified.
 
 ## Original full protocol — each of Android Edge and Quark
 
