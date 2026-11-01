@@ -1,7 +1,8 @@
 # Milestone 8D1 — Android validation
 
-Status: **PENDING — user deferred real-phone testing for several hours.**
-Date: 2026-11-01. No new Edge/Quark8D1 phone result is recorded.
+Status: **PENDING — Edge passed; Quark PAR failed and investigation is open.**
+Date: 2026-11-01. Results below are user-reported physical Android browser runs,
+not remotely observed phone sessions.
 
 ## Frozen engineering candidate
 
@@ -21,7 +22,7 @@ GET/HEAD; POST uploads are rejected. Selected local files remain in the browser.
 
 Entry, when the user is ready:
 
-[Open frozen 8D1 engineering preview](https://airlines-bikes-boc-gossip.trycloudflare.com/AniView/experiments/video-source/?debug=1)
+[Open frozen 8D1 engineering preview](https://internal-wanna-lopez-natural.trycloudflare.com/AniView/experiments/video-source/?debug=1)
 
 Keep the computer awake/online; phone and computer may share Wi-Fi. No cable,
 custom CA installation, certificate bypass or unsafe browser flags are required.
@@ -37,11 +38,64 @@ successful target decode-back, and no overflow at320/390/1280px. That is
 **desktop HTTPS evidence**, not Android public-HTTPS validation.
 
 The local57-case suite has41 successes,10 cancellations and6 expected typed
-rejections; actual Android codec support, native memory symptoms, quality and
-cleanup remain pending. The raw asset/fixture checksum freeze and desktop reports
+rejections. Android results are recorded separately below. The asset/fixture checksum freeze and desktop reports
 are ignored artifacts under `.tools/video-source/`.
 
-## Practical test, later — each of Android Edge and Quark
+## First Android results
+
+Both summaries identify content build8d1-c8c7e145cf58, secure context true,
+HMR false. Edge155 completed all groups; Quark10.2.0.995 / Chromium123 on Android16
+stopped on par.mp4→APNG in Run correctness, then did not run the final three groups.
+
+| Evidence | Edge | Quark |
+| --- | --- | --- |
+| Successful rows | 21 (benchmark appears twice) | 10 |
+| Cancelled rows | 1 | 0 |
+| Failure | None | VIDEO_SOURCE_LIMIT / probing / par.mp4→APNG |
+| Workers created / terminated | 86 / 86 | 41 / 41 |
+| Peak app samples / canonical RGBA | 2 / 1 | 2 / 1 |
+| Maximum observed source samples | 151 | 21 |
+| Maximum observed source pixels | 12,441,600 | 6,220,800 |
+| Maximum heartbeat gap | 71.3ms | 48.3ms |
+| Final active Worker / bitmap / archive / URL | 0 / 0 / 0 / 0 | 0 / 0 / 0 / 0 |
+| Final source sample / Canvas / ImageData / RGBA / ACK | All0 | All0 |
+| cleanupErrors | 0 | 0 |
+| Source disposition | softClosed=true, hardTerminated=false | softClosed=true, hardTerminated=false |
+| Native/GPU memory | UNKNOWN | UNKNOWN |
+
+Edge's extra successful benchmark row is a repeat, not a missing case. Quark's
+six AVC/VP9 conversions and first four correctness cases (VFR, B-frame, rotation,
+portrait) passed. No aggregate success is inferred for cases after its PAR failure.
+
+The source adapter has a strict absolute display-size guard on yielded samples.
+PAR track geometry is128×48 from coded64×48. A native sample can legitimately use
+a different size with the same display ratio; alternatively a browser/library
+path might lose PAR. Summary does not include actual native/sample geometry,
+so these remain hypotheses rather than a confirmed root cause. The standards
+distinction is documented in [WebCodecs VideoDecoderConfig](https://www.w3.org/TR/webcodecs/#videodecoderconfig).
+No resource limit, upstream library, or conversion behavior has been changed.
+
+### Isolated follow-up — par-geometry-1
+
+[Separate one-frame numeric probe](https://internal-wanna-lopez-natural.trycloudflare.com/AniView/par-followup/index.html)
+
+Run **Run PAR probe** once in Quark, then **Copy JSON**. Edge is optional for a
+same-device comparison. This reads only the original named tiny PAR fixture.
+It records track/config, first native decoder frame, yielded library sample,
+display ratio and Canvas→VideoFrame display-size preservation. A diagnostic
+VideoDecoder subclass observes geometry without altering config or frame content.
+Public sample.draw produces only numeric corner/hash evidence; no pixels are
+posted to the main thread or uploaded. The native frame stays library-owned;
+sample close, iterator return, Input dispose and Worker termination are recorded.
+
+`tools/video-source/par-geometry-probe.mjs` builds only a separate follow-up
+directory; the original frozen candidate and its30 checksums stay unchanged.
+Desktop Edge156 trusted-HTTPS verification passed. It is not Quark evidence.
+Do not re-run full acceptance until the geometry evidence is classified. If a
+change to Mediabunny behavior is required, stop and report under the task's
+explicit dependency rule; do not patch node_modules or silently weaken guards.
+
+## Original full protocol — each of Android Edge and Quark
 
 There is no need to select/download source files or understand low-level settings.
 Wait for each button group to finish before starting the next. Use a fresh tab per
@@ -89,19 +143,19 @@ the automated marker/corner/timing oracle remains the technical test.
 
 | Gate | Android Edge | Android Quark |
 | --- | --- | --- |
-| Secure context / no HMR / correct frozen ID | PENDING | PENDING |
-| AVC API/config/init/first decode/draw | PENDING | PENDING |
-| AVC→GIF/WebP/APNG | PENDING | PENDING |
-| VP9 API/config/init/first decode/draw | PENDING | PENDING |
-| VP9→GIF/WebP/APNG | PENDING | PENDING |
-| VFR / B-frame | PENDING | PENDING |
-| Rotation / portrait / PAR | PENDING | PENDING |
-| Trim/tail/origin / no-upscale | PENDING | PENDING |
-| 1080p-class resize / photo quality | PENDING | PENDING |
-| 150-frame workload | PENDING | PENDING |
-| Cancel→rerun / stale isolation | PENDING | PENDING |
-| Cleanup / repeated-use stability | PENDING | PENDING |
-| Heartbeat / jank / reload / crash | NOT MEASURED | NOT MEASURED |
+| Secure context / no HMR / correct frozen ID | PASS | PASS |
+| AVC API/config/init/first decode/draw | PASS | PASS |
+| AVC→GIF/WebP/APNG | PASS | PASS |
+| VP9 API/config/init/first decode/draw | PASS | PASS |
+| VP9→GIF/WebP/APNG | PASS | PASS |
+| VFR / B-frame | PASS | PASS |
+| Rotation / portrait / PAR | PASS | Rotation/portrait PASS; PAR FAIL |
+| Trim/tail/origin / no-upscale | PASS | PENDING after PAR failure |
+| 1080p-class resize / photo quality | PASS | NOT RUN |
+| 150-frame workload | PASS | NOT RUN |
+| Cancel→rerun / stale isolation | PASS | NOT RUN |
+| Cleanup / repeated-use stability | PASS for completed groups | Clean through failure; remaining groups PENDING |
+| Heartbeat / jank / reload / crash | 71.3ms; user says all tests passed | 48.3ms; qualitative report not supplied |
 
 A VP9-only failure requires capability/config/initialization/first-frame-stage
 evidence and a scope decision; no FFmpeg fallback. Any wrong B-frame/VFR visual

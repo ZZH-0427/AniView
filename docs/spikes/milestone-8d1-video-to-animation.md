@@ -3,8 +3,9 @@
 ## 1. Status
 
 **PENDING ANDROID VALIDATION — desktop framework complete.** Date: 2026-11-01.
-The user requested the framework first and deferred real-phone testing for several
-hours. No Android result, overall PASS, or 8D2 start is implied by desktop success.
+Fresh phone testing has now started: Edge passed; Quark stopped on the PAR
+fixture with VIDEO_SOURCE_LIMIT during probing. Overall PASS and 8D2 remain blocked
+on that investigation and Quark's remaining coverage. See the Android record below.
 V0.2 is **NOT RELEASED**.
 
 ## 2. Branch
@@ -243,24 +244,33 @@ Source app sample/Canvas/ImageData/canonical/ACK counters and cleanup errors ret
 
 ## 22. Android Edge
 
-**PENDING — user deferred.** No actual8D1 phone codec/config/init/decode result is
-available. Desktop secure-HTTPS verification is not Edge Android evidence.
+**PASS — user-reported Android Edge155.** Frozen build8d1-c8c7e145cf58,
+secure context true/HMR false:21 successes (benchmark repeated),1 cancellation,
+no failures. All six groups completed. Workers86/86; final active resources,
+source sample/Canvas/ImageData/RGBA/ACK and cleanup errors0; soft close confirmed.
 
 ## 23. Android Quark
 
-**PENDING — user deferred.** No actual8D1 phone result is available.
+**PARTIAL / FAIL — user-reported Quark10.2 / Chromium123 / Android16.** Same frozen
+build:10 successes, no cancellation; par.mp4→APNG fails VIDEO_SOURCE_LIMIT in
+probing. AVC/VP9 six directions, VFR, B-frame, rotation and portrait passed.
+Workers41/41 and all reported cleanup counters0; soft close confirmed. No
+confirmed Quark native geometry or root cause is available from Summary alone.
 
 ## 24. Android coverage gaps
 
-All new Android matrix, VFR/B-frame, rotation/PAR, high-resolution resize,
-150-frame, cancellation and repeated-cleanup checks remain untested.
-Use the [fresh checklist](milestone-8d1-android-validation.md);8A/8B/8C cannot substitute.
+Quark PAR is unresolved; positive/negative origin, mid-video trim and odd tail
+following it in the correctness group were not reached. Quark's resize,
+150-frame and cancel→rerun groups were explicitly not run. Edge coverage is
+complete. See the [Android record](milestone-8d1-android-validation.md); prior
+milestones do not substitute for these remaining cases.
 
 ## 25. Android responsiveness
 
-Heartbeat, severe jank, reload/crash, progressive slowdown and actual memory
-symptoms are **not measured on phone**. Native/GPU bytes remain not directly measured
-even after eventual phone acceptance.
+Reported heartbeat maximum: Edge71.3ms; Quark48.3ms before its failure. The user
+confirmed all Edge tests passed; no separate qualitative performance statement
+was provided for Quark. Native/GPU bytes remain null/UNKNOWN. Both reports show
+peak2 app samples,1 canonical RGBA frame, final0 active resources.
 
 ## 26. Cancellation
 
@@ -342,7 +352,7 @@ see [tool provenance](../../tools/video-source/README.md).
 
 ## 34. Known limitations
 
-Fresh Android acceptance is outstanding by user scheduling. Only the specified
+Quark PAR compatibility and remaining Android cases are outstanding. Only the specified
 8-bit opaque codec/profile/container subset and fixed geometry is accepted.
 Complex edit lists are rejected. Color/resize results are browser conversions,
 not original codec-plane reconstruction or guaranteed cross-browser RGB identity.
@@ -393,6 +403,8 @@ Ignored raw evidence/frozen asset hashes live under `.tools/video-source/`.
 
 ## 40. Next state
 
-Wait for the user's fresh Android Edge and Quark results against the frozen build.
+Investigate Quark PAR using a separate numeric probe without altering the frozen
+candidate. Then complete only the outstanding acceptance against an identified
+candidate; retain the Edge results as evidence for their original build.
 Do not run or infer those tests on their behalf now. Main, v0.1.0 and production
 remain unchanged. **Milestone 8D2 has not started. V0.2 NOT RELEASED.**
