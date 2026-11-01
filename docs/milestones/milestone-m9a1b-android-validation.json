@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "milestone": "M9A1b",
+  "date": "2026-11-01",
+  "status": "PASS",
+  "method": "User-reported response to the frozen candidate's Android lightweight UI checklist",
+  "candidate": "97e7241f10e5982643bdbbb8412354386bb5f66d",
+  "url": "https://classroom-activation-manually-brian.trycloudflare.com/AniView/",
+  "artifact": {
+    "productionBuild": true,
+    "hmr": false,
+    "pagesDeployment": false,
+    "fileCount": 34,
+    "unchangedDuringAcceptance": true
+  },
+  "userResponse": "各项测试均无异常",
+  "browsers": [
+    {
+      "name": "Android Edge",
+      "status": "PASS",
+      "checks": [
+        "Video trim error beside the fields; correction clears it",
+        "Video to Animated WebP result: Preview then Close retains visible result/Download and sensible focus",
+        "Repeat Preview return and download a result",
+        "No ordinary Frame-pixel workload or 15.36 MP engineering budget"
+      ]
+    },
+    {
+      "name": "Android Quark",
+      "status": "PASS",
+      "checks": [
+        "Video trim error beside the fields; correction clears it",
+        "Video to Animated WebP result: Preview then Close retains visible result/Download and sensible focus",
+        "Repeat Preview return and download a result",
+        "No ordinary Frame-pixel workload or 15.36 MP engineering budget"
+      ]
+    }
+  ],
+  "creatorMinimum": {
+    "status": "PASS",
+    "requiredCoverage": "At least one of the two Android browsers",
+    "browserAttribution": "Not separately specified in the aggregate user confirmation",
+    "checks": [
+      "One static image: visible minimum-count helper and disabled Generate",
+      "Second static image: helper disappears and Generate becomes available"
+    ]
+  },
+  "limitations": [
+    "Aggregate user confirmation; not independently instrumented Android evidence",
+    "No new browser versions, device model, numeric focus traces or measurements provided",
+    "Lightweight UI gate only; no repeated codec/stress matrix or every conversion direction",
+    "Does not claim that Creator minimum-count checking was separately performed in both browsers"
+  ]
+}
