@@ -1,0 +1,1699 @@
+{
+  "schema": 1,
+  "audit": "M9A1",
+  "recordedAt": "2026-11-01T12:43:40.916Z",
+  "branch": "feat/v0.2-video-to-animation",
+  "commit": "f30ac26c609fa348f4872420fabb748826c93d84",
+  "artifactCandidate": "455556891da173a8a8735dcd98cfa68c46a5f798",
+  "artifactProductCodeMatchesCommit": true,
+  "frozenAssetsVerified": 34,
+  "browser": "Edg/156.0.4314.50",
+  "node": "v24.22.1",
+  "productionBuild": true,
+  "hmr": false,
+  "hostingBase": "/AniView/",
+  "androidTestsPerformedThisAudit": false,
+  "baselineScreenshots": 91,
+  "totalLocalScreenshots": 99,
+  "archivedScreenshots": [
+    {
+      "file": "ui-001-workload-360.png",
+      "sha256": "25955e1223dea6bc0ff7f9049996d1f450ac7e3e70b879d836b19d7ebab15f63"
+    },
+    {
+      "file": "ui-001-creator-limit-390.png",
+      "sha256": "06b0d428758be4eead1b7b47e9bbebac961902dac7768d7b4239b9e561e120bc"
+    },
+    {
+      "file": "ui-002-trim-fields-360.png",
+      "sha256": "a24cfa3691996c0222e841d692af2e454992210cdf71be24f5db2795a3a4c8b6"
+    },
+    {
+      "file": "ui-002-trim-message-360.png",
+      "sha256": "5308dd84384de07d8be713eb077f0539fb8433eac09cd1692d5c89e040da650d"
+    },
+    {
+      "file": "ui-002-source-error-360.png",
+      "sha256": "c7a8171edd9d3370f5556bfb336f1429439f8dfdeb4b3b89f88b36bfc15a3600"
+    },
+    {
+      "file": "ui-003-one-image-390.png",
+      "sha256": "fcc11b775d3c32f0534d1f58a60e086b6e5337a5838b12a984a8886fd63aee7d"
+    },
+    {
+      "file": "ui-004-result-before-390.png",
+      "sha256": "44f0b5c933d2afd68ac9ab2e7534d9c569b8135efdaf7c19a1494d09e49c3ed4"
+    },
+    {
+      "file": "ui-004-return-after-390.png",
+      "sha256": "eefc0abf45791844c9b80658f917bda0e54997666e31822b8b362e56b91d9f9c"
+    }
+  ],
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 360,
+      "height": 800
+    }
+  ],
+  "horizontalOverflow": [],
+  "browserErrors": [],
+  "httpFailures": [],
+  "coverage": [
+    {
+      "name": "home",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "home",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1265,
+      "documentHeight": 910,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "home",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "home",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "home",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animated-viewer",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animated-viewer",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animated-viewer",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animated-viewer",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animated-viewer",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-convert",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-convert",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-convert",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-convert",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-convert",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 987,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-result",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-result",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1244,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1378,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-preview",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "animation-preview",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "apng-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1211,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "apng-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1323,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "gif-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1216,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "gif-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1298,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-result",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1265,
+      "documentHeight": 926,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-result",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1162,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1267,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-preview",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "mp4-preview",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "static-viewer",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "static-viewer",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-empty",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-empty",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-empty",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-empty",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-empty",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-one-image",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-one-image",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-one-image",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-one-image",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-one-image",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-setup",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-setup",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-setup",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1425,
+      "documentHeight": 1110,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-result",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1265,
+      "documentHeight": 1110,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-result",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 753,
+      "documentHeight": 1129,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1143,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1097,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-200",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 753,
+      "documentHeight": 1056,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-200",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1003,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "creator-200",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 949,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-convert",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1425,
+      "documentHeight": 1621,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-convert",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1265,
+      "documentHeight": 1573,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-convert",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 753,
+      "documentHeight": 1654,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-convert",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1641,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-convert",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1859,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "trim-error",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1553,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "trim-error",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1734,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "trim-error-message",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1553,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "trim-error-message",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 1734,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "duration-error",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1553,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "frame-limit-error",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1712,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1425,
+      "documentHeight": 1831,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-result",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1265,
+      "documentHeight": 1783,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-result",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 753,
+      "documentHeight": 1861,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-result",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 2029,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-result",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 2270,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "portrait-video",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1425,
+      "documentHeight": 1621,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "portrait-video",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 753,
+      "documentHeight": 1666,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "portrait-video",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1803,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "portrait-video",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 2023,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "original-limit",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1715,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-viewer",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-viewer",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-viewer",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-viewer",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-viewer",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-error",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "scrollWidth": 1440,
+      "documentHeight": 1000,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-error",
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "scrollWidth": 1280,
+      "documentHeight": 900,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-error",
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "scrollWidth": 768,
+      "documentHeight": 1024,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-error",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 844,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-error",
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "scrollWidth": 360,
+      "documentHeight": 800,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "zip-empty",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1034,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "video-empty",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1081,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "unsupported-video",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 1240,
+      "diagnosticPanels": 0
+    },
+    {
+      "name": "debug-home",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scrollWidth": 390,
+      "documentHeight": 890,
+      "diagnosticPanels": 1
+    }
+  ],
+  "videoFormGeometry": [
+    {
+      "name": "video-convert",
+      "width": 1440,
+      "viewportHeight": 1000,
+      "documentHeight": 1621,
+      "convertTop": 1453.828125,
+      "video": [
+        {
+          "width": 640,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "name": "video-convert",
+      "width": 1280,
+      "viewportHeight": 900,
+      "documentHeight": 1573,
+      "convertTop": 1405.828125,
+      "video": [
+        {
+          "width": 576,
+          "height": 432
+        }
+      ]
+    },
+    {
+      "name": "video-convert",
+      "width": 768,
+      "viewportHeight": 1024,
+      "documentHeight": 1654,
+      "convertTop": 1496.59375,
+      "video": [
+        {
+          "width": 640,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "name": "video-convert",
+      "width": 390,
+      "viewportHeight": 844,
+      "documentHeight": 1641,
+      "convertTop": 1497.75,
+      "video": [
+        {
+          "width": 324,
+          "height": 243
+        }
+      ]
+    },
+    {
+      "name": "video-convert",
+      "width": 360,
+      "viewportHeight": 800,
+      "documentHeight": 1859,
+      "convertTop": 1716.078125,
+      "video": [
+        {
+          "width": 294,
+          "height": 220.5
+        }
+      ]
+    },
+    {
+      "name": "video-result",
+      "width": 1440,
+      "viewportHeight": 1000,
+      "documentHeight": 1831,
+      "convertTop": 1453.828125,
+      "video": [
+        {
+          "width": 640,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "name": "video-result",
+      "width": 1280,
+      "viewportHeight": 900,
+      "documentHeight": 1783,
+      "convertTop": 1405.828125,
+      "video": [
+        {
+          "width": 576,
+          "height": 432
+        }
+      ]
+    },
+    {
+      "name": "video-result",
+      "width": 768,
+      "viewportHeight": 1024,
+      "documentHeight": 1861,
+      "convertTop": 1496.59375,
+      "video": [
+        {
+          "width": 640,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "name": "video-result",
+      "width": 390,
+      "viewportHeight": 844,
+      "documentHeight": 2029,
+      "convertTop": 1497.75,
+      "video": [
+        {
+          "width": 324,
+          "height": 243
+        }
+      ]
+    },
+    {
+      "name": "video-result",
+      "width": 360,
+      "viewportHeight": 800,
+      "documentHeight": 2270,
+      "convertTop": 1716.078125,
+      "video": [
+        {
+          "width": 294,
+          "height": 220.5
+        }
+      ]
+    },
+    {
+      "name": "portrait-video",
+      "width": 1440,
+      "viewportHeight": 1000,
+      "documentHeight": 1621,
+      "convertTop": 1453.828125,
+      "video": [
+        {
+          "width": 270,
+          "height": 480
+        }
+      ]
+    },
+    {
+      "name": "portrait-video",
+      "width": 768,
+      "viewportHeight": 1024,
+      "documentHeight": 1666,
+      "convertTop": 1508.09375,
+      "video": [
+        {
+          "width": 276.46875,
+          "height": 491.5
+        }
+      ]
+    },
+    {
+      "name": "portrait-video",
+      "width": 390,
+      "viewportHeight": 844,
+      "documentHeight": 1803,
+      "convertTop": 1659.859375,
+      "video": [
+        {
+          "width": 227.875,
+          "height": 405.109375
+        }
+      ]
+    },
+    {
+      "name": "portrait-video",
+      "width": 360,
+      "viewportHeight": 800,
+      "documentHeight": 2023,
+      "convertTop": 1879.578125,
+      "video": [
+        {
+          "width": 216,
+          "height": 384
+        }
+      ]
+    }
+  ],
+  "trimErrorGeometry": [
+    {
+      "width": 390,
+      "fields": [
+        {
+          "field": "video-start-time",
+          "top": 848.671875,
+          "value": "6",
+          "ariaInvalid": null,
+          "ariaDescribedby": null
+        },
+        {
+          "field": "video-end-time",
+          "top": 848.671875,
+          "value": "5",
+          "ariaInvalid": null,
+          "ariaDescribedby": null
+        }
+      ],
+      "alerts": [
+        {
+          "top": 1322.5625,
+          "text": "Choose a start and end within the video, with Start before End."
+        }
+      ]
+    },
+    {
+      "width": 360,
+      "fields": [
+        {
+          "field": "video-start-time",
+          "top": 826.171875,
+          "value": "6",
+          "ariaInvalid": null,
+          "ariaDescribedby": null
+        },
+        {
+          "field": "video-end-time",
+          "top": 916.5625,
+          "value": "5",
+          "ariaInvalid": null,
+          "ariaDescribedby": null
+        }
+      ],
+      "alerts": [
+        {
+          "top": 1503.890625,
+          "text": "Choose a start and end within the video, with Start before End."
+        }
+      ]
+    }
+  ],
+  "focusReturn": [
+    {
+      "stage": "duringPreview",
+      "value": {
+        "scrollY": 0,
+        "focused": "BODY",
+        "resultPresent": false
+      }
+    },
+    {
+      "stage": "afterRealPointerClose",
+      "value": {
+        "scrollY": 0,
+        "focused": "BODY",
+        "resultPresent": true,
+        "resultY": 1605.71875,
+        "previewY": 1812.3125,
+        "linkY": 1867.5
+      }
+    },
+    {
+      "stage": "afterOneTab",
+      "value": {
+        "scrollY": 0,
+        "focused": "video-conversion-back",
+        "resultPresent": true,
+        "resultY": 1605.71875,
+        "previewY": 1812.3125,
+        "linkY": 1867.5
+      }
+    }
+  ],
+  "unsupportedSourceError": {
+    "pickerY": 141.1875,
+    "errorY": 1338.34375,
+    "fieldsets": [
+      true,
+      true
+    ],
+    "descendants": [
+      {
+        "testid": "video-start-time",
+        "disabled": true
+      },
+      {
+        "testid": "video-end-time",
+        "disabled": true
+      },
+      {
+        "testid": "video-target",
+        "disabled": true
+      },
+      {
+        "testid": "video-fps",
+        "disabled": true
+      },
+      {
+        "testid": "video-size",
+        "disabled": true
+      }
+    ],
+    "error": "This video format is not supported. Choose an MP4/H.264 or WebM/VP9 video."
+  },
+  "creatorLimit": {
+    "message": "This sequence is too large to encode safely. Reduce the number of images or use smaller images (15,360,000 frame-pixels maximum).",
+    "sourceCount": 4
+  },
+  "creatorProgress": [
+    {
+      "flow": "creator",
+      "cancelled": true
+    },
+    {
+      "flow": "creator",
+      "stages": [
+        "Preparing images…",
+        "Preparing images 0 / 10…",
+        "Preparing images 1 / 10…",
+        "Preparing images 2 / 10…",
+        "Preparing images 3 / 10…",
+        "Preparing images 4 / 10…",
+        "Preparing images 5 / 10…",
+        "Preparing images 6 / 10…",
+        "Preparing images 7 / 10…",
+        "Preparing images 8 / 10…",
+        "Preparing images 9 / 10…",
+        "Preparing images 10 / 10…",
+        "Encoding 1 / 10",
+        "Cancelling…",
+        "Generation cancelled",
+        "Preparing images…",
+        "Preparing images 0 / 10…",
+        "Preparing images 1 / 10…",
+        "Preparing images 2 / 10…",
+        "Preparing images 3 / 10…",
+        "Preparing images 4 / 10…",
+        "Preparing images 5 / 10…",
+        "Preparing images 6 / 10…",
+        "Preparing images 7 / 10…",
+        "Preparing images 8 / 10…",
+        "Preparing images 9 / 10…",
+        "Preparing images 10 / 10…",
+        "Encoding 1 / 10",
+        "Encoding 2 / 10",
+        "Encoding 3 / 10",
+        "Encoding 4 / 10",
+        "Encoding 5 / 10",
+        "Encoding 6 / 10",
+        "Encoding 7 / 10",
+        "Encoding 8 / 10",
+        "Encoding 9 / 10",
+        "Encoding 10 / 10",
+        "Finalizing GIF…",
+        "GIF generated"
+      ],
+      "rerun": true
+    }
+  ],
+  "menuAndFocus": [
+    {
+      "name": "More menu End",
+      "focus": {
+        "tag": "BUTTON",
+        "label": "Remove from list",
+        "text": "Remove from list",
+        "y": 0
+      }
+    },
+    {
+      "name": "More menu Escape",
+      "focus": {
+        "tag": "BUTTON",
+        "id": "viewer-more-trigger",
+        "label": "More",
+        "text": "",
+        "y": 0
+      },
+      "menuClosed": true
+    },
+    {
+      "name": "Viewer to conversion focus",
+      "focus": {
+        "tag": "BODY",
+        "label": null,
+        "text": "\n    ← BackConvert animationSource animationvery-long-animation-example-with-man",
+        "y": 0
+      }
+    },
+    {
+      "name": "Animation Preview Close focus",
+      "focus": {
+        "tag": "BODY",
+        "label": null,
+        "text": "\n    ← BackConvert animationSource animationvery-long-animation-example-with-man",
+        "y": 0
+      }
+    },
+    {
+      "name": "MP4 Preview Back focus",
+      "focus": {
+        "tag": "BODY",
+        "label": null,
+        "text": "\n    ← BackConvert animationSource animationsmall.webpAnimated WebPDimensions320",
+        "y": 0
+      }
+    },
+    {
+      "name": "Static viewer menu",
+      "text": "Remove from list"
+    },
+    {
+      "name": "Creator Preview Close focus",
+      "focus": {
+        "tag": "BODY",
+        "label": null,
+        "text": "\n    AniViewCreate GIFSource imagesClear all3 / 200 images0.02 MiB / 16 MiB1a-ve",
+        "y": 0
+      }
+    },
+    {
+      "name": "Bounded 200-source list",
+      "list": {
+        "clientHeight": 335,
+        "scrollHeight": 12000,
+        "count": 200
+      }
+    },
+    {
+      "name": "Video result Preview Close focus",
+      "focus": {
+        "tag": "BODY",
+        "label": null,
+        "text": "\n    ← HomeConvert videoSource videoChoose another videoMP4 with H.264 or WebM w",
+        "y": 0
+      }
+    },
+    {
+      "name": "Debug details initially collapsed",
+      "panels": [
+        {
+          "summary": "Resource diagnostics",
+          "open": false
+        },
+        {
+          "summary": "Raw JSON",
+          "open": false
+        }
+      ]
+    }
+  ],
+  "keyboard": [
+    {
+      "name": "选择图片Open Images",
+      "outline": "rgb(39, 101, 176) solid 3px",
+      "outlineOffset": "3px"
+    }
+  ],
+  "touchLabels": [
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move up",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Move down",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "",
+      "name": "Remove",
+      "h": 44,
+      "w": 44
+    },
+    {
+      "text": "Frame duration (ms)",
+      "name": null,
+      "h": 17,
+      "w": 140.125
+    },
+    {
+      "text": "Loop forever",
+      "name": null,
+      "h": 44,
+      "w": 117.46875
+    }
+  ],
+  "zipConversionReturn": {
+    "before": {
+      "archive": "mixed.zip"
+    },
+    "after": {
+      "archive": "mixed.zip"
+    }
+  },
+  "reducedMotion": {
+    "matches": true,
+    "animatedUi": []
+  },
+  "errorCopyInventory": [
+    {
+      "path": "src/media/errors.ts",
+      "name": "errorMessages",
+      "line": 1,
+      "source": "errorMessages = {\n  STATIC_IMAGE_RUNTIME_UNAVAILABLE: 'Static-image viewing requires Blob and ImageBitmap support in this browser.',\n  VIEWER_RUNTIME_UNAVAILABLE: 'Image viewing requires Canvas, AbortController, Pointer Events, ResizeObserver and animation-frame support in this browser.',\n  UNSUPPORTED_FORMAT: 'Unsupported image format.',\n  CORRUPTED_FILE: 'This file appears to be damaged.',\n  DECODE_FAILED: 'This image could not be decoded.',\n  ARCHIVE_CORRUPTED: 'This archive appears to be damaged.',\n  ARCHIVE_ENCRYPTED: 'This ZIP entry is password-protected. Password-protected ZIP playback is not enabled yet.',\n  ARCHIVE_UNSUPPORTED: 'This archive uses an unsupported feature.',\n  ARCHIVE_INVALID: 'This file is not a valid ZIP archive.',\n  ARCHIVE_LIMIT_EXCEEDED: 'This archive exceeds the supported safety limits.',\n  ARCHIVE_ENTRY_TOO_LARGE: 'This ZIP entry is too large to open safely.',\n  ARCHIVE_CLOSED: 'This archive has been closed. Please open it again.',\n  ARCHIVE_WRONG_PASSWORD: 'The ZIP entry password is incorrect.',\n  OUT_OF_MEMORY: 'There is not enough memory to open this file.',\n  RESOURCE_LIMIT_EXCEEDED: 'This file exceeds the supported processing limits. Please try a smaller image.',\n  WORKER_FAILED: 'Media processing stopped. Please try opening the file again.',\n  WASM_UNAVAILABLE: 'The required decoder could not be loaded in this browser.',\n  FILE_READ_FAILED: 'This file could not be read.',\n  APNG_RUNTIME_UNAVAILABLE: 'APNG playback requires Worker image decoding and OffscreenCanvas support in this browser.',\n  GIF_RUNTIME_UNAVAILABLE: 'GIF playback requires Web Worker support in this browser.',\n  STATIC_PNG_NOT_ANIMATED: 'This file is a static image. Static-image viewing is not available in this milestone.',\n  STATIC_IMAGE_NOT_AVAILABLE: 'This file is a static image. Static-image viewing is not available in this milestone.',\n} as const",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    },
+    {
+      "path": "src/creation/gif/model.ts",
+      "name": "messages",
+      "line": 5,
+      "source": "messages: Record<EncodeErrorCode, string> = {\n  UNSUPPORTED_INPUT: 'GIF creation currently accepts static JPEG, PNG and WebP images only.',\n  ANIMATED_INPUT: 'GIF creation currently accepts static JPEG, PNG and WebP images only.',\n  CORRUPT_SOURCE: 'A source image is corrupted or incomplete.',\n  DECODE_FAILED: 'A source image could not be decoded.',\n  RESOURCE_LIMIT: 'This encoding job exceeds its resource limits.',\n  QUANTIZATION_FAILED: 'A frame could not be reduced to a GIF palette.',\n  ENCODING_FAILED: 'The GIF could not be encoded.',\n  CANCELLED: 'GIF encoding was cancelled.',\n  WORKER_FAILED: 'The GIF encoding worker failed or is unavailable.',\n  FILE_READ_FAILED: 'A source image could not be read.',\n}",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    },
+    {
+      "path": "src/creation/creation-session.ts",
+      "name": "creationErrorMessage",
+      "line": 26,
+      "source": "export function creationErrorMessage(cause: unknown): string {\n  if (cause instanceof EncodeError) {\n    const detail = cause.detail\n    if (detail?.kind === 'output-side' || detail?.kind === 'output-pixels') {\n      return `The animation would require a ${detail.width}×${detail.height} output canvas. GIF creation allows up to 2048 pixels per side and 4,194,304 pixels total. Use smaller source images.`\n    }\n    if (detail?.kind === 'workload') return 'This sequence is too large to encode safely. Reduce the number of images or use smaller images (15,360,000 frame-pixels maximum).'\n    if (detail?.kind === 'source-count') return 'Choose between 2 and 200 static source images.'\n    if (detail?.kind === 'source-bytes') return 'The source images exceed the 16 MiB total limit. Remove some images and try again.'\n    if (cause.code === 'ANIMATED_INPUT' || cause.code === 'UNSUPPORTED_INPUT') return unsupported\n    if (cause.code === 'CORRUPT_SOURCE') return 'A source image is corrupt or unreadable by this browser. Remove it or choose another image, then try again.'\n    return cause.message\n  }\n  if (cause instanceof MediaError) return cause.code === 'CORRUPTED_FILE' ? 'A source image is corrupt. Choose another image.' : cause.message\n  return 'GIF creation failed. Your sources and previous result are retained; please try again.'\n}",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    },
+    {
+      "path": "src/conversion/conversion-session.ts",
+      "name": "conversionErrorMessage",
+      "line": 47,
+      "source": "export function conversionErrorMessage(code: ProductConversionError, target: ConversionTarget = 'apng') {\n  switch (code) {\n    case 'RESOURCE_LIMIT': return 'This animation is too large to convert safely in the browser.'\n    case 'SOURCE_UNSUPPORTED': return 'Choose a GIF, animated WebP or APNG animation.'\n    case 'SOURCE_DECODE_FAILED': return 'The source animation could not be read or decoded. Try another file.'\n    case 'TARGET_ENCODER_UNSUPPORTED': return `${formatLabel(target)} encoding is not supported in this browser.`\n    case 'TARGET_ENCODE_FAILED': return 'The output animation could not be created or verified. Try again.'\n    case 'WORKER_FAILED': return 'Animation processing stopped unexpectedly. Try again.'\n    case 'CANCELLED': return 'Conversion cancelled. Your source and target are retained.'\n    case 'VIDEO_API_UNAVAILABLE':case 'VIDEO_CONFIG_UNSUPPORTED':case 'VIDEO_ENCODER_UNSUPPORTED':return 'MP4 encoding is not supported in this browser. Use a secure HTTPS page and a browser with video encoding support.'\n    case 'VIDEO_ENCODER_INIT_FAILED':return 'The video encoder could not start. Try again or use another browser.'\n    case 'VIDEO_OUTPUT_TOO_LARGE':return 'The MP4 is too large to save safely in the browser.'\n    case 'VIDEO_MUX_FAILED':return 'The MP4 could not be finalized. Your source is unchanged; try again.'\n    case 'VIDEO_ENCODE_FAILED':case 'VIDEO_FRAME_FAILED':case 'VIDEO_VALIDATION_FAILED':return 'The MP4 could not be created or verified. Try again.'\n  }\n}",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    },
+    {
+      "path": "src/video-conversion/errors.ts",
+      "name": "videoErrorMessage",
+      "line": 7,
+      "source": "export function videoErrorMessage(code:VideoProductError){switch(code){\n case 'VIDEO_CONTAINER_UNSUPPORTED':case 'SOURCE_UNSUPPORTED':return 'This video format is not supported. Choose an MP4/H.264 or WebM/VP9 video.'\n case 'VIDEO_CODEC_UNSUPPORTED':return 'This video codec is not supported yet. Choose an 8-bit SDR H.264 MP4 or opaque VP9 WebM.'\n case 'VIDEO_DECODER_UNAVAILABLE':return 'Video decoding is not available. Use a secure HTTPS page and a browser with video decoding support.'\n case 'VIDEO_CONFIG_UNSUPPORTED':return 'This browser does not support this video configuration. Try another video.'\n case 'VIDEO_TIMELINE_UNSUPPORTED':return 'This video’s timeline structure is not supported yet.'\n case 'VIDEO_PREROLL_LIMIT':return 'This clip needs too much decoding before its start. Try a different start position or a shorter video.'\n case 'VIDEO_SOURCE_LIMIT':return 'This source video exceeds processing limits or has unsupported frame dimensions. Try a smaller video.'\n case 'VIDEO_OUTPUT_PLAN_LIMIT':case 'RESOURCE_LIMIT':return 'This conversion is too large. Reduce the clip length, FPS or output size.'\n case 'VIDEO_JOB_DEADLINE':return 'This conversion took too long and was stopped. Shorten the clip or reduce FPS or output size.'\n case 'VIDEO_TARGET_TIMING_UNSUPPORTED':return 'Adjust the clip end time or choose another output format.'\n case 'TARGET_ENCODER_UNSUPPORTED':return 'This output format cannot be encoded in this browser. Choose another format.'\n case 'TARGET_ENCODE_FAILED':return 'The output animation could not be created or verified. Try again.'\n case 'VIDEO_DRAW_FAILED':case 'VIDEO_RGBA_FAILED':return 'This browser could not process the video’s pixels. Try another video or browser.'\n case 'WORKER_FAILED':return 'Video processing stopped unexpectedly. Your source is retained; try again.'\n case 'CANCELLED':return 'Conversion cancelled. Your video and settings are retained.'\n default:return 'This browser could not read or decode the video. Try another video.'\n}}",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    },
+    {
+      "path": "src/video-conversion/settings.ts",
+      "name": "estimateVideo",
+      "line": 11,
+      "source": "export function estimateVideo(info:VideoInspection,settings:VideoSettings,deflate:boolean|null=true):Preflight{\n const {startUs,endUs,fps,longSide,target}=settings\n if(![startUs,endUs].every(Number.isSafeInteger)||startUs<0||endUs<=startUs||endUs>info.durationUs)\n  return{ok:false,issue:'trim',message:'Choose a start and end within the video, with Start before End.'}\n if(endUs-startUs>VIDEO_INPUT_LIMITS.maxSelectedUs)return{ok:false,issue:'duration',message:'Video clips can be up to 30 seconds. Shorten the selected clip.'}\n if(!videoFps(target).includes(fps))return{ok:false,issue:'timing',message:'Choose a supported FPS for this output format.'}\n let size:{width:number;height:number}\n try{size=outputSize(info.displayWidth,info.displayHeight,longSide)}catch{return{ok:false,issue:'size',message:'The output long side can be up to 720 pixels. Choose 360, 480 or 720.'}}\n const frameCount=countGrid(startUs,endUs,fps),estimate={...size,durationUs:endUs-startUs,fps,frameCount,framePixels:size.width*size.height*frameCount}\n if(frameCount>VIDEO_INPUT_LIMITS.maxSampledFrames)return{ok:false,estimate,issue:'frames',message:'This conversion would create too many frames. Reduce the clip duration or FPS.'}\n if(estimate.framePixels>VIDEO_INPUT_LIMITS.maxFramePixels)return{ok:false,estimate,issue:'workload',message:'This conversion is too large. Reduce the clip duration, FPS or output size.'}\n if(target==='apng'&&deflate===false)return{ok:false,estimate,issue:'apng',message:'APNG encoding is not supported in this browser. Choose GIF or Animated WebP.'}\n try{const plan=createSamplingPlan(info,settings);return{ok:true,estimate,plan,expectedDurationMs:validateTargetTiming(plan,target)}}\n catch{return{ok:false,estimate,issue:'timing',message:'This clip has a frame duration too short for the selected format. Adjust the end time or choose another output format.'}}\n}",
+      "evidence": "source-reviewed; not all branches fault-injected"
+    }
+  ],
+  "measurementNotes": [
+    "CSS-pixel viewport emulation; this is not Android device evidence.",
+    "Pointer events, not only DOM click(), confirm the UI-004 return-to-top finding.",
+    "Derived disabled states inside fieldsets use matches(:disabled), not the child disabled property.",
+    "Only observed responsive/layout/interaction behavior is newly accepted; no full technical regression or fault-injection campaign.",
+    "Raw local intermediate reports and temporary drivers remain ignored under .tools/ui-ux-audit/."
+  ]
+}
