@@ -1,4 +1,4 @@
-# Static-image GIF Creator acceptance tools
+# Static-image animation Creator acceptance tools
 
 These tools exercise the actual V0.2 product UI on the feature branch. They do
 not deploy anything, create a release or modify the v0.1.0 production website.
@@ -65,13 +65,13 @@ http://COMPUTER_IP:4198/AniView/validation/creation/
 
 The second page supplies ZIP downloads containing **40×320×240 PNGs**, **10×1024²
 PNGs** and a mixed JPEG/PNG/WebP set. Download and extract these with the phone's
-Files/archive app, then choose the extracted static images in **Create GIF**.
+Files/archive app, then choose the extracted static images in **Create animation**.
 ZIP here is only a convenient fixture-delivery container: the Creator itself
 does not accept ZIP sources or perform extraction.
 
 In Android Edge and Quark:
 
-1. Enter Create GIF, choose the mixed static sources, add another image, move
+1. Enter Create animation, choose the mixed static sources, add another image, move
    rows up/down and remove one. Check the duration and finite/forever loop controls.
 2. Generate; confirm progress, metadata, Preview via AniView playback and return
    without losing the creation project. Use **Download GIF** and confirm a normal

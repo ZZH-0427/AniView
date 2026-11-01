@@ -127,7 +127,7 @@ export default function CreateGif({ session, onBack, onPreview, previewButtonRef
   return <main className="gif-creator" data-testid="creator-page">
     <header className="creator-header">
       <IconButton icon="previous-file" label={t('common.back')} data-testid="creation-back" onClick={onBack} />
-      <div><p className="creator-eyebrow">AniView</p><h1>{t('home.createGif')}</h1></div>
+      <div><p className="creator-eyebrow">AniView</p><h1>{t('home.createAnimation')}</h1></div>
     </header>
 
     <section className="creator-sources creator-card" aria-labelledby="creation-sources-heading">

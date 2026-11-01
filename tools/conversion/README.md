@@ -24,7 +24,7 @@ node node_modules/vite/bin/vite.js build --config tools/conversion/vite.config.m
 ```
 
 The builds are separate. Ordinary `npm run build` produces `dist/` with the
-existing Viewer and static-image GIF Creator. The explicit conversion config
+existing Viewer and static-image animation Creator. The explicit conversion config
 produces ignored `.tools/conversion-site/`, uses the `/AniView/` base and includes
 third-party notices. It does not add the experiment to normal navigation or
 eagerly import conversion encoders into ordinary Viewer startup.

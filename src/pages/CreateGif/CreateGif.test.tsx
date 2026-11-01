@@ -25,7 +25,7 @@ describe('GIF creation presentation', () => {
     if (count) await value.add(Array.from({ length: count }, (_, index) => source(`image-${index}.png`)))
     const html = render(value), generate = tag(html, 'creation-generate')
     if (count === 1) {
-      expect(html).toContain('Add at least one more static image to create an animated GIF.')
+      expect(html).toContain('Add at least one more static image to create an animation.')
       const helper = tag(html, 'creation-minimum-sources'), id = helper.match(/id="([^"]+)"/)?.[1]
       expect(id).toBeTruthy()
       expect(generate).toContain(`aria-describedby="${id}"`)
@@ -39,7 +39,7 @@ describe('GIF creation presentation', () => {
   })
   it('starts with a static multiple picker, honest limits and disabled generation', () => {
     const html = render(session())
-    expect(html).toContain('Create an animated GIF from static images.')
+    expect(html).toContain('Add images to create an animation.')
     expect(tag(html, 'creation-input')).toContain('accept="image/*"')
     expect(tag(html, 'creation-input')).toContain('multiple=""')
     expect(html).not.toContain('capture=')

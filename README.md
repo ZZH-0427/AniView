@@ -54,6 +54,10 @@ Browser-native pickers/video controls follow the browser or OS language.
 See the [localization record](docs/milestones/milestone-m9a1c-v0.2-localization.md)
 for the completed desktop and Android Edge/Quark acceptance.
 
+The static-image entry is named **Create animation / 制作动图**. In this branch
+the Creator directly generates GIF; Animated WebP/APNG use the separate
+animation-conversion workflow. See the [naming amendment](docs/milestones/milestone-m9a1c-v0.2-localization-naming-amendment.md).
+
 ## Features and Supported Formats
 
 | Media | Supported formats |

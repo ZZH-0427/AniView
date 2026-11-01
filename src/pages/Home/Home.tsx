@@ -25,7 +25,7 @@ export function Home({ onOpen, onArchive, onCreate,onConvertVideo }: {
         <p>{t('home.description')}</p>
         <ImageInput onFiles={onOpen} />
         <ArchiveInput onOpen={onArchive} />
-        {onCreate && <div className="home-create-entry"><IconButton icon="create" label={t('home.createGif')} text={t('home.createGif')}
+        {onCreate && <div className="home-create-entry"><IconButton icon="create" label={t('home.createAnimation')} text={t('home.createAnimation')}
           data-testid="create-gif-entry" onClick={onCreate} /></div>}
         {onConvertVideo&&<div className="home-create-entry"><IconButton icon="video" label={t('home.convertVideo')} text={t('home.convertVideo')} data-testid="convert-video-entry" onClick={onConvertVideo}/></div>}
         <p className="drop-hint">{t('home.dropHint')}</p>
