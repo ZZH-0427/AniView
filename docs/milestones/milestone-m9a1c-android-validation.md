@@ -4,11 +4,23 @@ Status: **PENDING ANDROID LOCALIZATION VALIDATION**.
 Both Android Edge and Quark need fresh lightweight product UI acceptance.
 No result from an earlier milestone is reused as a pass here.
 
-The dedicated preview candidate will be identified by its frozen
-`release-candidate.json` and local hash manifest. It is a production build,
-without Vite HMR, not a GitHub Pages deployment. Temporary secure HTTPS access
+Frozen candidate: `9d377b5ec0a98e487ac26faa2751f750e9153b26`.
+Page: https://email-farming-ins-cached.trycloudflare.com/AniView/
+Small sample: https://email-farming-ins-cached.trycloudflare.com/AniView/validation/video-animation/small.mp4
+
+The candidate's `release-candidate.json` records `sourceDirty:false`.
+Local manifest `.tools/localization/frozen.json` hashes all35 artifact files
+in `.tools/localization/site-9d377b5`; dedicated preview port4246.
+It is a production build, without Vite HMR, not a GitHub Pages deployment.
+Temporary secure HTTPS access
 uses the existing local preview/tunnel workflow. No selected media is sent to
 the preview server; sample downloads are procedural local test fixtures.
+The HTTPS entry/HTML dependencies/favicon/candidate identity (9 paths) matched
+their frozen hashes; small.mp4 matched the original2187-byte procedural file.
+Installed desktop Edge independently confirmed `secureContext:true`, HMR false,
+Chinese switching, video conversion and Preview return, with no page exception.
+This connectivity check is not an Android acceptance result. Keep the computer
+on and online during the temporary test; do not alter the frozen artifact.
 
 ## Minimal test, each browser
 

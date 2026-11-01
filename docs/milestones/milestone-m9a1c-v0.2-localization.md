@@ -3,6 +3,10 @@
 Status: **PENDING ANDROID LOCALIZATION VALIDATION**.
 Desktop implementation/validation complete, 2026-11-01.
 Branch: `feat/v0.2-video-to-animation`; baseline `adac203` (M9A1b closed).
+Frozen implementation candidate: `9d377b5ec0a98e487ac26faa2751f750e9153b26`,
+35 artifact files, clean source identity; subsequent acceptance documentation
+does not change this frozen candidate. HTTPS entry and a localized conversion/
+Preview roundtrip were independently checked in desktop Edge.
 M9A2 has not started. V0.2 is not released; public Pages remains v0.1.0.
 
 ## Architecture and preference
