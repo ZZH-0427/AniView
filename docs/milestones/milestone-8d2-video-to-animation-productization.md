@@ -1,6 +1,8 @@
 # Milestone 8D2 — Video → Animation Productization
 
-Status: **PENDING ANDROID VALIDATION**. Date:2026-11-01.
+Status: **PASSED / CLOSED**. Date:2026-11-01. Fresh Android Edge/Quark product
+acceptance passes on frozen candidate4555568; the [Android record](milestone-8d2-android-validation.md)
+retains user-confirmed coverage and independent successful-result/after-Home snapshots.
 Branch:`feat/v0.2-video-to-animation`. V0.2 is NOT RELEASED. Main, v0.1.0,
 GitHub Pages settings/workflow and production remain outside this work.
 
@@ -192,9 +194,16 @@ no audit force-fix or unsupported classification of all advisories is asserted.
 
 ## Android gate and next state
 
-Fresh lightweight product testing in Edge and Quark is **PENDING**. Use the
-[Android record/checklist](milestone-8d2-android-validation.md), frozen production
-build and trusted HTTPS. User preference is wireless; no USB is required.
+Fresh lightweight product testing in Edge and Quark is **PASSED** on the frozen
+production build over trusted public HTTPS. User preference is wireless; no USB
+was required. Both browsers passed the requested product protocol, repeated
+downloads and Cancel/rerun. Last snapshots show exact sampled/output counts
+75/75 WebP in Quark and50/50 GIF in Edge, peak canonical1/samples2, no cleanup
+errors, soft close and no active conversion Workers. After Home, all resources
+and both owned URLs are0; Workers46/46 Quark and52/52 Edge. Last-job heartbeat
+gaps55.1ms and52.3ms respectively, hidden=false/gaps=[]; no jank or other problems
+were reported. These are per-job/per-session observations, not whole-suite
+maxima or native-memory measurements.
 8D1 raw timer disposition and passed codec/ownership gates are inherited,
 not substituted for native preview/trim/settings/result/download/new-source8D2 UX.
 
@@ -203,5 +212,7 @@ Known limits: stated codec/opaque SDR subset; ignored audio;150 frames/30s/
 alpha/HEVC/AV1; browser-dependent RGB/resize; unobservable native/GPU peaks;
 source-work proxy; narrowly guarded native PAR compatibility; temporary preview.
 
-**Milestone8D2: PENDING ANDROID VALIDATION.** No main merge, tag, GitHub Release,
-production deployment or release-preparation work has started.
+**Milestone8D2: PASSED / CLOSED.** MP4/H.264 and opaque SDR VP9 WebM→GIF/WebP/APNG
+are feature-complete on the V0.2 branch. Alongside8A/8B/8C, the core conversion
+feature set is complete. Ready for stability/release-preparation planning, but
+no such work, main merge, tag, GitHub Release or production deployment has started.

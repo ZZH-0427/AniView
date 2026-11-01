@@ -41,7 +41,7 @@ This needs secure HTTPS and usable browser-native video decoding. Limits include
 150 sampled frames,30-second clips,720 maximum output long side and bounded
 frame-pixel work; smaller sources are not enlarged. Audio is ignored; HDR,
 transparent video and other video codecs are not supported. The accepted8D1
-technical architecture is retained. **8D2 Android product acceptance is pending**;
+technical architecture is retained. **8D2 passed fresh Android Edge/Quark product acceptance**;
 see the [product record](docs/milestones/milestone-8d2-video-to-animation-productization.md).
 These changes are not yet on the public demo.
 

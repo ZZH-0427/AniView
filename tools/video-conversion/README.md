@@ -39,5 +39,6 @@ Reports, browser profiles, generated/downloaded media and asset hashes remain
 ignored in `.tools/video-conversion-product/`. The
 [implementation record](../../docs/milestones/milestone-8d2-video-to-animation-productization.md)
 separates inherited technical evidence from new product tests; the
-[Android checklist](../../docs/milestones/milestone-8d2-android-validation.md)
-remains pending until actual phone results arrive.
+[Android acceptance record](../../docs/milestones/milestone-8d2-android-validation.md)
+now preserves passed fresh Edge/Quark product results. The accepted artifact was
+frozen at4555568; later closure changes are documentation only. V0.2 is not released.
