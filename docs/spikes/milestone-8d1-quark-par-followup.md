@@ -1,6 +1,6 @@
 # 8D1 Quark PAR follow-up — 2026-11-01
 
-Status: **FIX IMPLEMENTED / DESKTOP VERIFIED / TARGETED ANDROID RETEST PENDING**.
+Status: **PAR FIX PHONE VERIFIED / FUNCTIONAL AND CLEANUP PASS / TIMER REVIEW PENDING**.
 Original candidate: `8d1-c8c7e145cf58`. New candidate: `8d1-122e82b97f04`.
 Overall8D1 is not passed;8D2 has not started. V0.2 is not released.
 
@@ -88,7 +88,7 @@ artifact lives separately under ignored `.tools/video-source-par-site/` and its
 own preview port4232. Source code, test checkpoints and public Pages are not
 interchangeable with a phone result for a particular content build.
 
-## Targeted phone retest
+## Targeted phone retest protocol and actual result
 
 [New frozen candidate](https://departments-til-caps-listening.trycloudflare.com/AniView/experiments/video-source/?debug=1)
 
@@ -110,5 +110,22 @@ errors. A positive trackParFallbackSamples on Quark confirms the native omission
 path was exercised.0 can instead mean a particular run honored PAR natively;
 report the actual value rather than manufacturing a compatibility-path count.
 
-These are still pending. No overall PASS or production release is inferred from
-desktop success; keep main, v0.1.0 and GitHub Pages unchanged.
+The user exceeded the requested subsets and completed the entire seven-group
+sequence on the new candidate in **both** browsers:23 PASS,1 expected cancellation,
+failures empty,94/94 Workers terminated, all active resources/ACK and cleanup
+errors0. Quark's fallback count11 proves the formerly failing native omission
+path is now exercised successfully against all three output encoders. Edge's
+fallback count0 confirms the native-correct path also passes. Peak app samples2,
+canonical RGBA1; source disposition softClosed=true/hardTerminated=false.
+
+The [normalized physical-phone evidence](milestone-8d1-android-results-2026-11-01.json)
+retains both reports. PAR correction and functional/cleanup acceptance are passed.
+Edge heartbeat max57.400000095ms; Quark max36674.5ms. The user explicitly confirms
+Quark stayed foreground, no tens-of-seconds inability to tap/scroll, and neither
+browser had visible jank. Thus the large Quark timer gap cannot be attributed
+to backgrounding or silently treated as measured foreground blocking. The
+original harness has only setInterval elapsed gaps, no visibility/long-task trace.
+The existing export's largest-gap row is requested for localized evidence review.
+
+Overall8D1 remains pending that responsiveness evidence classification, not PAR
+or another codec rerun. Keep both candidates, main, v0.1.0 and Pages unchanged.

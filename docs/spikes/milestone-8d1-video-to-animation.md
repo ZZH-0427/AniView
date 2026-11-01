@@ -2,12 +2,13 @@
 
 ## 1. Status
 
-**PENDING ANDROID VALIDATION — desktop framework complete.** Date: 2026-11-01.
-Fresh phone testing has now started: Edge passed; Quark stopped on the PAR
-fixture with VIDEO_SOURCE_LIMIT during probing. Overall PASS and 8D2 remain blocked
-on that investigation and Quark's remaining coverage. See the Android record below.
-Follow-up: native PAR loss is confirmed; a guarded adapter correction is desktop
-verified in candidate8d1-122e82b97f04. Its targeted phone retest is still pending;
+**FUNCTIONAL/CLEANUP PHONE PASS — QUARK TIMER REVIEW PENDING.** Date: 2026-11-01.
+The initial Quark PAR failure has been corrected and retested. All functional
+and cleanup groups now pass on both phone browsers; only the unexplained Quark
+timer outlier remains under review.8D2 has not started.
+Follow-up: native PAR loss is confirmed; the guarded adapter correction is desktop
+and phone verified in candidate8d1-122e82b97f04. Both browsers have23 PASS/1 cancelled
+with clean resources. Quark's foreground timer-gap anomaly remains unclassified;
 see the [complete evidence and correction](milestone-8d1-quark-par-followup.md).
 V0.2 is **NOT RELEASED**.
 
@@ -66,8 +67,8 @@ callback. On an early decoder failure that stage stays unknown, not falsely true
 
 Worker diagnostics retain each capability step, codec and stopped phase.
 Known HDR/alpha/profile/coded-size policies reject before decoding; decoded
-color/format/geometry is checked again. Fresh Android Edge and Quark capability
-chains remain **PENDING**.
+color/format/geometry is checked again. Fresh Android Edge and Quark runs now
+confirm those chains for both codec families and all three output targets.
 
 ## 7. Timeline normalization
 
@@ -247,34 +248,33 @@ Source app sample/Canvas/ImageData/canonical/ACK counters and cleanup errors ret
 
 ## 22. Android Edge
 
-**PASS — user-reported Android Edge155.** Frozen build8d1-c8c7e145cf58,
-secure context true/HMR false:21 successes (benchmark repeated),1 cancellation,
-no failures. All six groups completed. Workers86/86; final active resources,
-source sample/Canvas/ImageData/RGBA/ACK and cleanup errors0; soft close confirmed.
+**PASS — user-reported Android Edge155.** New frozen build8d1-122e82b97f04,
+secure context true/HMR false:23 successes,1 cancellation, no failures. Entire
+seven-group sequence completed. Workers94/94; all final active counters and
+cleanup errors0; soft close confirmed. Heartbeat max57.4ms, no visible jank.
 
 ## 23. Android Quark
 
-**PARTIAL / FAIL — user-reported Quark10.2 / Chromium123 / Android16.** Same frozen
-build:10 successes, no cancellation; par.mp4→APNG fails VIDEO_SOURCE_LIMIT in
-probing. AVC/VP9 six directions, VFR, B-frame, rotation and portrait passed.
-Workers41/41 and all reported cleanup counters0; soft close confirmed. Follow-up
-numeric diagnostics confirm native output loses the requested PAR; the adapter
-normalization is implemented but pending a new phone retest.
+**FUNCTIONAL/CLEANUP PASS; TIMER REVIEW OPEN — Quark10.2 / Chromium123 / Android16.**
+New build8d1-122e82b97f04:23 successes,1 cancellation, no failures. PAR normalization
+observed11 samples; all three PAR target encoders passed. Workers94/94 and all
+final active/cleanup counters0; soft close confirmed. Foreground/no visible jank
+is user-confirmed, but the36674.5ms timer-gap outlier remains unexplained.
 
 ## 24. Android coverage gaps
 
-Quark PAR is unresolved; positive/negative origin, mid-video trim and odd tail
-following it in the correctness group were not reached. Quark's resize,
-150-frame and cancel→rerun groups were explicitly not run. Edge coverage is
-complete. See the [Android record](milestone-8d1-android-validation.md); prior
-milestones do not substitute for these remaining cases.
+All functional/cleanup groups are now covered on the same new build in both
+browsers. Only classification of Quark's large timer gap remains. See the
+[Android record](milestone-8d1-android-validation.md); previous candidate failures
+and their investigation are retained as history.
 
 ## 25. Android responsiveness
 
-Reported heartbeat maximum: Edge71.3ms; Quark48.3ms before its failure. The user
-confirmed all Edge tests passed; no separate qualitative performance statement
-was provided for Quark. Native/GPU bytes remain null/UNKNOWN. Both reports show
-peak2 app samples,1 canonical RGBA frame, final0 active resources.
+New reports: Edge57.4ms; Quark36674.5ms heartbeat maximum. The user confirms no
+visible jank in either, and Quark stayed foreground without a tens-of-seconds
+loss of click/scroll response. The original setInterval timer metric has no
+visibility/long-task trace; do not invent backgrounding or a foreground freeze.
+Review the existing export's per-row timings. Native/GPU bytes stay null/UNKNOWN.
 
 ## 26. Cancellation
 
@@ -358,7 +358,8 @@ see [tool provenance](../../tools/video-source/README.md).
 
 ## 34. Known limitations
 
-Quark PAR compatibility and remaining Android cases are outstanding. Only the specified
+Quark's foreground timer-gap anomaly needs classification. Functional and cleanup
+cases passed on both browsers. Only the specified
 8-bit opaque codec/profile/container subset and fixed geometry is accepted.
 Complex edit lists are rejected. Color/resize results are browser conversions,
 not original codec-plane reconstruction or guaranteed cross-browser RGB identity.
@@ -381,9 +382,9 @@ for Android time, quality and stability observations.
 
 ## 37. VP9 verdict
 
-**ACCEPT WITH LIMITATIONS — original candidate passed on Android Edge and Quark.**
-Both phone reports completed VP9→GIF/WebP/APNG before the unrelated AVC PAR
-failure. New candidate's targeted geometry checks remain pending.
+**ACCEPT WITH LIMITATIONS — both candidates passed on Android Edge and Quark.**
+Both new phone reports include VP9→GIF/WebP/APNG and the full geometry matrix.
+Only the separate Quark timer-gap classification remains open.
 A phone failure must report actual capability/config/first-decode stage and
 support a scope decision; it must not trigger an FFmpeg fallback.
 
@@ -391,20 +392,21 @@ support a scope decision; it must not trigger an FFmpeg fallback.
 
 | Component | Verdict |
 | --- | --- |
-| Mediabunny Input | ACCEPT WITH LIMITATIONS — desktop/phone codec slices verified; native PAR compatibility pending |
+| Mediabunny Input | ACCEPT WITH LIMITATIONS — desktop/phone codec slices verified; guarded native PAR correction passed |
 | VideoSampleSink | ACCEPT WITH LIMITATIONS — presentation stream verified; hidden work unobservable |
 | Sampling | ACCEPT WITH LIMITATIONS — µs normalization refinement verified |
-| Orientation/resize | ACCEPT WITH LIMITATIONS — Edge passed; Quark PAR correction/resize retest pending |
+| Orientation/resize | ACCEPT WITH LIMITATIONS — both phone matrices and guarded PAR correction passed |
 | RGBA extraction | ACCEPT WITH LIMITATIONS — Worker path verified; native copies unknown |
-| Video→Canonical adapter | ACCEPT WITH LIMITATIONS — ownership/ACK/cleanup verified on desktop |
+| Video→Canonical adapter | ACCEPT WITH LIMITATIONS — ownership/ACK/cleanup verified on desktop and both phones |
 | Overall architecture | ACCEPT WITH LIMITATIONS provisionally; overall milestone not passed |
 
 ## 39. Final verdict
 
-**Milestone 8D1: PENDING ANDROID VALIDATION.**
+**Milestone 8D1: PENDING TIMING-ANOMALY CLASSIFICATION.**
 The framework and desktop engineering gate are complete. Original candidate
 `8d1-c8c7e145cf58` remains unchanged; the separately frozen PAR follow-up is
-`8d1-122e82b97f04`, with targeted phone acceptance pending.
+`8d1-122e82b97f04`, with23 PASS/1 cancellation and clean resources in both phone
+browsers. Functional/cleanup acceptance passed; only the timer outlier is open.
 The wireless HTTPS preview was checked on desktop with normal certificate
 validation, actual AVC/VP9 Worker decoding, HMR false,320/390/1280-width layouts,
 and clean teardown. It is not phone or GitHub Pages validation.
@@ -412,9 +414,8 @@ Ignored raw evidence/frozen asset hashes live under `.tools/video-source/`.
 
 ## 40. Next state
 
-Complete the linked targeted retest against8d1-122e82b97f04; retain older Edge
-and Quark results as evidence for their original build. Keep both frozen artifacts
-unchanged during acceptance. Native PAR loss has been diagnosed; the guarded
-adapter correction is desktop verified, not yet phone verified.
+Read only the largest-gap row of Quark's already-completed export. Keep both
+frozen artifacts unchanged; no codec rerun or8D2 work is requested. Native PAR
+loss and its guarded correction are now verified on the real phone.
 Do not run or infer those tests on their behalf now. Main, v0.1.0 and production
 remain unchanged. **Milestone 8D2 has not started. V0.2 NOT RELEASED.**

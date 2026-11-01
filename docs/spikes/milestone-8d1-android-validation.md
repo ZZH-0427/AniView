@@ -1,6 +1,6 @@
 # Milestone 8D1 — Android validation
 
-Status: **PENDING — Edge passed; Quark PAR failed and investigation is open.**
+Status: **FUNCTIONAL/CLEANUP PASS — Quark foreground timer anomaly review pending.**
 Date: 2026-11-01. Results below are user-reported physical Android browser runs,
 not remotely observed phone sessions.
 
@@ -95,7 +95,7 @@ Classification and the adapter-only correction are recorded in the linked
 follow-up. No Mediabunny source/behavior patch, dependency change or resource-limit
 increase was necessary. Native decoder config support alone remains insufficient.
 
-## Current candidate — targeted retest pending
+## Current candidate — phone functional/cleanup results received
 
 Build **8d1-122e82b97f04** is separate from the unchanged original artifact.
 It permits only a complete, unadjusted native frame with explicit coherent
@@ -110,9 +110,33 @@ All other ambiguous size/crop mismatches remain rejected.
   → Run cancel→rerun → Close results → Copy summary.
   Expected17 PASS,1 cancellation, failures empty.
 
-Report responsiveness/reload/crash and the final cleanup fields. Native/GPU
-memory remains UNKNOWN. Older results are retained for their exact build; the
-new candidate's phone correction/remaining groups are not yet verified.
+The user ran **all seven groups** on both browsers, not just these requested
+subsets. Both new summaries have23 PASS,1 cancellation and no failures. Both
+report94/94 Workers, final0 active resources/URL/sample/Canvas/ImageData/RGBA/ACK,
+cleanupErrors0, and confirmed soft close. Quark's trackParFallbackSamples11 and
+Edge's0 distinguish exercised native-omission and native-correct paths. Both
+have peak2 app samples/1 canonical RGBA; native/GPU memory remains UNKNOWN.
+The [normalized reports](milestone-8d1-android-results-2026-11-01.json) bind these
+observations to the new content build. No prior-candidate coverage is substituted.
+
+### Remaining timing anomaly
+
+Edge's heartbeat max is57.400000095ms; Quark's is36674.5ms. The user confirms
+Quark remained foreground with no tens-of-seconds inability to click/scroll and
+no visible jank in either browser. Backgrounding is not an accepted explanation.
+The harness measures setInterval callback gaps across conversion and decode-back,
+not a PerformanceLongTask trace; Summary contains no per-row timing context.
+No diagnosis of browser throttling, clock anomaly or actual UI blocking is yet
+established. Only the largest-gap rows of the existing export are needed next.
+
+[Local existing-export reader](https://departments-til-caps-listening.trycloudflare.com/AniView/heartbeat-readback/index.html)
+
+Keep the original Quark test tab. Click **Export diagnostics**, then open the
+reader and select that downloaded JSON; **Copy short JSON**. It parses in one
+Worker, has an8MiB cap, emits only bounded numeric case/timing fields and uses no
+upload/persistence or new conversion. The candidate is unchanged. Desktop HTTPS
+checks passed with real57-case export, invalid JSON, oversize rejection and a
+synthetic large-gap ordering example; the synthetic row is not phone evidence.
 
 ## Original full protocol — each of Android Edge and Quark
 
@@ -158,7 +182,7 @@ Optional output visual inspection: Download last output after a chosen group and
 open it with the ordinary AniView Viewer separately. This is additional evidence;
 the automated marker/corner/timing oracle remains the technical test.
 
-## Coverage record
+## Current coverage record — build8d1-122e82b97f04
 
 | Gate | Android Edge | Android Quark |
 | --- | --- | --- |
@@ -168,18 +192,18 @@ the automated marker/corner/timing oracle remains the technical test.
 | VP9 API/config/init/first decode/draw | PASS | PASS |
 | VP9→GIF/WebP/APNG | PASS | PASS |
 | VFR / B-frame | PASS | PASS |
-| Rotation / portrait / PAR | PASS | Rotation/portrait PASS; PAR FAIL |
-| Trim/tail/origin / no-upscale | PASS | PENDING after PAR failure |
-| 1080p-class resize / photo quality | PASS | NOT RUN |
-| 150-frame workload | PASS | NOT RUN |
-| Cancel→rerun / stale isolation | PASS | NOT RUN |
-| Cleanup / repeated-use stability | PASS for completed groups | Clean through failure; remaining groups PENDING |
-| Heartbeat / jank / reload / crash | 71.3ms; user says all tests passed | 48.3ms; qualitative report not supplied |
+| Rotation / portrait / PAR | PASS | PASS; native omission path observed11 samples |
+| Trim/tail/origin / no-upscale | PASS | PASS |
+| 1080p-class resize / photo quality oracle | PASS | PASS |
+| 150-frame workload | PASS | PASS |
+| Cancel→rerun / stale isolation | PASS | PASS |
+| Cleanup / repeated-use stability | PASS;94/94 Workers | PASS;94/94 Workers |
+| Heartbeat / visible jank | 57.4ms; no visible jank | 36674.5ms; user reports foreground/no visible jank; timing review pending |
 
 A VP9-only failure requires capability/config/initialization/first-frame-stage
 evidence and a scope decision; no FFmpeg fallback. Any wrong B-frame/VFR visual
 identity, grid/count/tail/orientation error, leak or progressive crash prevents
 overall PASS. No Android gaps are silently filled from desktop.
 
-**Milestone 8D1: PENDING ANDROID VALIDATION.**
+**Milestone 8D1: PENDING TIMING-ANOMALY CLASSIFICATION. Functional and cleanup gates passed.**
 **Milestone 8D2 has not started. V0.2 NOT RELEASED.**

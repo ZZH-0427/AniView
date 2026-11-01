@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "evidence": "User-reported physical Android results supplied in chat; normalized common fields. Not an automated phone observation.",
+  "build": "8d1-122e82b97f04",
+  "common": {
+    "secureContext": true,
+    "hmr": false,
+    "pass": 23,
+    "cancelled": 1,
+    "failures": [],
+    "coverage": [
+      {
+        "case": "cfr.mp4",
+        "target": "gif"
+      },
+      {
+        "case": "cfr.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "cfr.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "vp9.webm",
+        "target": "gif"
+      },
+      {
+        "case": "vp9.webm",
+        "target": "webp"
+      },
+      {
+        "case": "vp9.webm",
+        "target": "apng"
+      },
+      {
+        "case": "par.mp4",
+        "target": "gif"
+      },
+      {
+        "case": "par.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "par.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "vfr.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "bframes.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "rotation.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "portrait.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "par.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "nonzero.webm",
+        "target": "apng"
+      },
+      {
+        "case": "negative.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "long.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "vfr.mp4",
+        "target": "gif"
+      },
+      {
+        "case": "1080.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "1080.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "photo.mp4",
+        "target": "apng"
+      },
+      {
+        "case": "benchmark.mp4",
+        "target": "webp"
+      },
+      {
+        "case": "cfr.mp4",
+        "target": "apng"
+      }
+    ],
+    "peakAppSamples": 2,
+    "peakAppExplicitVideoFrames": 0,
+    "peakCanonicalRgba": 1,
+    "maxObservedSourceSamples": 151,
+    "maxObservedSourcePixels": 12441600,
+    "lastSourceCleanup": {
+      "activeSamples": 0,
+      "activeCanvases": 0,
+      "activeImageData": 0,
+      "ownedRgba": 0,
+      "awaitingAck": 0,
+      "cleanupErrors": 0
+    },
+    "lastSourceDisposition": {
+      "softClosed": true,
+      "hardTerminated": false
+    },
+    "nativeGpuMemoryBytes": null,
+    "activeObjectUrls": 0,
+    "resources": {
+      "workersCreated": 94,
+      "workersTerminated": 94,
+      "activeWorkers": 0,
+      "peakWorkers": 2,
+      "bitmapsCreated": 0,
+      "bitmapsClosed": 0,
+      "activeBitmaps": 0,
+      "peakBitmaps": 0,
+      "archiveSessionsOpened": 0,
+      "archiveSessionsClosed": 0,
+      "activeArchiveSessions": 0,
+      "entryExtractionsStarted": 0,
+      "entryExtractionsCompleted": 0,
+      "entryExtractionsDiscarded": 0,
+      "staleResultsDiscarded": 0,
+      "decoderErrors": 0,
+      "staticDecodeErrors": 0,
+      "archiveErrors": 0,
+      "cleanupErrors": 0
+    }
+  },
+  "browsers": {
+    "edge": {
+      "version": "Edge Android 155 / Chromium155",
+      "trackParFallbackSamples": 0,
+      "heartbeatMaxGapMs": 57.40000009536743
+    },
+    "quark": {
+      "version": "Quark10.2.0.995 / Chromium123 / Android16",
+      "trackParFallbackSamples": 11,
+      "heartbeatMaxGapMs": 36674.5
+    }
+  },
+  "responsiveness": {
+    "status": "FOREGROUND_TIMER_GAP_UNEXPLAINED",
+    "userConfirmation": "Quark stayed in the foreground; no tens-of-seconds inability to click or scroll. Both browsers had no visible jank.",
+    "backgroundExplanationConfirmed": false,
+    "nextEvidence": "Read the largest-gap row from the existing local diagnostic export; do not rerun conversion or change the candidate.",
+    "foregroundOnlyGapMs": null
+  },
+  "milestone": "FUNCTIONAL_AND_CLEANUP_PASSED_TIMER_GAP_REVIEW_PENDING"
+}
