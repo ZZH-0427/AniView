@@ -1,4 +1,5 @@
-import { memo, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { memo, useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
+import type { Ref } from 'react'
 import { Icon } from '../../components/Icon'
 import { IconButton } from '../../components/IconButton'
 import type { CreationSession } from '../../creation/creation-session'
@@ -49,14 +50,16 @@ const SourceList = memo(function SourceList({ sources, busy, session }: {
 })
 
 /** Creation owns handles/settings only. Preview delegates to the existing Viewer. */
-export default function CreateGif({ session, onBack, onPreview }: {
+export default function CreateGif({ session, onBack, onPreview, previewButtonRef }: {
   session: CreationSession
   onBack: () => void
   onPreview: (result: CreationResult) => void
+  previewButtonRef?: Ref<HTMLButtonElement>
 }) {
   const snapshot = useSyncExternalStore(session.subscribe, session.getSnapshot, session.getSnapshot)
   const { sources, settings, result } = snapshot
   const input = useRef<HTMLInputElement>(null)
+  const minimumSourceId = useId()
   const [duration, setDuration] = useState(String(settings.frameDurationMs))
   const [playCount, setPlayCount] = useState(String(settings.playCount))
   const [dragging, setDragging] = useState(false)
@@ -144,6 +147,9 @@ export default function CreateGif({ session, onBack, onPreview }: {
       {sources.length ? <SourceList sources={sources} busy={busy} session={session} /> : <div className="creator-empty">
         <Icon name="create" /><p>Create an animated GIF from static images.</p><p>JPEG · PNG · WebP</p>
       </div>}
+      {sources.length === 1 && <p className="creator-note" id={minimumSourceId} data-testid="creation-minimum-sources">
+        Add at least one more static image to create an animated GIF.
+      </p>}
       <p className="creator-drop-hint">Drop image files here to append them.</p>
       {snapshot.notice && <p className="creator-notice" role="status" data-testid="creation-notice">{snapshot.notice}</p>}
     </section>
@@ -177,6 +183,7 @@ export default function CreateGif({ session, onBack, onPreview }: {
     <section className="creator-generation" aria-label="Generate animation">
       <div className="creator-generation-actions">
         <IconButton icon="create" label="Generate GIF" text="Generate GIF" className="creator-primary" data-testid="creation-generate"
+          aria-describedby={sources.length === 1 ? minimumSourceId : undefined}
           disabled={busy || sources.length < 2 || snapshot.totalSourceBytes > 16 * 1024 * 1024 || !durationValid || (!settings.loopForever && !countValid)} onClick={generate} />
         {generating && <IconButton icon="close" label="Cancel" text="Cancel" data-testid="creation-cancel"
           disabled={snapshot.status === 'cancelling'} onClick={() => { void session.cancel() }} />}
@@ -197,7 +204,7 @@ export default function CreateGif({ session, onBack, onPreview }: {
         <div><dt>GIF size</dt><dd>{formatBytes(result.metadata.bytes)}</dd></div>
       </dl>
       <div className="creator-result-actions">
-        <IconButton icon="play" label="Preview" text="Preview" data-testid="creation-preview" disabled={busy} onClick={() => onPreview(result)} />
+        <IconButton ref={previewButtonRef} className="preview-return-trigger" icon="play" label="Preview" text="Preview" data-testid="creation-preview" disabled={busy} onClick={() => onPreview(result)} />
         <a className="creator-download" href={result.url} download={result.filename} data-testid="creation-download"
           onClick={event => { event.currentTarget.download = session.nextDownloadName() }}
           aria-label="Download GIF" title="Download GIF"><Icon name="download" /><span>Download GIF</span></a>

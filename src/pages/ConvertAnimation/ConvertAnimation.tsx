@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import type { Ref } from 'react'
 import { DiagnosticsPanel } from '../../components/DiagnosticsPanel'
 import { runtimeDiagnostics } from '../../media/runtime-diagnostics'
 import { ConversionSession, conversionBusy, conversionErrorMessage, formatLabel } from '../../conversion/conversion-session'
@@ -21,8 +22,9 @@ function Metadata({ info, bytes,video=false }: { info: ConversionMetadata; bytes
     <div><dt>Size</dt><dd>{bytes.toLocaleString()} bytes</dd></div>
   </dl>
 }
-export default function ConvertAnimation({ session, snapshot, onBack, onPreview }: {
+export default function ConvertAnimation({ session, snapshot, onBack, onPreview, previewButtonRef }: {
   session: ConversionSession; snapshot: ConversionSnapshot; onBack: () => void; onPreview: () => void
+  previewButtonRef?: Ref<HTMLButtonElement>
 }) {
   const resources = useSyncExternalStore(runtimeDiagnostics.subscribe, runtimeDiagnostics.getSnapshot, runtimeDiagnostics.getSnapshot)
   const { status, source, sourceFormat, target, result, progress, diagnostics } = snapshot
@@ -58,7 +60,7 @@ export default function ConvertAnimation({ session, snapshot, onBack, onPreview 
     {result && <section className="conversion-card" data-testid="conversion-result" aria-labelledby="conversion-result-heading">
       <h2 id="conversion-result-heading">Converted {formatLabel(result.format)}</h2><Metadata info={result.metadata} bytes={result.blob.size} video={result.format==='mp4'} />
       {result.format==='mp4'&&source&&(source.width!==result.metadata.width||source.height!==result.metadata.height)&&<p className="conversion-note">White padding added on the right or bottom for video compatibility.</p>}
-      <div className="conversion-actions"><button disabled={busy} data-testid="conversion-preview" onClick={onPreview}>Preview</button>
+      <div className="conversion-actions"><button ref={previewButtonRef} className="preview-return-trigger" disabled={busy} data-testid="conversion-preview" onClick={onPreview}>Preview</button>
         <a className="conversion-download" href={result.url} download={result.filename} aria-disabled={busy} tabIndex={busy ? -1 : 0}
           onClick={event => { if (busy) event.preventDefault(); else event.currentTarget.download = session.nextDownloadName() }}
           data-testid="conversion-download">Download {formatLabel(result.format)}</a></div>

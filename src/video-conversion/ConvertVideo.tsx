@@ -1,4 +1,5 @@
-import {useEffect,useRef,useState,useSyncExternalStore} from 'react'
+import {useEffect,useId,useRef,useState,useSyncExternalStore} from 'react'
+import type {Ref} from 'react'
 import {DiagnosticsPanel} from '../components/DiagnosticsPanel'
 import {runtimeDiagnostics} from '../media/runtime-diagnostics'
 import {VIDEO_INPUT_LIMITS} from '../video-source/model'
@@ -22,11 +23,18 @@ function NativePreview({url,info,onTime,busy}:{url:string;info:VideoInspection;o
    onPlay={e=>{if(busy)e.currentTarget.pause()}}
    onTimeUpdate={e=>onTime(normalizedPreviewTime(e.currentTarget.currentTime,e.currentTarget.duration,info))}/></div>
 }
-export default function ConvertVideo({session,snapshot,onBack,onPreview}:{session:VideoConversionSession;snapshot:VideoConversionSnapshot;onBack:()=>void;onPreview:()=>void}){
+export default function ConvertVideo({session,snapshot,onBack,onPreview,previewButtonRef}:{session:VideoConversionSession;snapshot:VideoConversionSnapshot;onBack:()=>void;onPreview:()=>void;previewButtonRef?:Ref<HTMLButtonElement>}){
  const [cursor,setCursor]=useState<{url:string|undefined;us:number}>({url:undefined,us:0}),[dragging,setDragging]=useState(false)
  const resources=useSyncExternalStore(runtimeDiagnostics.subscribe,runtimeDiagnostics.getSnapshot,runtimeDiagnostics.getSnapshot)
  const {status,metadata,settings,result,progress,preflight,diagnostics}=snapshot,busy=videoBusy(status)
  const current=cursor.url===snapshot.previewUrl?cursor.us:0
+ const errorId=useId(),sourceErrorId=`${errorId}-source`,trimErrorId=`${errorId}-trim`,outputErrorId=`${errorId}-output`
+ // Metadata marks completed source admission. Later decoder/encoder failures belong to the job.
+ const sourceError=!metadata&&snapshot.error?videoErrorMessage(snapshot.error):undefined
+ const jobError=metadata&&snapshot.error?videoErrorMessage(snapshot.error):undefined
+ const invalidPreflight=preflight&&!preflight.ok?preflight:undefined
+ const trimError=invalidPreflight&&(invalidPreflight.issue==='trim'||invalidPreflight.issue==='duration')?invalidPreflight.message:undefined
+ const outputError=invalidPreflight&&!trimError?invalidPreflight.message:undefined
  useEffect(()=>{
   const over=(e:DragEvent)=>{e.preventDefault();const files=Array.from(e.dataTransfer?.types??[]).includes('Files');if(e.dataTransfer)e.dataTransfer.dropEffect=files?'copy':'none';if(files)setDragging(true)}
   const drop=(e:DragEvent)=>{e.preventDefault();setDragging(false);const file=e.dataTransfer?.files[0];if(file)void session.select(file)}
@@ -43,9 +51,12 @@ export default function ConvertVideo({session,snapshot,onBack,onPreview}:{sessio
     :progress?.stage==='encoding'?`Encoding ${progress.current+1} / ${progress.total}`:'Preparing video…':'Choose settings and convert'
  return <main className={`conversion-page video-conversion-page${dragging?' video-dragging':''}`} data-testid="video-conversion-page">
   <header className="conversion-header"><button onClick={onBack} data-testid="video-conversion-back" aria-label="Back to Home">← Home</button><h1>Convert video</h1></header>
-  <section className="conversion-card"><h2>Source video</h2>
+  <section className="conversion-card" data-testid="video-source-section"><h2>Source video</h2>
    <label className="video-file-label">{metadata?'Choose another video':'Choose video'}<input type="file" accept=".mp4,.webm,video/mp4,video/webm" data-testid="video-input"
+    aria-invalid={sourceError?true:undefined} aria-describedby={sourceError?sourceErrorId:undefined}
     onChange={e=>{const file=e.currentTarget.files?.[0];e.currentTarget.value='';if(file)void session.select(file)}}/></label>
+   {status==='preparing'&&<p role="status" data-testid="video-conversion-status">{operation}</p>}
+   {sourceError&&<p role="alert" id={sourceErrorId} data-testid="video-conversion-error" data-error-location="source" className="conversion-error">{sourceError}</p>}
    <p className="conversion-note">MP4 with H.264 or WebM with VP9. Audio is ignored in the animation. You can also drop a video here.</p>
    {snapshot.sourceName&&<p className="conversion-filename" title={snapshot.sourceName}>{snapshot.sourceName}</p>}
    {metadata&&<dl className="conversion-metadata"><div><dt>Duration</dt><dd>{(metadata.durationUs/1e6).toFixed(3)} s</dd></div>
@@ -54,16 +65,20 @@ export default function ConvertVideo({session,snapshot,onBack,onPreview}:{sessio
    {metadata&&snapshot.previewUrl&&<NativePreview key={snapshot.previewUrl} url={snapshot.previewUrl} info={metadata} busy={busy} onTime={us=>setCursor({url:snapshot.previewUrl,us})}/>}
    {!metadata&&snapshot.sourceName&&!busy&&<button onClick={()=>{void session.retryPrepare()}}>Prepare again</button>}
   </section>
-  <fieldset className="conversion-card video-trim" disabled={busy||!metadata}><legend>Trim</legend>
+  <fieldset className="conversion-card video-trim" disabled={busy||!metadata} aria-invalid={trimError?true:undefined} aria-describedby={trimError?trimErrorId:undefined}><legend>Trim</legend>
    <p>Current time: <output data-testid="video-current-time">{videoTime(current)}</output></p>
    <div className="conversion-actions"><button data-testid="video-set-start" onClick={()=>session.update({startUs:current})}>Set Start</button>
     <button data-testid="video-set-end" onClick={()=>session.update({endUs:current})}>Set End</button></div>
    <div className="video-fields"><label>Start (seconds)<input type="number" min="0" step="0.001" value={Number.isFinite(settings.startUs)?settings.startUs/1e6:''} data-testid="video-start-time"
+    aria-describedby={trimError?trimErrorId:undefined}
     onChange={e=>session.update({startUs:Math.round(e.currentTarget.valueAsNumber*1e6)})}/></label>
     <label>End (seconds)<input type="number" min="0" step="0.001" value={Number.isFinite(settings.endUs)?settings.endUs/1e6:''} data-testid="video-end-time"
+     aria-describedby={trimError?trimErrorId:undefined}
      onChange={e=>session.update({endUs:Math.round(e.currentTarget.valueAsNumber*1e6)})}/></label></div>
+   {/* Inline validation is read with the controls, without assertive announcements on each edit. */}
+   {trimError&&<p id={trimErrorId} data-testid="video-preflight-error" data-error-location="trim" className="conversion-error">{trimError}</p>}
   </fieldset>
-  <fieldset className="conversion-card video-fields" disabled={busy||!metadata}><legend>Output</legend>
+  <fieldset className="conversion-card video-fields" disabled={busy||!metadata} aria-invalid={outputError?true:undefined} aria-describedby={outputError?outputErrorId:undefined}><legend>Output</legend>
    <label>Format<select value={settings.target} data-testid="video-target" onChange={e=>{const target=e.currentTarget.value;if(target==='gif'||target==='webp'||target==='apng')session.update({target})}}>
     <option value="gif">GIF</option><option value="webp">Animated WebP</option><option value="apng">APNG</option></select></label>
    <label>FPS<select value={settings.fps} data-testid="video-fps" onChange={e=>session.update({fps:Number(e.currentTarget.value)})}>{videoFps(settings.target).map(fps=><option key={fps} value={fps}>{fps}</option>)}</select></label>
@@ -74,27 +89,27 @@ export default function ConvertVideo({session,snapshot,onBack,onPreview}:{sessio
   <section className="conversion-card" aria-labelledby="video-estimate-heading"><h2 id="video-estimate-heading">Estimated result</h2>
    {estimate?<dl className="conversion-metadata" data-testid="video-estimate"><div><dt>Selected duration</dt><dd>{(estimate.durationUs/1e6).toFixed(3)} s</dd></div>
     <div><dt>FPS</dt><dd>{estimate.fps}</dd></div><div><dt>Sampled frames</dt><dd>{estimate.frameCount} / 150</dd></div>
-    <div><dt>Output dimensions</dt><dd>{estimate.width} × {estimate.height}</dd></div><div><dt>Frame-pixel workload</dt><dd>{(estimate.framePixels/1e6).toFixed(2)} MP / 15.36 MP</dd></div></dl>:<p>Choose a video and a valid clip.</p>}
-   {preflight&&!preflight.ok&&<p role="alert" data-testid="video-preflight-error" className="conversion-error">{preflight.message}</p>}
+    <div><dt>Output dimensions</dt><dd>{estimate.width} × {estimate.height}</dd></div></dl>:<p>Choose a video and a valid clip.</p>}
+   {outputError&&<p id={outputErrorId} data-testid="video-preflight-error" data-error-location="output" className="conversion-error">{outputError}</p>}
   </section>
   <div className="conversion-actions"><button className="conversion-primary" data-testid="video-convert" disabled={busy||!preflight?.ok} onClick={()=>{void session.start()}}>Convert</button>
    {busy&&<button data-testid="video-cancel" disabled={status==='cancelling'} onClick={()=>{void session.cancel()}}>Cancel</button>}</div>
-  <p role="status" data-testid="video-conversion-status">{operation}</p>
+  {metadata&&status!=='preparing'&&<p role="status" data-testid="video-conversion-status">{operation}</p>}
   {status==='converting'&&<progress aria-label="Video conversion progress" {...(progress&&progress.stage!=='finalizing'?{max:1,value:progress.fraction}:{})}/>}
   {status==='verifying'&&<progress aria-label="Checking converted animation"/>}
-  {snapshot.error&&<p role="alert" data-testid="video-conversion-error" className="conversion-error">{videoErrorMessage(snapshot.error)}</p>}
+  {jobError&&<p role="alert" data-testid="video-conversion-error" data-error-location="job" className="conversion-error">{jobError}</p>}
   {result&&<section className="conversion-card" data-testid="video-conversion-result"><h2>Converted {label(result.format)}</h2>
    <dl className="conversion-metadata"><div><dt>Dimensions</dt><dd>{result.metadata.width} × {result.metadata.height}</dd></div><div><dt>Output frames</dt><dd>{result.metadata.frameCount}</dd></div>
     <div><dt>Duration</dt><dd>{(result.metadata.durationMs/1000).toFixed(3)} s</dd></div><div><dt>Playback</dt><dd>Loop forever</dd></div><div><dt>Size</dt><dd>{result.blob.size.toLocaleString()} bytes</dd></div></dl>
    {result.sampledFrames!==result.metadata.frameCount&&<p>Sampled frames: {result.sampledFrames}. Identical WebP frames were combined with their timing retained.</p>}
-   <div className="conversion-actions"><button onClick={onPreview} data-testid="video-result-preview">Preview</button>
+   <div className="conversion-actions"><button ref={previewButtonRef} className="preview-return-trigger" onClick={onPreview} data-testid="video-result-preview">Preview</button>
     <a className="conversion-download" href={result.url} download={result.filename} data-testid="video-result-download" onClick={e=>{e.currentTarget.download=session.nextDownloadName()}}>Download {label(result.format)}</a></div>
    <p className="conversion-note">Find saved files in Downloads or Files. Gallery visibility depends on your browser and device.</p>
   </section>}
   <DiagnosticsPanel title="Video conversion diagnostics"><details className="diagnostics-raw"><summary>Summary JSON</summary><output data-testid="video-conversion-debug">{JSON.stringify({status,jobId:snapshot.jobId,target:settings.target,
    ...diagnostics,activeWorkers:resources.activeWorkers,activeBitmaps:resources.activeBitmaps,activeArchiveSessions:resources.activeArchiveSessions,
    source:metadata?{container:metadata.container,codec:metadata.codec,width:metadata.displayWidth,height:metadata.displayHeight,durationUs:metadata.durationUs}:null,
-   plan:preflight?.ok?preflight.plan:null,limits:VIDEO_INPUT_LIMITS,error:snapshot.error??null,nativeGpuMemoryBytes:null})}</output></details></DiagnosticsPanel>
+   plan:preflight?.ok?preflight.plan:null,estimate:estimate??null,preflightIssue:invalidPreflight?.issue??null,limits:VIDEO_INPUT_LIMITS,error:snapshot.error??null,nativeGpuMemoryBytes:null})}</output></details></DiagnosticsPanel>
   <footer>Files are processed locally in your browser.</footer>
  </main>
 }

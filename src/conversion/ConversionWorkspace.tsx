@@ -3,6 +3,7 @@ import type { VirtualFile } from '../input/virtual-file'
 import { Viewer } from '../pages/Viewer/Viewer'
 import { ConversionSession, resultVirtualFile } from './conversion-session'
 import ConvertAnimation from '../pages/ConvertAnimation/ConvertAnimation'
+import { usePreviewReturn } from '../components/use-preview-return'
 const VideoResultPreview=lazy(()=>import('./VideoResultPreview'))
 
 /** MediaApp retains the borrowed source and archive; only the result belongs here. */
@@ -14,6 +15,7 @@ export default function ConversionWorkspace({ file, transition, onBack }: {
   const [preview, setPreview] = useState<{kind:'animation';file:VirtualFile}|{kind:'video';url:string}>()
   const [closingPreview, setClosingPreview] = useState(false)
   const lifetime = useRef(0), mounted = useRef(true)
+  const { previewButton, rememberPreview } = usePreviewReturn(!preview && !closingPreview)
   useEffect(() => {
     mounted.current = true
     const owner = lifetime, id = ++owner.current
@@ -35,7 +37,7 @@ export default function ConversionWorkspace({ file, transition, onBack }: {
   if (preview) return <div className="media-app has-media"><Viewer file={preview.file} transition={transition} position={1} count={1}
     onPrevious={() => {}} onNext={() => {}} onRemove={closePreview} onClose={closePreview} /></div>
   if (closingPreview) return <p role="status">Closing preview…</p>
-  return <ConvertAnimation session={session} snapshot={snapshot} onBack={() => {
+  return <ConvertAnimation session={session} snapshot={snapshot} previewButtonRef={previewButton} onBack={() => {
     void session.dispose().then(() => { if (mounted.current) onBack() })
-  }} onPreview={() => { const result=snapshot.result;if(result)setPreview(result.format==='mp4'?{kind:'video',url:result.url}:{kind:'animation',file:resultVirtualFile(result)}) }} />
+  }} onPreview={() => { const result=snapshot.result;if(result){rememberPreview();setPreview(result.format==='mp4'?{kind:'video',url:result.url}:{kind:'animation',file:resultVirtualFile(result)})} }} />
 }

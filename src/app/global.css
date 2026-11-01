@@ -56,6 +56,8 @@ footer { color: #536378; font-size: 0.9rem; }
 button { font: inherit; cursor: pointer; min-height: 44px; padding: 0.55rem 0.9rem; border: 1px solid #acb8c6; border-radius: 0.5rem; color: inherit; background: white; }
 button:disabled { opacity: 0.5; cursor: default; }
 button:focus-visible { outline: 3px solid #2765b0; outline-offset: 3px; }
+/* A pointer-closed preview must also leave an obvious, focused return target. */
+.preview-return-trigger:focus { outline: 3px solid #2765b0; outline-offset: 3px; }
 .image-picker { color: white; background: #285581; border-color: #285581; font-weight: 600; }
 .image-input { display: inline-block; }
 .foundation .image-input { margin-top: 1.5rem; }

@@ -29,7 +29,7 @@ export function creationErrorMessage(cause: unknown): string {
     if (detail?.kind === 'output-side' || detail?.kind === 'output-pixels') {
       return `The animation would require a ${detail.width}×${detail.height} output canvas. GIF creation allows up to 2048 pixels per side and 4,194,304 pixels total. Use smaller source images.`
     }
-    if (detail?.kind === 'workload') return 'This sequence is too large to encode safely. Reduce the number of images or use smaller images (15,360,000 frame-pixels maximum).'
+    if (detail?.kind === 'workload') return 'This sequence is too large to encode safely. Reduce the number of images or use smaller images.'
     if (detail?.kind === 'source-count') return 'Choose between 2 and 200 static source images.'
     if (detail?.kind === 'source-bytes') return 'The source images exceed the 16 MiB total limit. Remove some images and try again.'
     if (cause.code === 'ANIMATED_INPUT' || cause.code === 'UNSUPPORTED_INPUT') return unsupported

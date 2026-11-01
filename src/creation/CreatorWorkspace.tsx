@@ -5,6 +5,7 @@ import { CreationSession } from './creation-session'
 import type { CreationResult } from './creation-types'
 import { isCreationBusy } from './creation-types'
 import type { VirtualFile } from '../input/virtual-file'
+import { usePreviewReturn } from '../components/use-preview-return'
 
 interface Preview { readonly result: CreationResult; readonly file: VirtualFile }
 
@@ -16,6 +17,7 @@ export default function CreatorWorkspace({ onBack }: { onBack: () => void }) {
   const transition = useRef(Promise.resolve())
   const lifetime = useRef(0)
   const mounted = useRef(true)
+  const { previewButton, rememberPreview } = usePreviewReturn(!preview && !closingPreview)
 
   useEffect(() => {
     mounted.current = true
@@ -40,10 +42,11 @@ export default function CreatorWorkspace({ onBack }: { onBack: () => void }) {
     onPrevious={() => {}} onNext={() => {}} onRemove={() => { setClosingPreview(true); setPreview(undefined) }}
     onClose={() => { setClosingPreview(true); setPreview(undefined) }} /></div>
   if (closingPreview) return <p role="status">Closing preview…</p>
-  return <CreateGif session={session} onBack={() => {
+  return <CreateGif session={session} previewButtonRef={previewButton} onBack={() => {
     void session.dispose().then(() => { if (mounted.current) onBack() })
   }} onPreview={result => {
     if (isCreationBusy(session.getSnapshot().status)) return
+    rememberPreview()
     const file: VirtualFile = { name: 'aniview-animation.gif', size: result.blob.size, mimeType: 'image/gif', source: 'file',
       read: (start, end) => result.blob.slice(start, end).arrayBuffer() }
     setPreview({ result, file })

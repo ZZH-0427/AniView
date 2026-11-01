@@ -20,6 +20,23 @@ const tag = (html: string, id: string) => html.match(new RegExp(`<[^>]+data-test
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
 describe('GIF creation presentation', () => {
+  it.each([0, 1, 2, 20])('explains the minimum only for one source (%i selected), keeping generation rules', async count => {
+    const value = session()
+    if (count) await value.add(Array.from({ length: count }, (_, index) => source(`image-${index}.png`)))
+    const html = render(value), generate = tag(html, 'creation-generate')
+    if (count === 1) {
+      expect(html).toContain('Add at least one more static image to create an animated GIF.')
+      const helper = tag(html, 'creation-minimum-sources'), id = helper.match(/id="([^"]+)"/)?.[1]
+      expect(id).toBeTruthy()
+      expect(generate).toContain(`aria-describedby="${id}"`)
+      expect(html.indexOf('creation-minimum-sources')).toBeLessThan(html.indexOf('creation-settings-heading'))
+    } else {
+      expect(html).not.toContain('creation-minimum-sources')
+      expect(generate).not.toContain('aria-describedby')
+    }
+    expect(generate.includes('disabled=""')).toBe(count < 2)
+    await value.dispose()
+  })
   it('starts with a static multiple picker, honest limits and disabled generation', () => {
     const html = render(session())
     expect(html).toContain('Create an animated GIF from static images.')
