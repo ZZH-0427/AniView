@@ -1,7 +1,7 @@
 # M9A1c — V0.2 English / Simplified Chinese localization
 
-Status: **PENDING ANDROID LOCALIZATION VALIDATION**.
-Desktop implementation/validation complete, 2026-11-01.
+Status: **PASSED / CLOSED**, 2026-11-01.
+Desktop implementation/validation and fresh Android Edge/Quark acceptance complete.
 Branch: `feat/v0.2-video-to-animation`; baseline `adac203` (M9A1b closed).
 Frozen implementation candidate: `9d377b5ec0a98e487ac26faa2751f750e9153b26`,
 35 artifact files, clean source identity; subsequent acceptance documentation
@@ -126,12 +126,18 @@ Existing npm audit findings (12 moderate) remain unchanged; no force update.
 
 ## Android gate and remaining limitations
 
-Fresh Android Edge and Quark lightweight localization acceptance is pending.
+Fresh Android Edge and Quark lightweight localization acceptance passed on
+the frozen candidate. User response: “测试完成，均无问题”. Language/layout,
+selected source/settings, conversion/results, Preview return and Home were
+confirmed; the one-browser minimum-image helper/invalid-Trim supplement was
+covered by that response, without specifying which browser performed it.
 See [Android validation](milestone-m9a1c-android-validation.md). Previous M9A1b
-or codec tests do not substitute for this language/layout round.
+or codec tests were not used as a substitute for this round.
 
 Only English and Simplified Chinese are supplied. Native controls follow OS/
 browser language; technical names, debug and harness content intentionally
 remain standardized/English. Actual screen-reader speech has not been tested.
-No remaining desktop implementation failure is known. Do not mark PASSED or
-begin M9A2 until the new Android results arrive.
+No localization blocker remains known from the completed acceptance. V0.2
+localization is complete and UI/UX release blockers for this stage are closed.
+Ready for M9A2 — V0.2 Stability & Release Candidate Audit, but it has not started.
+Do not automatically begin M9A2, merge, tag, deploy or release.

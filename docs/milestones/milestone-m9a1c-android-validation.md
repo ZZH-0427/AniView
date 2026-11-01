@@ -1,8 +1,9 @@
 # M9A1c — Android localization acceptance
 
-Status: **PENDING ANDROID LOCALIZATION VALIDATION**.
-Both Android Edge and Quark need fresh lightweight product UI acceptance.
-No result from an earlier milestone is reused as a pass here.
+Status: **PASSED**, 2026-11-01.
+Method: user-reported completion of this frozen candidate's fresh Android Edge
+and Quark lightweight product UI checklist. No earlier milestone result is
+reused as a pass here. User response: **“测试完成，均无问题”**.
 
 Frozen candidate: `9d377b5ec0a98e487ac26faa2751f750e9153b26`.
 Page: https://email-farming-ins-cached.trycloudflare.com/AniView/
@@ -19,8 +20,8 @@ The HTTPS entry/HTML dependencies/favicon/candidate identity (9 paths) matched
 their frozen hashes; small.mp4 matched the original2187-byte procedural file.
 Installed desktop Edge independently confirmed `secureContext:true`, HMR false,
 Chinese switching, video conversion and Preview return, with no page exception.
-This connectivity check is not an Android acceptance result. Keep the computer
-on and online during the temporary test; do not alter the frozen artifact.
+This desktop connectivity check is separate from the Android acceptance result.
+The frozen artifact was not modified during acceptance.
 
 ## Minimal test, each browser
 
@@ -38,12 +39,17 @@ on and online during the temporary test; do not alter the frozen artifact.
 
 | Result | Android Edge | Android Quark |
 | --- | --- | --- |
-| Language switch / layout | Pending | Pending |
-| Selected source/settings retained | Pending | Pending |
-| Conversion/result retained | Pending | Pending |
-| Preview return focus/Download visibility | Pending | Pending |
-| Home and no crash/reload | Pending | Pending |
+| Language switch / layout | Pass | Pass |
+| Selected source/settings retained | Pass | Pass |
+| Conversion/result retained | Pass | Pass |
+| Preview return focus/Download visibility | Pass | Pass |
+| Home and no crash/reload | Pass | Pass |
 
-One-browser helper/invalid-Trim coverage: Pending.
-User confirmation should record the results and any anomaly; no long JSON,
-stress matrix or redundant codec measurements are required.
+One-browser minimum-image helper/invalid-Trim coverage: confirmed through the
+user's all-items completion response; the browser used for this supplemental
+check was not specified. No additional per-browser measurements are inferred.
+No anomaly was reported. No long JSON, repeat codec matrix or stress test was
+required for this lightweight language/layout acceptance.
+
+M9A1c is closed. M9A2 has not started. V0.2 is not released; main, the v0.1.0
+tag and GitHub Pages remain unchanged. This closure changes documentation only.

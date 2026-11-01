@@ -52,7 +52,7 @@ available Simplified Chinese translation. Only `aniview.locale` is stored locall
 Switching language retains the open workspace, settings, jobs and results.
 Browser-native pickers/video controls follow the browser or OS language.
 See the [localization record](docs/milestones/milestone-m9a1c-v0.2-localization.md)
-for the pending Android acceptance gate.
+for the completed desktop and Android Edge/Quark acceptance.
 
 ## Features and Supported Formats
 
