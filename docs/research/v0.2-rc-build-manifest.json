@@ -2,7 +2,7 @@
   "schema": 1,
   "date": "2026-11-04",
   "version": "0.1.0",
-  "commit": "f60654844853fca0bb4892eaa7953355ff61e287",
+  "commit": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
   "sourceDirty": false,
   "projectLicense": "UNLICENSED",
   "status": "DESKTOP AUDIT; ANDROID PENDING",
@@ -363,7 +363,7 @@
     {
       "path": "release-candidate.json",
       "size": 139,
-      "sha256": "8a4ba2bf6502fdcf6cbe0fd2a6267f9b6eb8be14bb5d6a4ef8d1597189336d82",
+      "sha256": "58c6d8fd39e5e7858effcb2077e73e1cf944f771a45b548271743505699883c3",
       "gzipBytes": 144
     },
     {

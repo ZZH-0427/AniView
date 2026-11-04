@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "scope": "Independent desktop HTTPS connectivity/product smoke; not Android acceptance",
+  "candidate": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
+  "url": "https://conservative-decision-diamond-winner.trycloudflare.com/AniView/",
+  "buildFilesVerified": 35,
+  "allFrozenHashesMatch": true,
+  "samples": [
+    {
+      "name": "animation.gif",
+      "status": 200,
+      "bytes": 11043,
+      "originalMatches": true
+    },
+    {
+      "name": "small.mp4",
+      "status": 200,
+      "bytes": 2187,
+      "originalMatches": true
+    },
+    {
+      "name": "medium.mp4",
+      "status": 200,
+      "bytes": 22003,
+      "originalMatches": true
+    },
+    {
+      "name": "mixed.zip",
+      "status": 200,
+      "bytes": 958,
+      "originalMatches": true
+    },
+    {
+      "name": "static.jpg",
+      "status": 200,
+      "bytes": 1166,
+      "originalMatches": true
+    },
+    {
+      "name": "static.png",
+      "status": 200,
+      "bytes": 161,
+      "originalMatches": true
+    }
+  ],
+  "productSmoke": {
+    "status": "PASS",
+    "candidate": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
+    "secure": true,
+    "hmr": false,
+    "animationToMp4": true,
+    "videoToWebp": true,
+    "previewReturn": true,
+    "resources": {
+      "workersCreated": 13,
+      "workersTerminated": 13,
+      "activeWorkers": 0,
+      "peakWorkers": 2,
+      "bitmapsCreated": 0,
+      "bitmapsClosed": 0,
+      "activeBitmaps": 0,
+      "peakBitmaps": 0,
+      "archiveSessionsOpened": 0,
+      "archiveSessionsClosed": 0,
+      "activeArchiveSessions": 0,
+      "entryExtractionsStarted": 0,
+      "entryExtractionsCompleted": 0,
+      "entryExtractionsDiscarded": 0,
+      "staleResultsDiscarded": 0,
+      "decoderErrors": 0,
+      "staticDecodeErrors": 0,
+      "archiveErrors": 0,
+      "cleanupErrors": 0,
+      "lastConversionCleanup": {
+        "activeDecoderWorkers": 0,
+        "activeEncoderWorkers": 0,
+        "activeVideoWorkers": 0,
+        "ownedVideoFrames": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "videoFramesBalanced": true
+      },
+      "lastVideoAnimationCleanup": {
+        "videoAnimationJobsStarted": 1,
+        "videoAnimationJobsCompleted": 1,
+        "videoAnimationCancellations": 0,
+        "activeVideoSourceWorkers": 0,
+        "activeEncoderWorkers": 0,
+        "activeOutputDecoderWorkers": 0,
+        "activeSamples": 0,
+        "activeCanvases": 0,
+        "activeImageData": 0,
+        "ownedRgba": 0,
+        "awaitingAck": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "sampledFrames": 18,
+        "actualOutputFrames": 12,
+        "sourceSamplesObserved": 13,
+        "sourcePixelsObserved": 39936,
+        "trackParFallbackSamples": 0,
+        "peakCanonicalRgba": 1,
+        "peakAppSamples": 2,
+        "softClosed": true,
+        "hardTerminated": false,
+        "heartbeat": {
+          "maxGapMs": 62.5,
+          "maxVisibleGapMs": 62.5,
+          "hiddenDuringJob": false,
+          "gaps": []
+        }
+      }
+    },
+    "errors": []
+  }
+}

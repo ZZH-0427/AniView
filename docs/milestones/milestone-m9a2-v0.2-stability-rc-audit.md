@@ -11,8 +11,12 @@ Baseline: `f60654844853fca0bb4892eaa7953355ff61e287`, branch
 `feat/v0.2-video-to-animation`. Start worktree was clean and remote feature HEAD
 matched. Main/origin main: `4a3dc69542ca2923744904cd10ddbf1a35f36ff9`;
 v0.1.0 tag object: `498f596377c6ba13cdc300a695b2b49370982811`, unchanged.
-The eventual phone validation candidate is recorded in the Android archive;
-it is not RC-qualified until fresh Edge/Quark acceptance passes.
+Frozen phone validation candidate: `a1876c6d62012a68d2764fe5e5b2e80220a9abf1`,
+recorded in the Android archive. It is not RC-qualified until fresh Edge/Quark
+acceptance passes. This candidate adds only audit/test/documentation changes.
+All34 non-identity production files match the desktop-tested f606548 build;
+the later Git SHA changes only release-candidate.json. Two clean candidate builds
+again match all35 files; the committed manifest identifies that frozen build.
 
 Environment: formal `D:\tool\nodejs\node.exe`24.22.1, npm11.19.1;
 Windows x64 build26200.9457/25H2; installed Microsoft Edge156.0.4314.58,
@@ -160,6 +164,12 @@ licenses checked against installed originals;24 retained texts reviewed; require
 notice omissions0. Mediabunny1.65.0/MPL-2.0 original67 sources/LICENSE match the
 integrity-pinned published archive. Exact source availability is retained. Own
 code stays UNLICENSED/private; no native AVC patent grant is asserted.
+
+The frozen candidate's35 files and six sample downloads were checked through
+the actual temporary HTTPS URL. Independent desktop Edge completed GIF→MP4 and
+MP4→WebP with Preview returns and Home-zero cleanup over that origin; secure
+context true, HMR false, no page error. This is transport/build-path evidence,
+not Android acceptance. See [HTTPS evidence](../research/v0.2-rc-https-evidence.json).
 
 No tracked dist/node_modules/log/tmp/environment file, unexpected large binary
 or credential-pattern match was found. Test archive passwords are test data;
