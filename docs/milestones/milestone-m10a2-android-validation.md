@@ -1,15 +1,18 @@
 # M10A2 — fresh Android Creator acceptance
 
-Date: 2026-11-04. **PENDING ANDROID CREATOR VALIDATION**.
+Date: 2026-11-04. **M10A2 Android Creator acceptance: PASSED**.
 
-Desktop implementation/checks passed. Edge and Quark rows below intentionally
-remain pending until the user tests this new product build. Prior 8A/8B/8C/8D/M9
+Desktop implementation/checks passed. On 2026-11-04 the user reported that both
+Edge and Quark passed the new acceptance procedure for frozen candidate
+`3fe3320597191e9156c777c4dd48619ca61ce1e8`, then explicitly confirmed both browsers'
+post-Home active-resource and cleanup-error counts were zero. Prior 8A/8B/8C/8D/M9
 results are useful history, not evidence for this new three-format Creator.
 
 ## Build and access
 
-Use the clean `feat/v0.3-animation-creator` desktop checkpoint recorded by the
-frozen preview's `/AniView/release-candidate.json`. Version stays 0.2.0 because no
+The accepted build is the clean `feat/v0.3-animation-creator` desktop checkpoint
+above, recorded by the frozen preview's `/AniView/release-candidate.json` with
+sourceDirty=false. Version stays 0.2.0 because no
 new release/version bump is authorized. This feature preview is not GitHub Pages.
 
 The immutable app files live under ignored `.tools/m10a2/site-<commit>/`; the
@@ -18,6 +21,13 @@ generated fixtures. Use a verified HTTPS tunnel or approved USB localhost revers
 forwarding, secureContext true, HMR false. The concrete temporary URL is supplied
 with the handoff, not hard-coded into production or treated as permanent hosting.
 Keep the computer awake/online. Do not update the frozen build during acceptance.
+
+The actual handoff used
+`https://hour-biz-paintball-griffin.trycloudflare.com/AniView/?debug=1`.
+Desktop preflight verified HTTPS reachability, sample downloads, secureContext
+true, HMR false, real WebP Worker/WASM generation and post-Home cleanup. The app
+was frozen under `.tools/m10a2/site-3fe332059719/`; no build or fixture change was
+made between handoff and acceptance. This temporary address is not a release URL.
 
 ## Original local samples
 
@@ -99,7 +109,22 @@ stop using old test URLs; a tunnel outage is not a passing application test.
 
 | Browser | Three targets / Preview | Save/reopen / unique names | Semi-alpha | Cancel/rerun | EN/ZH / layout | Cleanup | Verdict |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Android Edge | pending | pending | pending | not mandatory extra | pending | pending | PENDING |
-| Android Quark | pending | pending | pending | pending | pending | pending | PENDING |
+| Android Edge | PASS, user report | PASS, user report | PASS, user report | not mandatory extra | PASS, user report | all required counts 0, explicitly confirmed | PASS |
+| Android Quark | PASS, user report | PASS, user report | PASS, user report | PASS, user report | PASS, user report | all required counts 0, explicitly confirmed | PASS |
 
-Only close M10A2 after both fresh results are actually supplied and reviewed.
+The user's exact response to the current test checklist was “二者均已通过测测试”.
+This is fresh user-reported real-device acceptance, not an independently operated
+phone test. No Android raw JSON, exact browser versions, per-case timings or
+Quark cancellation target were supplied; none are inferred from old milestones.
+Generation Summary JSON was optional. The subsequent exact cleanup reply was
+“两个浏览器均为 0”, explicitly answering the listed active runtime and
+lastCreationCleanup fields. Counts are recorded as user-confirmed, not extracted
+from unavailable JSON. Mobile peak counters and sourceSoftClosed are not inferred.
+
+Both required workflows, repeated saves/reopening, semi-alpha, UI response and
+cleanup are accepted from these fresh user reports. The Quark medium cancellation
+workflow passed; its specific choice of WebP versus APNG was not supplied. No
+required acceptance item remains outstanding, and no repeated matrix is needed.
+
+**M10A2: PASSED. Unified Multi-format Animation Creator: FEATURE COMPLETE.**
+V0.3 remains IN DEVELOPMENT. No production deployment or release was performed.

@@ -1,17 +1,21 @@
 # M10A2 — Unified Multi-format Animation Creator
 
-Date: 2026-11-04. This is a desktop implementation checkpoint, **not a release**.
+Date: 2026-11-04. Implementation and fresh Android acceptance closeout, **not a release**.
 
 ## 1. Status
 
-**PENDING ANDROID CREATOR VALIDATION**. Desktop implementation and validation pass.
-Fresh Android Edge and Quark acceptance must precede PASSED / FEATURE COMPLETE.
+**M10A2: PASSED**. Desktop implementation/validation and fresh real-device Edge
+and Quark acceptance pass. On 2026-11-04 the user reported both checklists passed
+and explicitly confirmed both browsers' post-Home active-resource/cleanup counts
+were zero. Android evidence is user-reported, not independently operated by Codex.
 
 ## 2. Branch
 
 `feat/v0.3-animation-creator`. M10A1 checkpoint `42e6e75` was pushed before code
-changes. The implementation checkpoint is identified by Git and the frozen
-build's `release-candidate.json`, avoiding a self-referential commit hash here.
+changes. The accepted frozen implementation is
+`3fe3320597191e9156c777c4dd48619ca61ce1e8`, also recorded in its
+`release-candidate.json` with sourceDirty=false. The closeout follow-up changes
+only these milestone documents; the tested app and fixtures remain unchanged.
 Main and peeled `v0.2.0` remain `0cb82c0a446a160806596d618bbbc61e16a5752d`.
 No main push, tag, Release, repository setting change or Pages deployment.
 
@@ -185,6 +189,10 @@ canonical transfers detach. All generated result URLs are revoked after leaving.
 Post-Home snapshots expose source/encoder/validation/inspection Workers, bitmap,
 Canvas, ImageData, owned RGBA, ACK, URL and cleanup-error counts locally only.
 These are application ownership measurements, not measured RSS or GPU memory.
+Fresh Android Edge and Quark: after closing all media and returning Home, the
+user explicitly confirmed active runtime Workers/Bitmaps/ArchiveSessions and
+lastCreationCleanup's Worker/native-object/RGBA/ACK/URL/cleanup-error counts were
+all 0. No raw Android JSON or sourceSoftClosed value was supplied.
 
 ## 25. Localization
 
@@ -210,17 +218,24 @@ outputs remain ignored under `.tools/creation/` and `.tools/m10a2/`.
 
 ## 28. Android Edge
 
-PENDING. No previous milestone result substitutes for this new Creator flow.
+Functional checklist PASS, reported by the user for frozen candidate `3fe3320`.
+Post-Home cleanup counts explicitly confirmed all 0. No raw JSON was supplied.
 
 ## 29. Android Quark
 
-PENDING. No desktop emulation is reported as a real Android result.
+Functional checklist PASS, reported by the user for the same frozen candidate.
+Post-Home cleanup counts explicitly confirmed all 0. No desktop emulation is
+reported as a real Android result; the exact cancellation target was not specified.
 
 ## 30. Android Coverage Gaps
 
-Fresh three-target source/reorder/Preview/download, semi-alpha edges, cancel/rerun,
-language switch, old GIF Viewer smoke and complete Home cleanup remain required.
-See the [current Android procedure](milestone-m10a2-android-validation.md).
+The user reported both browsers passing the fresh checklist: target workflows,
+Preview/download/reopen, alpha, locale, Quark cancel/rerun and basic GIF Viewer
+regression, then explicitly confirmed both browsers' Home cleanup counts all 0.
+No required acceptance item remains open. Exact browser versions, timings, raw
+Android JSON and the Quark cancellation target are unavailable and not invented;
+they are evidence-detail omissions, not unperformed required workflows.
+See the [current Android record](milestone-m10a2-android-validation.md).
 
 ## 31. Performance / Responsiveness
 
@@ -300,24 +315,40 @@ No full video/codec matrix was unnecessarily repeated.
 **Retained**, not the product default. `src/spikes/gif-encoder/harness.ts` still
 consumes StaticGifEncoder; the historical client/worker/core tests and spike tools
 remain valid consumers. Only preparation is shared by delegation. Shared GIF
-quantization also remains used by the existing canonical encoder. Do not retire
-these while consumers remain and fresh Creator Android acceptance is pending.
+quantization also remains used by the existing canonical encoder. Fresh Android
+acceptance has now passed, but consumers remain; retirement would be a separate,
+explicitly scoped cleanup rather than deleting a still-used historical path.
 
 ## 40. Known Limitations
 
-Fresh real Android Creator acceptance is outstanding. GIF still has palette and
-binary-alpha losses. Lossless target guarantees start at native prepared Canvas
-pixels, not original file metadata/hidden RGB. Fixed limits and app ownership
+GIF still has palette and binary-alpha losses. Lossless target guarantees start
+at native prepared Canvas pixels, not original file metadata/hidden RGB. Fixed limits and app ownership
 counts do not measure native allocator/GPU memory. APNG needs existing deflate
 capability; unsupported browsers receive a controlled error.
 
 ## 41. Final Verdict
 
-**M10A2: PENDING ANDROID CREATOR VALIDATION**. Desktop gates passed; no final
-PASSED or FEATURE COMPLETE claim is made.
+**M10A2: PASSED**.
+
+AniView V0.3 now supports direct creation of:
+
+```text
+Static Images → GIF
+Static Images → Animated WebP
+Static Images → APNG
+```
+
+WebP/APNG are encoded directly from canonical RGBA frames and do not pass through
+GIF. Desktop and fresh Android gates passed; the final docs-only closeout does
+not change the accepted product build.
 
 ## 42. Next State
 
-V0.3 IN DEVELOPMENT. Freeze a clean production build, hand off its secure test
-URL, preserve that build during phone testing, and collect fresh Edge/Quark
-results. Stop at that handoff; do not start another milestone or deploy Pages.
+```text
+Unified Multi-format Animation Creator: FEATURE COMPLETE
+V0.3: IN DEVELOPMENT
+Ready for next V0.3 milestone planning.
+```
+
+STOP. No next milestone implementation, merge to main, version bump, tag, Release
+or Pages production deployment is part of this closeout.
