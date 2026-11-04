@@ -1,16 +1,24 @@
 # M10B2 — Android password ZIP validation
 
-**PENDING ANDROID PASSWORD ZIP VALIDATION**, 2026-11-04.
+**PASSED / CLOSED**, 2026-11-04. Fresh Android acceptance was performed and
+reported by the user; cleanup JSON below is supplied evidence, not a simulated
+phone run or independent remote observation.
 Desktop evidence: [milestone report](milestone-m10b2-password-zip.md).
 M10A2 Creator and M10B1 desktop feasibility do not replace this new product gate.
 
 ## Frozen environment
 
-The test URL is a newly verified temporary HTTPS tunnel to a frozen clean production
-build. The exact URL/commit is supplied in the test handoff and can be checked at
-`/AniView/release-candidate.json` (version 0.2.0, sourceDirty false).
-No Vite HMR, no Pages deployment; secureContext must be true. Keep the computer
-awake and connected; do not change the build/fixtures during acceptance. If the
+Accepted implementation: `0a35d4fa3e9f64d59ae7a4ae314d1adc70fe4b2b`.
+Production build identity: version 0.2.0, sourceDirty false. The later closeout
+changes only the two milestone documents and does not alter the accepted artifact.
+
+Historical test page:
+`https://allowed-enhancements-need-permitted.trycloudflare.com/AniView/?debug=1`.
+Samples: same origin, `/AniView/validation/password-zip/`.
+The temporary tunnel is not a permanent production URL.
+Desktop HTTPS verification confirmed secureContext=true, HMR=false, successful
+AES unlock/Viewer and zero cleanup. No Pages deployment. During testing the
+computer/build/fixtures were kept stable. For any future retest, if the
 URL stops working, report the full browser error and obtain a new verified entry;
 do not use old milestone links. These URLs serve synthetic samples only. Selected
 ZIP bytes and passwords remain in the phone browser and are never uploaded.
@@ -81,12 +89,50 @@ cleanup; obvious jank/reload/crash or exact error code/step. No long codec JSON 
 real password screenshot is requested. Optional different-password coverage can
 be noted separately; desktop A=X/B=Y already passes.
 
-## Results
+## Results — user-confirmed
 
 | Browser | New M10B2 workflow | Soft keyboard | Cleanup | Verdict |
 | --- | --- | --- | --- | --- |
-| Android Edge | Pending | Pending | Pending | PENDING |
-| Android Quark | Pending | Pending | Pending | PENDING |
+| Android Edge | All requested handoff flows passed | Passed | All active/cleanup counters 0 | PASS |
+| Android Quark | All requested handoff flows passed | Passed | All active/cleanup counters 0 | PASS |
 
-No Android result has been inferred or fabricated. Desktop viewport emulation is
-not real soft-keyboard acceptance. Remain at this gate until user results arrive.
+User's final confirmation: “各项测试均已通过，未发现卡顿等问题”. This covers the
+required browser-specific handoff: Edge plain ZIP, ZipCrypto wrong→correct, AES,
+reuse, encrypted-source conversion/Preview/Back and locale/keyboard; Quark Cancel,
+explicit retry, show/hide, wrong→correct, navigation, reopen/replacement,
+locale/keyboard. No additional rerun was requested after this confirmation.
+
+Optional different-password, full strength, corrupt/unsupported and pressure phone
+cases were not separately reported. Desktop/automated coverage is sufficient for
+these nonmandatory phone cases. No new browser version/device identity, exact
+latencies, memory measurements or case-by-case screen recording was supplied.
+Do not import such details from old Android milestones.
+
+### Edge supplied cleanup snapshot
+
+```json
+{"workersCreated":18,"workersTerminated":18,"activeWorkers":0,"peakWorkers":3,"bitmapsCreated":1,"bitmapsClosed":1,"activeBitmaps":0,"peakBitmaps":1,"archiveSessionsOpened":2,"archiveSessionsClosed":2,"activeArchiveSessions":0,"entryExtractionsStarted":11,"entryExtractionsCompleted":10,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":1,"cleanupErrors":0,"lastArchiveCleanup":{"activeArchiveWorkers":0,"activeArchiveSessions":0,"pendingReads":0,"pendingPasswordAccess":0,"currentExtractedBytes":0,"cleanupErrors":0},"lastConversionCleanup":{"activeDecoderWorkers":0,"activeEncoderWorkers":0,"activeVideoWorkers":0,"ownedVideoFrames":0,"activeObjectUrls":0,"cleanupErrors":0,"videoFramesBalanced":null}}
+```
+
+18/18 Workers, 1/1 Bitmaps, 2/2 archive sessions are balanced. All active,
+pending-access, current-plaintext and conversion cleanup counts are zero.
+The one historical archive error and 11/10 extraction counts are consistent with
+the intentional wrong-password test; they do not indicate a retained resource.
+`videoFramesBalanced:null` is an absent MP4-specific balance measurement for this
+animation conversion, not an active VideoFrame count; ownedVideoFrames is 0.
+
+### Quark supplied cleanup snapshot
+
+```json
+{"workersCreated":10,"workersTerminated":10,"activeWorkers":0,"peakWorkers":2,"bitmapsCreated":0,"bitmapsClosed":0,"activeBitmaps":0,"peakBitmaps":0,"archiveSessionsOpened":3,"archiveSessionsClosed":3,"activeArchiveSessions":0,"entryExtractionsStarted":7,"entryExtractionsCompleted":7,"entryExtractionsDiscarded":0,"staleResultsDiscarded":0,"decoderErrors":0,"staticDecodeErrors":0,"archiveErrors":0,"cleanupErrors":0,"lastArchiveCleanup":{"activeArchiveWorkers":0,"activeArchiveSessions":0,"pendingReads":0,"pendingPasswordAccess":0,"currentExtractedBytes":0,"cleanupErrors":0}}
+```
+
+10/10 Workers and 3/3 archive sessions are balanced. All active resources,
+pending access, current extracted bytes and cleanupErrors are zero. This snapshot
+does not provide an individual rejected-password attempt count; the workflow pass
+is attributed to the user's explicit overall confirmation, not inferred from it.
+
+**Required Android gates: PASS. M10B2: PASSED / CLOSED.** No product code, accepted
+build, dependency, resource limit, main, tag or production deployment changes are
+part of this evidence closeout. Password-protected ZIP is FEATURE COMPLETE;
+V0.3 remains IN DEVELOPMENT. STOP before any next milestone implementation.

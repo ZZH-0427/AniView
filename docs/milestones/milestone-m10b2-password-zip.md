@@ -1,19 +1,20 @@
 # M10B2 — Password-protected ZIP implementation and productization
 
 Date: 2026-11-04. Authoritative inputs: the M10B1 feasibility audit and M10B2
-implementation plan. This document records desktop implementation evidence;
-fresh Android product acceptance remains open. No production release is implied.
+implementation plan. Desktop validation and fresh Android Edge/Quark product
+acceptance passed on frozen implementation `0a35d4f`. No production release is implied.
 
 ## 1. Status
 
-**PENDING ANDROID PASSWORD ZIP VALIDATION**. Desktop implementation and validation
-passed. M10B2 is not yet PASSED or FEATURE COMPLETE.
+**M10B2 Password-protected ZIP: PASSED / CLOSED**. Desktop gates and fresh Android
+Edge/Quark acceptance passed. The closeout changes documentation only.
 
 ## 2. Branch
 
 `feat/v0.3-password-zip`, based on preserved M10B1 checkpoint `3f24ade`.
-The clean frozen preview identifies its exact commit in `release-candidate.json`;
-that identity is supplied with the Android test link. No main merge/push, version
+Accepted implementation: `0a35d4fa3e9f64d59ae7a4ae314d1adc70fe4b2b`, clean frozen
+production build, `sourceDirty=false`. The subsequent closeout is documentation
+only and does not replace the accepted product build. No main merge/push, version
 bump, tag, Release or Pages deployment is authorized by this milestone.
 
 ## 3. Supported Encryption
@@ -204,26 +205,40 @@ These reports contain synthetic fixtures only and are not production assets.
 
 ## 26. Android Edge
 
-**PENDING** fresh password-ZIP product acceptance. Previous Creator/conversion
-phone results are not reused. Procedure: [Android validation](milestone-m10b2-android-validation.md).
+**PASS**, user-reported on frozen `0a35d4f`: ordinary ZIP, ZipCrypto wrong→correct,
+same-secret reuse, AES media, encrypted-source conversion/Preview/Back, locale and
+soft-keyboard flows. User confirms all requested tests passed with no observed
+stutter or other problems. Workers 18/18, Bitmaps 1/1, archives 2/2; all active
+resources, archive-access and conversion cleanup counters 0. archiveErrors=1 and
+extractions 11 started/10 completed are consistent with the intentional rejected
+password step, not a cleanup leak. Full supplied snapshot and attribution:
+[Android validation](milestone-m10b2-android-validation.md).
 
 ## 27. Android Quark
 
-**PENDING** fresh password/Cancel/keyboard/navigation/cleanup acceptance.
+**PASS**, user-reported on frozen `0a35d4f`: password/Cancel/explicit retry,
+wrong→correct, show/hide, soft keyboard, navigation, archive replacement/reopen and
+locale flows. User confirms all requested tests passed without observed stutter
+or other problems. Workers 10/10, archives 3/3; all active and archive-access
+cleanup counters 0. No browser version/device identity was supplied in this report.
 
 ## 28. Android Coverage Gaps
 
-Real soft keyboard, focus/scroll after viewport changes, phone Worker decrypt and
-retry, same-secret reuse, encrypted-source conversion and final cleanup await new
-results. Different-password phone coverage is optional; desktop coverage passes.
+No required Android gate remains open: the user confirmed the requested workflows
+and supplied both final cleanup snapshots. This is user-performed acceptance, not
+an independent remote observation. Optional different-password, full AES-strength,
+corrupt/unsupported and large-pressure phone matrices were not separately reported;
+the applicable desktop/automated coverage passes. Browser versions and detailed
+timing were not supplied and are not inferred from older milestone results.
 
 ## 29. Responsive/Keyboard
 
 1280/768/390/360 px widths: no horizontal overflow, input/action/show-hide row
 targets at least 44 px; screenshots visually reviewed at desktop and 360 px.
 At 360×320 the document scrolls and Cancel remains reachable. Native Enter,
-Escape, Tab/Shift+Tab and initial/retry focus pass. This is not a substitute for
-Android soft-keyboard verification. Long names retain existing safe text handling.
+Escape, Tab/Shift+Tab and initial/retry focus pass. Fresh Android soft-keyboard,
+show/hide, scrolling and locale acceptance is now user-confirmed on Edge and Quark.
+Long names retain existing safe text handling.
 
 ## 30. Bundle
 
@@ -295,8 +310,8 @@ and v0.2.0 remain unchanged.
 
 ## 37. Known Limitations
 
-Android gate is outstanding. Encrypted central directory, PKWARE strong and
-proprietary encryption are unsupported. One latest successful credential only;
+Encrypted central directory, PKWARE strong and proprietary encryption are
+unsupported. One latest successful credential only;
 ZipCrypto/verifier corruption ambiguity is intrinsic. Passwords and native crypto
 buffers cannot be physically wiped/measured by this JavaScript application.
 Cancellation is cooperative; browser reload loses session/password/media state.
@@ -309,12 +324,19 @@ dependency, timeout or resource-limit changes.
 
 ## 38. Final Verdict
 
-**M10B2: PENDING ANDROID PASSWORD ZIP VALIDATION**.
-Desktop gates passed. Do not label the feature PASSED until fresh Edge and Quark
-results satisfy the accompanying Android checklist.
+**M10B2: PASSED / CLOSED**.
+
+AniView V0.3 now supports password-protected ZIP entries using Traditional
+ZipCrypto and WinZIP AES-128/192/256. Password handling remains session-local,
+lazy extraction is preserved, and no custom cryptographic implementation is used.
+Desktop gates and the new Edge/Quark product acceptance have passed.
 
 ## 39. Next State
 
-Password-protected ZIP: IMPLEMENTED, ANDROID ACCEPTANCE PENDING.
+Password-protected ZIP: FEATURE COMPLETE.
 V0.3: IN DEVELOPMENT. Production remains released v0.2.0.
-STOP at this gate; no next milestone, RAR/7z work or production operation.
+Ready for next V0.3 milestone planning.
+STOP; no next milestone, RAR/7z implementation or production operation is part of
+this closeout. Only the two M10B2 documents changed after accepted `0a35d4f`;
+the existing 1086-test/build/browser evidence remains applicable. No redundant
+codec/build rerun is claimed for this documentation-only update.
