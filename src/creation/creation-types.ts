@@ -1,29 +1,39 @@
 import type { VirtualFile } from '../input/virtual-file'
 import type { StaticImageFormat } from '../formats/static/static-dimensions'
-import type { EncodeMetrics, EncodeProgress } from './gif/model'
+import type { ConversionFormat, EncoderMetrics } from '../conversion/model'
+import type { ConversionProductResult } from '../conversion/conversion-session'
+import type { StaticPreparationMetrics } from './static-frame-core'
+import type { CreationCleanup } from '../media/creation-cleanup'
 import type { Message } from '../i18n/messages'
 
 export interface CreationSettings {
+  readonly target: ConversionFormat
   readonly frameDurationMs: number
   readonly loopForever: boolean
   /** Total complete plays; the encoder's extra-repeat field stays internal. */
   readonly playCount: number
 }
 export interface CreationSource { readonly id: string; readonly file: VirtualFile; readonly format: StaticImageFormat }
-export interface CreationResult {
-  readonly blob: Blob
-  readonly url: string
-  readonly filename: string
-  readonly metadata: CreationSettings & { readonly width: number; readonly height: number; readonly frameCount: number; readonly bytes: number }
-  readonly metrics: EncodeMetrics
+type AnimationResult = Extract<ConversionProductResult, { readonly format: ConversionFormat }>
+export interface CreationResult extends AnimationResult {
+  readonly mime: string
+  readonly extension: 'gif' | 'webp' | 'png'
+  readonly settings: CreationSettings
+  readonly inputFrameCount: number
+  readonly metadata: AnimationResult['metadata'] & { readonly durationMs: number; readonly bytes: number }
+  readonly metrics: EncoderMetrics
+  readonly creationMetrics: { readonly source: StaticPreparationMetrics; readonly totalMs: number; readonly peakRgbaFrames: number; readonly transferredFrames: number }
 }
+export interface CreationProgress { readonly phase: 'preparing' | 'encoding' | 'finalizing' | 'verifying'; readonly completedFrames: number; readonly totalFrames: number }
+export const creationFormats = { gif: { label: 'GIF', mime: 'image/gif', extension: 'gif' },
+  webp: { label: 'Animated WebP', mime: 'image/webp', extension: 'webp' }, apng: { label: 'APNG', mime: 'image/png', extension: 'png' } } as const
 export type CreationStatus = 'idle' | 'adding' | 'preparing' | 'encoding' | 'finalizing'
-  | 'cancelling' | 'success' | 'cancelled' | 'error'
+  | 'verifying' | 'cancelling' | 'success' | 'cancelled' | 'error'
 export interface CreationSnapshot {
   readonly sources: readonly CreationSource[]
   readonly settings: CreationSettings
   readonly status: CreationStatus
-  readonly progress?: EncodeProgress | undefined
+  readonly progress?: CreationProgress | undefined
   readonly addingProgress?: { readonly current: number; readonly total: number } | undefined
   readonly result?: CreationResult | undefined
   readonly error?: string | undefined
@@ -34,17 +44,19 @@ export interface CreationSnapshot {
   readonly rejectedCount?: number | undefined
   readonly notice: string
   readonly totalSourceBytes: number
-  readonly diagnostics: { readonly generations: number; readonly cancellations: number; readonly lastOutputBytes: number; readonly sourceCheckMs?: number }
+  readonly diagnostics: CreationCleanup & { readonly generations: number; readonly completed: number; readonly cancellations: number; readonly jobId: number;
+    readonly lastOutputBytes: number; readonly sourceCheckMs?: number }
 }
 
-export const DEFAULT_CREATION_SETTINGS: CreationSettings = { frameDurationMs: 500, loopForever: true, playCount: 1 }
-export const isCreationBusy = (status: CreationStatus) => ['adding', 'preparing', 'encoding', 'finalizing', 'cancelling'].includes(status)
+export const DEFAULT_CREATION_SETTINGS: CreationSettings = { target: 'gif', frameDurationMs: 500, loopForever: true, playCount: 1 }
+export const isCreationBusy = (status: CreationStatus) => ['adding', 'preparing', 'encoding', 'finalizing', 'verifying', 'cancelling'].includes(status)
 
 export class CreationSettingsError extends Error {
-  constructor(readonly field: 'duration' | 'plays' | 'loop', message: string) { super(message); this.name = 'CreationSettingsError' }
+  constructor(readonly field: 'duration' | 'plays' | 'loop' | 'target', message: string) { super(message); this.name = 'CreationSettingsError' }
 }
 
 export function normalizeCreationSettings(settings: CreationSettings): CreationSettings {
+  if (!['gif', 'webp', 'apng'].includes(settings.target)) throw new CreationSettingsError('target', 'Choose a supported animation format.')
   if (!Number.isFinite(settings.frameDurationMs) || settings.frameDurationMs < 20 || settings.frameDurationMs > 10000) {
     throw new CreationSettingsError('duration', 'Choose a frame duration from 20 to 10000 ms.')
   }

@@ -17,7 +17,7 @@ export async function launchBrowser(output = resolve('.tools/creation'), { onEve
   ], { windowsHide: true, stdio: 'ignore' })
   let launchError, socket, sequence = 0
   browser.on('error', error => { launchError = error })
-  const pending = new Map(), errors = [], assets = [], workerEvidence = [], downloads = []
+  const pending = new Map(), errors = [], assets = [], workerEvidence = [], sourceEvidence = [], downloads = []
   const send = (method, params = {}, sessionId, timeoutMs = 30_000) => new Promise((resolve, reject) => {
     const id = ++sequence
     const timer = setTimeout(() => { pending.delete(id); reject(new Error(`CDP timeout: ${method}`)) }, timeoutMs)
@@ -56,6 +56,7 @@ export async function launchBrowser(output = resolve('.tools/creation'), { onEve
       if (event.method === 'Runtime.consoleAPICalled' && event.params.type === 'debug') {
         const text = event.params.args[0]?.value
         if (typeof text === 'string' && text.startsWith('CREATION_BITMAP_EVIDENCE:')) workerEvidence.push(JSON.parse(text.slice('CREATION_BITMAP_EVIDENCE:'.length)))
+        if (typeof text === 'string' && text.startsWith('CREATION_SOURCE_EVIDENCE:')) sourceEvidence.push(JSON.parse(text.slice('CREATION_SOURCE_EVIDENCE:'.length)))
       }
       if (event.method === 'Network.responseReceived') {
         const response = event.params.response
@@ -65,14 +66,14 @@ export async function launchBrowser(output = resolve('.tools/creation'), { onEve
       if (event.method === 'Browser.downloadWillBegin' || event.method === 'Browser.downloadProgress') downloads.push({ type: event.method, ...event.params })
       if (event.method === 'Target.attachedToTarget') {
         const session = event.params.sessionId
-        void send('Runtime.enable', {}, session)
+        void send('Network.enable', {}, session).then(() => send('Runtime.enable', {}, session))
           .then(() => send('Runtime.evaluate', { expression: `
-            const evidence={created:0,closed:0,live:0,peak:0,detached:false};const live=new WeakSet();
+            const evidence={created:0,closed:0,live:0,peak:0,detached:false,frameTransfers:0,detachedFrameTransfers:0};const live=new WeakSet();
             if(typeof createImageBitmap==='function'&&typeof ImageBitmap!=='undefined'){
               const create=createImageBitmap;globalThis.createImageBitmap=async(...args)=>{const b=await create(...args);live.add(b);evidence.created++;evidence.live++;evidence.peak=Math.max(evidence.peak,evidence.live);return b};
               const close=ImageBitmap.prototype.close;ImageBitmap.prototype.close=function(){if(live.has(this)){live.delete(this);evidence.closed++;evidence.live--}return close.call(this)};
             }
-            const post=globalThis.postMessage;globalThis.postMessage=function(message,transfer){const value=post.call(this,message,transfer);if(message.type==='result'){evidence.detached=message.result.data.byteLength===0;console.debug('CREATION_BITMAP_EVIDENCE:'+JSON.stringify(evidence))}if(message.type==='error')console.debug('CREATION_BITMAP_EVIDENCE:'+JSON.stringify({...evidence,error:message.code}));return value};
+            const post=globalThis.postMessage;globalThis.postMessage=function(message,transfer){const value=post.call(this,message,transfer);if(message.type==='frame'&&message.frame?.rgba){evidence.frameTransfers++;if(message.frame.rgba.byteLength===0)evidence.detachedFrameTransfers++}if(message.type==='closed'&&message.resources)console.debug('CREATION_SOURCE_EVIDENCE:'+JSON.stringify(evidence));if(message.type==='result'){evidence.detached=message.result.data.byteLength===0;console.debug('CREATION_BITMAP_EVIDENCE:'+JSON.stringify(evidence))}if(message.type==='error')console.debug('CREATION_BITMAP_EVIDENCE:'+JSON.stringify({...evidence,error:message.code}));return value};
           ` }, session))
           .then(() => send('Runtime.runIfWaitingForDebugger', {}, session)).catch(error => errors.push(error.message))
       }
@@ -109,6 +110,6 @@ export async function launchBrowser(output = resolve('.tools/creation'), { onEve
     const click = selector => evaluate(`document.querySelector(${JSON.stringify(selector)})?.click()`)
     const clickLabel = label => evaluate(`Array.from(document.querySelectorAll('button')).find(b=>(b.getAttribute('aria-label')||b.title||b.textContent.trim())===${JSON.stringify(label)})?.click()`)
     const navigate = async url => { await send('Page.navigate', { url }); await send('Page.bringToFront') }
-    return { send, evaluate, waitFor, inputFiles, click, clickLabel, navigate, close, errors, assets, workerEvidence, downloads, profile }
+    return { send, evaluate, waitFor, inputFiles, click, clickLabel, navigate, close, errors, assets, workerEvidence, sourceEvidence, downloads, profile }
   } catch (error) { await close(); throw error }
 }

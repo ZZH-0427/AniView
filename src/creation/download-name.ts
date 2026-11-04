@@ -11,7 +11,10 @@ function downloadNonce() {
 
 /** Different suggestions across results, repeated clicks, tabs and page reloads. */
 export function createGifDownloadNamer(now: () => number = Date.now, nonce = downloadNonce()) {
-  return createDownloadNamer('aniview-animation', 'gif', now, nonce)
+  return createCreationDownloadNamer('gif', now, nonce)
+}
+export function createCreationDownloadNamer(extension: 'gif' | 'webp' | 'png', now: () => number = Date.now, nonce = downloadNonce()) {
+  return createDownloadNamer('aniview-animation', extension, now, nonce)
 }
 
 /** Same per-activation naming strategy for conversion, with a safe source basename. */

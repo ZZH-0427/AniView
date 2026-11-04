@@ -40,6 +40,9 @@
 .creator-checkbox { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; width: fit-content; cursor: pointer; }
 .creator-checkbox input { width: 20px; height: 20px; margin: 0; accent-color: #285581; }
 .creator-loop-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.creator-format { min-width: 0; margin-top: 0.75rem; padding: 0; border: 0; }
+.creator-format legend { font-size: 0.85rem; font-weight: 550; }
+.creator-format-options { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
 .creator-note { margin-top: 0.75rem; color: #66768a; font-size: 0.75rem; }
 .creator-generation { min-width: 0; padding: 0.1rem 0; }
 .creator-generation-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }

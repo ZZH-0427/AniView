@@ -2,7 +2,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../app/App'
 import { CreationSession } from '../creation/creation-session'
-import type { EncodedGif } from '../creation/gif/model'
+import type { StaticAnimationOutput } from '../creation/static-animation-encoder'
+import { creationOutput } from '../creation/creation.test-support'
 import { staticFixture } from '../formats/static/static-fixtures.test-support'
 import type { VirtualFile } from '../input/virtual-file'
 import CreateGif from '../pages/CreateGif/CreateGif'
@@ -99,14 +100,14 @@ describe('localized ordinary UI without workspace reset', () => {
     expect(session.getSnapshot()).toBe(snapshot); await session.dispose()
   })
   it('does not restart or cancel an active generation and retains the same result Blob', async () => {
-    let finish!: (result: EncodedGif) => void
-    const encode = vi.fn(() => new Promise<EncodedGif>(resolve => { finish = resolve })), cancel = vi.fn(async () => {})
-    const session = new CreationSession({ encoder: { encode, cancel }, createUrl: () => 'blob:one-result', revokeUrl: () => {} })
+    let finish!: (result: StaticAnimationOutput) => void
+    const encode = vi.fn(() => new Promise<StaticAnimationOutput>(resolve => { finish = resolve })), cancel = vi.fn(async () => {})
+    const session = new CreationSession({ encoder: { encode, cancel }, inspect: async () => ({ width: 2, height: 1, frameCount: 2, playCount: 0, durationMs: 1000 }),
+      createUrl: () => 'blob:one-result', revokeUrl: () => {} })
     await session.add([source(), source('two.png')]); const work = session.generate(), active = session.getSnapshot()
     localeStore.setLocale('zh-CN'); expect(renderCreator(session)).toContain('正在准备图片')
     expect(session.getSnapshot()).toBe(active); expect(encode).toHaveBeenCalledTimes(1); expect(cancel).not.toHaveBeenCalled()
-    finish({ data: new ArrayBuffer(6), byteLength: 6, metrics: { width: 2, height: 1, frameCount: 2, sourceBytes: 16,
-      decodeMs: 1, quantizeMs: 1, writeMs: 1, totalMs: 3, peakBitmaps: 1, peakRgbaFrames: 1, peakFrameBytes: 8, outputBytes: 6, outputCapacity: 6 } })
+    finish(creationOutput())
     await work; const result = session.getSnapshot().result
     expect(renderCreator(session)).toContain('已生成 GIF')
     localeStore.setLocale('en'); expect(renderCreator(session)).toContain('Generated GIF')

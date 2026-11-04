@@ -16,6 +16,7 @@ export async function generateFixtures(evaluate, folder = resolve('.tools/creati
     ['quality-flat', { count: 3, width: 384, height: 256, kind: 'flat' }],
     ['quality-gradient', { count: 3, width: 384, height: 256, kind: 'gradient' }],
     ['quality-high-color', { count: 3, width: 384, height: 256, kind: 'high-color' }],
+    ['quality-semi-edge', { count: 3, width: 96, height: 64, kind: 'semi-edge' }],
     ['mixed-jpeg', { count: 1, width: 32, height: 24, kind: 'solid', type: 'image/jpeg', prefix: 'red' }],
     ['mixed-png', { count: 1, width: 16, height: 12, kind: 'transparent', prefix: 'transparent' }],
     ['mixed-webp', { count: 1, width: 24, height: 16, kind: 'solid', type: 'image/webp', prefix: 'webp' }],
@@ -46,6 +47,8 @@ export async function generateFixtures(evaluate, folder = resolve('.tools/creati
   const oversized = join(folder, 'fixtures', 'encoded-source-over-16MiB.png')
   await writeFile(oversized, Buffer.alloc(16 * 1024 * 1024 + 1))
   manifest.oversizedSource = oversized // Admission must reject by size before reading/decoding.
+  const orientation = join(folder, 'fixtures', 'orientation-6.jpg')
+  await copyFile('tests/fixtures/static/orientation-6.jpg', orientation); manifest.orientation = orientation
   const wrongName = join(folder, 'fixtures', 'png-with-wrong-extension.jpg')
   await copyFile(manifest.groups['mixed-png'].files[0], wrongName); manifest.wrongExtension = wrongName
   const longName = join(folder, 'fixtures', 'a-very-long-original-programmatic-static-image-filename-that-must-not-hide-row-actions-or-overflow-the-small-mobile-viewport.png')
@@ -53,7 +56,7 @@ export async function generateFixtures(evaluate, folder = resolve('.tools/creati
 
   const zipOptions = { useWebWorkers: false, useCompressionStream: false, level: 0, lastModDate: new Date('2024-01-01T00:00:00Z'), extendedTimestamp: false, ntfsTimestamp: false }
   for (const [name, paths] of [['mobile-40.zip', small.slice(0, 40)], ['mobile-10-large.zip', manifest.groups['large-10'].files],
-    ['mixed-static.zip', [manifest.groups['mixed-jpeg'].files[0], manifest.groups['mixed-png'].files[0], manifest.groups['mixed-webp'].files[0]]]]) {
+    ['mixed-static.zip', [manifest.groups['mixed-jpeg'].files[0], manifest.groups['mixed-png'].files[0], manifest.groups['mixed-webp'].files[0], manifest.groups['quality-semi-edge'].files[0]]]]) {
     const writer = new ZipWriter(new BlobWriter('application/zip'), zipOptions)
     for (const [index, path] of paths.entries()) {
       const bytes = await readFile(path), extension = path.split('.').at(-1)

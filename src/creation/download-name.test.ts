@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createGifDownloadNamer, createAnimationDownloadNamer } from './download-name'
+import { createGifDownloadNamer, createAnimationDownloadNamer, createCreationDownloadNamer } from './download-name'
 
 describe('GIF download names', () => {
   it('keeps different results and repeated saves distinct even within one clock tick', () => {
@@ -22,6 +22,12 @@ describe('GIF download names', () => {
 })
 
 describe('converted animation download names', () => {
+  it.each(['gif', 'webp', 'png'] as const)('keeps repeated Creator %s saves distinct without a source filename', extension => {
+    const next = createCreationDownloadNamer(extension, () => 1000, 'fixed')
+    const names = [next(), next()]
+    expect(names[0]).toMatch(new RegExp(`^aniview-animation-.*\\.${extension}$`))
+    expect(names[0]).not.toBe(names[1])
+  })
   it.each(['gif', 'webp', 'png'] as const)('keeps the source basename with distinct %s downloads', extension => {
     const next = createAnimationDownloadNamer('folder/cat.original.gif', extension, () => 10, 'nonce')
     const names = [next(), next()]

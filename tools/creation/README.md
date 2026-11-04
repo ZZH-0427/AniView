@@ -1,7 +1,7 @@
 # Static-image animation Creator acceptance tools
 
-These tools exercise the actual V0.2 product UI on the feature branch. They do
-not deploy anything, create a release or modify the v0.1.0 production website.
+These tools exercise the V0.3 multi-format Creator on the feature branch. They do
+not deploy anything, create a release or modify the V0.2 production website.
 Use the existing installed Node.js 24/npm and installed Edge; no browser is
 downloaded. `BROWSER_PATH` can select another already-installed browser.
 
@@ -19,7 +19,16 @@ static sources, and drives the visible product controls. It checks file input,
 append/duplicates/reorder/remove/drop, settings, Worker progress, Cancel→rerun,
 existing-Viewer preview, repeated/new-result browser downloads with distinct
 filenames and preserved earlier bytes, URL lifecycle, limits, recovery,
-320/390/768/1280 layouts and ownership cleanup. It closes its own server/browser.
+320/360/390/768/1280 layouts and ownership cleanup. It closes its own server/browser.
+
+The three-target checks cover direct GIF/WebP/APNG output, full prepared-pixel
+comparison across every source frame (including merged WebP timelines), actual
+saved files reopened in unchanged decoder Workers, retaining the old result when
+switching target, live EN/ZH, and cancel/rerun in preparation, encoding and output
+checking. The GIF parity oracle uses the archived V0.2 RC production Worker in
+`.tools/rc-audit/site-a1876c6/assets/encoder.worker-4zFLx0Cr.js`, verified against
+the committed V0.2 build manifest. Set `ANIVIEW_V02_SITE` to an equivalent archive
+root. Missing/mismatched references fail clearly; no historical binary is committed.
 
 Product workloads include 200×320×240, 10×1024², two/three 2048² frames and a
 controlled rejection of four 2048² frames before quantization. Generated JPEG,
@@ -27,7 +36,7 @@ PNG and WebP come from the installed native Canvas encoder. Original flat art,
 gradient and procedural high-color scenes are also re-encoded through the UI;
 source/output contact sheets permit manual quality comparison.
 
-All original/generated source images, ZIP delivery packages, actual GIF downloads,
+All original/generated source images, ZIP delivery packages, actual animation downloads,
 screenshots, browser profiles and reports remain ignored under `.tools/creation/`.
 The generator source is reproducible; no downloaded artwork or large binary
 fixture is committed. Browser-native encoded files may differ across engines.
@@ -36,11 +45,19 @@ These are individual observations, not a controlled cross-device speed ranking.
 The main report is `.tools/creation/report.json`. `totalMs` comes from the real
 encoding job and includes preparation; fixture generation and test decode-back
 are separate. Bitmap/RGBA counts and buffer capacity are ownership proxies, not
-OS RSS or GPU measurements. The source/output quality metric covers the first
-frame; it is not a temporal flicker metric. Existing Worker native-bitmap and
+OS RSS or GPU measurements. The legacy GIF contact sheets cover the first frame;
+`multiFormat.quality` checks all prepared pixels in every covered source frame
+and records its exact scope. Neither is a temporal flicker metric. Worker native-bitmap and
 transfer probes provide separate resource evidence.
 
 ## Local Android product validation
+
+Current M10A2 acceptance is specified in
+`docs/milestones/milestone-m10a2-android-validation.md`. It requires fresh Edge and
+Quark results for all three formats, true semi-transparent PNG edges, cancellation,
+repeat downloads and post-Home cleanup. Use a frozen build via an HTTPS tunnel or
+approved USB localhost forwarding for a secure context, with no HMR. LAN HTTP
+examples below are useful for connectivity checks, not the formal secure-context gate.
 
 The desktop runner also prepares two original static-image bundles. To regenerate
 them without the product UI run:

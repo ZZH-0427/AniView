@@ -4,7 +4,7 @@ import { Icon } from '../../components/Icon'
 import { IconButton } from '../../components/IconButton'
 import type { CreationSession } from '../../creation/creation-session'
 import type { CreationResult, CreationSnapshot, CreationSource } from '../../creation/creation-types'
-import { isCreationBusy } from '../../creation/creation-types'
+import { isCreationBusy, creationFormats } from '../../creation/creation-types'
 import { droppedFiles } from '../../input/drag-drop'
 import { takeFileSelection } from '../../input/file-input'
 import { CreationDiagnostics } from './CreationDiagnostics'
@@ -22,12 +22,13 @@ function operationMessage(snapshot: CreationSnapshot, t: ReturnType<typeof useI1
   const progress = snapshot.progress
   switch (snapshot.status) {
     case 'adding': return snapshot.addingProgress ? t('progress.checkingSourcesCount', snapshot.addingProgress) : t('progress.checkingSources')
-    case 'preparing': return progress ? t('progress.preparingImagesCount', { current: progress.currentFrame, total: progress.totalFrames }) : t('progress.preparingImages')
-    case 'encoding': return t('progress.encodingCount', { current: Math.min((progress?.currentFrame ?? 0) + 1, progress?.totalFrames ?? snapshot.sources.length), total: progress?.totalFrames ?? snapshot.sources.length })
-    case 'finalizing': return t('progress.finalizingGif')
+    case 'preparing': return progress ? t('progress.preparingImagesCount', { current: progress.completedFrames, total: progress.totalFrames }) : t('progress.preparingImages')
+    case 'encoding': return t('progress.encodingCount', { current: progress?.completedFrames ?? 0, total: progress?.totalFrames ?? snapshot.sources.length })
+    case 'finalizing': return t('progress.finalizing')
+    case 'verifying': return t('progress.checkingOutput')
     case 'cancelling': return t('progress.cancelling')
     case 'cancelled': return t('progress.generationCancelled')
-    case 'success': return t('progress.gifGenerated')
+    case 'success': return t('creator.generatedFormat', { format: creationFormats[snapshot.result?.format ?? snapshot.settings.target].label })
     default: return ''
   }
 }
@@ -69,11 +70,12 @@ export default function CreateGif({ session, onBack, onPreview, previewButtonRef
   const [playCount, setPlayCount] = useState(String(settings.playCount))
   const [dragging, setDragging] = useState(false)
   const busy = isCreationBusy(snapshot.status)
-  const generating = ['preparing', 'encoding', 'finalizing', 'cancelling'].includes(snapshot.status)
+  const generating = ['preparing', 'encoding', 'finalizing', 'verifying', 'cancelling'].includes(snapshot.status)
   const durationValid = validDuration(duration), countValid = validPlayCount(playCount)
   const progress = snapshot.progress
-  const actualProgress = progress?.completedWork !== undefined && progress.totalWork !== undefined && progress.totalWork > 0
-    ? { value: progress.completedWork, max: progress.totalWork } : undefined
+  const actualProgress = progress?.phase === 'encoding' && progress.totalFrames > 0
+    ? { value: progress.completedFrames, max: progress.totalFrames } : undefined
+  const generateLabel = t(settings.target === 'gif' ? 'creator.generate' : settings.target === 'webp' ? 'creator.generateWebp' : 'creator.generateApng')
 
   useEffect(() => {
     let depth = 0
@@ -161,12 +163,19 @@ export default function CreateGif({ session, onBack, onPreview, previewButtonRef
 
     <section className="creator-settings creator-card" aria-labelledby="creation-settings-heading">
       <h2 id="creation-settings-heading">{t('creator.animation')}</h2>
+      <fieldset className="creator-format" disabled={busy}>
+        <legend>{t('creator.outputFormat')}</legend>
+        <div className="creator-format-options">{(['gif', 'webp', 'apng'] as const).map(target => <label key={target} className="creator-checkbox">
+          <input type="radio" name="creation-target" value={target} checked={settings.target === target}
+            onChange={() => session.updateSettings({ target })} />{creationFormats[target].label}
+        </label>)}</div>
+      </fieldset>
       <div className="creator-fields">
         <div className="creator-field"><label htmlFor="creation-duration">{t('creator.duration')}</label>
           <input id="creation-duration" type="number" min="20" max="10000" step="10" inputMode="numeric"
             value={duration} disabled={busy} aria-describedby="creation-duration-help" aria-invalid={!durationValid}
             onChange={event => setDuration(event.currentTarget.value)} onBlur={commitDuration} />
-          <p id="creation-duration-help">{t('creator.durationHelp')}</p>
+          <p id="creation-duration-help">{t('creator.durationPolicy')}</p>
         </div>
         <div className="creator-loop-field">
           <label className="creator-checkbox" htmlFor="creation-loop-forever">
@@ -181,39 +190,40 @@ export default function CreateGif({ session, onBack, onPreview, previewButtonRef
         </div>
       </div>
       <p className="creator-note">{t('creator.canvasNote')}</p>
-      <p className="creator-note">{t('creator.colorNote')}</p>
+      <p className="creator-note" data-testid="creation-target-hint">{t(settings.target === 'gif' ? 'creator.colorNote' : settings.target === 'webp' ? 'creator.webpHint' : 'creator.apngHint')}</p>
     </section>
 
     <section className="creator-generation" aria-label={t('creator.generateGroup')}>
       <div className="creator-generation-actions">
-        <IconButton icon="create" label={t('creator.generate')} text={t('creator.generate')} className="creator-primary" data-testid="creation-generate"
+        <IconButton icon="create" label={generateLabel} text={generateLabel} className="creator-primary" data-testid="creation-generate"
           aria-describedby={sources.length === 1 ? minimumSourceId : undefined}
           disabled={busy || sources.length < 2 || snapshot.totalSourceBytes > 16 * 1024 * 1024 || !durationValid || (!settings.loopForever && !countValid)} onClick={generate} />
         {generating && <IconButton icon="close" label={t('common.cancel')} text={t('common.cancel')} data-testid="creation-cancel"
           disabled={snapshot.status === 'cancelling'} onClick={() => { void session.cancel() }} />}
       </div>
       <p className="creator-status" role="status" data-testid="creation-status">{operationMessage(snapshot, t)}</p>
-      {generating && <progress aria-label={t('creator.progress')} data-testid="creation-progress"
+      {generating && <progress aria-label={t('creator.animationProgress')} data-testid="creation-progress"
         {...(actualProgress ? { value: actualProgress.value, max: actualProgress.max } : {})} />}
       {snapshot.error && <p className="creator-error" role="alert" data-testid="creation-error">{text(snapshot.errorMessage ?? { key: 'errors.creation' })}</p>}
     </section>
 
     {result && <section className="creator-result creator-card" aria-labelledby="creation-result-heading" data-testid="creation-result">
-      <h2 id="creation-result-heading">{t('creator.result')}</h2>
+      <h2 id="creation-result-heading">{t('creator.generatedFormat', { format: creationFormats[result.format].label })}</h2>
       <dl className="creator-result-metadata">
         <div><dt>{t('result.dimensions')}</dt><dd>{result.metadata.width} × {result.metadata.height}</dd></div>
         <div><dt>{t('result.frames')}</dt><dd>{result.metadata.frameCount}</dd></div>
-        <div><dt>{t('creator.frameDuration')}</dt><dd>{result.metadata.frameDurationMs} ms</dd></div>
-        <div><dt>{t('result.playback')}</dt><dd>{result.metadata.loopForever ? t('creator.loop') : t(result.metadata.playCount === 1 ? 'result.onePlay' : 'result.plays', { count: result.metadata.playCount })}</dd></div>
-        <div><dt>{t('creator.size')}</dt><dd>{formatBytes(result.metadata.bytes, locale)}</dd></div>
+        <div><dt>{t('creator.frameDuration')}</dt><dd>{result.settings.frameDurationMs} ms</dd></div>
+        <div><dt>{t('creator.totalDuration')}</dt><dd>{numberText(locale, result.metadata.durationMs)} ms</dd></div>
+        <div><dt>{t('result.playback')}</dt><dd>{result.metadata.playCount === 0 ? t('creator.loop') : t(result.metadata.playCount === 1 ? 'result.onePlay' : 'result.plays', { count: result.metadata.playCount })}</dd></div>
+        <div><dt>{t('creator.outputSize')}</dt><dd>{formatBytes(result.metadata.bytes, locale)}</dd></div>
       </dl>
       <div className="creator-result-actions">
         <IconButton ref={previewButtonRef} className="preview-return-trigger" icon="play" label={t('common.preview')} text={t('common.preview')} data-testid="creation-preview" disabled={busy} onClick={() => onPreview(result)} />
         <a className="creator-download" href={result.url} download={result.filename} data-testid="creation-download"
           onClick={event => { event.currentTarget.download = session.nextDownloadName() }}
-          aria-label={t('common.download', { format: 'GIF' })} title={t('common.download', { format: 'GIF' })}><Icon name="download" /><span>{t('common.download', { format: 'GIF' })}</span></a>
+          aria-label={t('common.download', { format: creationFormats[result.format].label })} title={t('common.download', { format: creationFormats[result.format].label })}><Icon name="download" /><span>{t('common.download', { format: creationFormats[result.format].label })}</span></a>
       </div>
-      <p className="creator-note">{t('common.savedGifs')}</p>
+      <p className="creator-note">{t('common.savedFiles')}</p>
     </section>}
 
     <CreationDiagnostics snapshot={snapshot} />

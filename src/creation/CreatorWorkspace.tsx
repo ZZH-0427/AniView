@@ -49,7 +49,7 @@ export default function CreatorWorkspace({ onBack }: { onBack: () => void }) {
   }} onPreview={result => {
     if (isCreationBusy(session.getSnapshot().status)) return
     rememberPreview()
-    const file: VirtualFile = { name: 'aniview-animation.gif', size: result.blob.size, mimeType: 'image/gif', source: 'file',
+    const file: VirtualFile = { name: result.filename, size: result.blob.size, mimeType: result.mime, source: 'file',
       read: (start, end) => result.blob.slice(start, end).arrayBuffer() }
     setPreview({ result, file })
   }} />

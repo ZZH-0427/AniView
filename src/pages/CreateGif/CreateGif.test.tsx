@@ -2,24 +2,35 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CreationSession } from '../../creation/creation-session'
 import type { CreationSnapshot } from '../../creation/creation-types'
-import type { EncodedGif } from '../../creation/gif/model'
+import { creationOutput } from '../../creation/creation.test-support'
 import type { VirtualFile } from '../../input/virtual-file'
 import CreateGif from './CreateGif'
 
 const source = (name: string): VirtualFile => ({ name, source: 'file', size: 256, read: async () => new ArrayBuffer(256) })
-const output = (): EncodedGif => ({ data: new ArrayBuffer(4096), byteLength: 300, metrics: {
-  decodeMs: 1, quantizeMs: 2, writeMs: 1, totalMs: 6, peakBitmaps: 1, peakRgbaFrames: 1,
-  peakFrameBytes: 32, outputBytes: 300, outputCapacity: 4096, frameCount: 2, width: 4, height: 2, sourceBytes: 512,
-} })
+const output = () => creationOutput(4, 2, 2, 300)
 function session() {
-  return new CreationSession({ detector: { detect: async () => ({ kind: 'png', animated: false }) },
-    encoder: { encode: async () => output(), cancel: async () => {} }, createUrl: () => 'blob:local-generated-gif', revokeUrl: () => {} })
+  const value: CreationSession = new CreationSession({ detector: { detect: async () => ({ kind: 'png', animated: false }) },
+    encoder: { encode: async () => output(), cancel: async () => {} }, inspect: async () => ({ width: 4, height: 2, frameCount: 2,
+      durationMs: value.getSnapshot().settings.frameDurationMs * 2, playCount: value.getSnapshot().settings.loopForever ? 0 : value.getSnapshot().settings.playCount }),
+    createUrl: () => 'blob:local-generated-gif', revokeUrl: () => {} })
+  return value
 }
 const render = (value: CreationSession) => renderToStaticMarkup(<CreateGif session={value} onBack={() => {}} onPreview={() => {}} />)
 const tag = (html: string, id: string) => html.match(new RegExp(`<[^>]+data-testid="${id}"[^>]*>`))?.[0] ?? ''
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks() })
 
 describe('GIF creation presentation', () => {
+  it.each(['gif', 'webp', 'apng'] as const)('renders %s selection, helper, CTA and actual result identity', async target => {
+    const value = session(); await value.add([source('one.png'), source('two.png')]); value.updateSettings({ target }); await value.generate()
+    const html = render(value), label = target === 'gif' ? 'GIF' : target === 'webp' ? 'WebP' : 'APNG'
+    expect(html).toContain('Output format')
+    expect(html.match(/<input[^>]+>/g)?.find(input => input.includes('type="radio"') && input.includes(`value="${target}"`))).toContain('checked=""')
+    expect(tag(html, 'creation-generate')).toContain(`Generate ${label}`)
+    expect(html).toContain(target === 'gif' ? '1-bit transparency' : 'Lossless full-color')
+    expect(tag(html, 'creation-download')).toContain(`.${target === 'apng' ? 'png' : target}`)
+    value.updateSettings({ target: target === 'gif' ? 'apng' : 'gif' })
+    expect(value.getSnapshot().result!.format).toBe(target); await value.dispose()
+  })
   it.each([0, 1, 2, 20])('explains the minimum only for one source (%i selected), keeping generation rules', async count => {
     const value = session()
     if (count) await value.add(Array.from({ length: count }, (_, index) => source(`image-${index}.png`)))
@@ -113,12 +124,12 @@ describe('GIF creation presentation', () => {
     const value = session()
     await value.add([source('one.png'), source('two.png')])
     const snapshot: CreationSnapshot = { ...value.getSnapshot(), status: 'encoding',
-      progress: { phase: 'quantizing', currentFrame: 1, totalFrames: 2, completedWork: 3, totalWork: 4 } }
+      progress: { phase: 'encoding', completedFrames: 1, totalFrames: 2 } }
     vi.spyOn(value, 'getSnapshot').mockReturnValue(snapshot)
     const html = render(value)
-    expect(html).toContain('Encoding 2 / 2')
-    expect(tag(html, 'creation-progress')).toContain('value="3"')
-    expect(tag(html, 'creation-progress')).toContain('max="4"')
+    expect(html).toContain('Encoding 1 / 2')
+    expect(tag(html, 'creation-progress')).toContain('value="1"')
+    expect(tag(html, 'creation-progress')).toContain('max="2"')
     expect(tag(html, 'creation-input')).toContain('disabled=""')
     expect(tag(html, 'creation-generate')).toContain('disabled=""')
     expect(tag(html, 'creation-cancel')).not.toContain('disabled=')

@@ -11,6 +11,13 @@ export async function renderFixtures(spec) {
       const pixels = ctx.createImageData(width, height)
       for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) pixels.data.set([20, 220, 50, [0,127,128,255][x % 4]], (y * width + x) * 4)
       ctx.putImageData(pixels, 0, 0)
+    } else if (kind === 'semi-edge') {
+      const pixels = ctx.createImageData(width, height)
+      for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+        const distance = Math.hypot((x - width / 2 - frame * 3) / (width * .4), (y - height / 2) / (height * .4))
+        pixels.data.set([230, 45 + frame * 50, 160, Math.round(Math.max(0, Math.min(1, (1 - distance) * 4)) * 255)], (y * width + x) * 4)
+      }
+      ctx.putImageData(pixels, 0, 0)
     } else if (kind === 'flat') {
       ctx.fillStyle = '#4985c8'; ctx.fillRect(0, 0, width, height)
       ctx.fillStyle = '#c6dba4'; ctx.fillRect(0, height * .75, width, height * .25)

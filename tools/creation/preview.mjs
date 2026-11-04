@@ -6,7 +6,7 @@ import { resolve, join, relative, extname, sep } from 'node:path'
 
 const option = (name, fallback) => process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : fallback
 const host = option('--host', '127.0.0.1'), port = Number(option('--port', '4198'))
-const dist = resolve('dist'), fixtures = resolve('.tools/creation'), base = '/AniView/'
+const dist = resolve(option('--root', 'dist')), fixtures = resolve('.tools/creation'), base = '/AniView/'
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.wasm': 'application/wasm', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif', '.zip': 'application/zip', '.json': 'application/json' }
 const safePath = (root, suffix) => {
@@ -16,11 +16,12 @@ const safePath = (root, suffix) => {
 }
 const index = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AniView local creation samples</title>
 <style>body{font:16px/1.6 system-ui;max-width:48rem;margin:auto;padding:1rem}a{display:block;min-height:44px;padding:.4rem}code{overflow-wrap:anywhere}</style>
-<h1>Local GIF creation samples</h1><p>Original programmatically generated images for local Android acceptance. Download a ZIP, extract it with the phone's Files app, then choose the extracted static images in Create animation. These ZIPs are fixture delivery only; the creator does not accept ZIP input.</p>
+<h1>Local multi-format animation creation samples</h1><p>Original programmatically generated images for local Android acceptance. Download a ZIP, extract it with the phone's Files app, then choose the extracted static images in Create animation. These ZIPs are fixture delivery only; the creator does not accept ZIP input.</p>
 <a href="${base}">Open AniView production preview (no HMR)</a>
 <a href="mobile-40.zip" download>Download 40 × 320×240 static PNGs</a>
 <a href="mobile-10-large.zip" download>Download 10 × 1024² static PNGs</a>
 <a href="mixed-static.zip" download>Download mixed JPEG / PNG / WebP</a>
+<a href="fixtures/quality-semi-edge/frame-001.png" download>Download PNG with semi-transparent edges</a>
 <p>Run the small workload first. Stop increasing workload after a tab crash or reload. All image processing stays in your browser.</p></html>`
 
 const server = createServer(async (request, response) => {

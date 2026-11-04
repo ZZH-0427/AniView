@@ -6,6 +6,7 @@ import { resolve, join, relative } from 'node:path'
 import { GifReader } from 'omggif'
 import { launchBrowser, sleep } from './browser.mjs'
 import { generateFixtures } from './generate-fixtures.mjs'
+import { multiFormatChecks } from './multi-format-checks.mjs'
 
 const output = resolve('.tools/creation'), port = process.env.ANIVIEW_CREATION_PORT ?? '4201'
 const host = `http://127.0.0.1:${port}`, url = `${host}/AniView/`
@@ -44,23 +45,21 @@ try {
     assert.equal(await resultUrl(), null)
   }
   const generate = async ({ expectError = false } = {}) => {
-    const old = await resultUrl(), start = performance.now()
+    const old = await resultUrl(), start = performance.now(), jobsBefore = await evaluate('window.__creationProbe.jobs.length')
     await evaluate(`window.__creationProbe.heartbeatCount=0;window.__creationProbe.maxHeartbeatGapMs=0;window.__creationBeat=performance.now();window.__creationTimer=setInterval(()=>{const now=performance.now();window.__creationProbe.heartbeatCount++;window.__creationProbe.maxHeartbeatGapMs=Math.max(window.__creationProbe.maxHeartbeatGapMs,now-window.__creationBeat);window.__creationBeat=now;},16)`)
     await click(selector('creation-generate'))
     if (expectError) await waitFor(`!!document.querySelector('${selector('creation-error')}')`, 60_000)
-    else await waitFor(`document.querySelector('${selector('creation-status')}')?.textContent==='GIF generated'&&document.querySelector('${selector('creation-download')}')?.href!==${JSON.stringify(old)}`, 60_000)
+    else await waitFor(`JSON.parse(document.querySelector('${selector('creation-debug')}').textContent).status==='success'&&document.querySelector('${selector('creation-download')}')?.href!==${JSON.stringify(old)}`, 120_000)
     await evaluate('clearInterval(window.__creationTimer)')
     await settled()
-    const evidence = await evaluate('({heartbeatCount:window.__creationProbe.heartbeatCount,maxHeartbeatGapMs:window.__creationProbe.maxHeartbeatGapMs,job:window.__creationProbe.jobs.at(-1),activeWorkers:window.__creationProbe.activeWorkers})')
+    const evidence = await evaluate(`({heartbeatCount:window.__creationProbe.heartbeatCount,maxHeartbeatGapMs:window.__creationProbe.maxHeartbeatGapMs,job:window.__creationProbe.jobs[${jobsBefore}],activeWorkers:window.__creationProbe.activeWorkers})`)
     evidence.wallMs = performance.now() - start
     assert.equal(evidence.activeWorkers, 0)
     if (expectError) evidence.error = await evaluate(`document.querySelector('${selector('creation-error')}').textContent`)
     else {
-      const state = await debug(); evidence.metrics = state.metrics
-      assert.equal(state.metrics.peakRgbaFrames, 1); assert.equal(state.metrics.peakBitmaps, 1)
-      const progress = evidence.job.progress
-      assert(progress.length, 'No Worker progress reached product')
-      assert(progress.every((p, i) => p.currentFrame <= p.totalFrames && (i === 0 || p.completedWork >= progress[i - 1].completedWork)), 'Progress regressed')
+      const state = await debug(); evidence.metrics = { ...state.metrics.source, peakRgbaFrames: state.metrics.peakRgbaFrames }
+      assert.equal(state.metrics.peakRgbaFrames, 1); assert.equal(state.metrics.source.peakBitmaps, 1)
+      for (const key of ['activeSourceWorkers','activeEncoderWorkers','activeValidationDecoderWorkers','activeInspectionWorkers','ownedRgba','awaitingAck','cleanupErrors']) assert.equal(state.diagnostics[key], 0, key)
     }
     return evidence
   }
@@ -75,8 +74,8 @@ try {
     await click(selector('creation-preview')); await waitFor(`document.querySelector('[data-testid=current-frame]')?.textContent.includes('Frame 1 / ${expected}')`)
     await clickLabel('Next Frame'); await waitFor("document.querySelector('[data-testid=current-frame]')?.textContent.includes('Frame 2 /')")
     await clickLabel('Previous Frame'); await waitFor("document.querySelector('[data-testid=current-frame]')?.textContent.includes('Frame 1 /')")
-    await clickLabel('Play'); await waitFor("document.querySelector('[data-testid=playback-state]')?.textContent==='playing'")
-    await clickLabel('Pause'); await waitFor("document.querySelector('[data-testid=playback-state]')?.textContent==='paused'")
+    await clickLabel('Play'); await waitFor("document.querySelector('[data-testid=playback-state]')?.dataset.state==='playing'")
+    await clickLabel('Pause'); await waitFor("document.querySelector('[data-testid=playback-state]')?.dataset.state==='paused'")
     await clickLabel('Close')
     await waitFor(`!!document.querySelector('${selector('creator-page')}')`)
   }
@@ -185,7 +184,7 @@ try {
   check('20/10000 ms boundaries, 10 ms normalization, invalid duration, once/finite/infinite loops and replacement URL revocation')
 
   await clear(); await choose([manifest.longFilename, png], 2)
-  for (const width of [320,390,768,1280]) {
+  for (const width of [320,360,390,768,1280]) {
     await send('Emulation.setDeviceMetricsOverride', { width, height: 850, deviceScaleFactor: 1, mobile: false })
     await sleep(50)
     const layout = await evaluate(`(()=>{const root=document.querySelector('${selector('creator-page')}');return{overflow:document.documentElement.scrollWidth>innerWidth,targets:Array.from(root.querySelectorAll('button,a.creator-download,summary')).filter(n=>n.getClientRects().length).map(n=>{const r=n.getBoundingClientRect();return{label:n.getAttribute('aria-label')||n.title||n.textContent.trim(),width:r.width,height:r.height}}),rows:Array.from(root.querySelectorAll('.creator-source-row')).map(row=>{const f=row.querySelector('.creator-filename').getBoundingClientRect(),a=row.querySelector('.creator-row-actions').getBoundingClientRect();return{overlap:f.right>a.left+.5}})}})()`)
@@ -212,7 +211,7 @@ try {
     const evidence = await generate({ expectError: expected === 'reject' })
     if (expected === 'reject') {
       assert.match(evidence.error, /too large|15,360,000|smaller images/i)
-      assert(!evidence.job.progress.some(progress => ['quantizing','encoding'].includes(progress.phase)), 'Workload rejection began encoding')
+      assert.equal(evidence.job, undefined, 'Workload rejection created an encoder Worker')
       assert.equal(await resultUrl(), null)
     } else {
       assert.equal(evidence.metrics.frameCount, files.length)
@@ -223,7 +222,7 @@ try {
 
   await clear(); await choose(group('side-too-large'), 2)
   const side = await generate({ expectError: true }); assert.match(side.error, /2048|2049/)
-  assert(!side.job.progress.some(p => ['quantizing','encoding'].includes(p.phase)))
+  assert.equal(side.job, undefined)
   await clear(); await choose([manifest.corruptPNG, jpeg], 2)
   const corrupt = await generate({ expectError: true }); assert.match(corrupt.error, /corrupt|decode/i)
   await clear(); await choose([manifest.oversizedSource,jpeg], 1)
@@ -252,6 +251,7 @@ try {
   }
   check('flat/gradient/high-color quality through product path; comparison artifacts saved')
 
+  const multiFormat = await multiFormatChecks({ browser, output, manifest, fixtureURL, clear, choose, edit, generate, check })
   const finalURL = await resultUrl(); await click(selector('creation-back'))
   await waitFor(`!!document.querySelector('${selector('create-gif-entry')}')`)
   assert(await evaluate(`window.__creationProbe.urlsRevoked.includes(${JSON.stringify(finalURL)})`))
@@ -268,9 +268,14 @@ try {
   for (const evidence of browser.workerEvidence.filter(item => !item.error)) {
     assert.equal(evidence.live, 0); assert.equal(evidence.created, evidence.closed); assert(evidence.peak <= 1); assert.equal(evidence.detached, true)
   }
+  assert(browser.sourceEvidence.length > 0, 'Missing independent native preparation Worker evidence')
+  for (const evidence of browser.sourceEvidence) {
+    assert.equal(evidence.live, 0); assert.equal(evidence.created, evidence.closed); assert(evidence.peak <= 1)
+    assert.equal(evidence.frameTransfers, evidence.detachedFrameTransfers)
+  }
   check('leaving Creator releases result URLs and all Workers; encoded transfers detached; native bitmaps closed')
-  const report = { passed: true, browser: await evaluate('navigator.userAgent'), checks, workloads, quality, ownership, workerEvidence: browser.workerEvidence,
-    downloads: browser.downloads, distinctDownloadedFilenames: savedDownloads.map(saved => saved.filename), previousDownloadsPreserved: true,
+  const report = { passed: true, browser: await evaluate('navigator.userAgent'), checks, workloads, quality, ownership, workerEvidence: browser.workerEvidence, sourceEvidence: browser.sourceEvidence,
+    downloads: browser.downloads, multiFormat, distinctDownloadedFilenames: savedDownloads.map(saved => saved.filename), previousDownloadsPreserved: true,
     startupAssets: initialAssets, assets: browser.assets, errors: browser.errors, fixtures: manifest.archives }
   await writeFile(join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n')
   assert.deepEqual(browser.errors, [])

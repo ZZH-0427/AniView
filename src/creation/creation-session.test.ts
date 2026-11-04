@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { CreationSession } from './creation-session'
 import { DEFAULT_CREATION_SETTINGS, normalizeCreationSettings } from './creation-types'
-import { EncodeError, type EncodedGif, type EncodeOptions } from './gif/model'
-import type { EncodeConfiguration } from './gif/encoder-client'
+import { EncodeError } from './gif/model'
+import type { StaticAnimationOutput, StaticAnimationOptions, StaticAnimationConfiguration } from './static-animation-encoder'
+import { creationOutput } from './creation.test-support'
 import type { VirtualFile } from '../input/virtual-file'
 import { staticFixture } from '../formats/static/static-fixtures.test-support'
-import { GIF_CREATION_LIMITS } from './gif/gif-validation'
 
 const tick = () => new Promise<void>(resolve => setTimeout(resolve, 0))
 const file = (name = 'quadrants.png', size?: number): VirtualFile => {
@@ -16,21 +16,22 @@ const file = (name = 'quadrants.png', size?: number): VirtualFile => {
     return bytes.buffer
   } }
 }
-const output = (): EncodedGif => ({ data: new Uint8Array([71, 73, 70, 56, 57, 97]).buffer, byteLength: 6,
-  metrics: { width: 2, height: 1, frameCount: 2, sourceBytes: 20, outputBytes: 6, outputCapacity: 6,
-    decodeMs: 1, quantizeMs: 1, writeMs: 1, totalMs: 4, peakBitmaps: 1, peakRgbaFrames: 1, peakFrameBytes: 8 } })
-interface Call { files: readonly VirtualFile[]; options: Partial<EncodeOptions> | undefined; config: EncodeConfiguration | undefined;
-  resolve: (result: EncodedGif) => void; reject: (error: Error) => void }
+const output = creationOutput
+interface Call { files: readonly VirtualFile[]; options: StaticAnimationOptions; config: StaticAnimationConfiguration | undefined;
+  resolve: (result: StaticAnimationOutput) => void; reject: (error: Error) => void }
 class Encoder {
   calls: Call[] = []
-  cancel = vi.fn(async () => {})
-  encode(files: readonly VirtualFile[], options?: Partial<EncodeOptions>, config?: EncodeConfiguration) {
-    return new Promise<EncodedGif>((resolve, reject) => { this.calls.push({ files, options, config, resolve, reject }) })
+  cancel = vi.fn(async () => { for (const call of this.calls) call.reject(new EncodeError('CANCELLED')) })
+  encode(files: readonly VirtualFile[], options: StaticAnimationOptions, config?: StaticAnimationConfiguration) {
+    return new Promise<StaticAnimationOutput>((resolve, reject) => { this.calls.push({ files, options, config, resolve, reject }) })
   }
 }
 function setup() {
   const encoder = new Encoder(), revokeUrl = vi.fn(), createUrl = vi.fn(() => `blob:result-${createUrl.mock.calls.length}`)
-  const session = new CreationSession({ encoder, createUrl, revokeUrl })
+  const session = new CreationSession({ encoder, createUrl, revokeUrl, inspect: async () => {
+    const call = encoder.calls.at(-1)!
+    return { width: 2, height: 1, frameCount: call.files.length, playCount: call.options.playCount, durationMs: call.files.length * call.options.durationMs }
+  } })
   return { session, encoder, createUrl, revokeUrl }
 }
 async function ready() { const setupResult = setup(); await setupResult.session.add([file(), file('quadrants.jpg')]); return setupResult }
@@ -118,14 +119,14 @@ describe('independent CreationSession', () => {
   it.each([0, -1, 101, 1.5])('rejects invalid total play count %s', playCount => {
     expect(() => normalizeCreationSettings({ ...DEFAULT_CREATION_SETTINGS, playCount })).toThrow('1 to 100')
   })
-  it.each([[true, 1, { kind: 'forever' }], [false, 1, { kind: 'once' }], [false, 3, { kind: 'repeat', repeats: 2 }]] as const)(
-    'maps forever=%s total plays=%s without leaking vendor repeat semantics', async (loopForever, playCount, loop) => {
+  it.each([[true, 1, 0], [false, 1, 1], [false, 3, 3]] as const)(
+    'maps forever=%s total plays=%s without leaking vendor repeat semantics', async (loopForever, playCount, canonicalPlays) => {
       const { session, encoder } = await ready()
       session.updateSettings({ loopForever, playCount, frameDurationMs: 250 })
       await finish(session, encoder)
-      expect(encoder.calls[0]!.options).toEqual({ loop, frameDurationMs: 250, colors: 256, alphaThreshold: 127 })
-      expect(encoder.calls[0]!.config!.limits).toEqual(GIF_CREATION_LIMITS)
-      expect(session.getSnapshot().result?.metadata).toMatchObject({ frameDurationMs: 250, loopForever, playCount })
+      expect(encoder.calls[0]!.options).toEqual({ durationMs: 250, target: 'gif', playCount: canonicalPlays })
+      expect(session.getSnapshot().result?.settings).toMatchObject({ frameDurationMs: 250, loopForever, playCount })
+      expect(session.getSnapshot().result?.metadata.playCount).toBe(canonicalPlays)
     },
   )
   it('does not generate with zero or one image', async () => {
@@ -142,9 +143,9 @@ describe('independent CreationSession', () => {
     await session.add([file()])
     expect(session.getSnapshot().sources).toEqual(original)
     expect(session.getSnapshot().settings.frameDurationMs).toBe(500)
-    call.config!.onProgress!({ phase: 'quantizing', currentFrame: 1, totalFrames: 2, completedWork: 3, totalWork: 4 })
+    call.config!.onProgress!({ phase: 'encoding', completedFrames: 1, totalFrames: 2 })
     expect(session.getSnapshot().status).toBe('encoding')
-    call.config!.onProgress!({ phase: 'finalizing', currentFrame: 2, totalFrames: 2, completedWork: 4, totalWork: 4 })
+    call.config!.onProgress!({ phase: 'finalizing', completedFrames: 2, totalFrames: 2 })
     expect(session.getSnapshot().status).toBe('finalizing')
     call.resolve(output()); await pending
     expect(session.getSnapshot().status).toBe('success')
@@ -160,7 +161,7 @@ describe('independent CreationSession', () => {
     expect(session.getSnapshot().status).toBe('cancelled')
     expect(session.getSnapshot().sources).toEqual(sources)
     const nextJob = session.generate(), current = encoder.calls[1]!
-    old.config!.onProgress!({ phase: 'finalizing', currentFrame: 2, totalFrames: 2 })
+    old.config!.onProgress!({ phase: 'finalizing', completedFrames: 2, totalFrames: 2 })
     old.resolve(output()); await oldJob
     expect(session.getSnapshot().status).toBe('preparing')
     expect(createUrl).not.toHaveBeenCalled()
