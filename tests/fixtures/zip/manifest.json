@@ -213,5 +213,327 @@
   "ratio-limit.zip": {
     "encodedBytes": 230,
     "mutation": true
+  },
+  "password-zipcrypto-store.zip": {
+    "encodedBytes": 284,
+    "testFixtureOnly": true,
+    "name": "password-zipcrypto-store.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": null
+      }
+    ],
+    "encodedSha256": "8feabc11029b856c14081d02eafbd86e5a806889c3ad25cd9fed0b0c15a9ae20"
+  },
+  "password-zipcrypto-deflate.zip": {
+    "encodedBytes": 257,
+    "testFixtureOnly": true,
+    "name": "password-zipcrypto-deflate.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 8,
+        "aesStrength": null
+      }
+    ],
+    "encodedSha256": "ba3dc3470ecb64268fc236b64c98badcd40d77fc63ce243abcd97ff4d9bbc351"
+  },
+  "password-aes128-store.zip": {
+    "encodedBytes": 314,
+    "testFixtureOnly": true,
+    "name": "password-aes128-store.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 1
+      }
+    ],
+    "encodedSha256": "404d7460e0f6ba8148d504ef75d777920dc4d30f9f897eeec35d0e7aaec5ad74"
+  },
+  "password-aes128-deflate.zip": {
+    "encodedBytes": 287,
+    "testFixtureOnly": true,
+    "name": "password-aes128-deflate.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 8,
+        "aesStrength": 1
+      }
+    ],
+    "encodedSha256": "378218e642296a346ee2ba484d11a9bb6260a81f18673faf678aea95296f1f33"
+  },
+  "password-aes192-store.zip": {
+    "encodedBytes": 318,
+    "testFixtureOnly": true,
+    "name": "password-aes192-store.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 2
+      }
+    ],
+    "encodedSha256": "0a50f40bff82f30700009a43fe4a9eaf0e382c373b18f21f3effc4338fd7acc0"
+  },
+  "password-aes192-deflate.zip": {
+    "encodedBytes": 291,
+    "testFixtureOnly": true,
+    "name": "password-aes192-deflate.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 8,
+        "aesStrength": 2
+      }
+    ],
+    "encodedSha256": "afffba9fd489a93ade57733b57a220166511f50207e1397b38e448fe5a71d2cb"
+  },
+  "password-aes256-store.zip": {
+    "encodedBytes": 322,
+    "testFixtureOnly": true,
+    "name": "password-aes256-store.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      }
+    ],
+    "encodedSha256": "7b495eee581d8e93b4736103678ef7747512376c3688ff45f4fddcfa05652418"
+  },
+  "password-aes256-deflate.zip": {
+    "encodedBytes": 295,
+    "testFixtureOnly": true,
+    "name": "password-aes256-deflate.zip",
+    "producer": "7-Zip 26.03 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-09-03",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 8,
+        "aesStrength": 3
+      }
+    ],
+    "encodedSha256": "fa9876986eccd288660f8e364d3d0d7c5e7dbd35b31cda958dee409a7ea8b18c"
+  },
+  "password-mixed.zip": {
+    "encodedBytes": 1543,
+    "testFixtureOnly": true,
+    "name": "password-mixed.zip",
+    "producer": "@zip.js/zip.js 2.23.0 supplemental fixture",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "01-public.gif",
+        "bytes": 114,
+        "encrypted": false,
+        "compressionMethod": 0,
+        "aesStrength": null
+      },
+      {
+        "name": "02-locked.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": null
+      },
+      {
+        "name": "03-public.png",
+        "bytes": 161,
+        "encrypted": false,
+        "compressionMethod": 0,
+        "aesStrength": null
+      },
+      {
+        "name": "04-locked.webp",
+        "bytes": 140,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      },
+      {
+        "name": "05-locked.png",
+        "bytes": 202,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 2
+      }
+    ],
+    "encodedSha256": "0ac6de764d071ba8e8370f4a2472480e52c5fa97158514b1a42def6b343800f1"
+  },
+  "password-different.zip": {
+    "encodedBytes": 956,
+    "testFixtureOnly": true,
+    "name": "password-different.zip",
+    "producer": "@zip.js/zip.js 2.23.0 supplemental fixture",
+    "credential": "aniview-test",
+    "otherCredential": "beta",
+    "entries": [
+      {
+        "name": "01-alpha.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": null
+      },
+      {
+        "name": "02-beta.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 1
+      },
+      {
+        "name": "03-alpha.png",
+        "bytes": 202,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      }
+    ],
+    "encodedSha256": "d786d2972c4f7ac7af26c3df236ccccba55d25b43b5f66b7e0787dddd3287007"
+  },
+  "password-first.zip": {
+    "encodedBytes": 572,
+    "testFixtureOnly": true,
+    "name": "password-first.zip",
+    "producer": "@zip.js/zip.js 2.23.0 supplemental fixture",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "01-locked.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      },
+      {
+        "name": "02-public.gif",
+        "bytes": 114,
+        "encrypted": false,
+        "compressionMethod": 0,
+        "aesStrength": null
+      }
+    ],
+    "encodedSha256": "18daeaf17deb05f01604b77000f358d4fb91a72a2cce58be5f7c8668b3224564"
+  },
+  "password-corrupt-zipcrypto.zip": {
+    "encodedBytes": 284,
+    "testFixtureOnly": true,
+    "name": "password-corrupt-zipcrypto.zip",
+    "producer": "Controlled mutation of password-zipcrypto-store.zip",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": null
+      }
+    ],
+    "encodedSha256": "83f0fc692233a7b7a9514bf1e563ca8a1230552de1ab70d3dbb0dcbe855ca191"
+  },
+  "password-corrupt-aes.zip": {
+    "encodedBytes": 322,
+    "testFixtureOnly": true,
+    "name": "password-corrupt-aes.zip",
+    "producer": "Controlled mutation of password-aes256-store.zip",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      }
+    ],
+    "encodedSha256": "2399506a4e903e50ec0e15134bc40b8e59d77f561be86be86c4af4e71334b8b8"
+  },
+  "password-corrupt-header.zip": {
+    "encodedBytes": 322,
+    "testFixtureOnly": true,
+    "name": "password-corrupt-header.zip",
+    "producer": "Controlled mutation of password-aes256-store.zip",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 3
+      }
+    ],
+    "encodedSha256": "2c1c85b0f9afff7eb98aada2fb22246bdecf33d9b05fe2d2ae31526527fda606"
+  },
+  "password-unsupported.zip": {
+    "encodedBytes": 284,
+    "testFixtureOnly": true,
+    "name": "password-unsupported.zip",
+    "producer": "Controlled mutation of password-zipcrypto-store.zip",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": null
+      }
+    ],
+    "encodedSha256": "b7f43dd0896444f5b47014a37b45f3af4042483b683a94a865ce84a60082e460"
+  },
+  "password-invalid-strength.zip": {
+    "encodedBytes": 322,
+    "testFixtureOnly": true,
+    "name": "password-invalid-strength.zip",
+    "producer": "Controlled mutation of password-aes256-store.zip",
+    "credential": "aniview-test",
+    "entries": [
+      {
+        "name": "animated.gif",
+        "bytes": 114,
+        "encrypted": true,
+        "compressionMethod": 0,
+        "aesStrength": 4
+      }
+    ],
+    "encodedSha256": "92e0d52c9ebfacfeb7f4a20cf9dc1630f312865dedec025387ae2cd028867ea7"
   }
 }

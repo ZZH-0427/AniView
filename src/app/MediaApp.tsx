@@ -11,6 +11,7 @@ import { useMediaSource } from './use-media-source'
 import { RuntimeDiagnosticsPanel } from '../components/RuntimeDiagnostics'
 import { useI18n } from '../i18n'
 const ConversionWorkspace = lazy(() => import('../conversion/ConversionWorkspace'))
+const ArchiveEntryAccess = lazy(() => import('../components/ArchiveEntryAccess'))
 
 export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;onConvertVideo?:()=>void }) {
   const { t, text } = useI18n()
@@ -19,6 +20,11 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
   const transition = useRef(Promise.resolve())
   const { session, notice, noticeMessage, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
   const current = currentSessionItem(session)
+  const entry = archive?.status === 'open' && current ? archive.session.entryForFile(current.file) : undefined
+  const viewer = current && <Viewer key={current.id} file={current.file} transition={transition} onClose={clear}
+    position={session.currentIndex + 1} count={session.items.length}
+    onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
+    onRemove={() => changeSession(removeCurrentFile)} onConvert={() => { setDragging(false); setConversion(current.file) }} />
 
   // File drops anywhere in the app must never replace the page with a local file.
   useEffect(() => {
@@ -66,10 +72,11 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
         </div>
         </details>
       </nav>
-      <Viewer key={current.id} file={current.file} transition={transition} onClose={clear}
-        position={session.currentIndex + 1} count={session.items.length}
-        onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}
-        onRemove={() => changeSession(removeCurrentFile)} onConvert={() => { setDragging(false); setConversion(current.file) }} />
+      {archive?.status === 'open' && entry?.encrypted ? <Suspense fallback={<p role="status">{t('zip.checkingAccess')}</p>}>
+        <ArchiveEntryAccess key={`${archive.session.id}:${current.id}`} session={archive.session} entryId={entry.id}
+          transition={transition} position={session.currentIndex + 1} count={session.items.length}
+          onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}>{viewer}</ArchiveEntryAccess>
+      </Suspense> : viewer}
     </> : <Home onOpen={addFiles} onArchive={openArchive} {...(onCreate ? { onCreate } : {})} {...(onConvertVideo?{onConvertVideo}:{})}/>}
     {notice && <p className="session-notice" role="status">{text(noticeMessage ?? { key: 'errors.generic' })}</p>}
     </>}

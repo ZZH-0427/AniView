@@ -1,15 +1,12 @@
-import {
-  BlobReader, ZipReader, ERR_ENCRYPTED, ERR_ENCRYPTED_CENTRAL_DIRECTORY,
-  ERR_INVALID_PASSWORD, ERR_UNSUPPORTED_COMPRESSION, ERR_RESERVED_COMPRESSION_METHOD,
-  ERR_UNSUPPORTED_ENCRYPTION, ERR_UNSUPPORTED_FORMAT, ERR_SPLIT_ZIP_FILE,
-  ERR_UNSUPPORTED_UINT64, ERR_CODEC_OUT_OF_MEMORY,
-} from '@zip.js/zip.js'
+import { BlobReader, ZipReader } from '@zip.js/zip.js'
 import type { Entry } from '@zip.js/zip.js'
 import { MediaError } from '../media/errors'
 import {
   assertArchiveTotals, assertArchiveFileSize, createArchiveEntryMetadata,
 } from './archive-policy'
 import type { ArchiveEntryMetadata, ArchiveLimits } from './archive-policy'
+import { archiveFailure } from './archive-errors'
+export { archiveFailure } from './archive-errors'
 
 export interface ArchiveEngineMetrics {
   readonly entryCount: number
@@ -30,37 +27,27 @@ class BoundedArchiveReader extends BlobReader {
   }
 }
 
-export function archiveFailure(cause: unknown): MediaError | DOMException {
-  if (cause instanceof MediaError) return cause
-  if (cause instanceof Error && cause.name === 'AbortError') return new DOMException('Cancelled', 'AbortError')
-  const message = cause instanceof Error ? cause.message : ''
-  if (message === ERR_INVALID_PASSWORD) return new MediaError('ARCHIVE_WRONG_PASSWORD')
-  if (message === ERR_ENCRYPTED) return new MediaError('ARCHIVE_ENCRYPTED')
-  if ([ERR_ENCRYPTED_CENTRAL_DIRECTORY, ERR_UNSUPPORTED_COMPRESSION, ERR_RESERVED_COMPRESSION_METHOD,
-    ERR_UNSUPPORTED_ENCRYPTION, ERR_UNSUPPORTED_FORMAT, ERR_SPLIT_ZIP_FILE,
-    ERR_UNSUPPORTED_UINT64].includes(message)) return new MediaError('ARCHIVE_UNSUPPORTED')
-  if (message === ERR_CODEC_OUT_OF_MEMORY || cause instanceof RangeError) return new MediaError('OUT_OF_MEMORY')
-  return new MediaError('ARCHIVE_CORRUPTED', { cause })
-}
-
 /** The sink checks real output before copying/retaining each decompressed chunk. */
 export function boundedBlobWriter(maxBytes: number, declaredBytes: number, signal?: AbortSignal) {
   const chunks: Uint8Array<ArrayBuffer>[] = []
-  let size = 0
+  let size = 0, discarded = false
+  const discard = () => { chunks.length = 0; size = 0; discarded = true }
   return {
     writable: new WritableStream<Uint8Array>({
       write(chunk) {
-        signal?.throwIfAborted()
-        if (chunk.byteLength > maxBytes - size) throw new MediaError('ARCHIVE_ENTRY_TOO_LARGE')
-        if (chunk.byteLength > declaredBytes - size) throw new MediaError('ARCHIVE_CORRUPTED')
-        size += chunk.byteLength
-        chunks.push(chunk.slice())
+        try {
+          signal?.throwIfAborted()
+          if (chunk.byteLength > maxBytes - size) throw new MediaError('ARCHIVE_ENTRY_TOO_LARGE')
+          if (chunk.byteLength > declaredBytes - size) throw new MediaError('ARCHIVE_CORRUPTED')
+          size += chunk.byteLength; chunks.push(chunk.slice())
+        } catch (cause) { discard(); throw cause }
       },
-      abort() { chunks.length = 0 },
+      abort: discard,
     }),
+    discard,
     blob() {
       signal?.throwIfAborted()
-      if (size !== declaredBytes) throw new MediaError('ARCHIVE_CORRUPTED')
+      if (discarded || size !== declaredBytes) throw new MediaError('ARCHIVE_CORRUPTED')
       const blob = new Blob(chunks)
       chunks.length = 0
       return blob
@@ -97,10 +84,15 @@ export class ArchiveEngine {
         signal?.throwIfAborted()
         if (entries.length >= limits.maxEntries) throw new MediaError('ARCHIVE_LIMIT_EXCEEDED')
         // Links, split volumes and PKWARE strong encryption are not normal image files.
-        const unsupported = entry.symlink || entry.diskNumberStart !== 0 || ((entry.rawBitFlag ?? 0) & 0x40) !== 0
+        const unsupported = entry.symlink || entry.diskNumberStart !== 0
+        const strength = entry.extraFieldAES?.strength
+        const aesStrength = strength === 1 || strength === 2 || strength === 3 ? strength : undefined
+        const encryption = !entry.encrypted ? 'none' : ((entry.rawBitFlag ?? 0) & 0x40) !== 0
+          || (entry.extraFieldAES && !aesStrength) ? 'unsupported' : entry.extraFieldAES ? 'aes' : 'zipcrypto'
         metadata.push(createArchiveEntryMetadata({ name: entry.filename, directory: entry.directory,
           compressedSize: entry.compressedSize, uncompressedSize: entry.uncompressedSize,
-          encrypted: entry.encrypted, compressionMethod: unsupported ? -1 : entry.compressionMethod }, entries.length, limits))
+          encrypted: entry.encrypted, encryption, ...(aesStrength ? { aesStrength } : {}),
+          compressionMethod: unsupported ? -1 : entry.compressionMethod }, entries.length, limits))
         entries.push(entry)
         // Reject cumulative size/path limits during iteration, not after retaining everything.
         totalBytes += entry.uncompressedSize
@@ -147,7 +139,7 @@ export class ArchiveEngine {
       options.signal?.throwIfAborted()
       if (this.closed) throw new MediaError('ARCHIVE_CLOSED')
       return output.blob()
-    } catch (cause) { throw archiveFailure(cause) }
+    } catch (cause) { output.discard(); throw archiveFailure(cause, metadata.encryption) }
     finally { this.extractMs = performance.now() - start }
   }
 

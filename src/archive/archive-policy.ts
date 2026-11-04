@@ -85,15 +85,19 @@ export interface ArchiveEntryInput {
   readonly compressedSize: number
   readonly uncompressedSize: number
   readonly encrypted: boolean
+  readonly encryption?: ArchiveEncryption
+  readonly aesStrength?: 1 | 2 | 3
   /** The underlying method, including for AES wrappers (STORE=0, DEFLATE=8). */
   readonly compressionMethod: number
 }
 
 export type ArchiveEntryBlockedCode =
   | 'ARCHIVE_UNSUPPORTED'
+  | 'ARCHIVE_UNSUPPORTED_ENCRYPTION'
   | 'ARCHIVE_ENTRY_TOO_LARGE'
   | 'ARCHIVE_LIMIT_EXCEEDED'
 
+export type ArchiveEncryption = 'none' | 'zipcrypto' | 'aes' | 'unsupported'
 export interface ArchiveEntryMetadata {
   readonly id: number
   readonly path: string
@@ -102,6 +106,8 @@ export interface ArchiveEntryMetadata {
   readonly compressedSize: number
   readonly uncompressedSize: number
   readonly encrypted: boolean
+  readonly encryption: ArchiveEncryption
+  readonly aesStrength?: 1 | 2 | 3
   readonly compressionMethod: number
   readonly access: 'AVAILABLE' | 'ENCRYPTED' | 'UNSUPPORTED'
   readonly mediaCandidate: boolean
@@ -154,12 +160,16 @@ export function createArchiveEntryMetadata(
   if (!blockedCode && entry.compressionMethod !== 0 && entry.compressionMethod !== 8) {
     blockedCode = 'ARCHIVE_UNSUPPORTED'
   }
+  const encryption = entry.encryption ?? (entry.encrypted ? 'zipcrypto' : 'none')
+  if (!blockedCode && encryption === 'unsupported') blockedCode = 'ARCHIVE_UNSUPPORTED_ENCRYPTION'
   return {
     id, path, originalPathLength: entry.name.length,
     directory: entry.directory,
     compressedSize: entry.compressedSize,
     uncompressedSize: entry.uncompressedSize,
     encrypted: entry.encrypted,
+    encryption,
+    ...(entry.aesStrength ? { aesStrength: entry.aesStrength } : {}),
     compressionMethod: entry.compressionMethod,
     access: blockedCode ? 'UNSUPPORTED' : entry.encrypted ? 'ENCRYPTED' : 'AVAILABLE',
     // Unsafe names stay in metadata but never enter the media list.

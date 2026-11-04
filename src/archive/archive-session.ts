@@ -5,6 +5,8 @@ import type { ArchiveEngineMetrics } from './archive-engine'
 import { ArchiveEntryVirtualFile } from './archive-entry-virtual-file'
 import type { ArchiveCommand, ArchiveRequest, ArchiveResponse } from './archive-worker-protocol'
 import { countRuntimeEvent, trackRuntimeResource } from '../media/runtime-diagnostics'
+import { recordArchiveCleanup } from '../media/archive-cleanup'
+import type { VirtualFile } from '../input/virtual-file'
 
 interface Pending {
   resolve(value: ArchiveResponse): void
@@ -16,6 +18,8 @@ export interface ArchiveMetrics extends ArchiveEngineMetrics {
   readonly currentEntryId: number | null
   readonly currentExtractedBytes: number
   readonly peakExtractedBytes: number
+  readonly pendingReads: number
+  readonly pendingPasswordAccess: number
 }
 let archiveIdentity = 0
 
@@ -36,9 +40,12 @@ export class ArchiveSession {
   private closing: Promise<void> | undefined
   private cached: { entryId: number; blob: Blob } | undefined
   private active: { entryId: number; controller: AbortController; promise: Promise<Blob> } | undefined
+  // Genuine private state: unavailable to JSON/spreads/diagnostics. Never persisted or put on VirtualFile.
+  #recentSuccessfulPassword: string | undefined
+  private readonly accessTasks = new Set<Promise<void>>()
   private counters: ArchiveMetrics = { entryCount: 0, mediaCount: 0, totalDeclaredBytes: 0,
     extractions: 0, metadataMs: 0, extractMs: 0, currentEntryId: null,
-    currentExtractedBytes: 0, peakExtractedBytes: 0 }
+    currentExtractedBytes: 0, peakExtractedBytes: 0, pendingReads: 0, pendingPasswordAccess: 0 }
 
   private constructor(file: File) {
     this.name = file.name
@@ -94,9 +101,27 @@ export class ArchiveSession {
     } catch (cause) { await session.close(); throw cause }
   }
 
-  get metrics(): ArchiveMetrics { return { ...this.counters } }
+  get metrics(): ArchiveMetrics { return { ...this.counters, pendingReads: this.active ? 1 : 0, pendingPasswordAccess: this.accessTasks.size } }
   get entries(): readonly ArchiveEntryMetadata[] { return this.entryList }
   get files(): readonly ArchiveEntryVirtualFile[] { return this.fileList }
+
+  /** Identity lookup, not UI ordinal: hidden ZIP entries do not share MediaSession indices. */
+  entryForFile(file: VirtualFile): ArchiveEntryMetadata | undefined {
+    const owned = this.fileList.find(candidate => candidate === file)
+    return owned ? this.entryList[owned.entryId] : undefined
+  }
+  ensureEntryAvailable(entryId: number, options: { signal?: AbortSignal } = {}): Promise<void> {
+    return this.accessEntry(entryId, options)
+  }
+  unlockEntry(entryId: number, password: string, options: { signal?: AbortSignal } = {}): Promise<void> {
+    return this.accessEntry(entryId, { ...options, password })
+  }
+  private accessEntry(entryId: number, options: { password?: string; signal?: AbortSignal }): Promise<void> {
+    const task = this.extractEntry(entryId, options).then(() => {})
+    this.accessTasks.add(task)
+    void task.finally(() => { this.accessTasks.delete(task); if (this.closed) this.recordCleanup() }).catch(() => {})
+    return task
+  }
 
   extractEntry(entryId: number, options: { password?: string; signal?: AbortSignal } = {}): Promise<Blob> {
     if (this.closed) return Promise.reject(new MediaError('ARCHIVE_CLOSED'))
@@ -104,9 +129,12 @@ export class ArchiveSession {
     const entry = this.entries[entryId]
     if (!entry || entry.directory) return Promise.reject(new MediaError('ARCHIVE_UNSUPPORTED'))
     if (entry.blockedCode) return Promise.reject(new MediaError(entry.blockedCode))
-    if (entry.encrypted && options.password === undefined) return Promise.reject(new MediaError('ARCHIVE_ENCRYPTED'))
-    if (this.cached?.entryId === entryId) return Promise.resolve(this.cached.blob)
-    if (this.active?.entryId === entryId && !this.active.controller.signal.aborted) return this.active.promise
+    const explicit = entry.encrypted && options.password !== undefined
+    // A cached Blob has already passed full authentication. New explicit attempts still receive a fresh writer.
+    if (!explicit && this.cached?.entryId === entryId) return Promise.resolve(this.cached.blob)
+    if (!explicit && this.active?.entryId === entryId && !this.active.controller.signal.aborted) return this.active.promise
+    let password = entry.encrypted ? options.password ?? this.#recentSuccessfulPassword : undefined
+    if (entry.encrypted && !password) return Promise.reject(new MediaError('ARCHIVE_ENCRYPTED'))
     const previous = this.active
     previous?.controller.abort()
     this.cached = undefined
@@ -122,7 +150,7 @@ export class ArchiveSession {
         if (this.closed || this.generation !== generation) throw new DOMException('Cancelled', 'AbortError')
         countRuntimeEvent('entryExtractionsStarted')
         const response = await this.request({ type: 'extract', entryId,
-          ...(options.password === undefined ? {} : { password: options.password }) }, controller.signal)
+          ...(password === undefined ? {} : { password }) }, controller.signal)
         if (controller.signal.aborted || this.closed || this.generation !== generation) {
           if (response.type === 'extracted') {
             countRuntimeEvent('entryExtractionsDiscarded')
@@ -131,13 +159,20 @@ export class ArchiveSession {
           throw new DOMException('Cancelled', 'AbortError')
         }
         if (response.type !== 'extracted') throw new MediaError('ARCHIVE_CORRUPTED')
+        if (response.blob.size !== entry.uncompressedSize) throw new MediaError('ARCHIVE_CORRUPTED')
         countRuntimeEvent('entryExtractionsCompleted')
+        if (entry.encrypted) this.#recentSuccessfulPassword = password
         this.cached = { entryId, blob: response.blob }
         this.counters = { ...this.counters, ...response.metrics, currentEntryId: entryId,
           currentExtractedBytes: response.blob.size,
           peakExtractedBytes: Math.max(this.counters.peakExtractedBytes, response.blob.size) }
         return response.blob
+      } catch (cause) {
+        // Do not keep a failed automatic value or loop over candidates. Guard against late old attempts.
+        if (entry.encrypted && this.generation === generation && !controller.signal.aborted) this.#recentSuccessfulPassword = undefined
+        throw cause
       } finally {
+        password = undefined
         options.signal?.removeEventListener('abort', abort)
         if (this.active?.controller === controller) this.active = undefined
       }
@@ -157,14 +192,21 @@ export class ArchiveSession {
   close(): Promise<void> {
     if (this.closing) return this.closing
     this.closed = true
+    this.#recentSuccessfulPassword = undefined
     ++this.generation
     this.cached = undefined
-    this.active?.controller.abort()
+    const active = this.active
+    active?.controller.abort()
     this.counters = { ...this.counters, currentEntryId: null, currentExtractedBytes: 0 }
     this.closing = (async () => {
       try { if (!this.terminated) await this.request({ type: 'close' }, undefined, 2000) }
       catch { /* A stuck/malformed input still has a bounded Worker lifetime. */ }
-      finally { this.terminate(new MediaError('ARCHIVE_CLOSED')); this.fileList = []; this.entryList = [] }
+      finally {
+        this.terminate(new MediaError('ARCHIVE_CLOSED'))
+        await active?.promise.catch(() => undefined)
+        await Promise.allSettled([...this.accessTasks])
+        this.fileList = []; this.entryList = []; this.recordCleanup()
+      }
     })()
     return this.closing
   }
@@ -193,6 +235,7 @@ export class ArchiveSession {
     if (this.terminated) return
     if (error.code === 'WORKER_FAILED') countRuntimeEvent('archiveErrors')
     this.terminated = this.closed = true
+    this.#recentSuccessfulPassword = undefined
     this.cached = undefined
     this.fileList = []
     this.entryList = []
@@ -204,5 +247,11 @@ export class ArchiveSession {
     this.worker.onmessage = this.worker.onerror = this.worker.onmessageerror = null
     for (const pending of this.pending.values()) { clearTimeout(pending.timer); pending.unlisten(); pending.reject(error) }
     this.pending.clear()
+    this.recordCleanup()
+  }
+  private recordCleanup() {
+    recordArchiveCleanup({ activeArchiveWorkers: this.terminated ? 0 : 1, activeArchiveSessions: this.releaseArchive ? 1 : 0,
+      pendingReads: this.pending.size, pendingPasswordAccess: this.accessTasks.size,
+      currentExtractedBytes: this.counters.currentExtractedBytes, cleanupErrors: 0 })
   }
 }

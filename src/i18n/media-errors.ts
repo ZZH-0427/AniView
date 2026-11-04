@@ -9,6 +9,8 @@ const keys = {
   ARCHIVE_UNSUPPORTED: 'errors.media.archiveUnsupported', ARCHIVE_INVALID: 'errors.media.archiveInvalid',
   ARCHIVE_LIMIT_EXCEEDED: 'errors.media.archiveLimit', ARCHIVE_ENTRY_TOO_LARGE: 'errors.media.entryLarge',
   ARCHIVE_CLOSED: 'errors.media.archiveClosed', ARCHIVE_WRONG_PASSWORD: 'errors.media.password',
+  ARCHIVE_UNSUPPORTED_ENCRYPTION: 'errors.media.archiveEncryption', ARCHIVE_INTEGRITY_FAILED: 'errors.media.archiveIntegrity',
+  ARCHIVE_PASSWORD_OR_CORRUPTED: 'errors.media.archivePasswordOrCorrupt',
   OUT_OF_MEMORY: 'errors.media.memory', RESOURCE_LIMIT_EXCEEDED: 'errors.media.limit', WORKER_FAILED: 'errors.media.worker',
   WASM_UNAVAILABLE: 'errors.media.wasm', FILE_READ_FAILED: 'errors.media.read', APNG_RUNTIME_UNAVAILABLE: 'errors.media.apngRuntime',
   GIF_RUNTIME_UNAVAILABLE: 'errors.media.gifRuntime', STATIC_PNG_NOT_ANIMATED: 'errors.media.staticUnavailable', STATIC_IMAGE_NOT_AVAILABLE: 'errors.media.staticUnavailable',
