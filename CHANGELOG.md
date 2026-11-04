@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.0 - Prepared, not yet released
+
+- Create GIF from static JPEG/PNG/WebP images; reorder, set timing/loops,
+  preview and download. Direct WebP/APNG creation is deferred.
+- Convert GIF, Animated WebP and APNG between formats and to one-cycle, silent
+  H.264 MP4 with transparency composited to white.
+- Convert supported MP4/H.264 and WebM/VP9 profile 0 videos to GIF/WebP/APNG,
+  with trim/presets, bounded workloads, cancellation, Preview and Download.
+- English / 简体中文 UI with workspace-preserving language changes.
+- Cross-feature lifecycle/resource checks and real Android Edge/Quark RC smoke.
+
+See [release notes](docs/releases/v0.2.0.md) and the
+[approval/preparation record](docs/releases/v0.2.0-release-preparation.md).
+
 ## 0.1.0 - 2026-10-25
 
 First public AniView release.
