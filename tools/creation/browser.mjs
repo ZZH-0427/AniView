@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path'
 
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export async function launchBrowser(output = resolve('.tools/creation')) {
+export async function launchBrowser(output = resolve('.tools/creation'), { onEvent } = {}) {
   await mkdir(output, { recursive: true })
   const profile = await mkdtemp(join(output, 'edge-profile-'))
   const browser = spawn(process.env.BROWSER_PATH ?? (process.platform === 'win32'
@@ -44,6 +44,8 @@ export async function launchBrowser(output = resolve('.tools/creation')) {
     await new Promise((resolve, reject) => { socket.onopen = resolve; socket.onerror = reject })
     socket.onmessage = ({ data }) => {
       const event = JSON.parse(data)
+      // Optional observational hook for release network/console evidence; existing callers are unchanged.
+      onEvent?.(event, send)
       if (event.id) {
         const item = pending.get(event.id); if (!item) return
         pending.delete(event.id); clearTimeout(item.timer)

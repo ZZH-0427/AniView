@@ -19,6 +19,7 @@ const profile = await mkdtemp(join(output, 'profile-'))
 const browser = spawn(process.env.BROWSER_PATH ?? process.env.EDGE_PATH ?? (process.platform === 'win32'
   ? 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe' : '/usr/bin/google-chrome'), [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--disable-extensions',
+  '--lang=en-US', '--accept-lang=en-US', // Legacy scenarios assert English; dedicated RC/i18n checks exercise both locales.
   '--disable-background-timer-throttling', '--disable-renderer-backgrounding', '--disable-backgrounding-occluded-windows',
   '--remote-debugging-port=0', `--user-data-dir=${profile}`, 'about:blank',
 ], { windowsHide: true, stdio: 'ignore' })

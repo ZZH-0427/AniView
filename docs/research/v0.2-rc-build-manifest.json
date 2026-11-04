@@ -1,0 +1,376 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "version": "0.1.0",
+  "commit": "f60654844853fca0bb4892eaa7953355ff61e287",
+  "sourceDirty": false,
+  "projectLicense": "UNLICENSED",
+  "status": "DESKTOP AUDIT; ANDROID PENDING",
+  "fileCount": 35,
+  "determinism": {
+    "cleanBuilds": 2,
+    "identicalFiles": 35,
+    "differentFiles": []
+  },
+  "base": "/AniView/",
+  "sourceMaps": false,
+  "unexpectedArtifacts": [],
+  "counts": {
+    "javascript": 25,
+    "css": 5,
+    "workers": 9,
+    "wasm": 1
+  },
+  "groups": {
+    "ordinaryEntry": [
+      {
+        "path": "assets/index-DgyFXi6E.js",
+        "size": 284481,
+        "sha256": "2704af97999478e54bb09d6b85ca24066bf3a8ca8b24ee6df6d8ff2c9ffb38ca",
+        "gzipBytes": 85789
+      },
+      {
+        "path": "assets/jsx-runtime-DHXBON9B.js",
+        "size": 8432,
+        "sha256": "74ad6ea1ee3716d0da78024e6518564a7482d72ad5130ae1e96963b0c9efbcbf",
+        "gzipBytes": 3189
+      },
+      {
+        "path": "assets/i18n-V2wxBn9G.js",
+        "size": 29247,
+        "sha256": "cf86e576c3b50ee16f3ea7095439ff0abc4b9993b929fe2379ace788bf26beab",
+        "gzipBytes": 10076
+      },
+      {
+        "path": "assets/errors-YK5NAh8y.js",
+        "size": 1882,
+        "sha256": "1105dbeb5b8a65ea04fe2912a4766f6d9743f89639236f218848be94252a17c8",
+        "gzipBytes": 822
+      },
+      {
+        "path": "assets/runtime-diagnostics-DXMF2_uP.js",
+        "size": 1357,
+        "sha256": "9f0e47e276b8b7aa603fe8058ba688020e14524a4ce4d5c9883e9318b608af18",
+        "gzipBytes": 613
+      }
+    ],
+    "ordinaryTotal": {
+      "size": 325399,
+      "gzipBytes": 100489
+    },
+    "entryCss": {
+      "size": 10958,
+      "gzipBytes": 3078
+    },
+    "creator": [
+      {
+        "path": "assets/CreatorWorkspace-BSjFLEgm.css",
+        "size": 6122,
+        "sha256": "4678a6bb209f7b15bd4f26c8a51225c632f21548ed28806a3deaad67ffd49ffd",
+        "gzipBytes": 1745
+      },
+      {
+        "path": "assets/CreatorWorkspace-Cn2Eyf2R.js",
+        "size": 28744,
+        "sha256": "d64b11d6fa7b535592fb2f2f4377cd4a152890c733576d61003cb296da2ac21b",
+        "gzipBytes": 8689
+      }
+    ],
+    "videoUi": [
+      {
+        "path": "assets/VideoConversionWorkspace-BimTsyVN.css",
+        "size": 802,
+        "sha256": "c27bf4dc11c1ac7aa35ead9eb42719e6058febe8ace323d9d6022da8b0959ae8",
+        "gzipBytes": 414
+      },
+      {
+        "path": "assets/VideoConversionWorkspace-DBON6pz3.js",
+        "size": 31172,
+        "sha256": "0b8a0d2f307869bb5e8906988019a575762a6c012923a5e9f9798c2f7082fb79",
+        "gzipBytes": 9437
+      }
+    ],
+    "sourceWorker": [
+      {
+        "path": "assets/source.worker-CbK00J7H.js",
+        "size": 274358,
+        "sha256": "9266f95be2ac178765682976baaa0290d1c14cd11feef2d1476cd674102a8288",
+        "gzipBytes": 72288
+      }
+    ],
+    "encoderWorkers": [
+      {
+        "path": "assets/encoder.worker-4zFLx0Cr.js",
+        "size": 24191,
+        "sha256": "c0fa42e70471ea6ac5e42de56383e65593965065335c167d332a629213b2d0ba",
+        "gzipBytes": 9240
+      },
+      {
+        "path": "assets/encoder.worker-BLZJZ1VS.js",
+        "size": 300564,
+        "sha256": "3e3e26d8fe8c19e28e8a3a3709126f0d525210deba50c105797feadcdd9b9c93",
+        "gzipBytes": 77663
+      },
+      {
+        "path": "assets/encoder.worker-Btvfz7ZV.js",
+        "size": 45991,
+        "sha256": "9085714284f911a68ea4a4055ffbeae3d529ccd91b6056d525aa7b73fde1ef64",
+        "gzipBytes": 16013
+      }
+    ],
+    "lazyRuntimes": [
+      {
+        "path": "assets/ConversionWorkspace-5-ueswVh.js",
+        "size": 19567,
+        "sha256": "47699101e8392c6a5cca6e89887ec4bdf480ef5fc6d0a3ae2f77dbe8748cfaaf",
+        "gzipBytes": 6114
+      },
+      {
+        "path": "assets/VideoResultPreview-CMN49pwV.js",
+        "size": 795,
+        "sha256": "e9b62735251967c08dc1fb0625bc2f8d7806eda380e862ff05a46cc633144bba",
+        "gzipBytes": 491
+      },
+      {
+        "path": "assets/runtime-CZJYdxvB.js",
+        "size": 7131,
+        "sha256": "ea7dbf4e2755e6d6255b422f0a15e318b280d162bcf0da7bfe95b2899b91446b",
+        "gzipBytes": 2518
+      },
+      {
+        "path": "assets/runtime-diagnostics-DXMF2_uP.js",
+        "size": 1357,
+        "sha256": "9f0e47e276b8b7aa603fe8058ba688020e14524a4ce4d5c9883e9318b608af18",
+        "gzipBytes": 613
+      }
+    ],
+    "mp4Runtime": [
+      {
+        "path": "assets/convert-D3ZYoR-D.js",
+        "size": 3514,
+        "sha256": "5649f296e5786f6977e89f368409b4c6e254ec5cfa6d7fbe139aec4d9b9bf714",
+        "gzipBytes": 1539
+      }
+    ],
+    "wasm": [
+      {
+        "path": "assets/aniview-webp-BzIHXVkK.wasm",
+        "size": 394132,
+        "sha256": "f08dc7922c9df005b72a1e169182c1886e03dcae9ab213d03e58a23cab6ff925",
+        "gzipBytes": 159999
+      }
+    ]
+  },
+  "assets": [
+    {
+      "path": "assets/ConversionWorkspace-5-ueswVh.js",
+      "size": 19567,
+      "sha256": "47699101e8392c6a5cca6e89887ec4bdf480ef5fc6d0a3ae2f77dbe8748cfaaf",
+      "gzipBytes": 6114
+    },
+    {
+      "path": "assets/CreatorWorkspace-BSjFLEgm.css",
+      "size": 6122,
+      "sha256": "4678a6bb209f7b15bd4f26c8a51225c632f21548ed28806a3deaad67ffd49ffd",
+      "gzipBytes": 1745
+    },
+    {
+      "path": "assets/CreatorWorkspace-Cn2Eyf2R.js",
+      "size": 28744,
+      "sha256": "d64b11d6fa7b535592fb2f2f4377cd4a152890c733576d61003cb296da2ac21b",
+      "gzipBytes": 8689
+    },
+    {
+      "path": "assets/VideoConversionWorkspace-BimTsyVN.css",
+      "size": 802,
+      "sha256": "c27bf4dc11c1ac7aa35ead9eb42719e6058febe8ace323d9d6022da8b0959ae8",
+      "gzipBytes": 414
+    },
+    {
+      "path": "assets/VideoConversionWorkspace-DBON6pz3.js",
+      "size": 31172,
+      "sha256": "0b8a0d2f307869bb5e8906988019a575762a6c012923a5e9f9798c2f7082fb79",
+      "gzipBytes": 9437
+    },
+    {
+      "path": "assets/VideoResultPreview-CMN49pwV.js",
+      "size": 795,
+      "sha256": "e9b62735251967c08dc1fb0625bc2f8d7806eda380e862ff05a46cc633144bba",
+      "gzipBytes": 491
+    },
+    {
+      "path": "assets/WebPSpikePage-CnjoLX4T.css",
+      "size": 667,
+      "sha256": "9ca7deade9ace2b79aeffcfe915f7409f5e36ec3d9abb19e3cdb873eec989a0a",
+      "gzipBytes": 354
+    },
+    {
+      "path": "assets/WebPSpikePage-DC3ynrfB.js",
+      "size": 4949,
+      "sha256": "7c251bede7724e284527d391be9bdfa3317b6d50e24295b1bd08efb3d443903b",
+      "gzipBytes": 1840
+    },
+    {
+      "path": "assets/aniview-webp-BzIHXVkK.wasm",
+      "size": 394132,
+      "sha256": "f08dc7922c9df005b72a1e169182c1886e03dcae9ab213d03e58a23cab6ff925",
+      "gzipBytes": 159999
+    },
+    {
+      "path": "assets/apng-decoder.worker-C3fCwwQ6.js",
+      "size": 24698,
+      "sha256": "d4e47266ec9b5369d29f38e9e074e1157eeba59045dad7a6604467d6c14d9796",
+      "gzipBytes": 8425
+    },
+    {
+      "path": "assets/archive-session-D2tkEPRo.js",
+      "size": 6625,
+      "sha256": "f17da22dbdabf6fb8dc384d2c6990b8fceac83b818ccc9f7b18557168a2edb79",
+      "gzipBytes": 2308
+    },
+    {
+      "path": "assets/archive.worker-CZVD7xoJ.js",
+      "size": 139317,
+      "sha256": "53c19a83462f0bca0d98bbf5a6e8d7238585f416c42c230625832b790dc84269",
+      "gzipBytes": 61639
+    },
+    {
+      "path": "assets/convert-D3ZYoR-D.js",
+      "size": 3514,
+      "sha256": "5649f296e5786f6977e89f368409b4c6e254ec5cfa6d7fbe139aec4d9b9bf714",
+      "gzipBytes": 1539
+    },
+    {
+      "path": "assets/convert-animation-CBGziFpQ.css",
+      "size": 1808,
+      "sha256": "9e9bc49b2849510d2b76b411fe21bf4164155a372d98bf72162254c615c985de",
+      "gzipBytes": 697
+    },
+    {
+      "path": "assets/convert-animation-DgCk15Oc.js",
+      "size": 6008,
+      "sha256": "c856f0b4fdd4a1a91d3d715cd5456c4565a615ca866e35d86051d6c400cb9c65",
+      "gzipBytes": 2113
+    },
+    {
+      "path": "assets/encoder.worker-4zFLx0Cr.js",
+      "size": 24191,
+      "sha256": "c0fa42e70471ea6ac5e42de56383e65593965065335c167d332a629213b2d0ba",
+      "gzipBytes": 9240
+    },
+    {
+      "path": "assets/encoder.worker-BLZJZ1VS.js",
+      "size": 300564,
+      "sha256": "3e3e26d8fe8c19e28e8a3a3709126f0d525210deba50c105797feadcdd9b9c93",
+      "gzipBytes": 77663
+    },
+    {
+      "path": "assets/encoder.worker-Btvfz7ZV.js",
+      "size": 45991,
+      "sha256": "9085714284f911a68ea4a4055ffbeae3d529ccd91b6056d525aa7b73fde1ef64",
+      "gzipBytes": 16013
+    },
+    {
+      "path": "assets/errors-YK5NAh8y.js",
+      "size": 1882,
+      "sha256": "1105dbeb5b8a65ea04fe2912a4766f6d9743f89639236f218848be94252a17c8",
+      "gzipBytes": 822
+    },
+    {
+      "path": "assets/gif-decoder.worker-DFKbESB4.js",
+      "size": 13043,
+      "sha256": "92ea34f2513ac166c33fd81a985432425c37cf48c58101503f13644fd1f91fcf",
+      "gzipBytes": 5229
+    },
+    {
+      "path": "assets/i18n-V2wxBn9G.js",
+      "size": 29247,
+      "sha256": "cf86e576c3b50ee16f3ea7095439ff0abc4b9993b929fe2379ace788bf26beab",
+      "gzipBytes": 10076
+    },
+    {
+      "path": "assets/index-BxJ7SMew.css",
+      "size": 10958,
+      "sha256": "21d1865f459f196886dfb9353f01ce80ca0e695602db1f0e71ebcd67cc295bac",
+      "gzipBytes": 3078
+    },
+    {
+      "path": "assets/index-DgyFXi6E.js",
+      "size": 284481,
+      "sha256": "2704af97999478e54bb09d6b85ca24066bf3a8ca8b24ee6df6d8ff2c9ffb38ca",
+      "gzipBytes": 85789
+    },
+    {
+      "path": "assets/inspection.worker-DURCfvm1.js",
+      "size": 99,
+      "sha256": "e05ea5d2115fe344253a12c26905f0ba36c881c6c67b18c4e1d944739149e06e",
+      "gzipBytes": 102
+    },
+    {
+      "path": "assets/jsx-runtime-DHXBON9B.js",
+      "size": 8432,
+      "sha256": "74ad6ea1ee3716d0da78024e6518564a7482d72ad5130ae1e96963b0c9efbcbf",
+      "gzipBytes": 3189
+    },
+    {
+      "path": "assets/product-conversion-B5RrbceD.js",
+      "size": 3964,
+      "sha256": "fdcc57e70595134ef1d83b228f9b538de22bfebe6bca30c3f4fef9fbc992953c",
+      "gzipBytes": 1672
+    },
+    {
+      "path": "assets/runtime-CZJYdxvB.js",
+      "size": 7131,
+      "sha256": "ea7dbf4e2755e6d6255b422f0a15e318b280d162bcf0da7bfe95b2899b91446b",
+      "gzipBytes": 2518
+    },
+    {
+      "path": "assets/runtime-diagnostics-DXMF2_uP.js",
+      "size": 1357,
+      "sha256": "9f0e47e276b8b7aa603fe8058ba688020e14524a4ce4d5c9883e9318b608af18",
+      "gzipBytes": 613
+    },
+    {
+      "path": "assets/source.worker-CbK00J7H.js",
+      "size": 274358,
+      "sha256": "9266f95be2ac178765682976baaa0290d1c14cd11feef2d1476cd674102a8288",
+      "gzipBytes": 72288
+    },
+    {
+      "path": "assets/use-preview-return-dIZDnV-L.js",
+      "size": 1065,
+      "sha256": "65505003f81f5ef626cc62baa211a571d4d04f01c86a95d4f3ef9c711c4b7710",
+      "gzipBytes": 646
+    },
+    {
+      "path": "assets/webp-decoder.worker-uUl3iHkx.js",
+      "size": 27042,
+      "sha256": "0308d29909f24a16eaef5b13bf9f8e52a67930040f6ce39ccdcdb654313b97d3",
+      "gzipBytes": 9547
+    },
+    {
+      "path": "favicon.svg",
+      "size": 208,
+      "sha256": "a531e1145e2522b6e2fc66161149ad75e00097181c7d0dc1d8b84ab14121fa76",
+      "gzipBytes": 185
+    },
+    {
+      "path": "index.html",
+      "size": 1041,
+      "sha256": "c34d8434b426f4a91119e81fd5dd8749fdb1941bc2f722d0e582c6f519f53aaa",
+      "gzipBytes": 490
+    },
+    {
+      "path": "release-candidate.json",
+      "size": 139,
+      "sha256": "8a4ba2bf6502fdcf6cbe0fd2a6267f9b6eb8be14bb5d6a4ef8d1597189336d82",
+      "gzipBytes": 144
+    },
+    {
+      "path": "third-party-notices.txt",
+      "size": 77664,
+      "sha256": "4d0d35cd01e8fee8203b85657d9d897009df4ba22699a52e975a17a0f4c0f023",
+      "gzipBytes": 18449
+    }
+  ]
+}

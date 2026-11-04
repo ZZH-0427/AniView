@@ -1,0 +1,232 @@
+{
+  "date": "2026-11-04",
+  "baseline": "f60654844853fca0bb4892eaa7953355ff61e287",
+  "project": {
+    "license": "UNLICENSED",
+    "private": true,
+    "version": "0.1.0"
+  },
+  "runtime": [
+    {
+      "name": "react",
+      "version": "19.3.1",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "react/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "react-dom/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "scheduler",
+      "version": "0.28.0",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "scheduler/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "apng-js",
+      "version": "1.1.5",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "apng-js/LICENSE.txt",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "gifenc",
+      "version": "1.0.3",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "gifenc/LICENSE.md",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "omggif",
+      "version": "1.0.10",
+      "license": "MIT",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "omggif/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "@zip.js/zip.js",
+      "version": "2.23.0",
+      "license": "BSD-3-Clause",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "zip.js/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Retain stated copyright/license/disclaimer; no copyleft source requirement in these license texts.",
+      "releaseBlocker": false
+    },
+    {
+      "name": "mediabunny",
+      "version": "1.65.0",
+      "license": "MPL-2.0",
+      "runtime": true,
+      "upstreamModified": false,
+      "retainedLicense": "mediabunny/LICENSE",
+      "upstreamLicenseMatches": true,
+      "publicNotice": true,
+      "sourceRequirement": "Corresponding covered source available under MPL-2.0; exact published source tarball linked.",
+      "releaseBlocker": false
+    }
+  ],
+  "correspondingSource": {
+    "version": "1.65.0",
+    "license": "MPL-2.0",
+    "url": "https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz",
+    "archiveBytes": 2301012,
+    "lockfileIntegrityMatches": true,
+    "sourceFilesCompared": 67,
+    "upstreamFilesChanged": [],
+    "licenseMatches": true
+  },
+  "retainedNotices": [
+    {
+      "path": "apng-js/EVENTS-LICENSE.txt",
+      "inPublicNotice": true
+    },
+    {
+      "path": "apng-js/LICENSE.txt",
+      "inPublicNotice": true
+    },
+    {
+      "path": "emscripten/COMPILER-RT-LICENSE.TXT",
+      "inPublicNotice": true
+    },
+    {
+      "path": "emscripten/DLMALLOC-NOTICE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "emscripten/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "emscripten/MUSL-COPYRIGHT",
+      "inPublicNotice": true
+    },
+    {
+      "path": "gifenc/LICENSE.md",
+      "inPublicNotice": true
+    },
+    {
+      "path": "gifenc/SOURCE-HEADER-NOTICES",
+      "inPublicNotice": true
+    },
+    {
+      "path": "libwebp/AUTHORS",
+      "inPublicNotice": false
+    },
+    {
+      "path": "libwebp/COPYING",
+      "inPublicNotice": true
+    },
+    {
+      "path": "libwebp/PATENTS",
+      "inPublicNotice": true
+    },
+    {
+      "path": "mediabunny/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "mediabunny/NOTICE",
+      "inPublicNotice": false
+    },
+    {
+      "path": "omggif/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "react/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "react-dom/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "rolldown/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "rolldown/THIRD-PARTY-LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "scheduler/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "vite/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "zip.js/LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "zip.js/SOURCE-HEADER-NOTICE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "zip.js/ZLIB-STREAMS-LICENSE",
+      "inPublicNotice": true
+    },
+    {
+      "path": "zip.js/ZLIB-STREAMS-TS-LICENSE.md",
+      "inPublicNotice": true
+    }
+  ],
+  "rawNoticeDifferences": [
+    {
+      "path": "libwebp/AUTHORS",
+      "inPublicNotice": false
+    },
+    {
+      "path": "mediabunny/NOTICE",
+      "inPublicNotice": false
+    }
+  ],
+  "missingRequiredNoticeTexts": [],
+  "hygiene": {
+    "trackedFiles": 513,
+    "unexpectedTracked": [],
+    "largeFilesOver1MiB": [],
+    "secretMatches": []
+  }
+}
