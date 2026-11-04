@@ -1,7 +1,8 @@
 # M9A2 — V0.2 Stability & Release Candidate Audit
 
-Status: **PENDING ANDROID RC VALIDATION**, 2026-11-04, Asia/Singapore.
-Desktop, automated, build, security, license and documentation gates passed.
+Status: **PASSED / CLOSED**, 2026-11-04, Asia/Singapore.
+Desktop, automated, build, security, license, documentation and fresh Android
+Edge/Quark RC smoke gates passed; the representative ZIP gate passed in Edge.
 No product-code fix was required. V0.2 is NOT RELEASED. Feature/UI/localization
 freeze remains in force; no M9B, main merge, tag, version bump or Pages deployment.
 
@@ -11,9 +12,10 @@ Baseline: `f60654844853fca0bb4892eaa7953355ff61e287`, branch
 `feat/v0.2-video-to-animation`. Start worktree was clean and remote feature HEAD
 matched. Main/origin main: `4a3dc69542ca2923744904cd10ddbf1a35f36ff9`;
 v0.1.0 tag object: `498f596377c6ba13cdc300a695b2b49370982811`, unchanged.
-Frozen phone validation candidate: `a1876c6d62012a68d2764fe5e5b2e80220a9abf1`,
-recorded in the Android archive. It is not RC-qualified until fresh Edge/Quark
-acceptance passes. This candidate adds only audit/test/documentation changes.
+Qualified RC candidate / sole M9B release baseline:
+`a1876c6d62012a68d2764fe5e5b2e80220a9abf1`, recorded in the Android archive.
+Fresh Edge/Quark acceptance passed on that frozen artifact. This candidate
+adds only audit/test/documentation changes.
 All34 non-identity production files match the desktop-tested f606548 build;
 the later Git SHA changes only release-candidate.json. Two clean candidate builds
 again match all35 files; the committed manifest identifies that frozen build.
@@ -198,7 +200,7 @@ they were not silently rewritten. No current capability contradiction was found.
 
 | Classification | Disposition |
 | --- | --- |
-| RC-BLOCKER | None found in completed desktop/security/license/build gates; Android RC gate remains pending. |
+| RC-BLOCKER | None unresolved after completed desktop/security/license/build and fresh Android RC gates. |
 | FIX BEFORE RELEASE | No product fix identified. |
 | ACCEPTED LIMITATION | Browser-dependent native video APIs/profiles; opaque8-bit SDR MP4/H.264 and VP9 WebM only; audio ignored; native/GPU observability; stated safety limits; native picker/gallery differences. |
 | DEFER TO V0.3 | Direct multi-target image Creator; password ZIP; RAR/7z; advanced editing; custom FPS/resolution; additional languages; optional P2 polish. |
@@ -210,7 +212,26 @@ guards; animation-to-MP4 one cycle/no audio/white alpha background/lossy H.264,
 odd-size padding; unsupported encrypted ZIP/RAR/7z; refresh loses media sessions.
 These remain accepted limits, not newly implemented features or hidden failures.
 
-Fresh Android Edge + Quark RC smoke and representative ZIP remain required:
-[Android archive](milestone-m9a2-android-rc-validation.md). Old8A–8D/UI/localization
-phone results do not substitute. Do not mark M9A2 PASSED or nominate a qualified
-M9B release baseline until this gate closes. No M9B action is authorized here.
+## Fresh Android closure and RC verdict
+
+[Android archive](milestone-m9a2-android-rc-validation.md) and the exact supplied
+[numeric results](milestone-m9a2-android-rc-results-2026-11-04.json) record the new
+Edge/Quark pass; old8A–8D/UI/localization results were not substituted. The user
+confirmed every requested flow and playable download, with no observed freeze,
+reload or crash. Edge passed ZIP playback→MP4→return/Next plus video→WebP;
+Quark passed Creator→GIF plus video→GIF Cancel/rerun. Both switched language.
+
+Final phone resources are0 in all reported active categories. Edge:15/15 Workers,
+1/1 archives,3/3 extractions, MP4 VideoFrames balanced. Quark:10/10 Workers,
+2 video jobs started/1 cancelled/1 completed. Both normal source paths report
+softClosed=true/hardTerminated=false, canonical peak1 and sample peak2. Last-job
+heartbeat maxima56.6ms/54.5ms are scheduling observations; no native/GPU memory
+claim or unreported browser version is invented.
+
+**M9A2: PASSED. AniView V0.2 is qualified as a Release Candidate.**
+The sole M9B release baseline remains **a1876c6d62012a68d2764fe5e5b2e80220a9abf1**;
+later closure commits only archive evidence and do not move the tested candidate.
+Core features/UI/localization remain FROZEN. Ready for M9B — V0.2 Release
+Preparation & Production Release, but M9B has not started. V0.2 is NOT RELEASED.
+STOP: do not automatically merge main, bump the final version, tag, deploy Pages
+or create a GitHub Release. This acceptance closure changes documentation only.

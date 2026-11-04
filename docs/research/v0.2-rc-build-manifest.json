@@ -5,7 +5,7 @@
   "commit": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
   "sourceDirty": false,
   "projectLicense": "UNLICENSED",
-  "status": "DESKTOP AUDIT; ANDROID PENDING",
+  "status": "RC QUALIFIED; M9A2 PASSED; V0.2 NOT RELEASED",
   "fileCount": 35,
   "determinism": {
     "cleanBuilds": 2,
