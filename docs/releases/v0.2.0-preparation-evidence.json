@@ -1,0 +1,473 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "status": "M9B PHASE A VALIDATION PASSED; NOT RELEASED",
+  "testedRc": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
+  "releaseBranch": "release/v0.2.0",
+  "buildCheckpoint": "a6c68e752bd7ed3a43d2005ed1f2e9a4dd16d006",
+  "finalPreparationSha": "Resolve frozen release/v0.2.0 HEAD; exact full SHA is supplied in the Phase A approval report. This documentation attestation follows the clean checkpoint build.",
+  "version": {
+    "before": "0.1.0",
+    "after": "0.2.0",
+    "lockRoot": "0.2.0",
+    "onlyThreeRootVersionValuesChanged": true,
+    "dependencyGraphUnchanged": true
+  },
+  "environment": {
+    "node": "v24.22.1",
+    "npm": "11.19.1",
+    "nodePath": "D:\\tool\\nodejs\\node.exe",
+    "npmPath": "D:\\tool\\nodejs\\npm.cmd"
+  },
+  "validation": {
+    "npmCi": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "test": "PASS",
+    "build": "PASS",
+    "testFiles": 79,
+    "tests": 1001,
+    "passed": 1001,
+    "failed": 0,
+    "skipped": 0
+  },
+  "security": {
+    "full": {
+      "info": 0,
+      "low": 0,
+      "moderate": 12,
+      "high": 0,
+      "critical": 0,
+      "total": 12
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "affectedPackages": [
+      {
+        "name": "@eslint-community/eslint-utils",
+        "version": "4.10.1",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@eslint/config-array",
+        "version": "0.23.5",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@eslint/js",
+        "version": "10.0.1",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/eslint-plugin",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/parser",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/type-utils",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/typescript-estree",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/utils",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "eslint",
+        "version": "10.13.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "eslint-plugin-react-refresh",
+        "version": "0.5.7",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "minimatch",
+        "version": "10.2.6",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "typescript-eslint",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      }
+    ],
+    "advisory": "GHSA-g3hv-75wg-m249",
+    "classificationUnchangedFromM9A2": true,
+    "fixApplied": false,
+    "releaseBlockers": []
+  },
+  "licensing": {
+    "runtimeLicensesChecked": 8,
+    "retainedTextsChecked": 24,
+    "missingRequiredPublicNotices": 0,
+    "mediabunny": {
+      "date": "2026-11-04",
+      "version": "1.65.0",
+      "license": "MPL-2.0",
+      "archiveMatchesLockIntegrity": true,
+      "sourceFilesCompared": 67,
+      "sourceFilesChanged": 0,
+      "licenseMatches": true,
+      "source": "https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz"
+    },
+    "project": {
+      "license": "UNLICENSED",
+      "private": true,
+      "version": "0.2.0"
+    }
+  },
+  "hygiene": {
+    "unexpectedTracked": [],
+    "secretMatches": [],
+    "keywordMatches": "Four archive/error source/test files contain password-related error categories; no credentials detected.",
+    "generatedArtifactsCommitted": false
+  },
+  "build": {
+    "fileCount": 35,
+    "manifest": "docs/releases/v0.2.0-build-manifest.json",
+    "identicalProductFiles": 34,
+    "unexpectedDifferences": [],
+    "documentedDifferences": [
+      {
+        "path": "release-candidate.json",
+        "reason": "Package version 0.1.0 to 0.2.0 and clean-build Git commit provenance; not a runtime import."
+      }
+    ],
+    "workersUnchanged": 9,
+    "wasmUnchanged": 1,
+    "allJavascriptAndCssUnchanged": true
+  },
+  "preview": {
+    "scope": "M9B Phase A lightweight local production preview, not Pages or Android",
+    "identity": {
+      "version": "0.2.0",
+      "commit": "a6c68e752bd7ed3a43d2005ed1f2e9a4dd16d006",
+      "sourceDirty": false,
+      "projectLicense": "UNLICENSED"
+    },
+    "browser": {
+      "protocolVersion": "1.3",
+      "product": "Edg/156.0.4314.58",
+      "revision": "@7806b68d20d1c1273d5b07b4f4de18e8f5852581",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+      "jsVersion": "15.6.12.10"
+    },
+    "checks": [
+      {
+        "label": "Home EN/ZH",
+        "runtime": {
+          "workersCreated": 0,
+          "workersTerminated": 0,
+          "activeWorkers": 0,
+          "peakWorkers": 0,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0
+        }
+      },
+      {
+        "label": "Viewer conversion Preview Download",
+        "runtime": {
+          "workersCreated": 9,
+          "workersTerminated": 9,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Downloaded WebP reopened",
+        "runtime": {
+          "workersCreated": 10,
+          "workersTerminated": 10,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "ZIP navigation",
+        "runtime": {
+          "workersCreated": 13,
+          "workersTerminated": 13,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Creator ready",
+        "runtime": {
+          "workersCreated": 13,
+          "workersTerminated": 13,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Convert video result Preview Back",
+        "runtime": {
+          "workersCreated": 20,
+          "workersTerminated": 20,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          },
+          "lastVideoAnimationCleanup": {
+            "videoAnimationJobsStarted": 1,
+            "videoAnimationJobsCompleted": 1,
+            "videoAnimationCancellations": 0,
+            "activeVideoSourceWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeOutputDecoderWorkers": 0,
+            "activeSamples": 0,
+            "activeCanvases": 0,
+            "activeImageData": 0,
+            "ownedRgba": 0,
+            "awaitingAck": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "sampledFrames": 18,
+            "actualOutputFrames": 12,
+            "sourceSamplesObserved": 13,
+            "sourcePixelsObserved": 39936,
+            "trackParFallbackSamples": 0,
+            "peakCanonicalRgba": 1,
+            "peakAppSamples": 2,
+            "softClosed": true,
+            "hardTerminated": false,
+            "heartbeat": {
+              "maxGapMs": 52.39999997615814,
+              "maxVisibleGapMs": 52.39999997615814,
+              "hiddenDuringJob": false,
+              "gaps": []
+            }
+          }
+        }
+      },
+      {
+        "label": "Ordinary page EN/ZH, no diagnostics",
+        "passed": true
+      }
+    ],
+    "download": {
+      "bytes": 2468,
+      "completed": true
+    },
+    "conversion": {
+      "status": "success",
+      "target": "webp",
+      "lastOutputBytes": 2468,
+      "activeDecoderWorkers": 0,
+      "activeEncoderWorkers": 0
+    },
+    "video": {
+      "status": "success",
+      "target": "webp"
+    },
+    "observedRequests": 62,
+    "nonGetHeadRequests": 0,
+    "unexpectedEndpoints": [],
+    "assetHttpErrors": [],
+    "wasmObserved": true,
+    "browserErrors": [],
+    "nativeGpuMemoryBytes": null,
+    "hmr": false
+  },
+  "inheritedAndroid": {
+    "reason": "All 34 product files match the tested RC byte-for-byte; no Phase A Android retest required by user request.",
+    "record": "docs/milestones/milestone-m9a2-android-rc-results-2026-11-04.json",
+    "browsers": [
+      "Edge",
+      "Quark"
+    ],
+    "result": "PASS by user report"
+  },
+  "productionBeforePreparation": {
+    "date": "2026-11-04",
+    "identityStatus": 200,
+    "identity": {
+      "version": "0.1.0",
+      "commit": "4a3dc69542ca2923744904cd10ddbf1a35f36ff9",
+      "sourceDirty": false,
+      "projectLicense": "UNLICENSED"
+    },
+    "indexStatus": 200,
+    "indexHasAniView": true
+  },
+  "approvalRequired": true,
+  "mainMerged": false,
+  "tagCreated": false,
+  "pagesTriggered": false,
+  "githubReleaseCreated": false
+}
