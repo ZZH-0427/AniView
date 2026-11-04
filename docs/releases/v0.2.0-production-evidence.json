@@ -1,0 +1,1037 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "status": "RELEASED; PRODUCTION VERIFIED",
+  "version": "0.2.0",
+  "testedRc": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
+  "releasePreparationSha": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+  "finalMainSha": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+  "userApproval": {
+    "explicit": true,
+    "approvedExactSha": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+    "scope": "Phase B main fast-forward/push, Pages, annotated tag and GitHub Release"
+  },
+  "tag": {
+    "name": "v0.2.0",
+    "type": "annotated",
+    "object": "3f83ab43fa880432bef9e84784da29b8c4dc9843",
+    "peeled": "0cb82c0a446a160806596d618bbbc61e16a5752d"
+  },
+  "previousStable": {
+    "tag": "v0.1.0",
+    "object": "498f596377c6ba13cdc300a695b2b49370982811",
+    "peeled": "4a3dc69542ca2923744904cd10ddbf1a35f36ff9",
+    "unchanged": true
+  },
+  "validation": {
+    "npmCi": "PASS",
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "test": "PASS",
+    "build": "PASS",
+    "files": 79,
+    "tests": 1001,
+    "passed": 1001,
+    "failed": 0,
+    "skipped": 0
+  },
+  "security": {
+    "full": {
+      "info": 0,
+      "low": 0,
+      "moderate": 12,
+      "high": 0,
+      "critical": 0,
+      "total": 12
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "affectedPackages": [
+      {
+        "name": "@eslint-community/eslint-utils",
+        "version": "4.10.1",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@eslint/config-array",
+        "version": "0.23.5",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@eslint/js",
+        "version": "10.0.1",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/eslint-plugin",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/parser",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/type-utils",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/typescript-estree",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "@typescript-eslint/utils",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "eslint",
+        "version": "10.13.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "eslint-plugin-react-refresh",
+        "version": "0.5.7",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "minimatch",
+        "version": "10.2.6",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      },
+      {
+        "name": "typescript-eslint",
+        "version": "8.72.0",
+        "severity": "moderate",
+        "shipped": false,
+        "decision": "NOT APPLICABLE TO PRODUCTION"
+      }
+    ],
+    "advisory": "GHSA-g3hv-75wg-m249",
+    "classificationUnchangedFromM9A2": true,
+    "fixApplied": false,
+    "releaseBlockers": []
+  },
+  "licensing": {
+    "runtimeLicensesChecked": 8,
+    "retainedTextsChecked": 24,
+    "missingRequiredPublicNotices": 0,
+    "mediabunny": {
+      "date": "2026-11-04",
+      "version": "1.65.0",
+      "license": "MPL-2.0",
+      "archiveMatchesLockIntegrity": true,
+      "sourceFilesCompared": 67,
+      "sourceFilesChanged": 0,
+      "licenseMatches": true,
+      "source": "https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz"
+    },
+    "project": {
+      "license": "UNLICENSED",
+      "private": true,
+      "version": "0.2.0"
+    }
+  },
+  "mainBuildComparison": {
+    "identicalProductFiles": 33,
+    "unexpectedDifferences": [],
+    "documentedDifferences": [
+      {
+        "path": "release-candidate.json",
+        "reason": "Package version 0.1.0 to 0.2.0 and clean-build Git commit provenance; not a runtime import."
+      },
+      {
+        "path": "third-party-notices.txt",
+        "reason": "Windows core.autocrlf checkout converted line endings. All normalized notice content is identical to the tested RC and immutable Git blob. Linux Actions will emit the LF Git blob; no legal text, runtime code or approved commit changed."
+      }
+    ],
+    "workersUnchanged": 9,
+    "wasmUnchanged": 1,
+    "allJavascriptAndCssUnchanged": true
+  },
+  "workflow": {
+    "id": 41788961741,
+    "name": "Validate and deploy Pages",
+    "event": "push",
+    "headSha": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+    "url": "https://github.com/ZZH-0427/AniView/actions/runs/41788961741",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/setup-node@v6",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run lint",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run typecheck",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run test",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run npm run build",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Core browser regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Release UI browser regression",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Configure Pages",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Upload Pages artifact",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/setup-node@v6",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v6",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "deploy",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Deploy to GitHub Pages",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  "githubRelease": {
+    "id": 433604563,
+    "title": "AniView v0.2.0",
+    "url": "https://github.com/ZZH-0427/AniView/releases/tag/v0.2.0",
+    "tag": "v0.2.0",
+    "target": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+    "publishedAt": "2026-11-04T07:01:30Z",
+    "draft": false,
+    "prerelease": false,
+    "manualAssets": 0,
+    "interface": "Authenticated official GitHub REST API; existing credential held in memory only"
+  },
+  "productionAssets": {
+    "date": "2026-11-04",
+    "url": "https://zzh-0427.github.io/AniView/",
+    "status": "PASS",
+    "identity": {
+      "version": "0.2.0",
+      "commit": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+      "sourceDirty": false,
+      "projectLicense": "UNLICENSED"
+    },
+    "fileCount": 35,
+    "assets": [
+      {
+        "path": "assets/ConversionWorkspace-5-ueswVh.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 19567,
+        "sha256": "47699101e8392c6a5cca6e89887ec4bdf480ef5fc6d0a3ae2f77dbe8748cfaaf",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/CreatorWorkspace-BSjFLEgm.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "size": 6122,
+        "sha256": "4678a6bb209f7b15bd4f26c8a51225c632f21548ed28806a3deaad67ffd49ffd",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/CreatorWorkspace-Cn2Eyf2R.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 28744,
+        "sha256": "d64b11d6fa7b535592fb2f2f4377cd4a152890c733576d61003cb296da2ac21b",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/VideoConversionWorkspace-BimTsyVN.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "size": 802,
+        "sha256": "c27bf4dc11c1ac7aa35ead9eb42719e6058febe8ace323d9d6022da8b0959ae8",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/VideoConversionWorkspace-DBON6pz3.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 31172,
+        "sha256": "0b8a0d2f307869bb5e8906988019a575762a6c012923a5e9f9798c2f7082fb79",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/VideoResultPreview-CMN49pwV.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 795,
+        "sha256": "e9b62735251967c08dc1fb0625bc2f8d7806eda380e862ff05a46cc633144bba",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/WebPSpikePage-CnjoLX4T.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "size": 667,
+        "sha256": "9ca7deade9ace2b79aeffcfe915f7409f5e36ec3d9abb19e3cdb873eec989a0a",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/WebPSpikePage-DC3ynrfB.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 4949,
+        "sha256": "7c251bede7724e284527d391be9bdfa3317b6d50e24295b1bd08efb3d443903b",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200,
+        "mime": "application/wasm",
+        "size": 394132,
+        "sha256": "f08dc7922c9df005b72a1e169182c1886e03dcae9ab213d03e58a23cab6ff925",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/apng-decoder.worker-C3fCwwQ6.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 24698,
+        "sha256": "d4e47266ec9b5369d29f38e9e074e1157eeba59045dad7a6604467d6c14d9796",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/archive-session-D2tkEPRo.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 6625,
+        "sha256": "f17da22dbdabf6fb8dc384d2c6990b8fceac83b818ccc9f7b18557168a2edb79",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/archive.worker-CZVD7xoJ.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 139317,
+        "sha256": "53c19a83462f0bca0d98bbf5a6e8d7238585f416c42c230625832b790dc84269",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/convert-D3ZYoR-D.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 3514,
+        "sha256": "5649f296e5786f6977e89f368409b4c6e254ec5cfa6d7fbe139aec4d9b9bf714",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/convert-animation-CBGziFpQ.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "size": 1808,
+        "sha256": "9e9bc49b2849510d2b76b411fe21bf4164155a372d98bf72162254c615c985de",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/convert-animation-DgCk15Oc.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 6008,
+        "sha256": "c856f0b4fdd4a1a91d3d715cd5456c4565a615ca866e35d86051d6c400cb9c65",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/encoder.worker-4zFLx0Cr.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 24191,
+        "sha256": "c0fa42e70471ea6ac5e42de56383e65593965065335c167d332a629213b2d0ba",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/encoder.worker-BLZJZ1VS.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 300564,
+        "sha256": "3e3e26d8fe8c19e28e8a3a3709126f0d525210deba50c105797feadcdd9b9c93",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/encoder.worker-Btvfz7ZV.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 45991,
+        "sha256": "9085714284f911a68ea4a4055ffbeae3d529ccd91b6056d525aa7b73fde1ef64",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/errors-YK5NAh8y.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 1882,
+        "sha256": "1105dbeb5b8a65ea04fe2912a4766f6d9743f89639236f218848be94252a17c8",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/gif-decoder.worker-DFKbESB4.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 13043,
+        "sha256": "92ea34f2513ac166c33fd81a985432425c37cf48c58101503f13644fd1f91fcf",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/i18n-V2wxBn9G.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 29247,
+        "sha256": "cf86e576c3b50ee16f3ea7095439ff0abc4b9993b929fe2379ace788bf26beab",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/index-BxJ7SMew.css",
+        "status": 200,
+        "mime": "text/css; charset=utf-8",
+        "size": 10958,
+        "sha256": "21d1865f459f196886dfb9353f01ce80ca0e695602db1f0e71ebcd67cc295bac",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/index-DgyFXi6E.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 284481,
+        "sha256": "2704af97999478e54bb09d6b85ca24066bf3a8ca8b24ee6df6d8ff2c9ffb38ca",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/inspection.worker-DURCfvm1.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 99,
+        "sha256": "e05ea5d2115fe344253a12c26905f0ba36c881c6c67b18c4e1d944739149e06e",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/jsx-runtime-DHXBON9B.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 8432,
+        "sha256": "74ad6ea1ee3716d0da78024e6518564a7482d72ad5130ae1e96963b0c9efbcbf",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/product-conversion-B5RrbceD.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 3964,
+        "sha256": "fdcc57e70595134ef1d83b228f9b538de22bfebe6bca30c3f4fef9fbc992953c",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/runtime-CZJYdxvB.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 7131,
+        "sha256": "ea7dbf4e2755e6d6255b422f0a15e318b280d162bcf0da7bfe95b2899b91446b",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/runtime-diagnostics-DXMF2_uP.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 1357,
+        "sha256": "9f0e47e276b8b7aa603fe8058ba688020e14524a4ce4d5c9883e9318b608af18",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/source.worker-CbK00J7H.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 274358,
+        "sha256": "9266f95be2ac178765682976baaa0290d1c14cd11feef2d1476cd674102a8288",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/use-preview-return-dIZDnV-L.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 1065,
+        "sha256": "65505003f81f5ef626cc62baa211a571d4d04f01c86a95d4f3ef9c711c4b7710",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "assets/webp-decoder.worker-uUl3iHkx.js",
+        "status": 200,
+        "mime": "application/javascript; charset=utf-8",
+        "size": 27042,
+        "sha256": "0308d29909f24a16eaef5b13bf9f8e52a67930040f6ce39ccdcdb654313b97d3",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "favicon.svg",
+        "status": 200,
+        "mime": "image/svg+xml",
+        "size": 208,
+        "sha256": "a531e1145e2522b6e2fc66161149ad75e00097181c7d0dc1d8b84ab14121fa76",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "index.html",
+        "status": 200,
+        "mime": "text/html; charset=utf-8",
+        "size": 1041,
+        "sha256": "c34d8434b426f4a91119e81fd5dd8749fdb1941bc2f722d0e582c6f519f53aaa",
+        "comparison": "identical to tested RC"
+      },
+      {
+        "path": "release-candidate.json",
+        "status": 200,
+        "mime": "application/json; charset=utf-8",
+        "size": 139,
+        "sha256": "2d2ed6f678cd5017816021cccbca73278ffda9d6f5a7b195660a02d72295af70",
+        "comparison": "approved version and Git SHA identity"
+      },
+      {
+        "path": "third-party-notices.txt",
+        "status": 200,
+        "mime": "text/plain; charset=utf-8",
+        "size": 77663,
+        "sha256": "cc6d03eb94774fe054c9d785f8c2e164b5e34e8dd4530673ce8c1b7b4421a1f6",
+        "comparison": "exact immutable LF Git blob; normalized legal text identical to RC"
+      }
+    ]
+  },
+  "productionSmoke": {
+    "scope": "M9B Phase B public GitHub Pages production validation, desktop Edge",
+    "status": "PASS",
+    "identity": {
+      "version": "0.2.0",
+      "commit": "0cb82c0a446a160806596d618bbbc61e16a5752d",
+      "sourceDirty": false,
+      "projectLicense": "UNLICENSED"
+    },
+    "browser": {
+      "protocolVersion": "1.3",
+      "product": "Edg/156.0.4314.58",
+      "revision": "@7806b68d20d1c1273d5b07b4f4de18e8f5852581",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+      "jsVersion": "15.6.12.10"
+    },
+    "checks": [
+      {
+        "label": "Home EN/ZH",
+        "runtime": {
+          "workersCreated": 0,
+          "workersTerminated": 0,
+          "activeWorkers": 0,
+          "peakWorkers": 0,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0
+        }
+      },
+      {
+        "label": "Viewer conversion Preview Download",
+        "runtime": {
+          "workersCreated": 9,
+          "workersTerminated": 9,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Downloaded WebP reopened",
+        "runtime": {
+          "workersCreated": 10,
+          "workersTerminated": 10,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 0,
+          "archiveSessionsClosed": 0,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 0,
+          "entryExtractionsCompleted": 0,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "ZIP navigation",
+        "runtime": {
+          "workersCreated": 13,
+          "workersTerminated": 13,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Creator ready",
+        "runtime": {
+          "workersCreated": 13,
+          "workersTerminated": 13,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          }
+        }
+      },
+      {
+        "label": "Convert video result Preview Back",
+        "runtime": {
+          "workersCreated": 20,
+          "workersTerminated": 20,
+          "activeWorkers": 0,
+          "peakWorkers": 2,
+          "bitmapsCreated": 0,
+          "bitmapsClosed": 0,
+          "activeBitmaps": 0,
+          "peakBitmaps": 0,
+          "archiveSessionsOpened": 1,
+          "archiveSessionsClosed": 1,
+          "activeArchiveSessions": 0,
+          "entryExtractionsStarted": 2,
+          "entryExtractionsCompleted": 2,
+          "entryExtractionsDiscarded": 0,
+          "staleResultsDiscarded": 0,
+          "decoderErrors": 0,
+          "staticDecodeErrors": 0,
+          "archiveErrors": 0,
+          "cleanupErrors": 0,
+          "lastConversionCleanup": {
+            "activeDecoderWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeVideoWorkers": 0,
+            "ownedVideoFrames": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "videoFramesBalanced": null
+          },
+          "lastVideoAnimationCleanup": {
+            "videoAnimationJobsStarted": 1,
+            "videoAnimationJobsCompleted": 1,
+            "videoAnimationCancellations": 0,
+            "activeVideoSourceWorkers": 0,
+            "activeEncoderWorkers": 0,
+            "activeOutputDecoderWorkers": 0,
+            "activeSamples": 0,
+            "activeCanvases": 0,
+            "activeImageData": 0,
+            "ownedRgba": 0,
+            "awaitingAck": 0,
+            "activeObjectUrls": 0,
+            "cleanupErrors": 0,
+            "sampledFrames": 18,
+            "actualOutputFrames": 12,
+            "sourceSamplesObserved": 13,
+            "sourcePixelsObserved": 39936,
+            "trackParFallbackSamples": 0,
+            "peakCanonicalRgba": 1,
+            "peakAppSamples": 2,
+            "softClosed": true,
+            "hardTerminated": false,
+            "heartbeat": {
+              "maxGapMs": 51.30000001192093,
+              "maxVisibleGapMs": 51.30000001192093,
+              "hiddenDuringJob": false,
+              "gaps": []
+            }
+          }
+        }
+      },
+      {
+        "label": "Ordinary page EN/ZH, no diagnostics",
+        "passed": true
+      }
+    ],
+    "download": {
+      "bytes": 2468,
+      "completed": true
+    },
+    "conversion": {
+      "status": "success",
+      "target": "webp",
+      "deflate": true,
+      "jobId": 2,
+      "conversionsStarted": 1,
+      "conversionsCompleted": 1,
+      "cancellations": 0,
+      "activeDecoderWorkers": 0,
+      "activeEncoderWorkers": 0,
+      "peakRgbaFrames": 1,
+      "lastOutputBytes": 2468,
+      "activeObjectUrls": 1,
+      "cleanupErrors": 0,
+      "wasmLiveAllocBytes": 0,
+      "videoConversionsStarted": 0,
+      "videoConversionsCompleted": 0,
+      "videoCancellations": 0,
+      "activeVideoWorkers": 0,
+      "peakCanonicalRgbaFrames": 0,
+      "peakVideoFrames": 0,
+      "maxEncodeQueue": 0,
+      "ownedVideoFrames": 0,
+      "videoFramesBalanced": null,
+      "lastMp4Bytes": 0,
+      "lastCodec": null,
+      "activeWorkers": 0,
+      "activeArchiveSessions": 0,
+      "activeBitmaps": 0,
+      "source": {
+        "width": 320,
+        "height": 240,
+        "frameCount": 10,
+        "framePixels": 768000
+      },
+      "limits": {
+        "maxFrames": 200,
+        "maxSide": 2048,
+        "maxPixels": 4194304,
+        "maxFramePixels": 15360000,
+        "maxSourceBytes": 67108864,
+        "maxOutputBytes": 67108864
+      },
+      "error": null
+    },
+    "video": {
+      "status": "success",
+      "jobId": 2,
+      "target": "webp",
+      "videoAnimationJobsStarted": 1,
+      "videoAnimationJobsCompleted": 1,
+      "videoAnimationCancellations": 0,
+      "activeVideoSourceWorkers": 0,
+      "activeEncoderWorkers": 0,
+      "activeOutputDecoderWorkers": 0,
+      "activeSamples": 0,
+      "activeCanvases": 0,
+      "activeImageData": 0,
+      "ownedRgba": 0,
+      "awaitingAck": 0,
+      "activeObjectUrls": 2,
+      "cleanupErrors": 0,
+      "sampledFrames": 18,
+      "actualOutputFrames": 12,
+      "sourceSamplesObserved": 13,
+      "sourcePixelsObserved": 39936,
+      "trackParFallbackSamples": 0,
+      "peakCanonicalRgba": 1,
+      "peakAppSamples": 2,
+      "softClosed": true,
+      "hardTerminated": false,
+      "heartbeat": {
+        "maxGapMs": 51.30000001192093,
+        "maxVisibleGapMs": 51.30000001192093,
+        "hiddenDuringJob": false,
+        "gaps": []
+      },
+      "activeWorkers": 0,
+      "activeBitmaps": 0,
+      "activeArchiveSessions": 0,
+      "source": {
+        "container": "mp4",
+        "codec": "avc",
+        "width": 64,
+        "height": 48,
+        "durationUs": 1200000
+      },
+      "plan": {
+        "width": 64,
+        "height": 48,
+        "frameCount": 18,
+        "playCount": 0,
+        "startUs": 0,
+        "endUs": 1200000,
+        "fps": 15,
+        "framePixels": 55296,
+        "durationUs": 1200000
+      },
+      "estimate": {
+        "width": 64,
+        "height": 48,
+        "durationUs": 1200000,
+        "fps": 15,
+        "frameCount": 18,
+        "framePixels": 55296
+      },
+      "preflightIssue": null,
+      "limits": {
+        "maxSourceBytes": 67108864,
+        "maxOutputBytes": 67108864,
+        "maxCodedSide": 2048,
+        "maxCodedPixels": 2073600,
+        "maxOutputSide": 720,
+        "maxSampledFrames": 150,
+        "maxFramePixels": 15360000,
+        "maxSelectedUs": 30000000,
+        "maxObservedSamples": 1800,
+        "maxObservedSourcePixels": 622080000,
+        "maxPrerollSeconds": 5,
+        "deadlineMs": 120000,
+        "maxCacheBytes": 4194304,
+        "maxReadChunk": 1048576
+      },
+      "error": null,
+      "nativeGpuMemoryBytes": null
+    },
+    "observedRequests": 62,
+    "mediaUploads": 0,
+    "unexpectedApiRequests": 0,
+    "browserErrors": [],
+    "unhandledExceptions": 0,
+    "wasmRequests": [
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      },
+      {
+        "url": "https://zzh-0427.github.io/AniView/assets/aniview-webp-BzIHXVkK.wasm",
+        "status": 200
+      }
+    ],
+    "nativeGpuMemoryBytes": null,
+    "hmr": false
+  },
+  "postReleaseArchive": {
+    "branch": "release/v0.2.0",
+    "reason": "Documentation only; preserve main release SHA/tag and avoid triggering another deployment",
+    "tagMoved": false,
+    "mainChanged": false
+  },
+  "rollback": {
+    "needed": false,
+    "executed": false,
+    "stable": "v0.1.0",
+    "method": "Reviewed new main commit restoring the stable source tree, validate then redeploy via main; never force-move tags"
+  },
+  "deferred": [
+    "Direct multi-target image creator",
+    "Password ZIP UI",
+    "RAR/7z",
+    "Advanced editing",
+    "Custom FPS/resolution",
+    "Additional languages"
+  ]
+}

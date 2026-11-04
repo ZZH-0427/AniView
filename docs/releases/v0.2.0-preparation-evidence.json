@@ -5,7 +5,7 @@
   "testedRc": "a1876c6d62012a68d2764fe5e5b2e80220a9abf1",
   "releaseBranch": "release/v0.2.0",
   "buildCheckpoint": "a6c68e752bd7ed3a43d2005ed1f2e9a4dd16d006",
-  "finalPreparationSha": "Resolve frozen release/v0.2.0 HEAD; exact full SHA is supplied in the Phase A approval report. This documentation attestation follows the clean checkpoint build.",
+  "finalPreparationSha": "0cb82c0a446a160806596d618bbbc61e16a5752d",
   "version": {
     "before": "0.1.0",
     "after": "0.2.0",
@@ -469,5 +469,6 @@
   "mainMerged": false,
   "tagCreated": false,
   "pagesTriggered": false,
-  "githubReleaseCreated": false
+  "githubReleaseCreated": false,
+  "postReleaseArchive": "See v0.2.0-release-record.md. This explicit SHA was inserted after publication; the archive does not move the release tag."
 }
