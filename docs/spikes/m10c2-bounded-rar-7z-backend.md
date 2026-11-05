@@ -1,12 +1,13 @@
 # M10C2 — Bounded RAR / 7z Backend Technical Spike
 
-Date:2026-11-05. **Interim report: desktop complete; Android gate pending.**
+Date:2026-11-05. **Interim report: desktop complete; Android failure under investigation.**
 This document is not a PASS, production dependency approval or M10C3 authorization.
 
 ## 1. Status
 
-IN PROGRESS. Desktop gates A–D have evidence; fresh bounded-build Android Edge
-and Quark remain required. M10C1 phone results do not substitute for this build.
+IN PROGRESS. Desktop gates A–D have evidence. Initial bounded-build Android runs
+failed one RAR4 header-password check in each browser; acceptance awaits the
+[focused investigation](m10c2-rar4-android-followup.md). M10C1 results do not substitute.
 
 ## 2. Branch
 
@@ -146,7 +147,7 @@ Compressed83886089-byte header also fails with RESOURCE_LIMIT.
 ## 25. Desktop
 
 Installed Edge156,69 successful checks,5 intentional cancellations, no browser
-errors. Separate Node policy/protocol tests3/3; contract strict typecheck passes.
+errors. Original Node tests3/3; follow-up regression checks4/4; strict contract check passes.
 Root lint/typecheck/build and88 files /1086 tests pass.
 The exact frozen HTTPS `/AniView/` artifact independently repeats69 checks,
 5 cancellations,77/77 Workers, no browser errors, secureContext=true, HMR=false;
@@ -154,25 +155,29 @@ max active heartbeat18.5 ms. Source/notices/hash download links are included.
 
 ## 26. Android Edge
 
-PENDING — fresh frozen bounded-build test required.
+Initial57 PASS,1 failure: RAR4 header-password outcome ARCHIVE_TIMEOUT.
+Workers64/64, active0, maxWasm51511296. Focused follow-up pending.
 
 ## 27. Android Quark
 
-PENDING — fresh frozen bounded-build test required.
+Initial57 PASS,1 failure: same case ARCHIVE_BACKEND_ERROR.
+Workers64/64, active0, maxWasm51511296. Focused follow-up pending.
 
 ## 28. Android Failure Boundary
 
-Not measured yet. Stop if reload/OOM/crash/severe freeze occurs; never substitute
-the old unrestricted M10C1 memory high-water for a bounded-build result.
+No OOM/discard inference from summaries. Initial failures remain recorded;
+cleanup was balanced. Stop at any new failure, reload/OOM/crash/severe freeze.
 
 ## 29. Heartbeat / Responsiveness
 
 Local desktop max active gap17.7 ms, UI coordination off native decode thread.
-Timer signal is not complete device/OS memory evidence. Pending phone observation.
+Initial phone heartbeat36.5 ms Edge /381.1 ms Quark is a signal, not a root-cause
+or crash diagnosis. Further observation accompanies the targeted follow-up.
 
 ## 30. Bundle
 
-Custom JS70345 /gzip18565; WASM285663 /gzip122511; Worker5807 /gzip2383 bytes.
+Custom JS70345 /gzip18565; WASM285663 /gzip122511; original Worker5807 /gzip2383 bytes.
+Trace Worker5910 /gzip2378 plus initialization helper1287 /gzip617 bytes.
 Published reference JS81048 +WASM1171525 raw bytes. No product bundle addition.
 
 ## 31. Lazy Loading
@@ -295,7 +300,7 @@ subpath/lazy integration after the backend's final decision.
 
 ## 52. Open Questions
 
-Fresh bounded-build Edge/Quark outcomes and phone-supported operating envelope.
+RAR4 Android failure stage/root cause and targeted follow-up outcome.
 Unmeasured native/OS memory is a known observability limit, not a fake numeric cap.
 Future product release compliance remains distinct from this engineering prototype.
 
@@ -311,6 +316,7 @@ bounded-build Android acceptance. No PASS claim from desktop alone.
 
 ## 55. Next State
 
-Frozen production harness `m10c2-bounded-e88132ca`; no HMR, no Pages deployment.
-Next action is Edge + Quark small/memory/lifecycle smoke, then archive numeric
-summaries, decide gates and update this report. Do not implement M10C3.
+Original frozen production harness `m10c2-bounded-e88132ca` is retained. Separate
+`m10c2-rar4-trace-1` provides targeted14-check follow-up with the identical native
+WASM and limits. No HMR/Pages deployment. Await Edge/Quark Summary and stage traces,
+then decide gates. Do not implement M10C3.

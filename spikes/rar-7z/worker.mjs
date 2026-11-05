@@ -1,4 +1,5 @@
 import { BackendError, detect, policy, normalizedPath, numeric, dictionary, fail } from './policy.mjs'
+import { initializeRuntime } from './runtime-init.mjs'
 let mod, entries, p, sourceKind, memory, ranges = 0, bytesRead = 0, maxRead = 0
 let busy = false
 const codes = ['OK', 'ARCHIVE_CORRUPTED', 'ARCHIVE_PASSWORD_REQUIRED', 'ARCHIVE_PASSWORD_REJECTED', 'ARCHIVE_RESOURCE_LIMIT', 'ARCHIVE_UNSUPPORTED_METHOD', 'ARCHIVE_BACKEND_ERROR', 'ARCHIVE_PASSWORD_REJECTED_OR_CORRUPTED']
@@ -8,18 +9,23 @@ function text(i, property) { return mod.UTF8ToString(mod._av_string(i, property)
 function metrics() { return { wasmBytes: memory.buffer.byteLength, wasmMaximum: 67108864, ranges, bytesRead, maxRead, outputBytes: mod._av_length(), mountedArchives: 1, instances: 1 } }
 async function handle(m, progress) {
   if (m.type === 'OPEN') {
+    progress('source-check')
     p = policy(m.limits)
     if (!(m.source instanceof Blob) || m.source.size > p.maxInputBytes) fail('ARCHIVE_RESOURCE_LIMIT')
     sourceKind = detect(new Uint8Array(await m.source.slice(0,8).arrayBuffer()))
     // Glue is fetched only when OPEN is requested, never by normal product UI.
     const asset = new URL('./artifacts/bounded-sevenzip.js', import.meta.url)
-    const response = await fetch(asset); if (!response.ok) fail('ARCHIVE_BACKEND_ERROR')
-    // UMD factory is loaded as a module side effect; no eval or blob script.
+    progress('glue-import-start')
     const { default: factory } = await import(asset.href)
-    const wasm = await (await fetch(new URL('./artifacts/bounded-sevenzip.wasm', import.meta.url))).arrayBuffer()
-    mod = await factory({ wasmBinary: wasm, print() {}, printErr() {}, instantiateWasm(imports, success) {
-      WebAssembly.instantiate(wasm, imports).then(result => { memory = Object.values(result.instance.exports).find(v => v instanceof WebAssembly.Memory); success(result.instance, result.module) }); return {}
-    } })
+    progress('glue-imported')
+    progress('wasm-fetch-start')
+    const response = await fetch(new URL('./artifacts/bounded-sevenzip.wasm', import.meta.url))
+    progress('wasm-response',{httpStatus:response.status})
+    if(!response.ok)fail('ARCHIVE_BACKEND_ASSET_FAILED')
+    const wasm = await response.arrayBuffer()
+    progress('wasm-fetched',{wasmAssetBytes:wasm.byteLength})
+    mod = await initializeRuntime(factory,wasm,progress,value=>{memory=value})
+    progress('runtime-ready')
     const read = FileReaderSync.prototype.readAsArrayBuffer
     FileReaderSync.prototype.readAsArrayBuffer = function(blob) {
       if (blob.size > 1048576 || bytesRead + blob.size > p.maxReadBytes) fail('ARCHIVE_RESOURCE_LIMIT')
@@ -28,7 +34,9 @@ async function handle(m, progress) {
     }
     mod.FS.mkdir('/input'); mod.FS.mount(mod.WORKERFS, { blobs: [{ name: 'archive', data: m.source }] }, '/input')
     progress('opening')
-    outcome(mod.ccall('av_open', 'number', ['number','string'], [sourceKind, m.options.password ?? null]))
+    const nativeCode=mod.ccall('av_open', 'number', ['number','string'], [sourceKind, m.options.password ?? null])
+    progress('native-open-returned',{nativeCode})
+    outcome(nativeCode)
     const count = mod._av_count()
     if (count < 0 || count > p.maxEntries) fail('ARCHIVE_RESOURCE_LIMIT')
     entries = []; let chars = 0
@@ -77,7 +85,7 @@ globalThis.onmessage = async ({ data: m }) => {
   if(busy){postMessage({...base,type:'ERROR',code:'ARCHIVE_BUSY'});return}
   busy=true
   try {
-    const result=await handle(m,phase=>postMessage({...base,type:'PROGRESS',phase}))
+    const result=await handle(m,(phase,detail)=>postMessage({...base,type:'PROGRESS',phase,detail}))
     postMessage({...base,type:'RESULT',result},result?.data?[result.data]:[])
   } catch(e) {
     // Neither native text, filenames nor credentials enter diagnostics.

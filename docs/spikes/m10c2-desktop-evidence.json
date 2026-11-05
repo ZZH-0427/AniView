@@ -1,5 +1,5 @@
 {
-  "status": "ANDROID_PENDING",
+  "status": "ANDROID_INITIAL_FAILED_FOLLOWUP_PENDING",
   "date": "2026-11-05",
   "desktop": {
     "build": "m10c2-bounded-1",

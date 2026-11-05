@@ -2,6 +2,12 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { policy, detect, normalizedPath, numeric, dictionary } from './policy.mjs'
 import { SevenZipBackend } from './backend.mjs'
+import { initializeRuntime } from './runtime-init.mjs'
+test('failed custom WASM instantiation rejects promptly instead of hanging',async()=>{
+  const factory=options=>{options.instantiateWasm({},()=>assert.fail('unexpected success'));return new Promise(()=>{})}
+  const reject=async()=>{throw new WebAssembly.CompileError('synthetic invalid WASM')}
+  await assert.rejects(initializeRuntime(factory,new Uint8Array(),()=>{},()=>{},reject),/ARCHIVE_WASM_INITIALIZATION_FAILED/)
+})
 test('signatures override misleading extension/MIME; other containers excluded',()=>{
   assert.equal(detect([0x37,0x7a,0xbc,0xaf,0x27,0x1c]),7)
   assert.equal(detect([0x52,0x61,0x72,0x21,0x1a,7,0]),4)

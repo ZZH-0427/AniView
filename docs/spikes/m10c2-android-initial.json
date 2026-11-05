@@ -1,0 +1,6 @@
+{
+  "status": "FAILED_NOT_ACCEPTED",
+  "userReport": "各项测试均已完成",
+  "edge": {"build":"m10c2-bounded-e88132ca","secureContext":true,"hmr":false,"pass":57,"failures":[{"case":"password outcomes test_read_format_rar4_encrypted_filenames.rar","error":"ARCHIVE_TIMEOUT"}],"cancellations":5,"workersCreated":64,"workersTerminated":64,"activeWorkers":0,"peakWorkers":1,"maxWasmBytes":51511296,"maxHeartbeatGapMs":36.5},
+  "quark": {"build":"m10c2-bounded-e88132ca","secureContext":true,"hmr":false,"pass":57,"failures":[{"case":"password outcomes test_read_format_rar4_encrypted_filenames.rar","error":"ARCHIVE_BACKEND_ERROR"}],"cancellations":5,"workersCreated":64,"workersTerminated":64,"activeWorkers":0,"peakWorkers":1,"maxWasmBytes":51511296,"maxHeartbeatGapMs":381.10000002384186}
+}

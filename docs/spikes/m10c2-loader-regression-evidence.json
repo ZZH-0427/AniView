@@ -1,0 +1,286 @@
+{
+  "status": "ANDROID_FOLLOWUP_PENDING",
+  "nativeWasmUnchanged": true,
+  "wasmSha256": "e88132ca3c005a6ed8e9b89cd1f4cf7ad731bffb9301c9caf6712fb989a9ca3e",
+  "originalFrozenFilesUnchanged": true,
+  "before": {
+    "actualFactory": true,
+    "invalidWasm": true,
+    "state": "still-pending",
+    "unhandled": [
+      "CompileError"
+    ]
+  },
+  "after": {
+    "rows": [
+      {
+        "mode": "http-error",
+        "ok": false,
+        "code": "ARCHIVE_BACKEND_ASSET_FAILED",
+        "ms": 24.100000023841858,
+        "trace": [
+          {
+            "event": "worker-created",
+            "elapsedMs": 6,
+            "generation": 1
+          },
+          {
+            "event": "request-sent",
+            "elapsedMs": 6,
+            "generation": 1,
+            "operation": "OPEN"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 18,
+            "generation": 1,
+            "phase": "source-check"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 18,
+            "generation": 1,
+            "phase": "glue-import-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 22,
+            "generation": 1,
+            "phase": "glue-imported"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 22,
+            "generation": 1,
+            "phase": "wasm-fetch-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 24,
+            "generation": 1,
+            "phase": "wasm-response",
+            "httpStatus": 503
+          },
+          {
+            "event": "request-error",
+            "elapsedMs": 24,
+            "generation": 1,
+            "code": "ARCHIVE_BACKEND_ASSET_FAILED"
+          },
+          {
+            "event": "worker-terminated",
+            "elapsedMs": 24,
+            "generation": 1,
+            "code": "ARCHIVE_CANCELLED"
+          }
+        ]
+      },
+      {
+        "mode": "invalid-wasm",
+        "ok": false,
+        "code": "ARCHIVE_WASM_INITIALIZATION_FAILED",
+        "ms": 18.30000001192093,
+        "trace": [
+          {
+            "event": "worker-created",
+            "elapsedMs": 2,
+            "generation": 1
+          },
+          {
+            "event": "request-sent",
+            "elapsedMs": 2,
+            "generation": 1,
+            "operation": "OPEN"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 11,
+            "generation": 1,
+            "phase": "source-check"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 11,
+            "generation": 1,
+            "phase": "glue-import-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 15,
+            "generation": 1,
+            "phase": "glue-imported"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 15,
+            "generation": 1,
+            "phase": "wasm-fetch-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 16,
+            "generation": 1,
+            "phase": "wasm-response",
+            "httpStatus": 200
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 16,
+            "generation": 1,
+            "phase": "wasm-fetched",
+            "wasmAssetBytes": 4
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 18,
+            "generation": 1,
+            "phase": "wasm-instantiate-start"
+          },
+          {
+            "event": "request-error",
+            "elapsedMs": 18,
+            "generation": 1,
+            "code": "ARCHIVE_WASM_INITIALIZATION_FAILED"
+          },
+          {
+            "event": "worker-terminated",
+            "elapsedMs": 18,
+            "generation": 1,
+            "code": "ARCHIVE_CANCELLED"
+          }
+        ]
+      },
+      {
+        "mode": "valid",
+        "ok": true,
+        "count": 7,
+        "ms": 27.19999998807907,
+        "trace": [
+          {
+            "event": "worker-created",
+            "elapsedMs": 2,
+            "generation": 1
+          },
+          {
+            "event": "request-sent",
+            "elapsedMs": 2,
+            "generation": 1,
+            "operation": "OPEN"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 13,
+            "generation": 1,
+            "phase": "source-check"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 13,
+            "generation": 1,
+            "phase": "glue-import-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 16,
+            "generation": 1,
+            "phase": "glue-imported"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 16,
+            "generation": 1,
+            "phase": "wasm-fetch-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 18,
+            "generation": 1,
+            "phase": "wasm-response",
+            "httpStatus": 200
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 19,
+            "generation": 1,
+            "phase": "wasm-fetched",
+            "wasmAssetBytes": 285663
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 20,
+            "generation": 1,
+            "phase": "wasm-instantiate-start"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 22,
+            "generation": 1,
+            "phase": "wasm-instantiated",
+            "wasmBytes": 16777216
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 23,
+            "generation": 1,
+            "phase": "runtime-ready"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 23,
+            "generation": 1,
+            "phase": "opening"
+          },
+          {
+            "event": "phase",
+            "elapsedMs": 27,
+            "generation": 1,
+            "phase": "native-open-returned",
+            "nativeCode": 0
+          },
+          {
+            "event": "request-complete",
+            "elapsedMs": 27,
+            "generation": 1
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "build": "m10c2-rar4-trace-1",
+      "wasmBuild": "e88132ca",
+      "diagnosticVersion": "rar4-open-trace-1",
+      "secureContext": true,
+      "hmr": false,
+      "pass": 0,
+      "failures": [],
+      "cancellations": 0,
+      "lastFailure": null,
+      "workersCreated": 3,
+      "workersTerminated": 3,
+      "activeWorkers": 0,
+      "peakWorkers": 1,
+      "maxWasmBytes": 0,
+      "maxHeartbeatGapMs": 15.699999988079071
+    }
+  },
+  "https": {
+    "result": {
+      "build": "m10c2-rar4-trace-1",
+      "wasmBuild": "e88132ca",
+      "diagnosticVersion": "rar4-open-trace-1",
+      "secureContext": true,
+      "hmr": false,
+      "pass": 14,
+      "failures": [],
+      "cancellations": 0,
+      "lastFailure": null,
+      "workersCreated": 21,
+      "workersTerminated": 21,
+      "activeWorkers": 0,
+      "peakWorkers": 1,
+      "maxWasmBytes": 16777216,
+      "maxHeartbeatGapMs": 17.600000023841858
+    },
+    "errors": []
+  }
+}

@@ -15,6 +15,7 @@ node spikes/rar-7z/supplement-fixtures.mjs
 node spikes/rar-7z/edge-fixtures.mjs
 python spikes/rar-7z/header-bomb.py
 node --test spikes/rar-7z/backend.test.mjs
+node spikes/rar-7z/runtime-init.browser.mjs
 node spikes/rar-7z/package-evidence.mjs
 node spikes/rar-7z/serve.mjs 4292
 node spikes/rar-7z/run-browser.mjs desktop

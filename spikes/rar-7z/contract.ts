@@ -45,6 +45,7 @@ export interface ExtendedArchiveBackend {
   cancel(): Promise<void>
   close(): Promise<void>
   getMetrics(): { workersCreated: number; workersTerminated: number; activeWorkers: number; staleMessages: number }
+  getTrace(): Array<{ event: string; elapsedMs: number; generation: number; [key: string]: string | number }>
 }
 export type RequestType = 'OPEN' | 'LIST' | 'EXTRACT' | 'METRICS'
 // CANCEL/CLOSE are local coordinator operations: a synchronous native call cannot

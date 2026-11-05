@@ -1,5 +1,5 @@
 import { SevenZipBackend } from './backend.mjs'
-const state = { build:'m10c2-bounded-e88132ca', secureContext:isSecureContext, hmr:false, pass:0, failures:[], cancellations:0,
+const state = { build:'m10c2-rar4-trace-1', wasmBuild:'e88132ca', diagnosticVersion:'rar4-open-trace-1', secureContext:isSecureContext, hmr:false, pass:0, failures:[], cancellations:0,lastFailure:null,
   workersCreated:0,workersTerminated:0,activeWorkers:0,peakWorkers:1,maxWasmBytes:0,maxHeartbeatGapMs:0,rows:[] }
 let manifest, running=false, active=false, lastBeat=performance.now()
 setInterval(()=>{const now=performance.now();if(active&&!document.hidden)state.maxHeartbeatGapMs=Math.max(state.maxHeartbeatGapMs,now-lastBeat);lastBeat=now},16)
@@ -7,7 +7,7 @@ const load=async name=>{const r=await fetch(new URL('fixtures/'+name,import.meta
 const sha=async b=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',b)),x=>x.toString(16).padStart(2,'0')).join('')
 function assert(v,why){if(!v)throw Error(why)}
 function record(b){const m=b.getMetrics();state.workersCreated+=m.workersCreated;state.workersTerminated+=m.workersTerminated;state.activeWorkers+=m.activeWorkers}
-async function withBackend(fn,values){const b=new SevenZipBackend(values);active=true;lastBeat=performance.now();try{return await fn(b)}finally{await b.close();record(b);active=false}}
+async function withBackend(fn,values){const b=new SevenZipBackend(values);active=true;lastBeat=performance.now();let failed=false;try{return await fn(b)}catch(e){failed=true;throw e}finally{await b.close();if(failed)state.lastFailure={trace:b.getTrace().slice(-18),resources:b.getMetrics()};record(b);active=false}}
 async function expectedError(action,codes){try{await action();throw Error('Expected failure')}catch(e){if(!codes.includes(e.code))throw e;return e.code}}
 async function one(f,values){return withBackend(async b=>{
   const t=performance.now(),file=await load(f.name),opened=await b.open(file,{password:f.credential??undefined})
@@ -16,16 +16,30 @@ async function one(f,values){return withBackend(async b=>{
   return {case:f.name,startupMs,inputBytes:file.size,metadata:opened.entries,extractions}
 },values)}
 function observe(value){if(!value||typeof value!=='object')return;if(typeof value.wasmBytes==='number')state.maxWasmBytes=Math.max(state.maxWasmBytes,value.wasmBytes);for(const child of Object.values(value))observe(child)}
-async function test(name,fn){document.querySelector('#status').textContent='Running '+name;try{const result=await fn();observe(result);state.pass++;state.rows.push({name,status:'PASS',result})}catch(e){state.failures.push({case:name,error:e.code??e.message});state.rows.push({name,status:'FAIL',error:e.code??e.message});throw e}}
+async function test(name,fn){document.querySelector('#status').textContent='Running '+name;try{const result=await fn();observe(result);state.pass++;state.rows.push({name,status:'PASS',result})}catch(e){state.failures.push({case:name,error:e.code??e.message});state.rows.push({name,status:'FAIL',error:e.code??e.message});state.lastFailure={...state.lastFailure,case:name,code:e.code??'CHECK_FAILED'};throw e}}
 async function run(group){
   if(running)throw Error('Busy');running=true
   try{
     manifest??=await (await fetch(new URL('fixtures/manifest.json',import.meta.url))).json()
     const find=name=>manifest.find(x=>x.name===name)
-    if(group==='small'||group==='desktop'){
-      for(const f of manifest.filter(f=>!/^input-|^medium|^large|^dict-|^dictionary-/.test(f.name)))await test(f.name,()=>one(f))
-      await test('ZIP excluded',()=>withBackend(b=>expectedError(()=>b.open(new Blob([new Uint8Array([0x50,0x4b,3,4])])),['ARCHIVE_UNSUPPORTED_FORMAT'])))
-      for(const name of ['password.7z','headers.7z','test_read_format_rar4_encrypted.rar','test_read_format_rar4_encrypted_filenames.rar','test_read_format_rar5_encrypted.rar','test_read_format_rar5_encrypted_filenames.rar']){
+    const followup=group==='password-followup'
+    if(followup){
+      for(let trial=1;trial<=3;trial++)await test('RAR4 header credential sequence '+trial,()=>withBackend(async b=>{
+        const name='test_read_format_rar4_encrypted_filenames.rar',f=find(name),source=await load(name),stages=[]
+        let t=performance.now();const required=await expectedError(()=>b.open(source),['ARCHIVE_PASSWORD_REQUIRED']);stages.push({phase:'missing',code:required,ms:Math.round(performance.now()-t)})
+        t=performance.now();const wrong=await expectedError(()=>b.open(source,{password:'intentionally-wrong'}),['ARCHIVE_PASSWORD_REJECTED','ARCHIVE_PASSWORD_REJECTED_OR_CORRUPTED']);stages.push({phase:'wrong',code:wrong,ms:Math.round(performance.now()-t)})
+        t=performance.now();const opened=await b.open(source,{password:f.credential}),wanted=f.expected.find(e=>e.path==='b.txt'),entry=opened.entries.find(e=>e.normalizedPath===wanted.path)
+        const out=await b.extractEntry(entry.id,{password:f.credential});assert(await sha(out.data)===wanted.sha256,'Correct-password output hash mismatch');stages.push({phase:'correct',bytes:out.data.byteLength,ms:Math.round(performance.now()-t)})
+        return {trial,stages,trace:b.getTrace()}
+      }))
+    }
+    if(group==='small'||group==='desktop'||followup){
+      if(!followup){
+        for(const f of manifest.filter(f=>!/^input-|^medium|^large|^dict-|^dictionary-/.test(f.name)))await test(f.name,()=>one(f))
+        await test('ZIP excluded',()=>withBackend(b=>expectedError(()=>b.open(new Blob([new Uint8Array([0x50,0x4b,3,4])])),['ARCHIVE_UNSUPPORTED_FORMAT'])))
+      }
+      const passwordCases=followup?['test_read_format_rar5_encrypted.rar','test_read_format_rar5_encrypted_filenames.rar']:['password.7z','headers.7z','test_read_format_rar4_encrypted.rar','test_read_format_rar4_encrypted_filenames.rar','test_read_format_rar5_encrypted.rar','test_read_format_rar5_encrypted_filenames.rar']
+      for(const name of passwordCases){
         await test('password outcomes '+name,()=>withBackend(async b=>{
           const f=find(name),file=await load(name),header=/headers|filenames/.test(name)
           if(header){await expectedError(()=>b.open(file),['ARCHIVE_PASSWORD_REQUIRED']);return expectedError(()=>b.open(file,{password:'intentionally-wrong'}),['ARCHIVE_PASSWORD_REJECTED','ARCHIVE_PASSWORD_REJECTED_OR_CORRUPTED'])}
