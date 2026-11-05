@@ -1,0 +1,686 @@
+{
+  "status": "ANDROID_PENDING",
+  "date": "2026-11-05",
+  "desktop": {
+    "build": "m10c2-bounded-1",
+    "secureContext": true,
+    "hmr": false,
+    "pass": 69,
+    "failures": [],
+    "cancellations": 5,
+    "workersCreated": 77,
+    "workersTerminated": 77,
+    "activeWorkers": 0,
+    "peakWorkers": 1,
+    "maxWasmBytes": 51511296,
+    "maxHeartbeatGapMs": 17.69999998807907
+  },
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Edg/156.0.4314.58",
+    "revision": "@7806b68d20d1c1273d5b07b4f4de18e8f5852581",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+    "jsVersion": "15.6.12.10"
+  },
+  "errors": [],
+  "memoryRows": [
+    {
+      "name": "input-1m.7z",
+      "status": "PASS",
+      "result": {
+        "case": "input-1m.7z",
+        "startupMs": 26.100000023841858,
+        "inputBytes": 1048740,
+        "metadata": [
+          {
+            "id": 0,
+            "path": "00.bin",
+            "normalizedPath": "00.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 349525,
+            "packedSize": 349525,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 0,
+            "special": false
+          },
+          {
+            "id": 1,
+            "path": "01.bin",
+            "normalizedPath": "01.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 349525,
+            "packedSize": 349525,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 1,
+            "special": false
+          },
+          {
+            "id": 2,
+            "path": "02.bin",
+            "normalizedPath": "02.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 349525,
+            "packedSize": 349525,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 2,
+            "special": false
+          }
+        ],
+        "extractions": [
+          {
+            "id": 0,
+            "bytes": 349525,
+            "ms": 2.700000047683716,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 6,
+            "bytesRead": 349690,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 1,
+            "bytes": 349525,
+            "ms": 1.899999976158142,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 9,
+            "bytesRead": 699215,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 2,
+            "bytes": 349525,
+            "ms": 1.600000023841858,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 12,
+            "bytesRead": 1048740,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "medium.7z",
+      "status": "PASS",
+      "result": {
+        "case": "medium.7z",
+        "startupMs": 38.59999996423721,
+        "inputBytes": 6292031,
+        "metadata": [
+          {
+            "id": 0,
+            "path": "00.bin",
+            "normalizedPath": "00.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 2097152,
+            "packedSize": 6291847,
+            "encrypted": 0,
+            "solid": null,
+            "method": "LZMA2:22",
+            "attributes": 32,
+            "dictionaryBytes": 4194304,
+            "block": 0,
+            "special": false
+          },
+          {
+            "id": 1,
+            "path": "01.bin",
+            "normalizedPath": "01.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 2097152,
+            "packedSize": null,
+            "encrypted": 0,
+            "solid": null,
+            "method": "LZMA2:22",
+            "attributes": 32,
+            "dictionaryBytes": 4194304,
+            "block": 0,
+            "special": false
+          },
+          {
+            "id": 2,
+            "path": "02.bin",
+            "normalizedPath": "02.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 2097152,
+            "packedSize": null,
+            "encrypted": 0,
+            "solid": null,
+            "method": "LZMA2:22",
+            "attributes": 32,
+            "dictionaryBytes": 4194304,
+            "block": 0,
+            "special": false
+          }
+        ],
+        "extractions": [
+          {
+            "id": 0,
+            "bytes": 2097152,
+            "ms": 10.5,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 6,
+            "bytesRead": 3145912,
+            "maxRead": 1048576,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 1,
+            "bytes": 2097152,
+            "ms": 12.199999988079071,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 11,
+            "bytesRead": 8388792,
+            "maxRead": 1048576,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 2,
+            "bytes": 2097152,
+            "ms": 14.699999988079071,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 18,
+            "bytesRead": 14680639,
+            "maxRead": 1048576,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "large.7z",
+      "status": "PASS",
+      "result": {
+        "case": "large.7z",
+        "startupMs": 62.5,
+        "inputBytes": 15728811,
+        "metadata": [
+          {
+            "id": 0,
+            "path": "00.bin",
+            "normalizedPath": "00.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 5242880,
+            "packedSize": 5242880,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 0,
+            "special": false
+          },
+          {
+            "id": 1,
+            "path": "01.bin",
+            "normalizedPath": "01.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 5242880,
+            "packedSize": 5242880,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 1,
+            "special": false
+          },
+          {
+            "id": 2,
+            "path": "02.bin",
+            "normalizedPath": "02.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 5242880,
+            "packedSize": 5242880,
+            "encrypted": 0,
+            "solid": null,
+            "method": "Copy",
+            "attributes": 32,
+            "dictionaryBytes": null,
+            "block": 2,
+            "special": false
+          }
+        ],
+        "extractions": [
+          {
+            "id": 0,
+            "bytes": 5242880,
+            "ms": 28,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 43,
+            "bytesRead": 5243051,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 1,
+            "bytes": 5242880,
+            "ms": 37.30000001192093,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 83,
+            "bytesRead": 10485931,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          },
+          {
+            "id": 2,
+            "bytes": 5242880,
+            "ms": 36.5,
+            "wasmBytes": 16777216,
+            "wasmMaximum": 67108864,
+            "ranges": 123,
+            "bytesRead": 15728811,
+            "maxRead": 131072,
+            "outputBytes": 0,
+            "mountedArchives": 1,
+            "instances": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "dict-1m.7z",
+      "status": "PASS",
+      "result": {
+        "inputBytes": 3252,
+        "entry": {
+          "id": 0,
+          "path": "zeros.bin",
+          "normalizedPath": "zeros.bin",
+          "isDirectory": false,
+          "isFile": true,
+          "size": 20971520,
+          "packedSize": 3130,
+          "encrypted": 0,
+          "solid": null,
+          "method": "LZMA2:20",
+          "attributes": 32,
+          "dictionaryBytes": 1048576,
+          "block": 0,
+          "special": false
+        },
+        "result": "ARCHIVE_RESOURCE_LIMIT",
+        "preflight": {
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 2,
+          "bytesRead": 122,
+          "maxRead": 90,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "native": {
+          "code": "ARCHIVE_RESOURCE_LIMIT",
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 3252,
+          "maxRead": 3130,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        }
+      }
+    },
+    {
+      "name": "dict-4m.7z",
+      "status": "PASS",
+      "result": {
+        "inputBytes": 3252,
+        "entry": {
+          "id": 0,
+          "path": "zeros.bin",
+          "normalizedPath": "zeros.bin",
+          "isDirectory": false,
+          "isFile": true,
+          "size": 20971520,
+          "packedSize": 3130,
+          "encrypted": 0,
+          "solid": null,
+          "method": "LZMA2:22",
+          "attributes": 32,
+          "dictionaryBytes": 4194304,
+          "block": 0,
+          "special": false
+        },
+        "result": "ARCHIVE_RESOURCE_LIMIT",
+        "preflight": {
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 2,
+          "bytesRead": 122,
+          "maxRead": 90,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "native": {
+          "code": "ARCHIVE_RESOURCE_LIMIT",
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 3252,
+          "maxRead": 3130,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        }
+      }
+    },
+    {
+      "name": "dict-16m.7z",
+      "status": "PASS",
+      "result": {
+        "inputBytes": 3252,
+        "entry": {
+          "id": 0,
+          "path": "zeros.bin",
+          "normalizedPath": "zeros.bin",
+          "isDirectory": false,
+          "isFile": true,
+          "size": 20971520,
+          "packedSize": 3130,
+          "encrypted": 0,
+          "solid": null,
+          "method": "LZMA2:24",
+          "attributes": 32,
+          "dictionaryBytes": 16777216,
+          "block": 0,
+          "special": false
+        },
+        "result": "ARCHIVE_RESOURCE_LIMIT",
+        "preflight": {
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 2,
+          "bytesRead": 122,
+          "maxRead": 90,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "native": {
+          "code": "ARCHIVE_RESOURCE_LIMIT",
+          "wasmBytes": 20185088,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 3252,
+          "maxRead": 3130,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        }
+      }
+    },
+    {
+      "name": "dict-64m.7z",
+      "status": "PASS",
+      "result": {
+        "inputBytes": 3252,
+        "entry": {
+          "id": 0,
+          "path": "zeros.bin",
+          "normalizedPath": "zeros.bin",
+          "isDirectory": false,
+          "isFile": true,
+          "size": 20971520,
+          "packedSize": 3130,
+          "encrypted": 0,
+          "solid": null,
+          "method": "LZMA2:24m",
+          "attributes": 32,
+          "dictionaryBytes": 25165824,
+          "block": 0,
+          "special": false
+        },
+        "result": "ARCHIVE_RESOURCE_LIMIT",
+        "preflight": {
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 2,
+          "bytesRead": 122,
+          "maxRead": 90,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "native": {
+          "code": "ARCHIVE_RESOURCE_LIMIT",
+          "wasmBytes": 31653888,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 3252,
+          "maxRead": 3130,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        }
+      }
+    },
+    {
+      "name": "hard heap ceiling",
+      "status": "PASS",
+      "result": {
+        "before": {
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 274,
+          "maxRead": 207,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "within": {
+          "allocated": true,
+          "wasmBytes": 51511296,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 274,
+          "maxRead": 207,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "overCap": {
+          "allocated": false,
+          "wasmBytes": 51511296,
+          "wasmMaximum": 67108864,
+          "ranges": 3,
+          "bytesRead": 274,
+          "maxRead": 207,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        },
+        "recoveryBytes": 114
+      }
+    },
+    {
+      "name": "compressed header exceeds heap",
+      "status": "PASS",
+      "result": "ARCHIVE_RESOURCE_LIMIT"
+    },
+    {
+      "name": "native oversized dictionary with preflight bypassed",
+      "status": "PASS",
+      "result": {
+        "metadata": [
+          {
+            "id": 0,
+            "path": "oversized.bin",
+            "normalizedPath": "oversized.bin",
+            "isDirectory": false,
+            "isFile": true,
+            "size": 83886080,
+            "packedSize": 12289,
+            "encrypted": 0,
+            "solid": null,
+            "method": "LZMA2:96m",
+            "attributes": 32,
+            "dictionaryBytes": 100663296,
+            "block": 0,
+            "special": false
+          }
+        ],
+        "result": {
+          "code": "ARCHIVE_RESOURCE_LIMIT",
+          "wasmBytes": 16777216,
+          "wasmMaximum": 67108864,
+          "ranges": 2,
+          "bytesRead": 130,
+          "maxRead": 98,
+          "outputBytes": 0,
+          "mountedArchives": 1,
+          "instances": 1
+        }
+      }
+    },
+    {
+      "name": "native actual output with declared-size preflight bypassed",
+      "status": "PASS",
+      "result": {
+        "code": "ARCHIVE_RESOURCE_LIMIT",
+        "wasmBytes": 16777216,
+        "wasmMaximum": 67108864,
+        "ranges": 5,
+        "bytesRead": 2097336,
+        "maxRead": 1048576,
+        "outputBytes": 0,
+        "mountedArchives": 1,
+        "instances": 1
+      }
+    }
+  ],
+  "package": {
+    "schema": 1,
+    "engine": "7-Zip 26.05",
+    "engineRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+    "referencePackage": "sevenzip-wasm 26.5.0",
+    "emscripten": "6.0.13",
+    "node": "v24.22.1",
+    "memory": {
+      "initial": 16777216,
+      "maximum": 67108864,
+      "growth": true,
+      "shared": false,
+      "binary": {
+        "count": 1,
+        "flags": 1,
+        "initial": 16777216,
+        "maximum": 67108864
+      }
+    },
+    "assets": [
+      {
+        "file": "artifacts/bounded-sevenzip.js",
+        "bytes": 70345,
+        "gzipBytes": 18565,
+        "sha256": "054463887f3d8fec3918572efb13bea627535cf953778dc61164c2c2074d36f7"
+      },
+      {
+        "file": "artifacts/bounded-sevenzip.wasm",
+        "bytes": 285663,
+        "gzipBytes": 122511,
+        "sha256": "e88132ca3c005a6ed8e9b89cd1f4cf7ad731bffb9301c9caf6712fb989a9ca3e"
+      },
+      {
+        "file": "worker.mjs",
+        "bytes": 5807,
+        "gzipBytes": 2383,
+        "sha256": "1f18619383a66d9dd5d3e82becf4affd822b7ad0749be19850bee162c0b6e4f6"
+      },
+      {
+        "file": "backend.mjs",
+        "bytes": 2782,
+        "gzipBytes": 1120,
+        "sha256": "3b3b005c4a9004acc2292bb7ad3b83d2504ffb149dda3e55d3cd78040652cb2c"
+      },
+      {
+        "file": "policy.mjs",
+        "bytes": 2262,
+        "gzipBytes": 1075,
+        "sha256": "fea274ad7d889e0ccabfefb27798af2ef0df9a91d87f1bb2be28d4a24e5e0a47"
+      },
+      {
+        "file": "harness.mjs",
+        "bytes": 10745,
+        "gzipBytes": 3292,
+        "sha256": "b3680cc56633cf79c49d02e7e0d4dd7ea772419efb6ec6e566f94575bb0c832b"
+      }
+    ],
+    "buildReproducible": true
+  },
+  "httpsFrozen": {
+    "summary": {
+      "build": "m10c2-bounded-e88132ca",
+      "secureContext": true,
+      "hmr": false,
+      "pass": 69,
+      "failures": [],
+      "cancellations": 5,
+      "workersCreated": 77,
+      "workersTerminated": 77,
+      "activeWorkers": 0,
+      "peakWorkers": 1,
+      "maxWasmBytes": 51511296,
+      "maxHeartbeatGapMs": 18.5
+    },
+    "browser": {
+      "protocolVersion": "1.3",
+      "product": "Edg/156.0.4314.58",
+      "revision": "@7806b68d20d1c1273d5b07b4f4de18e8f5852581",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0",
+      "jsVersion": "15.6.12.10"
+    },
+    "errors": [],
+    "url": "https://ambient-cognitive-particular-olympus.trycloudflare.com/AniView/"
+  }
+}
