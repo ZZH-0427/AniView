@@ -147,8 +147,8 @@ also passes. Cancel/close share the same termination path during extraction.
 
 See [memory boundary results](../research/v0.3-rar-7z-memory-boundary-results.md)
 and `m10c2-desktop-evidence.json`.1 /6 /15 MiB inputs retain16 MiB linear heap in
-ordinary tests. Dictionary probes grow to20.2 /31.7 MiB; malloc48 MiB grows heap
-to51511296.80 MiB allocation and96 MiB dictionary fail below64 MiB maximum.
+ordinary tests. Dictionary probes grow to20185088 /31653888 bytes; malloc48 MiB
+grows heap to51511296 bytes.80 MiB allocation and96 MiB dictionary fail below64 MiB maximum.
 Compressed83886089-byte header also fails with RESOURCE_LIMIT.
 
 ## 25. Desktop
