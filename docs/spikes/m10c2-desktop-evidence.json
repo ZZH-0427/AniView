@@ -1,5 +1,5 @@
 {
-  "status": "ANDROID_INITIAL_FAILED_FOLLOWUP_PENDING",
+  "status": "M10C2_PASS_WITH_LIMITATIONS",
   "date": "2026-11-05",
   "desktop": {
     "build": "m10c2-bounded-1",
@@ -682,5 +682,6 @@
     },
     "errors": [],
     "url": "https://ambient-cognitive-particular-olympus.trycloudflare.com/AniView/"
-  }
+  },
+  "androidAcceptance": "See m10c2-android-initial.json and m10c2-android-followup.json; initial failures retained."
 }

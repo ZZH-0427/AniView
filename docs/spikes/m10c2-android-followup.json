@@ -1,0 +1,8 @@
+{
+  "status": "PASS_WITH_LIMITATIONS",
+  "acceptance": "Original successful memory/lifecycle results plus three targeted RAR4 credential retries and eleven previously skipped checks in each browser; original failures retained separately.",
+  "nativeWasmSha256": "e88132ca3c005a6ed8e9b89cd1f4cf7ad731bffb9301c9caf6712fb989a9ca3e",
+  "edge": {"build":"m10c2-rar4-trace-1","wasmBuild":"e88132ca","diagnosticVersion":"rar4-open-trace-1","secureContext":true,"hmr":false,"pass":14,"failures":[],"cancellations":0,"lastFailure":null,"workersCreated":21,"workersTerminated":21,"activeWorkers":0,"peakWorkers":1,"maxWasmBytes":16777216,"maxHeartbeatGapMs":21.5},
+  "quark": {"build":"m10c2-rar4-trace-1","wasmBuild":"e88132ca","diagnosticVersion":"rar4-open-trace-1","secureContext":true,"hmr":false,"pass":14,"failures":[],"cancellations":0,"lastFailure":null,"workersCreated":21,"workersTerminated":21,"activeWorkers":0,"peakWorkers":1,"maxWasmBytes":16777216,"maxHeartbeatGapMs":20.40000009536743},
+  "originalFailureRootCause": "Not established. An independently confirmed custom-instantiation rejection defect was fixed; follow-up success does not prove network-only or a particular original native failure."
+}

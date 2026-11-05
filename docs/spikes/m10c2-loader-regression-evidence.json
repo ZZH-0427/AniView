@@ -1,5 +1,5 @@
 {
-  "status": "ANDROID_FOLLOWUP_PENDING",
+  "status": "M10C2_PASS_WITH_LIMITATIONS",
   "nativeWasmUnchanged": true,
   "wasmSha256": "e88132ca3c005a6ed8e9b89cd1f4cf7ad731bffb9301c9caf6712fb989a9ca3e",
   "originalFrozenFilesUnchanged": true,
@@ -282,5 +282,6 @@
       "maxHeartbeatGapMs": 17.600000023841858
     },
     "errors": []
-  }
+  },
+  "androidAcceptance": "See m10c2-android-initial.json and m10c2-android-followup.json; initial failures retained."
 }

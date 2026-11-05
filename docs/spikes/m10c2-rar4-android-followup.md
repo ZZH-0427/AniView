@@ -1,6 +1,6 @@
 # M10C2 — RAR4 Android failure investigation
 
-2026-11-05. **Unresolved mobile failure; M10C2 is not accepted.**
+2026-11-05. **Targeted Android acceptance passed; M10C2: PASS WITH LIMITATIONS.**
 
 ## Supplied evidence
 
@@ -63,7 +63,28 @@ the final18 trace events and cleanup counters. Large/memory/lifecycle retesting
 is unnecessary for this localized loader/diagnostic change with identical native
 artifact and bounds.
 
-Failure before native-open points to startup/loading evidence; native-open
-without return requires investigation of native work/Worker failure. Neither
-outcome should be assumed in advance. Root cause and final gate remain pending.
-Do not start M10C3.
+## User-supplied follow-up and disposition
+
+Both supplied summaries match the new diagnostic version, secureContext=true,
+HMR=false,14 PASS, failures=[], lastFailure=null, Workers21/21 and active0.
+Edge heartbeat21.5 ms; Quark20.40000009536743 ms. Max observable WASM is16 MiB
+for this small-only follow-up; the original memory group's51511296-byte peak
+is retained separately. Exact supplied data: `m10c2-android-followup.json`.
+
+This covers three complete retries of the failed credential sequence and the11
+previously skipped checks per browser. Together with the original successful
+memory/lifecycle checks, the required technical matrix has accepted coverage.
+Do not call this a single clean69-check phone run: it is57 earlier successes
+plus14 follow-up successes, including repeated coverage; original failures remain.
+
+The original mobile root cause is still unproven because no failed-stage trace
+was supplied. Confirmed: the independent initialization rejection bug is fixed,
+its fault-injection regression passes, and the native password sequence now passes
+three times in each phone browser with the unchanged binary/limits. Do not claim
+the original failure was definitely a network issue or native decoder defect.
+
+Disposition: close the focused acceptance blocker with these retained limitations.
+No additional failure was reported in the supplied follow-up; subjective UI/OS
+memory measurements were not supplied and are not invented. This supports narrow
+productization planning, not a universal archive or browser reliability claim.
+Do not automatically start M10C3 implementation.

@@ -1,19 +1,26 @@
 # M10C2 — Bounded RAR / 7z Backend Technical Spike
 
-Date:2026-11-05. **Interim report: desktop complete; Android failure under investigation.**
-This document is not a PASS, production dependency approval or M10C3 authorization.
+Date:2026-11-05. **M10C2: PASS WITH LIMITATIONS — READY FOR NARROW PRODUCTIZATION.**
+This closes the technical spike. It is not a production release/dependency approval
+or permission to start M10C3 implementation automatically.
 
 ## 1. Status
 
-IN PROGRESS. Desktop gates A–D have evidence. Initial bounded-build Android runs
-failed one RAR4 header-password check in each browser; acceptance awaits the
-[focused investigation](m10c2-rar4-android-followup.md). M10C1 results do not substitute.
+**PASS WITH LIMITATIONS.** Gate A: compiled hard memory/output/I/O/time bounds
+demonstrated, with incomplete metadata preflight explicitly retained. Gate B:
+native structured indexed API and honest typed errors. Gate C: termination,
+reopen and balanced lifecycle. Gate D: exact source/build/notices/replacement
+prototype and two identical native builds. Fresh Android follow-up is accepted;
+original failures remain in the [investigation record](m10c2-rar4-android-followup.md).
 
 ## 2. Branch
 
-Branch `feat/v0.3-rar-7z-spike`, clean base `0ead2ce`. Only isolated spike source,
-license materials and new research documents change. Audit branch/main/v0.2.0
-and production stay unchanged; no Pages/release/version operation.
+Branch `feat/v0.3-rar-7z-spike`, base `0ead2ce`. Implementation commits
+`8efeff1` and `79eecf3`; this report's containing documentation commit is
+the closeout (exact final hash in Git log/final handoff). Only isolated spike,
+licenses and research/planning documents changed. Remote is synced after the
+closeout push, working tree clean. Production code/main/v0.2.0 unchanged.
+No merge, release/version/tag or Pages operation.
 
 ## 3. Spike Backend
 
@@ -155,24 +162,34 @@ max active heartbeat18.5 ms. Source/notices/hash download links are included.
 
 ## 26. Android Edge
 
-Initial57 PASS,1 failure: RAR4 header-password outcome ARCHIVE_TIMEOUT.
-Workers64/64, active0, maxWasm51511296. Focused follow-up pending.
+**PASS WITH LIMITATIONS, user-supplied.** Original57 PASS/1 RAR4 header-password
+timeout, Workers64/64, active0, maxWasm51511296. Follow-up14 PASS/no failures,
+lastFailure=null, Workers21/21, active0, maxWasm16777216, heartbeat21.5 ms.
+Three credential retries and11 previously skipped checks passed. Exact JSON in
+`m10c2-android-followup.json`; no claim of one clean69-check phone run.
 
 ## 27. Android Quark
 
-Initial57 PASS,1 failure: same case ARCHIVE_BACKEND_ERROR.
-Workers64/64, active0, maxWasm51511296. Focused follow-up pending.
+**PASS WITH LIMITATIONS, user-supplied.** Original57 PASS/1 same-case BACKEND_ERROR,
+Workers64/64, active0, maxWasm51511296. Follow-up14 PASS/no failures,
+lastFailure=null, Workers21/21, active0, maxWasm16777216,
+heartbeat20.40000009536743 ms. Same accepted coverage and retained initial failure.
 
 ## 28. Android Failure Boundary
 
-No OOM/discard inference from summaries. Initial failures remain recorded;
-cleanup was balanced. Stop at any new failure, reload/OOM/crash/severe freeze.
+The original RAR4 failure is qualified, not erased. Root cause remains unproven
+because no failed-stage trace was supplied. A separate initialization-rejection
+defect was reproduced/fixed and regression-tested; subsequent targeted sequences
+passed three times per browser with unchanged native WASM/limits. No OOM/reload/
+crash conclusion is inferred solely from counters. This is a bounded tested
+envelope, not a measured whole-device failure limit.
 
 ## 29. Heartbeat / Responsiveness
 
-Local desktop max active gap17.7 ms, UI coordination off native decode thread.
-Initial phone heartbeat36.5 ms Edge /381.1 ms Quark is a signal, not a root-cause
-or crash diagnosis. Further observation accompanies the targeted follow-up.
+Desktop active heartbeat17.7 ms; initial phone36.5 ms Edge/381.1 ms Quark;
+focused follow-up21.5/20.40000009536743 ms. Decode is in a Worker. These are timer
+signals, not independent subjective UI or OS memory measurements; no additional
+phone exception was reported in the supplied follow-up summaries.
 
 ## 30. Bundle
 
@@ -231,32 +248,46 @@ license change and no legal clearance claim.
 
 ## 39. Product Limit Recommendation
 
-NONE approved yet. Test values are64 MiB linear heap /32 MiB input /8 MiB output,
-1000 entries /15 s plus path/read budgets. Fresh Android evidence must support
-any later product numbers; do not turn successful desktop caps into production policy.
+Conservative M10C3 candidates: input15 MiB, selected output4 MiB, compiled
+heap64 MiB/initial16 MiB, known dictionary4 MiB; retain experimental entry/path/
+read/deadline mechanisms. The [memory report](../research/v0.3-rar-7z-memory-boundary-results.md)
+gives reasons, desktop/Android evidence and provisional entries. These are
+inferences below observed15 MiB+171-byte input and5 MiB output, not already
+tested exact product boundaries. M10C3 must freeze/test each adopted boundary,
+especially cumulative path budget and Viewer/conversion coexistence. Do not
+approve32/512 MiB input or unbounded dictionaries from this spike.
 
 ## 40. RAR Product Decision
 
-DEFER pending this spike's Android gate; not a final rejection of RAR.
+**GO WITH LIMITATIONS** for narrow productization planning: single-file RAR4/RAR5,
+regular selected entries, mandatory bounded Worker/runtime, stable unsupported
+errors and recorded limits. No all-variant or arbitrary-size guarantee.
 
 ## 41. 7z Product Decision
 
-DEFER pending the same gate; no automatic M10C3 start.
+**GO WITH LIMITATIONS** for single-file7z and tested common codecs/filters under
+the same bounds. Do not expose unrelated backend formats or unrestricted prebuilt
+WASM. Unknown methods must fail safely.
 
 ## 42. RAR Password Decision
 
-No product approval. Native capability demonstrated; ambiguous credential/data
-failure requires an honest future access state/message if included.
+**GO WITH LIMITATIONS** for tested RAR data/header encryption. Keep definite
+REQUIRED/REJECTED plus REJECTED_OR_CORRUPTED; no false certainty. Three new RAR4
+header credential sequences per browser passed. Product opening/access/keyboard/
+translation/replacement acceptance is still M10C3 work, not tested by this harness.
 
 ## 43. 7z Password Decision
 
-Same. Header-opening and selected-entry access must be distinct; do not retrofit
-the accepted ZIP password controller to imitate this experiment.
+**GO WITH LIMITATIONS** for tested7z data/header encryption. Prompt before listing
+for encrypted headers; verify selected body before promoting a successful
+credential. No persistence/logging/uploads and no changes to ZIP password ownership.
 
 ## 44. Solid Archive Decision
 
-Capability measured in both formats. Possible narrow scope only with hard memory,
-actual output, cumulative reads and external deadline; phone decision pending.
+RAR solid: **LIMITED**.7z solid: **LIMITED**. First/middle/last hashes are tested;
+native heap, actual output, cumulative source I/O and external deadline must stay.
+Unknown total solid work cannot be precisely preflighted; no full-block retention
+or constant-time random-access guarantee.
 
 ## 45. Multi-volume
 
@@ -265,8 +296,10 @@ pairing, SFX guarantee or recursive archives implemented in M10C2.
 
 ## 46. Recommended M10C3 Scope
 
-Not approved or planned yet. Only after final PASS/PASS WITH LIMITATIONS should
-a separate plan freeze format/codec/access exclusions and mobile-backed values.
+The requested [M10C3 proposal](../planning/m10c3-rar-7z-productization-plan.md)
+is now created: narrow source/session integration, typed protocol/policy, header
+and entry access gates, separate lazy bounded component, source/notices packaging,
+ZIP regressions and new product-level Android acceptance. This is a plan only.
 
 ## 47. Recommended Backend Architecture
 
@@ -277,13 +310,17 @@ session, separate extended session, VirtualFile → existing media pipeline.
 
 ## 48. Files to Add in M10C3
 
-Conditional, not implemented: archive-source contract/factory, separate extended
-session/VirtualFile/Worker/backend/protocol, source manifest/notices and tests.
+Proposed only: archive-source contract/factory/signature; separate Rar7z session,
+entry VirtualFile, typed protocol/Worker/backend/loader/policy/errors, component
+asset/source manifest and behavioral/security tests. Exact proposed paths are in
+the M10C3 plan. No production files were added in M10C2.
 
 ## 49. Files to Modify in M10C3
 
-Only after approval: localized input labels/factory/UI-facing access types and
-translations/notices. Exact file plan is deliberately not frozen before Android.
+Proposed localized UI/source changes only: use-media-source, MediaApp, ArchiveInput,
+ArchiveSummary, ArchiveEntryAccess, optional archive-level password form copy,
+paired i18n/error text, README/notices and asset checks. Existing ZIP parser/
+session/password internals remain outside the modification map.
 
 ## 50. Files Not to Touch
 
@@ -293,30 +330,40 @@ None were changed by this task.
 
 ## 51. Risks
 
-HIGH if hard heap/deadline guards are removed or unknown graph metadata is treated
-as complete preflight. MEDIUM native patch maintenance, mobile total memory,
-ambiguous encrypted failures, source packaging compliance. LOW controlled
-subpath/lazy integration after the backend's final decision.
+HIGH consequence if compiled native/output/deadline safeguards are removed;
+universal metadata preflight remains unavailable. MEDIUM residuals: native
+maintenance/redistribution compliance, unmeasured total browser memory,
+ambiguous encrypted failures and unknown original phone startup cause. LOW:
+typed/localized source UI work after policy and regression gates pass.
+No unresolved reproduced native correctness or cleanup failure remains in the
+accepted matrix; this is not a claim to cover all hostile archives.
 
 ## 52. Open Questions
 
-RAR4 Android failure stage/root cause and targeted follow-up outcome.
-Unmeasured native/OS memory is a known observability limit, not a fake numeric cap.
-Future product release compliance remains distinct from this engineering prototype.
+The exact original Android RAR4 failure cause is unknown; retain as a regression
+watch item without guessing network/native cause. Product policy exact boundaries,
+Viewer/conversion combined ownership and final distribution compliance require
+M10C3 acceptance. Native/OS memory beyond observable WASM is not measured.
+Technical follow-up acceptance itself is closed.
 
 ## 53. Final Gate
 
-NOT YET READY FOR M10C3. Android evidence pending. Do not emit a final V0.3 defer
-or productization plan merely because this interim report needs a status line.
+**READY FOR M10C3 — narrow productization**, subject to this report's limitations
+and the separate plan. This is technical readiness, not production release or
+automatic implementation authorization.
 
 ## 54. Final Verdict
 
-NOT YET RATED. The four permitted final outcomes will be decided only after fresh
-bounded-build Android acceptance. No PASS claim from desktop alone.
+**M10C2: PASS WITH LIMITATIONS — READY FOR NARROW PRODUCTIZATION.**
+RAR: GO WITH LIMITATIONS.7z: GO WITH LIMITATIONS. Password support in both:
+GO WITH LIMITATIONS. Solid in both: LIMITED. Multi-volume: DEFER.
+The bounded backend demonstrates required resource/lifecycle mechanisms within
+the tested envelope. ZIP and password ZIP remain on zip.js2.23.0.
 
 ## 55. Next State
 
-Original frozen production harness `m10c2-bounded-e88132ca` is retained. Separate
-`m10c2-rar4-trace-1` provides targeted14-check follow-up with the identical native
-WASM and limits. No HMR/Pages deployment. Await Edge/Quark Summary and stage traces,
-then decide gates. Do not implement M10C3.
+M10C2 COMPLETE. Ready for a separately requested M10C3 — RAR /7z Productization.
+No implementation of that stage, production dependency, merge, deployment or
+release was started. Temporary desktop/phone services are stopped after evidence
+is archived; their URLs are historical, not production links. Local ignored
+artifacts/source package and numeric evidence remain available for reproduction.
