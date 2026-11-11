@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "candidateCommit": "86728599149381455ddbfaba7cd529ccfea11ab6",
+  "status": "BLOCKED",
+  "automated": {
+    "files": 95,
+    "total": 1191,
+    "passed": 1191,
+    "failed": 0,
+    "skipped": 0
+  },
+  "native": {
+    "filenameCases": 43,
+    "compatibilityCases": 34,
+    "selectedHashes": 195,
+    "boundaryChecks": 22,
+    "productGroups": 6,
+    "mediaSelections": 30
+  },
+  "featureChecks": {
+    "creator": {
+      "passed": true,
+      "groups": 26,
+      "workloads": 5,
+      "qualityScenes": 3,
+      "outputs": [
+        "gif",
+        "webp",
+        "apng"
+      ],
+      "qualityCases": 12,
+      "cancelChecks": 9,
+      "workersCreated": 257,
+      "workersTerminated": 257,
+      "activeWorkers": 0,
+      "urlsCreated": 49,
+      "urlsRevoked": 49,
+      "transfers": 1762,
+      "detached": 1762,
+      "errors": [],
+      "responsiveness": {
+        "documentsObserved": 2,
+        "maxHeartbeatGapMs": 207.89999997615814,
+        "maxVisibleHeartbeatGapMs": 207.89999997615814,
+        "hiddenDuringAnyDocument": false,
+        "explicitHarnessNavigations": 2,
+        "visibleGapsOver250ms": 0
+      }
+    },
+    "animationConversion": {
+      "passed": true,
+      "directions": [
+        "gif->webp",
+        "gif->apng",
+        "webp->gif",
+        "webp->apng",
+        "apng->gif",
+        "apng->webp"
+      ],
+      "groups": 22,
+      "workersCreated": 130,
+      "workersTerminated": 130,
+      "activeWorkers": 0,
+      "urlsCreated": 14,
+      "urlsRevoked": 14,
+      "errors": [],
+      "responsiveness": {
+        "documentsObserved": 2,
+        "maxHeartbeatGapMs": 49.10000002384186,
+        "maxVisibleHeartbeatGapMs": 49.10000002384186,
+        "hiddenDuringAnyDocument": false,
+        "explicitHarnessNavigations": 2,
+        "visibleGapsOver250ms": 0
+      }
+    },
+    "animationToMp4": {
+      "passed": true,
+      "groups": 8,
+      "sources": [
+        "small.gif",
+        "small.png",
+        "small.webp",
+        "odd.png",
+        "regional.gif",
+        "regional.png",
+        "regional.webp"
+      ],
+      "whiteAndNoAudio": {
+        "passed": true,
+        "sources": [
+          {
+            "source": "small.gif",
+            "videoTracks": 1,
+            "audioTracks": 0
+          },
+          {
+            "source": "small.png",
+            "videoTracks": 1,
+            "audioTracks": 0
+          },
+          {
+            "source": "small.webp",
+            "videoTracks": 1,
+            "audioTracks": 0
+          }
+        ],
+        "transparentSamples": 64,
+        "semiSamples": 8,
+        "meanSemiRgbError": 8.583333333333334,
+        "maxSemiRgbError": 27
+      }
+    },
+    "videoToAnimation": {
+      "passed": true,
+      "groups": 22,
+      "directions": [
+        "cfr.mp4->gif",
+        "cfr.mp4->webp",
+        "cfr.mp4->apng",
+        "vp9.webm->gif",
+        "vp9.webm->webp",
+        "vp9.webm->apng"
+      ]
+    },
+    "localization": {
+      "passed": true,
+      "groups": 11,
+      "layouts": 110,
+      "widths": [
+        1440,
+        1280,
+        768,
+        390,
+        360
+      ],
+      "languages": [
+        "en",
+        "zh-CN"
+      ],
+      "previewReturns": 16,
+      "activeJobs": [
+        {
+          "flow": "creator",
+          "before": "preparing",
+          "after": "preparing",
+          "generations": 1
+        },
+        {
+          "flow": "video",
+          "before": "converting",
+          "after": "converting",
+          "jobId": 2
+        }
+      ],
+      "errors": [],
+      "protocolNotices": [],
+      "initialFailure": {
+        "classification": "TEST ENVIRONMENT",
+        "retained": "localization/initial-report.json",
+        "correction": "Await mounted fullscreen locale select before original setter; no product change or removed assertions",
+        "focusedCycles": 3
+      },
+      "responsiveness": {
+        "documentsObserved": 8,
+        "maxHeartbeatGapMs": 50.10000002384186,
+        "maxVisibleHeartbeatGapMs": 50.10000002384186,
+        "hiddenDuringAnyDocument": false,
+        "explicitHarnessNavigations": 8,
+        "visibleGapsOver250ms": 0
+      }
+    }
+  },
+  "cross": {
+    "passed": true,
+    "sequences": [
+      {
+        "id": "A",
+        "passed": true,
+        "durationMs": 1230.5156
+      },
+      {
+        "id": "B",
+        "passed": true,
+        "durationMs": 1518.2079999999999
+      },
+      {
+        "id": "C",
+        "passed": true,
+        "durationMs": 1387.8117000000002
+      }
+    ],
+    "documentUnchanged": true,
+    "cleanupSnapshots": 13,
+    "repeats": 6,
+    "layouts": 8,
+    "maxVisibleHeartbeatGapMs": 20.199999928474426,
+    "finalCounts": {
+      "workersCreated": 82,
+      "workersTerminated": 82,
+      "activeWorkers": 0,
+      "bitmapsCreated": 2,
+      "bitmapsClosed": 2,
+      "activeBitmaps": 0,
+      "archiveSessionsOpened": 10,
+      "archiveSessionsClosed": 10,
+      "activeArchiveSessions": 0,
+      "cleanupErrors": 0
+    }
+  },
+  "security": {
+    "npmAuditCommands": {
+      "allCommand": "npm audit --json",
+      "allExitCode": 1,
+      "productionCommand": "npm audit --omit=dev --json",
+      "productionExitCode": 0,
+      "at": "2026-11-11T09:19:51.4693183Z"
+    },
+    "all": {
+      "info": 0,
+      "low": 0,
+      "moderate": 10,
+      "high": 0,
+      "critical": 0,
+      "total": 10
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "nativeGate": {
+      "id": "NATIVE-SECURITY-01",
+      "state": "BLOCKER",
+      "impact": "UNKNOWN; further sample validation stopped by automatic safety check",
+      "productFailureReproduced": false
+    }
+  },
+  "android": {
+    "edge": "PENDING",
+    "quark": "PENDING",
+    "cleanupJsonProvided": false,
+    "httpsCandidatePrepared": false
+  },
+  "harnessCorrections": [
+    {
+      "classification": "TEST ENVIRONMENT",
+      "scope": "localization fullscreen control",
+      "correction": "Wait for React-mounted locale select; affected suite passes without product changes"
+    },
+    {
+      "classification": "TEST ENVIRONMENT",
+      "scope": "extra asset-browser CDP launch",
+      "initialAttempts": 2,
+      "correction": "Use an absolute audit profile directory; corrected HTTP and query suite passes"
+    }
+  ],
+  "assetAudit": {
+    "passed": true,
+    "assetCount": 57,
+    "bytes": 5957987,
+    "scope": "Loopback, not Android HTTPS"
+  }
+}

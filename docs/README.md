@@ -6,11 +6,17 @@ checkpoint does not override a later closeout. Historical plans and failed runs
 are retained as evidence, not rewritten into current status.
 
 V0.3 remains in development. Scope freeze and pre-RC cleanup are not a release,
-version bump or permission to deploy. M10E Stability & Release Candidate Audit is
-a separate next task; this index does not start it.
+version bump or permission to deploy. M10E Stability & Release Candidate Audit now
+has desktop evidence and an unresolved native security gate; it is BLOCKED,
+with Android RC validation not started. This index grants no release approval.
 
 ## CURRENT
 
+- [M10E stability/RC audit](milestones/milestone-m10e-v0.3-stability-rc-audit.md),
+  [security/license gate](research/m10e-v0.3-security-license-audit.md),
+  [tested asset manifest](research/m10e-v0.3-rc-asset-manifest.json), and
+  [Android record](milestones/milestone-m10e-android-rc-validation.md): current
+  audit result and exact separation of desktop evidence from pending phone tests.
 - [V0.3 scope freeze](releases/v0.3-scope-freeze.md): current capability boundary,
   deferred enhancements and source-checked limits.
 - [M10D scope freeze and pre-RC cleanup](milestones/milestone-m10d-v0.3-scope-freeze-pre-rc-cleanup.md):
