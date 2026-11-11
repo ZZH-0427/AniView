@@ -5,12 +5,12 @@ Images, videos and archive entries are processed **locally on your device**.
 
 **[Open AniView](https://zzh-0427.github.io/AniView/)** ·
 [Releases](https://github.com/ZZH-0427/AniView/releases) ·
-[V0.2 release notes](docs/releases/v0.2.0.md)
+[V0.3 release notes](docs/releases/v0.3.0-release-notes.md)
 
-Production **v0.2.0 is released and frozen**. This feature branch develops V0.3;
-its changes are not deployed to the production link. RAR/7z product integration
-is in M10C3 validation, including a required new Android acceptance gate. See the
-[productization record](docs/milestones/milestone-m10c3-rar-7z-productization.md).
+This README describes the **v0.3.0 feature set**. Published versions appear in
+[Releases](https://github.com/ZZH-0427/AniView/releases); the
+[release preparation record](docs/releases/v0.3.0-release-preparation.md) records
+the publication gate and the exact candidate being prepared.
 
 ## Supported workflows
 
@@ -20,8 +20,8 @@ is in M10C3 validation, including a required new Android acceptance gate. See th
 | GIF, Animated WebP, APNG | Application-controlled Canvas animation | Convert to either other animated-image format, or MP4/H.264 |
 | MP4/H.264 | Native source preview, when supported | GIF, Animated WebP or APNG |
 | WebM/VP9 profile 0 | Native source preview, when supported | GIF, Animated WebP or APNG |
-| ZIP | Browse supported image entries | Open an entry in the normal viewer/conversion workflow |
-| Single-file RAR4, RAR5, 7z (V0.3 branch) | Bounded, read-only image browsing | Existing viewer/conversion workflow after selected-entry verification |
+| ZIP, including ZipCrypto and WinZIP AES-128/192/256 | Browse supported image entries | Open an entry in the normal viewer/conversion workflow |
+| Single-file RAR4, RAR5, 7z | Bounded, read-only image browsing | Existing viewer/conversion workflow after selected-entry verification |
 
 Format detection inspects file signatures and container metadata. A system picker
 showing other file types does not make them supported. APNG commonly uses `.png`.
@@ -40,8 +40,8 @@ preserve the view; changing files restores Fit. The player uses bounded frame
 retention rather than retaining every decoded frame.
 
 Open an archive to browse without extracting it manually. Metadata is read first
-and the selected entry is extracted on demand. ZIP, including accepted ZipCrypto
-and AES password flows, continues to use zip.js 2.23.0. RAR/7z use a separate,
+and the selected entry is extracted on demand. Ordinary ZIP, traditional ZipCrypto
+and WinZIP AES-128/192/256 continue to use zip.js 2.23.0. RAR/7z use a separate,
 lazy-loaded bounded SevenZip Worker. A password may be needed before an encrypted
 directory can be listed or before a selected encrypted image can be opened.
 Passwords stay in the current archive session and are dropped on close or
@@ -57,14 +57,17 @@ Other archive formats are rejected. Removing an item never deletes the source.
 
 ## Create animation
 
-Add **2–200 static JPEG/PNG/WebP images**, reorder or remove them, set frame
-durations and loop count, choose GIF, Animated WebP or APNG, then generate. Preview uses the shared viewer;
+Add **2–200 static JPEG/PNG/WebP images**, reorder or remove them, set a shared
+frame duration and loop count, choose GIF, Animated WebP or APNG, then generate.
+Preview uses the shared viewer;
 returning from Preview preserves the list, settings and result. Download saves a
 local file with a distinct name for each download request.
 
-The three output formats share the bounded source/encoding pipeline. GIF has a 256-color palette, binary
-transparency, no dithering and centisecond timing; converting it later cannot
-recover colors or alpha discarded during GIF creation.
+All three targets consume the same bounded **canonical RGBA frame stream**.
+Animated WebP and APNG are generated directly from the static sources, without a
+GIF intermediate. GIF has a 256-color palette, binary transparency, no dithering
+and centisecond timing; converting it later cannot recover colors or alpha
+discarded during GIF creation.
 
 ## Convert animation and video
 
@@ -117,13 +120,14 @@ and output encoding support are detected separately; API presence alone does not
 guarantee a particular file is supported. Unsupported capabilities receive a
 compatibility message.
 
-V0.2 validation includes desktop Edge automated/browser checks and real Android
-Edge and Quark workflows. Earlier viewer checks also covered Chrome, QQ and
-Xiaomi browsers; these are not claims of complete V0.2 conversion coverage.
-See the [qualified RC audit](docs/milestones/milestone-m9a2-v0.2-stability-rc-audit.md)
-and [Android record](docs/milestones/milestone-m9a2-android-rc-validation.md).
-No app-observable resource leaks were detected in the validated flows;
-native/GPU memory is not fully observable.
+The V0.3 release candidate passed desktop automated/browser checks and the
+assigned real Android Edge and Quark Creator/archive/lifecycle workflows.
+Both browsers' Home diagnostics reported balanced ownership and zero applicable
+active-resource/cleanup-error counters. Earlier viewer checks also covered
+Chrome, QQ and Xiaomi browsers; they do not establish complete V0.3 conversion
+coverage in those browsers. See the [RC audit](docs/milestones/milestone-m10e-v0.3-stability-rc-audit.md)
+and [Android record](docs/milestones/milestone-m10e-android-rc-validation.md).
+Application counters do not measure all browser/native/GPU memory.
 
 ## Processing limits
 
@@ -132,8 +136,8 @@ native/GPU memory is not fully observable.
 | Image viewing | 64 MiB encoded image; static images up to 4,194,304 pixels and 16,384 pixels per edge |
 | Display Canvas | 8,192 pixels per edge; 16,777,216 backing pixels |
 | Viewing list / ZIP | 1,000 images; ZIP 512 MiB encoded, 10,000 entries, 64 MiB per uncompressed entry |
-| RAR / 7z (M10C3 policy under validation) | 15 MiB archive; 4 MiB selected output; recognized dictionaries up to 4 MiB; 1,000 entries; 1,024 characters per path / 128 Ki characters total; 15-second operation deadline |
-| Static images → GIF | 2–200 images; 16 MiB combined source; 2,048 pixels per side, 4,194,304 pixels per frame; 15,360,000 total frame-pixels |
+| RAR / 7z | 15 MiB archive; 4 MiB selected output; recognized dictionaries up to 4 MiB; 1,000 entries; 1,024 UTF-16 code units per path / 131,072 total; 15-second operation deadline |
+| Static images → GIF / Animated WebP / APNG | 2–200 images; 16 MiB combined source; 2,048 pixels per side, 4,194,304 pixels per frame; 15,360,000 total frame-pixels; 64 MiB encoded output |
 | Animation conversion / MP4 | Up to 200 frames; 2,048 pixels per side, 4,194,304 pixels per frame; 15,360,000 total frame-pixels; source/output each 64 MiB; MP4 duration up to 30 seconds |
 | Video → animation | Source/output each 64 MiB; coded side up to 2,048 and coded pixels up to 2,073,600; output long side up to 720; 150 sampled frames; 30 seconds selected; 15,360,000 output frame-pixels |
 
@@ -193,13 +197,17 @@ React DOM and unmodified **Mediabunny 1.65.0 (MPL-2.0)**. See
 [deployed notice collection](https://zzh-0427.github.io/AniView/third-party-notices.txt).
 Corresponding MPL source is linked there. Browser/OS H.264 codec availability
 does not constitute a patent license grant from AniView.
-The V0.3 bounded SevenZip component has separate LGPL/unRAR and runtime notices,
+The bounded SevenZip component uses 7-Zip 26.05 with selected 26.06 RAR3/InBuffer
+security fixes and RAR4 raw-filename validation, built with Emscripten 6.0.13.
+It has separate LGPL/unRAR and runtime notices,
 exact source/build materials and replacement instructions under
 [`public/vendor/sevenzip/`](public/vendor/sevenzip/). This is an engineering
 redistribution assessment, not legal clearance or an AniView license grant.
 
 ## Deferred work
 
-Multi-volume/SFX guarantees, archive creation, advanced animation
-editing, custom FPS/resolution and additional languages are deferred. No release
-date is promised for these features.
+Multi-volume archives, SFX compatibility guarantees, archive creation, automatic
+recursive archive browsing, advanced animation editing, further free-form
+FPS/resolution controls and additional languages are deferred. Existing video
+trim/FPS/resolution presets remain available. No release date is promised for
+these enhancements.
