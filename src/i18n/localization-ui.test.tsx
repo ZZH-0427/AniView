@@ -39,7 +39,7 @@ describe('localized ordinary UI without workspace reset', () => {
     expect(html).toContain(`>${creatorName}</span>`)
     expect(html).not.toContain(locale === 'en' ? 'Create GIF' : '创建 GIF')
     expect(html).toContain(locale === 'en' ? 'Convert video' : '转换视频')
-    expect(html).toContain(locale === 'en' ? 'Open ZIP' : '打开 ZIP')
+    expect(html).toContain(locale === 'en' ? 'Open archive' : '打开压缩包')
     if (locale === 'en') expect(/[\u3400-\u9fff]/.test(ordinary)).toBe(false)
     else expect(ordinary).not.toContain('Your images, on your device')
   })

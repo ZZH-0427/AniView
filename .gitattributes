@@ -1,3 +1,11 @@
 src/formats/webp/wasm/*.wasm binary
 src/formats/webp/wasm/*.mjs text eol=lf
 third_party/licenses/** -text
+# Component manifests hash exact bytes, including the corresponding-source recipe.
+# Preserve them across Windows/Linux checkouts rather than applying autocrlf.
+# Original license text and generated glue retain their upstream whitespace.
+public/vendor/sevenzip/** -text whitespace=-blank-at-eol,-blank-at-eof
+tools/extended-archive/** -text
+# Unified-patch context includes meaningful whitespace-only context lines.
+tools/extended-archive/*.patch whitespace=-blank-at-eol
+public/vendor/sevenzip/patches/*.patch whitespace=-blank-at-eol

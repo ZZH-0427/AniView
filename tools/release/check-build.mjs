@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { readFile, readdir, stat, writeFile, mkdir } from 'node:fs/promises'
 import { gzipSync } from 'node:zlib'
+import { verifyRuntime } from '../extended-archive/verify-runtime.mjs'
 
 const pkg = JSON.parse(await readFile('package.json', 'utf8'))
 const lock = JSON.parse(await readFile('package-lock.json', 'utf8'))
@@ -34,6 +35,8 @@ for (const [, reference] of html.matchAll(/(?:src|href)="([^"]+)"/g)) {
   assert(paths.includes(reference.slice('/AniView/'.length)), `Missing HTML asset: ${reference}`)
 }
 assert(!html.includes('Currently in early development'), 'Use the public product description')
+// A copied partial/stale component must never make a successful production build.
+const extendedRuntime = await verifyRuntime('dist/vendor/sevenzip')
 
 let commit = null, sourceDirty = null
 try {
@@ -47,7 +50,7 @@ for (const path of [...paths.filter(path => path !== 'release-candidate.json'), 
   const content = await readFile('dist/' + path)
   assets.push({ path, bytes: content.length, gzipBytes: gzipSync(content).length })
 }
-const report = { ...identity, validationAssetCount: 0, assets }
+const report = { ...identity, validationAssetCount: 0, extendedRuntime, assets }
 await mkdir('.tools', { recursive: true })
 await writeFile('.tools/release-build-report.json', JSON.stringify(report, null, 2) + '\n')
 console.log(JSON.stringify(report, null, 2))

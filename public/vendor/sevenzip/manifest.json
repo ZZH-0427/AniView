@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "engine": "7-Zip 26.05",
+  "engineRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+  "referencePackage": "sevenzip-wasm 26.5.0",
+  "wrapperRevision": "7b53d4abf78da9eb06f9447730ae31eaf9acd7c3",
+  "emscripten": "6.0.13",
+  "emscriptenRevision": "e13ee988ce3d87a738dd8f3661d02223308c412a",
+  "node": "v24.22.1",
+  "abi": {
+    "extractArguments": 3,
+    "probeCommands": false,
+    "formatHandlers": [
+      "RAR4",
+      "RAR5",
+      "7z"
+    ],
+    "writesArchives": false
+  },
+  "memory": {
+    "initial": 16777216,
+    "maximum": 67108864,
+    "shared": false,
+    "growth": true,
+    "binary": {
+      "count": 1,
+      "flags": 1,
+      "initial": 16777216,
+      "maximum": 67108864
+    }
+  },
+  "nativeOutputMaximum": 4194304,
+  "buildInputs": [
+    {
+      "file": "tools/extended-archive/build-runtime.mjs",
+      "sha256": "b0bbfc40830b5fb4976ee2ef147d21219109abe3291b3db20fe9b2a489d60719"
+    },
+    {
+      "file": "tools/extended-archive/compile.mjs",
+      "sha256": "c07830a48aaa8cf95dcd7bd4640f7a78d5e2cce0e9fc2a8e8cf71dd9c9f67f0e"
+    },
+    {
+      "file": "tools/extended-archive/apply-native-patches.mjs",
+      "sha256": "4ca77e861e84afc11f12c0fa9ae1cc0e634d4a0a4286c2c93d66c4a44fff2972"
+    },
+    {
+      "file": "tools/extended-archive/native/bridge.cpp",
+      "sha256": "09295719a6183308b12695007e81906d173fc4a830b2663ddc3228c15ef03fe0"
+    },
+    {
+      "file": "tools/extended-archive/system-emscripten.patch",
+      "sha256": "7fba657a2c40687cc20cf394f47364d037aefd67cf35bdd107924b40dae7e91d"
+    },
+    {
+      "file": "tools/extended-archive/rar4-filename.patch",
+      "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    }
+  ],
+  "patches": [
+    {
+      "file": "patches/system-emscripten.patch",
+      "sha256": "7fba657a2c40687cc20cf394f47364d037aefd67cf35bdd107924b40dae7e91d"
+    },
+    {
+      "file": "patches/rar4-filename.patch",
+      "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    }
+  ],
+  "sourceArchives": [
+    {
+      "file": "7zip-b88c6bc.tar.gz",
+      "source": ".tools/m10c3/7zip.tar.gz",
+      "sha256": "d06cf3c4b4cb085f9a9a5c385b80e46d9ab47849860a4e2c00e1882409c7f830"
+    },
+    {
+      "file": "wrapper-7b53d4a.tar.gz",
+      "source": ".tools/m10c3/wrapper.tar.gz",
+      "sha256": "6b0caee34dca8d9dffcc53ab26e9c95a8c6ae5ff5f15f309ad8b73f009487ba8"
+    }
+  ],
+  "assets": [
+    {
+      "file": "bounded-sevenzip.js",
+      "bytes": 70301,
+      "gzipBytes": 18555,
+      "sha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d"
+    },
+    {
+      "file": "bounded-sevenzip.wasm",
+      "bytes": 287473,
+      "gzipBytes": 123391,
+      "sha256": "bcbd8a4466062683a7e5d5c195be745fe18ea1065a4c6ccfe157dbca230fe970"
+    },
+    {
+      "file": "corresponding-source.tar.gz",
+      "bytes": 3623878,
+      "gzipBytes": 3624638,
+      "sha256": "4180d1a660ac1af72125335fdf6ce45fae2a6ac8b61b1887816ead4563c64183"
+    },
+    {
+      "file": "README.md",
+      "bytes": 5036,
+      "gzipBytes": 2446,
+      "sha256": "43c7119d6617df8c07a52bcc38fdd1da4ca47af2364c008b6a545de313ef0a59"
+    },
+    {
+      "file": "THIRD_PARTY_NOTICES.md",
+      "bytes": 2626,
+      "gzipBytes": 1368,
+      "sha256": "a578a25199367b2fc047857ca40d3925ca30b5a0feca0e7f5d2bfcdd65717ac0"
+    },
+    {
+      "file": "CHANGES.md",
+      "bytes": 1440,
+      "gzipBytes": 844,
+      "sha256": "d5b7e964c76b565a7e5d33210da74406f5e92c99e7ed508991820f78ee5b543b"
+    },
+    {
+      "file": "patches/system-emscripten.patch",
+      "bytes": 273,
+      "gzipBytes": 205,
+      "sha256": "7fba657a2c40687cc20cf394f47364d037aefd67cf35bdd107924b40dae7e91d"
+    },
+    {
+      "file": "patches/rar4-filename.patch",
+      "bytes": 7252,
+      "gzipBytes": 2559,
+      "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    },
+    {
+      "file": "licenses/7zip-License.txt",
+      "bytes": 6190,
+      "gzipBytes": 1962,
+      "sha256": "dac8389b6bc39339537bc351772106afe7951cb242cdf03e855b67c3a683deb1"
+    },
+    {
+      "file": "licenses/compiler-rt-LICENSE.txt",
+      "bytes": 16708,
+      "gzipBytes": 5439,
+      "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d"
+    },
+    {
+      "file": "licenses/emscripten-LICENSE.txt",
+      "bytes": 5093,
+      "gzipBytes": 1592,
+      "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+    },
+    {
+      "file": "licenses/LGPL-2.1.txt",
+      "bytes": 26530,
+      "gzipBytes": 9348,
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    {
+      "file": "licenses/libcxx-LICENSE.txt",
+      "bytes": 16703,
+      "gzipBytes": 5439,
+      "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+    },
+    {
+      "file": "licenses/libcxxabi-LICENSE.txt",
+      "bytes": 16706,
+      "gzipBytes": 5441,
+      "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c"
+    },
+    {
+      "file": "licenses/libunwind-LICENSE.txt",
+      "bytes": 16706,
+      "gzipBytes": 5440,
+      "sha256": "b5efebcaca80879234098e52d1725e6d9eb8fb96a19fce625d39184b705f7b6d"
+    },
+    {
+      "file": "licenses/musl-COPYRIGHT.txt",
+      "bytes": 6196,
+      "gzipBytes": 2928,
+      "sha256": "b870108ec5e7790e9f9919064f1b9421d62d5f9b0e6c230c6adf7ea2da62e97b"
+    },
+    {
+      "file": "licenses/sevenzip-wasm-LICENSE.txt",
+      "bytes": 6288,
+      "gzipBytes": 1988,
+      "sha256": "bbc7b2904d894e2d36d2c3a0ad75a3b39c019ae26c9b1afb01c2c689972c1608"
+    },
+    {
+      "file": "licenses/unRarLicense.txt",
+      "bytes": 1921,
+      "gzipBytes": 903,
+      "sha256": "17bd9fa4399092c777536fff045b41df76ec9d2ac4c9b8e7345d3b8b6ccc7976"
+    }
+  ]
+}

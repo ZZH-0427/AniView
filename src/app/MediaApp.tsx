@@ -18,7 +18,8 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
   const [dragging, setDragging] = useState(false)
   const [conversion, setConversion] = useState<VirtualFile>()
   const transition = useRef(Promise.resolve())
-  const { session, notice, noticeMessage, archive, addFiles, openArchive, clear, changeSession } = useMediaSource(transition)
+  const { session, notice, noticeMessage, archive, addFiles, openArchive, clear, changeSession,
+    unlockArchive, cancelArchiveAccess, showArchivePrompt, retryArchive } = useMediaSource(transition)
   const current = currentSessionItem(session)
   const entry = archive?.status === 'open' && current ? archive.session.entryForFile(current.file) : undefined
   const viewer = current && <Viewer key={current.id} file={current.file} transition={transition} onClose={clear}
@@ -61,7 +62,9 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
     {conversion ? <Suspense fallback={<p role="status">{t('common.openingConverter')}</p>}><ConversionWorkspace file={conversion} transition={transition}
       onBack={() => setConversion(undefined)} /></Suspense> : <>
     {archive && <ArchiveSummary key={archive.status === 'open' ? archive.session.id : `${archive.status}:${archive.name}`}
-      archive={archive} onClose={clear} count={session.items.length} />}
+      archive={archive} onClose={clear} count={session.items.length}
+      onUnlock={unlockArchive} onCancelAccess={cancelArchiveAccess} onShowPrompt={showArchivePrompt} onRetry={retryArchive}
+      items={session.items} selected={session.currentIndex} onSelect={index => changeSession(previous => ({ ...previous, currentIndex: index }))} />}
     {current ? <>
       <nav className="session-controls" aria-label={t('session.list')}>
         <details className="session-options"><summary>{t('session.options')}</summary>
@@ -72,7 +75,7 @@ export function MediaApp({ onCreate,onConvertVideo }: { onCreate?: () => void;on
         </div>
         </details>
       </nav>
-      {archive?.status === 'open' && entry?.encrypted ? <Suspense fallback={<p role="status">{t('zip.checkingAccess')}</p>}>
+      {archive?.status === 'open' && entry && (archive.session.format !== 'zip' || entry.encrypted) ? <Suspense fallback={<p role="status">{t('zip.checkingAccess')}</p>}>
         <ArchiveEntryAccess key={`${archive.session.id}:${current.id}`} session={archive.session} entryId={entry.id}
           transition={transition} position={session.currentIndex + 1} count={session.items.length}
           onPrevious={() => changeSession(previousFile)} onNext={() => changeSession(nextFile)}>{viewer}</ArchiveEntryAccess>

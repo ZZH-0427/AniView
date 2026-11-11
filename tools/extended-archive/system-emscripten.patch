@@ -1,0 +1,10 @@
+--- a/CPP/Windows/System.cpp
++++ b/CPP/Windows/System.cpp
+@@ -358,6 +358,7 @@ bool GetRamSize(size_t &size)
+   #elif defined(__FreeBSD_kernel__) && defined(__GLIBC__)
+   // GNU/kFreeBSD Debian
+   // fixme
++  #elif defined(__EMSCRIPTEN__)
+   #else
+ 
+   struct sysinfo info;

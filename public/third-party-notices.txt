@@ -1654,3 +1654,45 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
   This Source Code Form is "Incompatible With Secondary Licenses", as
   defined by the Mozilla Public License, v. 2.0.
+
+
+========================================================================
+V0.3 bounded read-only SevenZip component (RAR4 / RAR5 / 7z)
+========================================================================
+
+7-Zip 26.05, Copyright (C) 1999-2026 Igor Pavlov and source-listed authors.
+Engine revision: b88c6bc09339de32f7d18bbab900686b244f42ba.
+Reference wrapper/build provenance: sevenzip-wasm 26.5.0,
+revision 7b53d4abf78da9eb06f9447730ae31eaf9acd7c3.
+This is a restricted custom source build with Emscripten 6.0.13, not the npm
+package's prebuilt binary. ZIP and password ZIP continue to use zip.js 2.23.0.
+
+The component's generated JS and WASM include LGPL-2.1-or-later code with the
+unRAR restriction and applicable BSD/public-domain/runtime portions. Each portion
+retains its own terms. The unRAR restriction prohibits using its decompression
+code to develop a RAR-compatible compressor. AniView supplies no RAR-writing API.
+
+Full component terms, notices, exact source/hash manifest, corresponding-source
+archive, native/build modifications and replacement instructions accompany the
+static component in this site's vendor/sevenzip/ directory:
+
+  vendor/sevenzip/THIRD_PARTY_NOTICES.md
+  vendor/sevenzip/licenses/7zip-License.txt
+  vendor/sevenzip/licenses/LGPL-2.1.txt
+  vendor/sevenzip/licenses/unRarLicense.txt
+  vendor/sevenzip/licenses/sevenzip-wasm-LICENSE.txt
+  vendor/sevenzip/licenses/emscripten-LICENSE.txt
+  vendor/sevenzip/licenses/compiler-rt-LICENSE.txt
+  vendor/sevenzip/licenses/libcxx-LICENSE.txt
+  vendor/sevenzip/licenses/libcxxabi-LICENSE.txt
+  vendor/sevenzip/licenses/libunwind-LICENSE.txt
+  vendor/sevenzip/licenses/musl-COPYRIGHT.txt
+  vendor/sevenzip/manifest.json
+  vendor/sevenzip/corresponding-source.tar.gz
+  vendor/sevenzip/README.md
+
+Retain matching source/build/notices and an appropriate library replacement or
+relinking route when redistributing the component. There is no runtime hash lock
+preventing replacement of the matching JS/WASM pair. A Worker boundary or
+private:true does not waive third-party obligations. This notice does not choose
+or grant a license for AniView itself, and makes no legal-compliance guarantee.

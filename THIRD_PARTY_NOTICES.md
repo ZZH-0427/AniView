@@ -70,3 +70,34 @@ Mediabunny **1.65.0** is pinned under **MPL-2.0**. Milestone 8C2 reuses the acce
 upstream file is modified. Ordinary Viewer startup does not load it.
 
 The [complete license](third_party/licenses/mediabunny/LICENSE) and [source-availability notice](third_party/licenses/mediabunny/NOTICE) accompany the feature-branch notice artifact. Exact corresponding TypeScript source is available in the [published 1.65.0 source package](https://registry.npmjs.org/mediabunny/-/mediabunny-1.65.0.tgz). Native browser H.264 codecs are not supplied by AniView or Mediabunny; this notice does not grant AVC patent rights or settle later product-release obligations. This experimental dependency is not part of the published v0.1.0 release.
+
+## V0.3 bounded RAR / 7z component
+
+The M10C3 source branch integrates a separate, lazy, read-only SevenZip component
+for single-file RAR4, RAR5 and 7z archives. ZIP/password ZIP retain
+`@zip.js/zip.js` 2.23.0. This is a vendored third-party runtime, not a new npm
+runtime dependency, and does not change AniView's `UNLICENSED`/`private` policy.
+It does not imply a deployment or change the frozen v0.2.0 release.
+
+The engine is **7-Zip 26.05**, revision
+`b88c6bc09339de32f7d18bbab900686b244f42ba`, built with Emscripten **6.0.13**.
+Reference wrapper/build provenance is sevenzip-wasm **26.5.0**, revision
+`7b53d4abf78da9eb06f9447730ae31eaf9acd7c3`; the runtime is a restricted custom
+source build, not that npm package's prebuilt binary. LGPL-2.1-or-later,
+the unRAR restriction and applicable BSD/public-domain/runtime terms apply to
+their respective component portions. Library-derived modifications retain those
+terms. The unRAR restriction prohibits developing a RAR-compatible compressor
+from the restricted decompression code; no RAR-writing interface is supplied.
+
+The static distribution keeps the component materials together under
+[`public/vendor/sevenzip/`](public/vendor/sevenzip/):
+[notices](public/vendor/sevenzip/THIRD_PARTY_NOTICES.md),
+[complete licenses](public/vendor/sevenzip/licenses/), and
+[build/replacement instructions](public/vendor/sevenzip/README.md).
+The component manifest records exact shipped hashes and source revisions, and
+the accompanying `corresponding-source.tar.gz` supplies pinned original sources,
+native adapter, build recipe and portability patch. The library JS/WASM can be
+rebuilt/replaced together without a runtime hash lock. Keep matching materials
+with any redistributed component; a Worker boundary or `private:true` does not
+waive license obligations. This is an engineering license assessment, not legal
+advice or a guarantee for every distribution scenario.

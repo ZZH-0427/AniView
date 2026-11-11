@@ -3,6 +3,7 @@ import { runtimeDiagnostics } from '../media/runtime-diagnostics'
 import { conversionCleanup } from '../media/conversion-cleanup'
 import { creationCleanup } from '../media/creation-cleanup'
 import { archiveCleanup } from '../media/archive-cleanup'
+import { extendedArchiveCleanup } from '../media/extended-archive-cleanup'
 import {videoAnimationCleanup} from '../video-conversion/cleanup'
 import { DiagnosticsGroup, DiagnosticsPanel, RawDiagnostics } from './DiagnosticsPanel'
 
@@ -10,6 +11,7 @@ export function RuntimeDiagnosticsPanel() {
   const snapshot = useSyncExternalStore(runtimeDiagnostics.subscribe, runtimeDiagnostics.getSnapshot, runtimeDiagnostics.getSnapshot)
   const lastCreationCleanup = useSyncExternalStore(creationCleanup.subscribe, creationCleanup.getSnapshot, creationCleanup.getSnapshot)
   const lastArchiveCleanup = useSyncExternalStore(archiveCleanup.subscribe, archiveCleanup.getSnapshot, archiveCleanup.getSnapshot)
+  const lastExtendedArchiveCleanup = useSyncExternalStore(extendedArchiveCleanup.subscribe, extendedArchiveCleanup.getSnapshot, extendedArchiveCleanup.getSnapshot)
   const lastConversionCleanup=useSyncExternalStore(conversionCleanup.subscribe,conversionCleanup.getSnapshot,conversionCleanup.getSnapshot)
   const lastVideoAnimationCleanup=useSyncExternalStore(videoAnimationCleanup.subscribe,videoAnimationCleanup.getSnapshot,videoAnimationCleanup.getSnapshot)
   return <DiagnosticsPanel title="Resource diagnostics">
@@ -32,6 +34,6 @@ export function RuntimeDiagnosticsPanel() {
         { label: 'Archive', value: snapshot.archiveErrors }, { label: 'Cleanup', value: snapshot.cleanupErrors },
       ]} />
     </div>
-    <RawDiagnostics items={[{ testId: 'runtime-metrics', value: {...snapshot,...(lastArchiveCleanup?{lastArchiveCleanup}:{}),...(lastCreationCleanup?{lastCreationCleanup}:{}),...(lastConversionCleanup?{lastConversionCleanup}:{}),...(lastVideoAnimationCleanup?{lastVideoAnimationCleanup}:{})} }]} />
+    <RawDiagnostics items={[{ testId: 'runtime-metrics', value: {...snapshot,...(lastArchiveCleanup?{lastArchiveCleanup}:{}),...(lastExtendedArchiveCleanup?{lastExtendedArchiveCleanup}:{}),...(lastCreationCleanup?{lastCreationCleanup}:{}),...(lastConversionCleanup?{lastConversionCleanup}:{}),...(lastVideoAnimationCleanup?{lastVideoAnimationCleanup}:{})} }]} />
   </DiagnosticsPanel>
 }

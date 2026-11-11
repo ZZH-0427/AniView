@@ -8,7 +8,7 @@ import {videoErrorMessage} from './errors'
 describe('video conversion product surface',()=>{
  it('exposes a separate lazy Home entry without replacing Viewer or GIF creation',()=>{
   const html=renderToStaticMarkup(<App/>);expect(html).toContain('data-testid="convert-video-entry"')
-  expect(html).toContain('Create animation');expect(html).toContain('Choose Images');expect(html).toContain('Open ZIP archive')
+  expect(html).toContain('Create animation');expect(html).toContain('Choose Images');expect(html).toContain('Open archive')
   expect(html).not.toContain('video-conversion-page')
  })
  it('renders accessible single-file selection, trim/settings and a disabled initial conversion',()=>{
