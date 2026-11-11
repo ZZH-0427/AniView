@@ -231,7 +231,7 @@ receipts, source distribution and candidate regression. Do not auto-start Androi
 
 ## Independent Ubuntu validation and current resolution
 
-[Workflow](../../.github/workflows/m10e-s2-native-harness.yml):
+[Historical workflow](https://github.com/ZZH-0427/AniView/blob/d7bc6e80e93804f6d539ef730204be1b18fb8444/.github/workflows/m10e-s2-native-harness.yml):
 `M10E-S2 Native Error Harness`. It runs only on pushes to
 `feat/v0.3-native-security-backport` affecting the workflow or its three harness
 source/helper paths. No PR, schedule, workflow_run, dispatch, Pages or artifact
@@ -332,20 +332,28 @@ Local CI-helper contract tests: 10 PASS, separate from native 20. Lint/typecheck
 adaptation. The official component and its distribution hashes remain unchanged;
 no 189-object rebuild occurs this turn.
 
-## Workflow retention decision
+## Workflow retention and authorized cleanup
 
-**Recommend REMOVE LATER**, after the user accepts the evidence. This is a
-branch-specific workaround for the Windows tool block, not a replacement for the
-release workflow. Do not delete it now or rewrite history. Keep the C++/runner,
-helper, run URL and audit record if a later authorized cleanup removes the YAML.
+At d2004c2 the recommendation was REMOVE LATER and the workflow was retained
+pending the user's decision. On 2026-11-11 the user explicitly approved removal
+in the M10E Android RC preparation task. Only
+`.github/workflows/m10e-s2-native-harness.yml` is removed from the current tree.
+The historical source link above, successful run 43009589916 and all Git history
+remain. No Actions run record is deleted.
 
-If the user chooses KEEP, meaningful changes to one of its four listed paths on
-the named feature branch trigger it; documentation-only pushes do not. Existing
-runs can be re-run without trigger-only commits. Each run downloads the pinned SDK
-and uses one Ubuntu job with a 45-minute ceiling (this run about 35 seconds; future
-network/queue cost varies). It needs pinned-action/SDK maintenance; the blank
-optional SDK label can be corrected in a separately reviewed change. The workflow
-has no deployment path and does not run on main merely because it exists there.
+The cross-platform runner, unchanged 20 C++ assertions, CI evidence helper/tests,
+S1/S2 reports, named Linux evidence JSON, pinned source, all three native patches,
+corresponding source, licenses and build receipts remain. Pages workflow is
+unchanged and has no dependency on this branch-scoped temporary workflow. The
+cleanup does not change product code, frozen JS/WASM, resource limits or versions.
+Its clean commit becomes the separately identified input for Android RC builds;
+the old d31abd8 desktop build is not relabeled as that new commit.
+
+Historical KEEP assessment: it would have run only on matching branch/path
+changes, not ordinary documentation commits; one Ubuntu job downloaded the SDK,
+with a 45-minute ceiling (the observed run took about 35 seconds). It had no Pages
+steps. Removal is a normal forward commit, not a history rewrite or loss of test
+source. Android verification is still a separate pending gate.
 
 ## Closeout evidence and next state
 
@@ -362,4 +370,5 @@ Linux result above supplies the missing, separately scoped verification.
 **NATIVE-SECURITY-01: CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS.**
 **M10E: READY TO PREPARE ANDROID RC VALIDATION.** This is not M10E PASSED or
 RC-READY. Android acceptance is still PENDING; no URL or phone handoff is issued.
-No M10F, merge/version/tag/Release/Pages action is performed. The workflow is retained.
+No M10F, merge/version/tag/Release/Pages action is performed. The temporary workflow
+was subsequently removed only after the user's explicit cleanup authorization.
