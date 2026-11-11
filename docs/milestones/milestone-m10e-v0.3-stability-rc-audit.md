@@ -1,15 +1,18 @@
 # M10E — V0.3 stability and release candidate audit
 
-2026-11-11. **M10E: PENDING ANDROID RC VALIDATION.**
+2026-11-11. **M10E: RC-READY / PASSED / CLOSED.**
 Native gate **NATIVE-SECURITY-01: CLOSED — VERIFIED BACKPORT WITH INDEPENDENT
 LINUX HARNESS**; see the [S2 record](milestone-m10e-s2-native-security-backport.md).
-M10E itself is not PASSED/RC-READY: real Android results and per-browser Home
-cleanup JSON are still pending. The current HTTPS handoff is recorded below;
-M10F is NOT STARTED.
+Android Edge and Quark are USER-CONFIRMED FUNCTIONAL PASS / CLEANUP PASS on the
+handed-off frozen RC. Quark's one archive error is a USER-CONFIRMED EXPECTED
+NEGATIVE PASSWORD TEST, with original counts retained. See the final closeout
+below and the [Android record](milestone-m10e-android-rc-validation.md).
+M10F is ready for a separately authorized release task, but remains NOT STARTED.
 
 ## Identity and scope
 
-Baseline and tested source: `86728599149381455ddbfaba7cd529ccfea11ab6`.
+Original audit baseline/tested source: `86728599149381455ddbfaba7cd529ccfea11ab6`.
+Final accepted RC source: `733df1984919e318348a88c512d68743990bdca6`.
 Created `feat/v0.3-rc-audit` from the clean cumulative V0.3 pre-RC branch, not main.
 The [scope freeze](../releases/v0.3-scope-freeze.md) remains unchanged. No product,
 dependency, lockfile, native patch/binary, safety limit or license is modified.
@@ -228,17 +231,19 @@ It was subsequently removed by explicitly authorized forward commit 733df19, wit
 source, assertions, run evidence and history preserved. It had no secrets, write
 permissions or Pages steps. No product code, limit, version or frozen component changes.
 
-## Android, Git and next state
+## Android preparation and Git checkpoint (historical)
 
-[Android RC record](milestone-m10e-android-rc-validation.md): Edge **PENDING**,
-Quark **PENDING**, new cleanup JSON **NOT PROVIDED**. The native gate permits the separately authorized preparation follow-up below.
+[Android RC record](milestone-m10e-android-rc-validation.md) was Edge **PENDING**,
+Quark **PENDING**, cleanup JSON **NOT PROVIDED** at the post-S2 checkpoint. The
+native gate permitted the separately authorized preparation follow-up below.
 Older M10A/B/C phone results do not substitute. The historical audit loopback
 preview was closed after its checks; the new held HTTPS RC is identified separately.
 
 The original audit-only branch remains preserved. Separately authorized S2 CI
 and documentation commits are pushed on `feat/v0.3-native-security-backport`;
 the S2 desktop product source is d31abd8 and actual Linux CI source is d7bc6e8. Final
-M10E closeout still requires the separately requested Android results.
+M10E closeout then required the separately requested Android results; the final
+user evidence is recorded below.
 Main/peeled v0.2.0 stay0cb82c0; annotated v0.2.0 stays3f83ab4, and production
 Pages remains V0.2.0. No merge/version/tag/Release/Pages operation occurs.
 
@@ -253,7 +258,7 @@ remain accepted; the scoped native gate closure does not remove those limits.
 The subsequent explicitly authorized preparation is recorded below; M10F is not started.
 
 
-## Authorized temporary CI cleanup and Android RC preparation (current)
+## Authorized temporary CI cleanup and Android RC preparation (historical checkpoint)
 
 Cleanup commit `733df1984919e318348a88c512d68743990bdca6` removes only the one-time
 workflow and updates its S2 retention explanation. Pages remains byte-identical;
@@ -291,9 +296,57 @@ the same held product; no product behavior is changed or error hidden.
 
 The [Android RC record](milestone-m10e-android-rc-validation.md) supplies the frozen
 HTTPS URL, verified public samples, minimal A/B/C steps and required Home JSON.
-The temporary static origin/tunnel remain running for that handoff. Desktop HTTPS
-results are not new Android results; application counters do not measure all native
-or GPU memory. Edge and Quark are both PENDING, new cleanup JSON NOT PROVIDED.
+The temporary static origin/tunnel were kept running for that handoff. Desktop HTTPS
+results are separate from Android results; application counters do not measure all
+native or GPU memory. At preparation closeout Edge and Quark were both PENDING,
+cleanup JSON NOT PROVIDED; the preparation evidence retains that dated state.
 Main, version, tag, Release and production Pages remain unchanged.
 
-**M10E: PENDING ANDROID RC VALIDATION. M10F: NOT STARTED.**
+**Preparation checkpoint: M10E PENDING ANDROID RC VALIDATION. M10F NOT STARTED.**
+
+## Final Android RC acceptance and M10E closeout (current)
+
+The user has now separately confirmed Android Edge and Quark completed the assigned
+minimal Creator/archive/lifecycle A/B/C flows without other functional problems,
+and supplied their Home Resource Diagnostics. Both are **USER-CONFIRMED FUNCTIONAL
+PASS / CLEANUP PASS**. The [Android record](milestone-m10e-android-rc-validation.md)
+is the single detailed record of the supplied counters and their provenance;
+no phone repetitions, durations, extra codec matrix or device-level hash checks
+are inferred. All reported active resources and cleanupErrors are zero, and
+reported Worker/Bitmap/archive ownership pairs balance. Both extended snapshots
+report peakWasmBytes=16777216 and timeouts=0; this observed peak is not the 64 MiB cap.
+
+Quark retains archiveErrors=1 and extraction counts 16 started/15 completed/0
+discarded. The user explicitly confirmed a deliberate wrong-password attempt,
+subsequent successful correct-password entry and completion of all assigned tests.
+Classification: **USER-CONFIRMED EXPECTED NEGATIVE PASSWORD TEST**. The counts are
+consistent with that attempt, but no independent per-request log correlation is
+available or claimed. This explained negative test is not an RC blocker.
+
+Accepted candidate is `733df1984919e318348a88c512d68743990bdca6`, attributed to both
+phone results through the user confirmation and the existing held HTTPS evidence.
+Its canonical [manifest](../research/m10e-android-rc-asset-manifest.json) SHA256 is
+`bf8208541f8c26d34c119e6d67baabcd494827656bbf0ec081153332e0f0d93c`.
+The later documentation HEAD is not substituted for that product identity.
+Frozen JS/WASM match the recorded hashes; read-only native distribution/memory
+verification passes without recompilation, binary changes or limit changes.
+
+Retained evidence remains separately scoped: 95 files / 1191 automated tests and
+lint/typecheck/build; original desktop cross-feature A/B/C; two-build equality at
+8672859 and at S2 d31abd8; the single clean 733df19 build; RAR4 filename regressions;
+26.06 selected security backport/fresh Windows component build; independent Linux
+20/20; security/license/distribution checks; and the new user-confirmed phone
+results. These tests/builds were not rerun during this documentation closeout.
+Windows 4551 and M10C2 initial phone failures remain historical facts. The Linux
+harness is not a direct 20-case execution on the shipped Windows WASM.
+
+All accepted source/format/resource/solid/password/platform/download limitations
+remain. Ownership counters do not measure total browser/native/GPU/system memory;
+the prior development-dependency advisory scan is not a new scan or universal
+native-safety guarantee. No product, dependency, source patch, runtime, version,
+main, tag, Release or production Pages change is part of this closeout.
+
+**M10E — V0.3 Stability & Release Candidate Audit: RC-READY / PASSED / CLOSED.**
+**M10F: READY FOR A SEPARATELY AUTHORIZED RELEASE TASK / NOT STARTED.**
+Stop here and wait for the user's release task; this verdict does not authorize
+release operations.

@@ -5,18 +5,25 @@ retain their dated conclusions: an older `NOT STARTED`, `BLOCKED` or `PENDING`
 checkpoint does not override a later closeout. Historical plans and failed runs
 are retained as evidence, not rewritten into current status.
 
-V0.3 remains in development. Scope freeze and pre-RC cleanup are not a release,
-version bump or permission to deploy. M10E Stability & Release Candidate Audit now
-has desktop evidence and an unresolved native security gate; it is BLOCKED,
-with Android RC validation not started. This index grants no release approval.
+V0.3 is not released. M10E Stability & Release Candidate Audit is now
+**RC-READY / PASSED / CLOSED**, with its native security gate resolved and new
+user-confirmed Edge/Quark functional and Home cleanup acceptance. Final accepted
+RC source is 733df1984919e318348a88c512d68743990bdca6. M10F is ready for a separately
+authorized release task but remains NOT STARTED. This index grants no release,
+version bump, main merge, tag or deployment approval.
 
 ## CURRENT
 
 - [M10E stability/RC audit](milestones/milestone-m10e-v0.3-stability-rc-audit.md),
   [security/license gate](research/m10e-v0.3-security-license-audit.md),
-  [tested asset manifest](research/m10e-v0.3-rc-asset-manifest.json), and
+  [final RC asset manifest](research/m10e-android-rc-asset-manifest.json), and
   [Android record](milestones/milestone-m10e-android-rc-validation.md): current
-  audit result and exact separation of desktop evidence from pending phone tests.
+  audit closeout and separation of automated/desktop evidence from user-confirmed
+  phone results. The older manifests and then-PENDING preparation snapshot remain
+  linked in those records for history.
+- [M10E-S2 native security resolution](milestones/milestone-m10e-s2-native-security-backport.md)
+  and [independent Linux 20/20 evidence](research/m10e-s2-linux-harness-evidence.json):
+  scoped security gate closure, separate from direct testing of the shipped WASM.
 - [V0.3 scope freeze](releases/v0.3-scope-freeze.md): current capability boundary,
   deferred enhancements and source-checked limits.
 - [M10D scope freeze and pre-RC cleanup](milestones/milestone-m10d-v0.3-scope-freeze-pre-rc-cleanup.md):
@@ -41,6 +48,7 @@ with Android RC validation not started. This index grants no release approval.
 | M10A — Unified multi-format animation Creator | [M10A2](milestones/milestone-m10a2-unified-animation-creator.md) | [Edge / Quark](milestones/milestone-m10a2-android-validation.md) |
 | M10B — Password-protected ZIP | [M10B2](milestones/milestone-m10b2-password-zip.md) | [Edge / Quark](milestones/milestone-m10b2-android-validation.md) |
 | M10C — Narrow RAR4 / RAR5 / 7z productization | [M10C3](milestones/milestone-m10c3-rar-7z-productization.md) | [Edge / Quark and cleanup metrics](milestones/milestone-m10c3-android-validation.md) |
+| M10E — V0.3 stability and release candidate audit | [RC-READY / PASSED / CLOSED](milestones/milestone-m10e-v0.3-stability-rc-audit.md) | [Edge / Quark functional and cleanup PASS](milestones/milestone-m10e-android-rc-validation.md) |
 
 Earlier technical gates remain available as the
 [M10C1 feasibility audit](research/v0.3-rar-7z-feasibility-audit.md) and

@@ -1,9 +1,10 @@
 # M10E — Android RC validation record
 
-2026-11-11. **M10E: PENDING ANDROID RC VALIDATION.**
-Android Edge: **PENDING**. Android Quark: **PENDING**.
-New phone cleanup JSON: **NOT PROVIDED**. No previous milestone phone result is
-relabeled as this RC's acceptance. M10E is not PASSED/RC-READY; M10F is NOT STARTED.
+2026-11-11. **M10E: RC-READY / PASSED / CLOSED.**
+Android Edge and Android Quark: **USER-CONFIRMED FUNCTIONAL PASS / CLEANUP PASS**.
+The user supplied separate Home Resource Diagnostics values for this RC and
+confirmed the assigned minimal flows completed without other problems. These are
+new M10E confirmations, not inherited phone results. M10F remains NOT STARTED.
 
 ## Current frozen candidate
 
@@ -11,6 +12,11 @@ Product build source: `733df1984919e318348a88c512d68743990bdca6`, the clean
 workflow-cleanup commit on `feat/v0.3-native-security-backport`.
 `release-candidate.json` says sourceDirty=false, version 0.2.0 and UNLICENSED.
 Later documentation commits are not the source identity of this held build.
+
+Both Android results are attributed to this handed-off RC using the user's
+confirmation and the existing immutable HTTPS build/asset evidence. Separate
+device-captured build identities, on-device file hashes, browser versions and
+timings were not supplied or independently verified; none is inferred here.
 
 [RC asset manifest](../research/m10e-android-rc-asset-manifest.json):
 59 assets, 6,049,630 bytes; canonical UTF-8/LF SHA256
@@ -36,7 +42,7 @@ The [S2 record](milestone-m10e-s2-native-security-backport.md) retains the origi
 Windows 4551/WSL checkpoints. The successful one-time workflow was subsequently
 removed by authorized forward commit 733df19; its Git history, source and evidence remain.
 
-## HTTPS handoff and desktop verification
+## Recorded HTTPS handoff and desktop verification
 
 Frozen page:
 <https://ctrl-subtle-where-bullet.trycloudflare.com/AniView/?debug=1&rc=733df1984919e318348a88c512d68743990bdca6>
@@ -44,59 +50,93 @@ Frozen page:
 Public synthetic sample catalog:
 <https://ctrl-subtle-where-bullet.trycloudflare.com/AniView/validation/rc-v03/>
 
-This temporary Cloudflare tunnel serves an immutable production snapshot under
-/AniView/, not GitHub Pages. The PC and tunnel must stay running and online.
-An expired/unreachable URL is an access problem to report, not an Android FAIL/PASS.
-Do not substitute an older milestone link. Both phone browsers must use this
-same candidate; the build and samples must not change between their tests.
+This was the temporary Cloudflare handoff for the immutable production snapshot
+under /AniView/, not GitHub Pages or a release URL. Availability was checked during
+preparation; this documentation-only closeout does not recheck or promise ongoing
+tunnel availability. The frozen candidate and samples were held for both browsers.
 
 [Preparation evidence](../research/m10e-android-rc-preparation-evidence.json)
 records fresh lint/typecheck, 95 files / 1191 tests, production build, 20-asset native
 distribution verification, real HTTPS transport and desktop browser results.
-The desktop HTTPS results do not constitute Android acceptance. Runtime ownership
-counters do not measure total browser/native/GPU/system memory.
+That dated preparation snapshot correctly retains its then-PENDING Android fields.
+The later user evidence below closes the phone gate; desktop HTTPS results remain
+separate. Runtime counters do not measure total browser/native/GPU/system memory.
 
-## Minimal Android matrix — not yet performed
+## Assigned minimal Android matrix — USER-CONFIRMED PASS
 
-Use Android Edge and Quark, each covering A/B/C. No full codec/native negative
-matrix, stress run or video benchmark is requested. Only public synthetic fixtures
-are required; do not provide personal files or passwords.
+The user confirmed Edge and Quark each completed the assigned A/B/C scope below.
+This does not add a full codec/native negative matrix, stress run or video benchmark.
+Exact optional fixture choices, per-step repetition counts and elapsed times were
+not separately recorded. The rows summarize the assigned scope, not invented
+per-step traces. A deliberate wrong-password attempt is separately confirmed for
+Quark only; Edge's zero archive-error count is retained without inferring one.
 
 | Sequence | Steps in each browser |
 | --- | --- |
 | A — Creator | Download mixed-static.zip, extract in the phone file manager, then select its static JPEG/PNG/WebP images in Create animation. Generate GIF, Animated WebP and APNG; Preview representative output(s), return, Download and confirm saved result(s) open. Return Home. Do not import the delivery ZIP directly into Creator. |
-| B — Archives | Open password-mixed.zip directly in AniView; its first GIF is public, so Next reaches an encrypted item. Try a wrong public test password, then aniview-test; verify Viewer, navigation and return. Open either normal-rar5.rar or headers.7z, enter Viewer and return; headers.7z also uses aniview-test. Return Home. |
+| B — Archives | Open password-mixed.zip directly in AniView; its first GIF is public, so Next reaches an encrypted item. Unlock with the public test password aniview-test; verify Viewer, navigation and return. Open either normal-rar5.rar or headers.7z, enter Viewer and return; headers.7z also uses aniview-test. Return Home. Quark's separately confirmed wrong-password step is classified below. |
 | C — Lifecycle | Cancel once or replace an archive source, close/reopen and successfully read a media entry. For example, cancel the headers.7z password prompt, close the archive, reopen and unlock. Switch EN/ZH and check the password controls under the soft keyboard. Close all media/archives and return Home. |
 
 The catalog also retains mixed.zip and normal.7z for ordinary/reopen checks.
 Legacy RAR4 is optional, not an extra required matrix; its public password is
 password and its text-only listing is expected. Each sample's size/SHA is in the
-preparation evidence and the catalog. Report any exact error code/step, noticeable
-stall, reload or crash, and confirm the candidate used.
+preparation evidence and the recorded catalog. The user's functional confirmation
+reports no other problem; no separate phone timing or performance trace is claimed.
 
-## Home cleanup evidence required from each browser
+## User-supplied Home cleanup evidence
 
-After completing A/B/C, close all media/archives and return Home. Expand Resource
-diagnostics → Raw JSON and copy the existing output separately for Edge and Quark.
-Do not edit its values or paste personal passwords. Check fields actually present:
+The following is a concise transcription of the separately supplied diagnostics;
+it is not a newly generated device trace. Only reported fields are represented.
+Created/closed pairs and application-observable ownership support CLEANUP PASS;
+they do not prove complete browser/native/GPU/system memory release.
 
-- Runtime activeWorkers, activeBitmaps, activeArchiveSessions and cleanupErrors.
-- lastExtendedArchiveCleanup activeExtendedArchiveWorkers, activeWasmInstances,
-  activeArchiveSessions, activeExtraction, pendingAccess, currentExtractedBytes,
-  activeObjectUrls and cleanupErrors.
-- Other present creation/archive/conversion snapshots: active Worker/Bitmap/
-  Canvas/ImageData/RGBA/ACK/VideoFrame/URL ownership, pending reads and cleanupErrors.
+| Runtime field | Android Edge | Android Quark |
+| --- | --- | --- |
+| Workers created / terminated | 14 / 14 | 19 / 19 |
+| Active Workers | 0 | 0 |
+| Bitmaps created / closed | 2 / 2 | 6 / 6 |
+| Active Bitmaps | 0 | 0 |
+| Archive sessions opened / closed | 3 / 3 | 4 / 4 |
+| Active archive sessions | 0 | 0 |
+| Extractions started / completed | 8 / 8 | 16 / 15 |
+| Extractions discarded | Not separately provided | 0 |
+| Archive errors (historical count) | 0 | 1 |
+| Cleanup errors | 0 | 0 |
 
-Active/pending/current ownership values and cleanupErrors should be zero;
-created/terminated and opened/closed should balance. Peak/cumulative counters
-need not be zero. Deliberately wrong passwords may increase historical
-archiveErrors; identify that step instead of requiring all historical errors to
-be zero. Missing fields, unperformed steps and absent JSON remain unprovided.
+Both separately supplied Extended Archive cleanup records report the same values:
 
-| Browser | Candidate used | A/B/C | Home cleanup JSON | Verdict |
+| Extended Archive field | Edge | Quark |
+| --- | --- | --- |
+| Workers created / terminated | 1 / 1 | 1 / 1 |
+| Active Workers | 0 | 0 |
+| Active WASM instances | 0 | 0 |
+| Active extraction | 0 | 0 |
+| Pending access | 0 | 0 |
+| Current extracted bytes | 0 | 0 |
+| Active object URLs | 0 | 0 |
+| Cleanup errors | 0 | 0 |
+| Peak WASM bytes | 16777216 | 16777216 |
+| Timeouts | 0 | 0 |
+
+Creation cleanup in both browsers: all reported active resources are zero,
+peakCanonicalRgbaFrames=1 and sourceSoftClosed=true. Individual additional field
+values were not separately transcribed and are not manufactured here.
+
+### Quark archive error classification
+
+**USER-CONFIRMED EXPECTED NEGATIVE PASSWORD TEST.** The user explicitly confirmed
+one deliberate wrong-password attempt, followed by successful correct-password
+entry and completion of all assigned functional tests without another problem.
+archiveErrors=1 and extractions started=16/completed=15/discarded=0 are retained
+unchanged and are consistent with that expected failure attempt. There is no
+independent per-request log correlation proving which extraction produced the
+counter increment; no such correlation is claimed. With reported active resources
+and cleanupErrors zero, this expected negative test is not an RC blocker.
+
+| Browser | Candidate attribution | Assigned A/B/C | Cleanup | Final result |
 | --- | --- | --- | --- | --- |
-| Android Edge | Not yet user-confirmed | PENDING | NOT PROVIDED | PENDING |
-| Android Quark | Not yet user-confirmed | PENDING | NOT PROVIDED | PENDING |
+| Android Edge | 733df198 via user confirmation + frozen HTTPS evidence | USER-CONFIRMED PASS | USER-CONFIRMED PASS | FUNCTIONAL PASS / CLEANUP PASS |
+| Android Quark | 733df198 via user confirmation + frozen HTTPS evidence | USER-CONFIRMED PASS | USER-CONFIRMED PASS | FUNCTIONAL PASS / CLEANUP PASS; expected negative password test retained |
 
 ## Historical baselines retained
 
@@ -109,5 +149,15 @@ bytes; [manifest](../research/m10e-v0.3-rc-asset-manifest.json) canonical SHA256
 Normalize Windows checkout CRLF to LF when verifying these documentation digests.
 Old audit findings and M10C2 initial Android failures are not rewritten.
 
-**M10E: PENDING ANDROID RC VALIDATION.** Await separate real Edge/Quark results.
-No version bump, main merge, tag, Release, production Pages or M10F action occurs.
+## Final closeout
+
+**M10E — V0.3 Stability & Release Candidate Audit: RC-READY / PASSED / CLOSED.**
+The user-confirmed functional/cleanup results and resolved expected-error
+classification complete the phone gate for the identified RC. Existing automated,
+desktop, reproducibility, native security and distribution results are retained
+as prior evidence; those suites were not rerun during this documentation closeout.
+Existing format/resource/solid/password/platform limitations remain accepted.
+
+**M10F: READY FOR A SEPARATELY AUTHORIZED RELEASE TASK / NOT STARTED.**
+This verdict does not change version 0.2.0 metadata or authorize a main merge,
+tag, GitHub Release or production Pages deployment.
