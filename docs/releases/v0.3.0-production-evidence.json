@@ -1,0 +1,603 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-11T13:07:40.401064+00:00",
+  "status": "M10F PASSED / CLOSED; AniView V0.3.0 RELEASED / PRODUCTION VERIFIED",
+  "release": {
+    "approvedCommit": "6baea97390c998722ebef16c28126a65641fff38",
+    "tagObject": "2b851f5a0e55d11b1f0041a7b59cb970ad84a2ef",
+    "peeledCommit": "6baea97390c998722ebef16c28126a65641fff38",
+    "id": 441704442,
+    "name": "AniView V0.3.0",
+    "tag": "v0.3.0",
+    "draft": false,
+    "prerelease": false,
+    "immutable": false,
+    "publishedAt": "2026-11-11T13:05:03Z",
+    "htmlUrl": "https://github.com/ZZH-0427/AniView/releases/tag/v0.3.0",
+    "bodySha256": "ab89f1611cf759a1b7b6dc7376b7e07f2b47d0c1d6018a38fe25f2f7033b27f2"
+  },
+  "archive": {
+    "branch": "release/v0.3.0",
+    "basedOn": "6baea97390c998722ebef16c28126a65641fff38",
+    "archiveCommit": "Following normal documentation commit; not embedded in itself",
+    "mainAndTagRemain": "6baea97390c998722ebef16c28126a65641fff38"
+  },
+  "authorization": {
+    "source": "User formal M10F release authorization in this conversation",
+    "approvedCommit": "6baea97390c998722ebef16c28126a65641fff38",
+    "phases": [
+      "F3 main fast-forward/publish",
+      "F4 Pages deployment and actual production validation",
+      "F5 annotated v0.3.0 tag and GitHub Release only after production PASS",
+      "F6 release/v0.3.0 closeout archive"
+    ]
+  },
+  "mainPublication": {
+    "transport": "GitHub Git Data API force=false fast-forward after ordinary Git push timeout",
+    "ordinaryGitPush": "failed: transfer below1 byte/sec for25 seconds; remote read confirmed old main before API update",
+    "force": false,
+    "main": "6baea97390c998722ebef16c28126a65641fff38",
+    "originMain": "6baea97390c998722ebef16c28126a65641fff38"
+  },
+  "pages": {
+    "runId": 43023408548,
+    "runUrl": "https://github.com/ZZH-0427/AniView/actions/runs/43023408548",
+    "event": "push",
+    "headSha": "6baea97390c998722ebef16c28126a65641fff38",
+    "conclusion": "success",
+    "attempt": 1,
+    "jobs": [
+      {
+        "id": 130531967029,
+        "name": "build",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-11T12:47:40Z",
+        "completed_at": "2026-11-11T12:49:36Z"
+      },
+      {
+        "id": 130532933431,
+        "name": "deploy",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-11T12:49:40Z",
+        "completed_at": "2026-11-11T12:49:49Z"
+      }
+    ],
+    "ciEnvironment": {
+      "node": "v24.22.2",
+      "npm": "11.19.1",
+      "runnerImage": "ubuntu-26.04"
+    },
+    "officialArtifact": {
+      "id": 13856581123,
+      "zipSha256": "19472666c7a3b3ec6552b1c66f8a1cc26f853bc7e4d695a7b988c3c982afbc7d",
+      "all59CiHashesMatch": true,
+      "noticesMatchApprovedGitBlob": true
+    }
+  },
+  "identity": {
+    "version": "0.3.0",
+    "commit": "6baea97390c998722ebef16c28126a65641fff38",
+    "sourceDirty": false,
+    "projectLicense": "UNLICENSED"
+  },
+  "manifests": {
+    "production": {
+      "file": "v0.3.0-production-build-manifest.json",
+      "sha256": "3f036c46c7680936b469ac1353cdc156ec3fa35cb9ae5e6825c6e04549ffbd78",
+      "files": 59,
+      "bytes": 6047932
+    },
+    "windows": {
+      "file": "v0.3.0-windows-build-manifest.json",
+      "sha256": "ffa38bece071199a48197d7e2f727df69a62da55cb3ed949e3daae37820cb61f",
+      "files": 59,
+      "bytes": 6049630,
+      "twoFinalBuildsEqual": true
+    }
+  },
+  "checkoutFormatDifference": {
+    "windowsAndCiByteIdentical": false,
+    "differentFiles": [
+      "third-party-notices.txt"
+    ],
+    "actualDifference": {
+      "path": "third-party-notices.txt",
+      "expectedWindowsBytes": 81529,
+      "expectedWindowsSha256": "f262f1d0a83e9e6410ad42004347aede2501366a83f27e3dcaeb078754984cd8",
+      "committedBytes": 79831,
+      "committedSha256": "fa6802e07be2032f551dec830d6f7728a509cf53b60e0b464012a07da1a7cc12",
+      "crlfWindows": 1698,
+      "crlfCommitted": 0,
+      "lfNormalizationExactlyExplains": true
+    },
+    "independentlyExpectedBeforeProduction": true,
+    "officialArtifactVerified": true,
+    "approvedSourceChanged": false,
+    "originalStrictFailureRetained": true,
+    "strictFailureSha256": "856ddc9f0f928ee7b4e2be6dcf0f6d52bd85cee2f9ec7ee84c05d70efa95e719"
+  },
+  "automated": {
+    "ciDirectTestSource": "6baea97390c998722ebef16c28126a65641fff38",
+    "ciTestFiles": 95,
+    "ciTestsPassed": 1191,
+    "ciFailed": 0,
+    "ciSkipped": 0,
+    "preparationTestsSource": "fe5b0bbae222f98540f6aa960fd0faa194ac009f",
+    "ciBuildSteps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@v6",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-node@v6",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm ci",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run lint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run test",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run npm run build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Core browser regression",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Release UI browser regression",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Configure Pages",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Upload Pages artifact",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-node@v6",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@v6",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "native": {
+    "engine": "7-Zip 26.05 + selected 26.06 Rar3/InBuffer security/error-handling backport + AniView RAR4 filename patch",
+    "emscripten": "6.0.13",
+    "wasmSha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c",
+    "glueSha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d",
+    "memory": {
+      "initial": 16777216,
+      "maximum": 67108864,
+      "shared": false,
+      "growth": true,
+      "binary": {
+        "count": 1,
+        "flags": 1,
+        "initial": 16777216,
+        "maximum": 67108864
+      }
+    },
+    "rebuiltThisRelease": false,
+    "securityGate": "NATIVE-SECURITY-01 CLOSED",
+    "linuxHarness": "20/20 PASS retained, separately built independent harness, not direct tests on shipped Windows WASM"
+  },
+  "securityLicense": {
+    "productionAdvisories": 0,
+    "developmentModerateNodes": 10,
+    "high": 0,
+    "critical": 0,
+    "developmentDisposition": "ACCEPTED LIMITATION: 10 moderate dev-tool nodes propagate one advisory, not 10 independent browser vulnerabilities",
+    "licenseEngineeringGate": "PASS (engineering)",
+    "missingRequiredMaterials": [],
+    "projectLicense": "UNLICENSED",
+    "private": true,
+    "legalGuarantee": false
+  },
+  "production": {
+    "url": "https://zzh-0427.github.io/AniView/",
+    "passed": true,
+    "browser": "Edg/157.0.4341.42",
+    "scope": "Actual HTTPS GitHub Pages production verification on approved v0.3.0; not a new Android matrix",
+    "checks": [
+      "actual production HTTPS approved identity and all asset bytes/hash, Worker/WASM MIME, normal TLS and missing-asset404",
+      "production HTTPS Home lazy loading and legacy Spike WebP query returns Home, secureContext=true/HMR=false",
+      "actual production HTTPS GIF/WebP/APNG application-controlled Viewer playback and navigation",
+      "ordinary/password ZIP actual Viewer, wrong/correct password and credential reuse without SevenZip loading",
+      "Creator three direct targets, retained sources and results, actual Preview/play/return/download and EN/ZH",
+      "actual archive cancellation terminates worker; retry rebuilds and opens another media entry",
+      "production animation to H264 MP4 actual encoding, native Preview/play/seek and saved MP4",
+      "production MP4 H264 to Animated WebP Worker sampling/encoding, actual Preview and saved output",
+      "RAR5/plain/password and 7z/plain/encrypted-header actual extraction, passwords, Viewer navigation and Home cleanup",
+      "production HTTPS Worker/WASM actual responses under /AniView/, recorded hosting headers, same-origin/no-CDN, no upload/password transmission, no errors/reload"
+    ],
+    "assetCount": 59,
+    "bytes": 6047932,
+    "pixelChecks": 23,
+    "homeSnapshots": 12,
+    "jobTargets": [
+      {
+        "kind": "creator",
+        "target": "gif"
+      },
+      {
+        "kind": "creator",
+        "target": "webp"
+      },
+      {
+        "kind": "creator",
+        "target": "apng"
+      },
+      {
+        "kind": "animation-conversion",
+        "target": "apng"
+      },
+      {
+        "kind": "extended archive"
+      },
+      {
+        "kind": "extended archive"
+      },
+      {
+        "kind": "extended archive"
+      },
+      {
+        "kind": "extended archive"
+      },
+      {
+        "kind": "animation-conversion",
+        "target": "mp4"
+      },
+      {
+        "kind": "video-to-animation",
+        "target": "webp"
+      }
+    ],
+    "savedDownloads": [
+      {
+        "bytes": 528,
+        "sha256": "73867edb286225c6df82f8a373290b4f6516ca8f3e5f16b5f3fe032e82e999dd",
+        "format": "gif"
+      },
+      {
+        "bytes": 254,
+        "sha256": "fe3dcf9e79636b5db7ac29df9d4e274c2cb6a5f33e3150d37556d6a61e3bf4a9",
+        "format": "webp"
+      },
+      {
+        "bytes": 435,
+        "sha256": "46b34c85b4097a111e50a6b4cff0620f9b12ef4726d1f822fc637b5179118729",
+        "format": "apng"
+      },
+      {
+        "bytes": 322,
+        "sha256": "43eb5e9176aea293f2033cc9bcd39deb527e1397e097d12aa7c09b7a64fb70de",
+        "format": "apng"
+      },
+      {
+        "bytes": 3843,
+        "sha256": "184c09c690a3fcf1f50f3d1b70e01a9ebf9fd287aa893959ebf281de70ea6442",
+        "format": "mp4"
+      },
+      {
+        "bytes": 2724,
+        "sha256": "5f8266ca197662767cce11d0716cacdad69cadfeac2c0e1cae9b8e7bf43b361c",
+        "format": "webp"
+      }
+    ],
+    "cancellationScope": "Actual extract dispatch followed by DOM cancel before terminal reply; does not prove native codec input consumption.",
+    "browserErrors": [],
+    "documentUnchanged": true,
+    "reusedSuccessfulSourceGetEvidence": [
+      {
+        "path": "vendor/sevenzip/corresponding-source.tar.gz",
+        "url": "https://zzh-0427.github.io/AniView/vendor/sevenzip/corresponding-source.tar.gz",
+        "receipt": ".tools/m10f/production/corresponding-source-dotnet.json",
+        "bytes": 3650212,
+        "sha256": "f64a368ce5e4c94b03ca8a3b4fa7ec89d8d51e31fc04c899ff9ecedfa83addb3",
+        "status": 200,
+        "mime": "application/gzip",
+        "note": "Earlier actual successful source GET reused explicitly; not another source download.",
+        "receiptSha256": "1a1fb19c4544058b9b84798a04178b18870c5fa287562d325cc0d5a0c20e5fb5"
+      }
+    ]
+  },
+  "runtimeNetwork": {
+    "requests": 156,
+    "methods": [
+      "GET"
+    ],
+    "unexpectedOrigins": [],
+    "observedUploadRequests": 0,
+    "observedMediaArchivePasswordUploads": 0,
+    "runtimeCdnRequests": 0,
+    "newTelemetryObserved": false,
+    "normalTlsValidation": true,
+    "hmr": false
+  },
+  "finalProductionCleanup": {
+    "name": "MP4 H264 to Animated WebP actual decode/encode/Preview/download/EN-ZH/Home",
+    "runtime": {
+      "workersCreated": 69,
+      "workersTerminated": 69,
+      "activeWorkers": 0,
+      "peakWorkers": 3,
+      "bitmapsCreated": 0,
+      "bitmapsClosed": 0,
+      "activeBitmaps": 0,
+      "peakBitmaps": 0,
+      "archiveSessionsOpened": 7,
+      "archiveSessionsClosed": 7,
+      "activeArchiveSessions": 0,
+      "entryExtractionsStarted": 23,
+      "entryExtractionsCompleted": 20,
+      "entryExtractionsDiscarded": 0,
+      "staleResultsDiscarded": 0,
+      "decoderErrors": 0,
+      "staticDecodeErrors": 0,
+      "archiveErrors": 1,
+      "cleanupErrors": 0,
+      "lastArchiveCleanup": {
+        "activeArchiveWorkers": 0,
+        "activeArchiveSessions": 0,
+        "pendingReads": 0,
+        "pendingPasswordAccess": 0,
+        "currentExtractedBytes": 0,
+        "cleanupErrors": 0
+      },
+      "lastExtendedArchiveCleanup": {
+        "extendedArchiveWorkersCreated": 2,
+        "extendedArchiveWorkersTerminated": 2,
+        "activeExtendedArchiveWorkers": 0,
+        "activeWasmInstances": 0,
+        "activeArchiveSessions": 0,
+        "activeExtraction": 0,
+        "pendingAccess": 0,
+        "currentExtractedBytes": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "peakWasmBytes": 16777216,
+        "timeouts": 0
+      },
+      "lastCreationCleanup": {
+        "activeSourceWorkers": 0,
+        "activeEncoderWorkers": 0,
+        "activeValidationDecoderWorkers": 0,
+        "activeInspectionWorkers": 0,
+        "activeBitmaps": 0,
+        "activeCanvases": 0,
+        "activeImageData": 0,
+        "ownedRgba": 0,
+        "awaitingAck": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "peakCanonicalRgbaFrames": 1,
+        "sourceSoftClosed": true
+      },
+      "lastConversionCleanup": {
+        "activeDecoderWorkers": 0,
+        "activeEncoderWorkers": 0,
+        "activeVideoWorkers": 0,
+        "ownedVideoFrames": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "videoFramesBalanced": true
+      },
+      "lastVideoAnimationCleanup": {
+        "videoAnimationJobsStarted": 1,
+        "videoAnimationJobsCompleted": 1,
+        "videoAnimationCancellations": 0,
+        "activeVideoSourceWorkers": 0,
+        "activeEncoderWorkers": 0,
+        "activeOutputDecoderWorkers": 0,
+        "activeSamples": 0,
+        "activeCanvases": 0,
+        "activeImageData": 0,
+        "ownedRgba": 0,
+        "awaitingAck": 0,
+        "activeObjectUrls": 0,
+        "cleanupErrors": 0,
+        "sampledFrames": 10,
+        "actualOutputFrames": 10,
+        "sourceSamplesObserved": 11,
+        "sourcePixelsObserved": 33792,
+        "trackParFallbackSamples": 0,
+        "peakCanonicalRgba": 1,
+        "peakAppSamples": 2,
+        "softClosed": true,
+        "hardTerminated": false,
+        "heartbeat": {
+          "maxGapMs": 59.39999997615814,
+          "maxVisibleGapMs": 59.39999997615814,
+          "hiddenDuringJob": false,
+          "gaps": []
+        }
+      }
+    },
+    "probe": {
+      "created": 69,
+      "terminated": 69,
+      "activeWorkers": 0,
+      "urlsCreated": 7,
+      "urlsRevoked": 7,
+      "activeObjectUrls": 0
+    }
+  },
+  "historyAndRisks": {
+    "oldTagObjects": {
+      "v0.1.0": "498f596377c6ba13cdc300a695b2b49370982811",
+      "v0.2.0": "3f83ab43fa880432bef9e84784da29b8c4dc9843"
+    },
+    "oldTagsMoved": false,
+    "oldBranchesPreserved": true,
+    "android": "M10E user-confirmed Edge/Quark PASS retained under identical runtime; no new production phone matrix claimed",
+    "limits": "Existing archive/codec/resource/workload boundaries remain",
+    "memoryScope": "Application ownership counters do not measure total browser/native/GPU/system memory"
+  },
+  "sourceTransportReceipts": [
+    {
+      "file": ".tools/m10f/production/corresponding-source-dotnet.json",
+      "bytes": 852,
+      "sha256": "1a1fb19c4544058b9b84798a04178b18870c5fa287562d325cc0d5a0c20e5fb5",
+      "result": {
+        "scope": "Read-only built-in .NET transport of the same production corresponding-source file after slow Node transfer; original timeout records retained",
+        "url": "https://zzh-0427.github.io/AniView/vendor/sevenzip/corresponding-source.tar.gz",
+        "status": 200,
+        "elapsedMs": 1521,
+        "bytesRead": 3650212,
+        "passed": true,
+        "sha256": "f64a368ce5e4c94b03ca8a3b4fa7ec89d8d51e31fc04c899ff9ecedfa83addb3"
+      },
+      "errorFirstLine": null
+    },
+    {
+      "file": ".tools/m10f/production/corresponding-source-retry.json",
+      "bytes": 833,
+      "sha256": "5e6c8436f6ec10c465df1454e61eed060cc5e334b52e62d1dc6adc80a2bcbc91",
+      "result": {
+        "scope": "One-time extended-timeout retry of only the large production corresponding-source file; original45s timeout retained",
+        "url": "https://zzh-0427.github.io/AniView/vendor/sevenzip/corresponding-source.tar.gz",
+        "status": 200,
+        "timeoutMs": 240000,
+        "elapsedMs": 240008,
+        "bytesRead": 3188160,
+        "passed": false
+      },
+      "errorFirstLine": "TimeoutError: The operation was aborted due to timeout"
+    }
+  ],
+  "rawLocalEvidence": {
+    "productionReport": {
+      "file": ".tools/m10f/production/ci-attempt1/report.json",
+      "bytes": 201863,
+      "sha256": "a30223295a33f731f8c66980f6e63fb4e3d38187d09b12e1f6a166b18f4c17ff"
+    },
+    "productionSummary": {
+      "file": ".tools/m10f/production/ci-attempt1/summary.json",
+      "bytes": 9632,
+      "sha256": "e6a8ebd82751023dbad92ef2f2c3c732760f77edcce14e3c651ffe3242cd97ba"
+    },
+    "publishedRelease": {
+      "file": ".tools/m10f/release/publish-result.json",
+      "bytes": 862,
+      "sha256": "698f85a9715748019cfd0f0ae929f1f1bb417fd80638f7eb72399e43ee14117f"
+    },
+    "mainPublish": {
+      "file": ".tools/m10f/formal/main-publish.json",
+      "bytes": 2156,
+      "sha256": "6cbea7592de240c421c6c6036d3b463118eb070076b52624196161d6649cda17"
+    },
+    "authorization": {
+      "file": ".tools/m10f/formal/authorization.json",
+      "bytes": 630,
+      "sha256": "998b679d6ba942d600e0678198f57bcc3a7e59ce8582754abc67458fd5002541"
+    },
+    "runs": {
+      "file": ".tools/m10f/formal/actions/runs.json",
+      "bytes": 1192,
+      "sha256": "63fbdad0ff3c0d5483f6a4f6180e9603ceec2fdbc712171c48da64dd4d079e41"
+    },
+    "jobs": {
+      "file": ".tools/m10f/formal/actions/jobs-43023408548.json",
+      "bytes": 10718,
+      "sha256": "3ddb1550716d4147e3ed41fab9f7aa7bcc034ebf00a6e4861493aa9ccbd2c461"
+    },
+    "buildLog": {
+      "file": ".tools/m10f/formal/actions/job-130531967029.log",
+      "bytes": 152477,
+      "sha256": "f3fb5c9bf07ef0e3a3ab37fc55734fde6fbaec648515203c516bf19c9f2bb4a7"
+    },
+    "deployLog": {
+      "file": ".tools/m10f/formal/actions/job-130532933431.log",
+      "bytes": 3824,
+      "sha256": "63349d8fe7fbcb0a4384c4a87949dd324bd8b99e55b0c645e335fa57fc8ab23f"
+    },
+    "ciArtifactVerification": {
+      "file": ".tools/m10f/production/ci-artifact-verification.json",
+      "bytes": 905,
+      "sha256": "2b0eaebe2f39908c93810a5076f374099eed1ae22e8da78e838a9547d3bb3d8e"
+    },
+    "ciManifestDerivation": {
+      "file": ".tools/m10f/production/ci-manifest-derivation.json",
+      "bytes": 1027,
+      "sha256": "0169646ed1d4ce6f227e41eda9c407b022e3fe5d1ab30ab81d421a7780599a98"
+    },
+    "checkoutDifference": {
+      "file": ".tools/m10f/production/copied-public-platform-difference.json",
+      "bytes": 570,
+      "sha256": "1882b123fbfa89d7a32918d1bc3c1de5577264b8a9dcac299ca3f93802d5a703"
+    },
+    "strictWindowsFailure": {
+      "file": ".tools/m10f/production/strict-windows-delivery/report.json",
+      "bytes": 35197,
+      "sha256": "856ddc9f0f928ee7b4e2be6dcf0f6d52bd85cee2f9ec7ee84c05d70efa95e719"
+    },
+    "ciManifest": {
+      "file": ".tools/m10f/production/ci-production-manifest.json",
+      "bytes": 12895,
+      "sha256": "3f036c46c7680936b469ac1353cdc156ec3fa35cb9ae5e6825c6e04549ffbd78"
+    },
+    "windowsManifest": {
+      "file": ".tools/m10f/builds/release-build-2-manifest.json",
+      "bytes": 12870,
+      "sha256": "ffa38bece071199a48197d7e2f727df69a62da55cb3ed949e3daae37820cb61f"
+    },
+    "windowsManifest1": {
+      "file": ".tools/m10f/builds/release-build-1-manifest.json",
+      "bytes": 12870,
+      "sha256": "ffa38bece071199a48197d7e2f727df69a62da55cb3ed949e3daae37820cb61f"
+    },
+    "preflight": {
+      "file": ".tools/m10f/release-preflight.json",
+      "bytes": 11527,
+      "sha256": "b534fd14f6378fee870aff6db149474b87d0b6ef0226c6048888c7526d92d4b0"
+    },
+    "securityLicense": {
+      "file": ".tools/m10f/security/security-license-summary.json",
+      "bytes": 3929,
+      "sha256": "e212df559678be164c0db4353a3ab59534c501d6ed55483f275860b7311afc60"
+    }
+  }
+}

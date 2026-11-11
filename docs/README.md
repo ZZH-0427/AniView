@@ -5,12 +5,15 @@ retain their dated conclusions: an older `NOT STARTED`, `BLOCKED` or `PENDING`
 checkpoint does not override a later closeout. Historical plans and failed runs
 are retained as evidence, not rewritten into current status.
 
-V0.3 is not released. M10E Stability & Release Candidate Audit is now
+V0.3.0 is **RELEASED / PRODUCTION VERIFIED**; M10F is **PASSED / CLOSED**.
+The [official release record](releases/v0.3.0-release-record.md) is archived on
+release/v0.3.0; released main/tag code remains frozen at 6baea973.
+M10E Stability & Release Candidate Audit is
 **RC-READY / PASSED / CLOSED**, with its native security gate resolved and new
 user-confirmed Edge/Quark functional and Home cleanup acceptance. Final accepted
-RC source is 733df1984919e318348a88c512d68743990bdca6. M10F is ready for a separately
-authorized release task but remains NOT STARTED. This index grants no release,
-version bump, main merge, tag or deployment approval.
+RC source is 733df1984919e318348a88c512d68743990bdca6; its release preparation
+and authorized production publication are traced by the final record. This
+archive does not authorize another version bump, main change, tag move or deployment.
 
 ## CURRENT
 
@@ -93,6 +96,13 @@ for the resulting behavior and acceptance.
 | [RAR/7z defer record](planning/v0.3-rar-7z-defer-record.md) | Later M10C2 gate and approved narrow M10C3 implementation |
 
 ## RELEASE ARCHIVE
+
+- V0.3.0: [official record](releases/v0.3.0-release-record.md),
+  [production manifest](releases/v0.3.0-production-build-manifest.json),
+  [production evidence](releases/v0.3.0-production-evidence.json),
+  [checkout-format difference](releases/v0.3.0-checkout-format-difference.md) and
+  [published Release body](releases/v0.3.0-github-release-body.md).
+  These records live on release/v0.3.0, preserving frozen main/tag code.
 
 - V0.1: [release record](releases/v0.1.0.md),
   [QA](releases/v0.1.0-qa.md), [limits](releases/v0.1.0-limits.md) and
