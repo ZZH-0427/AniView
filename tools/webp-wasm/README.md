@@ -118,16 +118,23 @@ Use the official Google sample from
 `8afc28fef9bba14b5eecbbc6bb8b4379dc96b6ebc3e0845607ced41b7dda337c`.
 This file is referenced for engineering validation only; it is not redistributed.
 
-Start Vite in another terminal, then:
+Start the Vite development server in another terminal, then:
 
 ```powershell
 node tools/webp-wasm/browser-check.mjs "http://127.0.0.1:5173/AniView/?spike=webp"
 ```
 
-Repeat with `npm run build` + `npm run preview` at port 4173, then against
-`https://ZZH-0427.github.io/AniView/?spike=webp` after deployment. An optional second
-argument selects a different local animated WebP. `EDGE_PATH` may override the
-installed Edge executable. No Playwright or browser downloads are required.
+The `?spike=webp` engineering page is development-only. Its lazy import and route
+are guarded by Vite's static `import.meta.env.DEV`; ordinary production builds do
+not include its JavaScript/CSS, and that query displays the normal application.
+Keep this independent harness on the development server. For production-preview
+and deployed playback checks, use the normal Viewer and its existing browser
+regression scenarios instead of the spike URL. Historical milestone references
+describe the earlier production-accessible checkpoint.
+
+An optional second argument selects a different local animated WebP. `EDGE_PATH`
+may override the installed Edge executable. No Playwright or browser downloads
+are required.
 
 The script uses native Node WebSocket/CDP, targets real Dedicated Workers and
 observes their WASM network traffic. It checks input and output buffer detachment,

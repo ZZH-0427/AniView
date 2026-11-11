@@ -26,6 +26,13 @@ async function files(directory, prefix = '') {
 const paths = await files('dist')
 assert(!paths.some(path => /(^|\/)(validation|tests|fixtures|node_modules|\.tools)(\/|$)/.test(path)),
   'Development fixtures must not enter the production artifact')
+assert(!paths.some(path => /WebPSpikePage|webp-spike/.test(path)),
+  'The development-only WebP harness must not emit production assets')
+for (const path of paths.filter(path => path.endsWith('.js'))) {
+  const script = await readFile('dist/' + path, 'utf8')
+  assert(!script.includes('Animated WebP technical spike') && !script.includes('Milestone 1A engineering harness'),
+    'The development-only WebP harness must not be bundled into production JavaScript: ' + path)
+}
 for (const required of ['index.html', 'favicon.svg', 'third-party-notices.txt']) {
   assert(paths.includes(required) && (await stat('dist/' + required)).size > 0, `Missing release asset: ${required}`)
 }

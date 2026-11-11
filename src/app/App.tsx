@@ -3,7 +3,8 @@ import { MediaApp } from './MediaApp'
 import { useI18n } from '../i18n'
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher'
 
-const WebPSpikePage = lazy(() => import('../spikes/webp/WebPSpikePage'))
+// Keep the engineering harness available in Vite dev without shipping its chunk.
+const WebPSpikePage = import.meta.env.DEV ? lazy(() => import('../spikes/webp/WebPSpikePage')) : undefined
 const CreatorWorkspace = lazy(() => import('../creation/CreatorWorkspace'))
 const VideoConversionWorkspace=lazy(()=>import('../video-conversion/VideoConversionWorkspace'))
 
@@ -11,7 +12,8 @@ function AppContent() {
   const { t } = useI18n()
   const [creating, setCreating] = useState(false)
   const [convertingVideo,setConvertingVideo]=useState(false)
-  if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('spike') === 'webp') {
+  if (import.meta.env.DEV && WebPSpikePage && typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).get('spike') === 'webp') {
     return <Suspense fallback={<p>Loading engineering harness…</p>}><WebPSpikePage /></Suspense>
   }
   if (creating) return <Suspense fallback={<p role="status">{t('common.openingCreator')}</p>}>
