@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "status": "PASS",
+  "workflow": ".github/workflows/m10e-s2-native-harness.yml",
+  "run": {
+    "id": 43009589916,
+    "url": "https://github.com/ZZH-0427/AniView/actions/runs/43009589916",
+    "jobId": 130485547565,
+    "jobUrl": "https://github.com/ZZH-0427/AniView/actions/runs/43009589916/job/130485547565",
+    "attempt": 1,
+    "event": "push",
+    "headSha": "d7bc6e80e93804f6d539ef730204be1b18fb8444",
+    "conclusion": "success",
+    "startedAt": "2026-11-11T11:09:33Z",
+    "completedAt": "2026-11-11T11:10:08Z"
+  },
+  "runner": {
+    "label": "ubuntu-24.04",
+    "distribution": "Ubuntu 24.04.5 LTS",
+    "architecture": "x86_64",
+    "imageVersion": "20261101.360.1",
+    "runnerVersion": "2.338.2"
+  },
+  "toolchain": {
+    "emsdkCommit": "35659964bc2762fffec0d257997fb61475f765b7",
+    "sdkReleaseBuild": "eb132757325583b787fe9414b09afea9442b72ad",
+    "emscripten": "6.0.13",
+    "emscriptenRevision": "e13ee988ce3d87a738dd8f3661d02223308c412a",
+    "clang": "24.0.0git",
+    "llvmRevision": "83ee07799c341b60965f07892f7bb3d175da05be",
+    "wasmEmscriptenFinalize": "133 (version_133-96-ga631c1445)",
+    "python": "3.12.3",
+    "node": "24.22.1"
+  },
+  "sourceIdentity": {
+    "windowsProductSource": "d31abd8dbc4ab9e8b0bcf032b760c719f478ab6f",
+    "workflowAndHarnessRunnerSource": "d7bc6e80e93804f6d539ef730204be1b18fb8444",
+    "engineBase": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+    "backportUpstream": "d3296e39e1f1f92c7b41c0c3848e65640428d42d",
+    "harnessCppSha256": "299df348faa5a3ff67a2ea509c583020c3b39477a344dc67095554b6bcfabbb9",
+    "frozenManifestSha256": "31939431ab44698093db1a496f560874c179436d991dd4021d662e3619fa7528",
+    "patchOrder": [
+      "system-emscripten.patch",
+      "rar4-filename.patch",
+      "rar3-inbuffer-2606-backport.patch"
+    ],
+    "supportingSourceMatches": 9,
+    "buildInputMatches": 7
+  },
+  "nativeResult": {
+    "sourceCommit": "d7bc6e80e93804f6d539ef730204be1b18fb8444",
+    "total": 20,
+    "executed": 20,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "groups": [
+      {
+        "name": "RAR3 callback exception handling",
+        "expected": 6,
+        "executed": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "status": "PASS"
+      },
+      {
+        "name": "Recovery / EOF handling",
+        "expected": 6,
+        "executed": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "status": "PASS"
+      },
+      {
+        "name": "Shared InBuffer behavior",
+        "expected": 3,
+        "executed": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "status": "PASS"
+      },
+      {
+        "name": "Decoder Code status propagation",
+        "expected": 4,
+        "executed": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "status": "PASS"
+      },
+      {
+        "name": "Solid guard",
+        "expected": 1,
+        "executed": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "status": "PASS"
+      }
+    ],
+    "tests": [
+      {
+        "name": "read-byte-captures-hresult-0-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-byte-init-recovery-and-normal-eof-0",
+        "passed": true
+      },
+      {
+        "name": "read-byte-captures-hresult-1-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-byte-init-recovery-and-normal-eof-1",
+        "passed": true
+      },
+      {
+        "name": "read-byte-captures-hresult-2-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-byte-init-recovery-and-normal-eof-2",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-captures-hresult-0-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-init-recovery-and-normal-eof-0",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-captures-hresult-1-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-init-recovery-and-normal-eof-1",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-captures-hresult-2-and-stops-refill",
+        "passed": true
+      },
+      {
+        "name": "read-aligned-byte-init-recovery-and-normal-eof-2",
+        "passed": true
+      },
+      {
+        "name": "shared-buffer-throws-original-hresult-after-buffered-input",
+        "passed": true
+      },
+      {
+        "name": "failed-input-read-byte-lookahead-read-bytes-skip-never-refill",
+        "passed": true
+      },
+      {
+        "name": "shared-buffer-init-recovery-normal-eof-and-processed-size",
+        "passed": true
+      },
+      {
+        "name": "code-clears-stale-status-and-propagates-captured-hresult-0",
+        "passed": true
+      },
+      {
+        "name": "code-clears-stale-status-and-propagates-captured-hresult-1",
+        "passed": true
+      },
+      {
+        "name": "code-clears-stale-status-and-propagates-captured-hresult-2",
+        "passed": true
+      },
+      {
+        "name": "code-clears-stale-status-and-propagates-captured-hresult-3",
+        "passed": true
+      },
+      {
+        "name": "failed-code-does-not-admit-solid-continuation",
+        "passed": true
+      }
+    ],
+    "frozenAssetsVerified": true,
+    "independentArtifacts": [
+      {
+        "file": "native-error-harness.cjs",
+        "sha256": "fa714668a334d1c12f49a179cc9ef453407c9e7800eccd70a8171b8aaae26f9d"
+      },
+      {
+        "file": "native-error-harness.wasm",
+        "sha256": "7ccbfc648fcb12976b3f5f2847cf0c79f77130c42f809b3c3a79b0b2d028f928"
+      }
+    ],
+    "independentMemory": {
+      "count": 1,
+      "flags": 1,
+      "initial": 16777216,
+      "maximum": 67108864
+    },
+    "result": "PASS"
+  },
+  "windowsFrozenProduct": {
+    "wasmSha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c",
+    "jsSha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d",
+    "unchanged": true,
+    "verifiedAssets": 20
+  },
+  "evidence": {
+    "downloadedJobLogSha256": "d59a1ebb8a482f3271505a37d1cb56332d7ba527abe8e1d9cf8fdd0eef7fb810",
+    "rawLogLocal": ".tools/m10e-s2/actions-evidence/job-130485547565.log"
+  },
+  "limits": [
+    "Independent Linux harness is not a direct execution of the frozen Windows product WASM.",
+    "Code status tests use the existing white-box status injection; four zero-write assertions are not a complete partial-output/Worker e2e proof.",
+    "Existing Windows fresh-build, filename/boundary/compatibility and product evidence remains the separate product assurance chain.",
+    "The optional post-activation emsdk commit label was empty because SDK activation removed the custom EMSDK_COMMIT environment variable. Exact checkout SHA was verified before activation and appears in fetch/checkout logs; emcc reports the exact 6.0.13 revision."
+  ],
+  "securityGate": "CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS",
+  "androidState": "READY TO PREPARE ANDROID RC VALIDATION; not started"
+}
