@@ -1,7 +1,25 @@
 {
-  "schema": 1,
-  "engine": "7-Zip 26.05",
+  "schema": 2,
+  "engine": "7-Zip 26.05 + selected 26.06 Rar3/InBuffer security/error-handling backport + AniView RAR4 filename patch",
   "engineRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+  "securityBackport": {
+    "baseRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+    "upstreamRevision": "d3296e39e1f1f92c7b41c0c3848e65640428d42d",
+    "files": [
+      {
+        "file": "CPP/7zip/Compress/Rar3Decoder.cpp",
+        "sha256": "fee600a4b359a12fc38a4a95f057d075a5f34a1eea9ba545915de9049d006d96"
+      },
+      {
+        "file": "CPP/7zip/Compress/Rar3Decoder.h",
+        "sha256": "0fa7330795ff6a1faddcf9fbe53497d7c6fb57c3c4111e36856c46f08c8b6086"
+      },
+      {
+        "file": "CPP/7zip/Common/InBuffer.cpp",
+        "sha256": "4264580db28cb2c563c9b416c119a8f82ddad95da09e6844f450b6a2a4451bbf"
+      }
+    ]
+  },
   "referencePackage": "sevenzip-wasm 26.5.0",
   "wrapperRevision": "7b53d4abf78da9eb06f9447730ae31eaf9acd7c3",
   "emscripten": "6.0.13",
@@ -33,15 +51,15 @@
   "buildInputs": [
     {
       "file": "tools/extended-archive/build-runtime.mjs",
-      "sha256": "b0bbfc40830b5fb4976ee2ef147d21219109abe3291b3db20fe9b2a489d60719"
+      "sha256": "c28f37248793403d85fc9d64e576fc89ef2c6ac8002c84c1d0be921d7b63cbd7"
     },
     {
       "file": "tools/extended-archive/compile.mjs",
-      "sha256": "c07830a48aaa8cf95dcd7bd4640f7a78d5e2cce0e9fc2a8e8cf71dd9c9f67f0e"
+      "sha256": "c4e0bf65c1f4c5665d5a86bddf31529b09386448e341e5e3dd03c6c082c78e4a"
     },
     {
       "file": "tools/extended-archive/apply-native-patches.mjs",
-      "sha256": "4ca77e861e84afc11f12c0fa9ae1cc0e634d4a0a4286c2c93d66c4a44fff2972"
+      "sha256": "2176ad03011e31bbbf5623fd169db7de166b0059150ef174a2bac9f1f285809c"
     },
     {
       "file": "tools/extended-archive/native/bridge.cpp",
@@ -54,6 +72,40 @@
     {
       "file": "tools/extended-archive/rar4-filename.patch",
       "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    },
+    {
+      "file": "tools/extended-archive/rar3-inbuffer-2606-backport.patch",
+      "sha256": "d031e9d5abaa449d63ae2326335014e3652df9c48d34e9efe99c705c24514728"
+    }
+  ],
+  "distributionInputs": [
+    {
+      "file": "tools/extended-archive/prepare-runtime.mjs",
+      "sha256": "4c98eb256c5d83a7635f03d8bbb6194f68562bcb376cd2f51a3b07e0219b7287"
+    },
+    {
+      "file": "tools/extended-archive/package-runtime.mjs",
+      "sha256": "4daf6e6b63c7542c9962d542aec659e42fd049d69bce9e51ff6effbceb24d690"
+    },
+    {
+      "file": "tools/extended-archive/verify-runtime.mjs",
+      "sha256": "f3bdaf6b2cacc3f78e2db23995b5852ec403ac88207ca696cbe42112318d122b"
+    },
+    {
+      "file": "tools/extended-archive/README.md",
+      "sha256": "6e7c957dc7a42aeeb43e4d1c67ccb8107e01509d6db43132163a22fae46d1356"
+    },
+    {
+      "file": "tools/extended-archive/distribution/README.md",
+      "sha256": "36e0cbfba2f762963901e0663e19919f682e2f865d10a11304e1c0241454db72"
+    },
+    {
+      "file": "tools/extended-archive/distribution/THIRD_PARTY_NOTICES.md",
+      "sha256": "d4075c4060addf8a7f0e11c87d3ec93b769fb6ea14af265249c9158a0086bbf3"
+    },
+    {
+      "file": "tools/extended-archive/distribution/CHANGES.md",
+      "sha256": "449a2afd81bed08b11f93d7fc886d9afbec1270e42ea500290cef8799519c6ce"
     }
   ],
   "patches": [
@@ -64,6 +116,10 @@
     {
       "file": "patches/rar4-filename.patch",
       "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    },
+    {
+      "file": "patches/rar3-inbuffer-2606-backport.patch",
+      "sha256": "d031e9d5abaa449d63ae2326335014e3652df9c48d34e9efe99c705c24514728"
     }
   ],
   "sourceArchives": [
@@ -87,33 +143,39 @@
     },
     {
       "file": "bounded-sevenzip.wasm",
-      "bytes": 287473,
-      "gzipBytes": 123391,
-      "sha256": "bcbd8a4466062683a7e5d5c195be745fe18ea1065a4c6ccfe157dbca230fe970"
+      "bytes": 287742,
+      "gzipBytes": 123488,
+      "sha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c"
     },
     {
       "file": "corresponding-source.tar.gz",
-      "bytes": 3623878,
-      "gzipBytes": 3624638,
-      "sha256": "4180d1a660ac1af72125335fdf6ce45fae2a6ac8b61b1887816ead4563c64183"
+      "bytes": 3650212,
+      "gzipBytes": 3651003,
+      "sha256": "f64a368ce5e4c94b03ca8a3b4fa7ec89d8d51e31fc04c899ff9ecedfa83addb3"
     },
     {
       "file": "README.md",
-      "bytes": 5036,
-      "gzipBytes": 2446,
-      "sha256": "43c7119d6617df8c07a52bcc38fdd1da4ca47af2364c008b6a545de313ef0a59"
+      "bytes": 7091,
+      "gzipBytes": 3314,
+      "sha256": "36e0cbfba2f762963901e0663e19919f682e2f865d10a11304e1c0241454db72"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
-      "bytes": 2626,
-      "gzipBytes": 1368,
-      "sha256": "a578a25199367b2fc047857ca40d3925ca30b5a0feca0e7f5d2bfcdd65717ac0"
+      "bytes": 3162,
+      "gzipBytes": 1632,
+      "sha256": "d4075c4060addf8a7f0e11c87d3ec93b769fb6ea14af265249c9158a0086bbf3"
     },
     {
       "file": "CHANGES.md",
-      "bytes": 1440,
-      "gzipBytes": 844,
-      "sha256": "d5b7e964c76b565a7e5d33210da74406f5e92c99e7ed508991820f78ee5b543b"
+      "bytes": 2765,
+      "gzipBytes": 1484,
+      "sha256": "449a2afd81bed08b11f93d7fc886d9afbec1270e42ea500290cef8799519c6ce"
+    },
+    {
+      "file": "native-build-receipt.json",
+      "bytes": 56149,
+      "gzipBytes": 18436,
+      "sha256": "2d0de07b8fb2b29aa45a34e833e2d05c01ee4b5bfbc6efd873579fb4b6cf5159"
     },
     {
       "file": "patches/system-emscripten.patch",
@@ -126,6 +188,12 @@
       "bytes": 7252,
       "gzipBytes": 2559,
       "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    },
+    {
+      "file": "patches/rar3-inbuffer-2606-backport.patch",
+      "bytes": 2395,
+      "gzipBytes": 832,
+      "sha256": "d031e9d5abaa449d63ae2326335014e3652df9c48d34e9efe99c705c24514728"
     },
     {
       "file": "licenses/7zip-License.txt",

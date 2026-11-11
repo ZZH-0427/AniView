@@ -1,13 +1,13 @@
 // Pinned read-only product component. This build does not run during npm install.
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { resolve, relative } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { applyNativePatches, hashBuildInputs } from './apply-native-patches.mjs'
+import { applyNativePatches, hashBuildInputs, securityBackport } from './apply-native-patches.mjs'
 const source = resolve(process.env.SEVENZIP_SOURCE ?? '.tools/m10c3/source')
 const sdk = resolve(process.env.EMSDK ?? '.tools/emsdk')
 const out = resolve('public/vendor/sevenzip')
-const work = resolve('.tools/m10c3/native-build')
+const work = resolve(process.env.SEVENZIP_WORK ?? '.tools/m10c3/native-build')
 await mkdir(out, { recursive: true }); await mkdir(work, { recursive: true })
 if (Number(process.versions.node.split('.')[0]) !== 24) throw Error('Build requires Node.js 24')
 const compilerVersion = JSON.parse((await readFile(sdk + '/upstream/emscripten/emscripten-version.txt', 'utf8')).trim())
@@ -16,7 +16,7 @@ const config = `LLVM_ROOT = '${sdk.replaceAll('\\', '/')}/upstream/bin'\nBINARYE
 await writeFile(work + '/emscripten.config', config)
 const arc = await readFile(source + '/CPP/7zip/Bundles/Format7zF/Arc_gcc.mak', 'utf8')
 const rules = await readFile(source + '/CPP/7zip/7zip_gcc.mak', 'utf8')
-applyNativePatches(source)
+const patchApplications = applyNativePatches(source)
 const groups = ['COMMON_OBJS', 'WIN_OBJS', '7ZIP_COMMON_OBJS', 'AR_COMMON_OBJS', '7Z_OBJS', 'RAR_OBJS', 'COMPRESS_OBJS', 'CRYPTO_OBJS', 'C_OBJS']
 const objects = new Set(['MyWindows', 'FileStreams'])
 for (const group of groups) for (const m of arc.matchAll(new RegExp('^' + group + ' \\+?= ([\\s\\S]*?)(?=\\n\\s*\\n)', 'gm')))
@@ -33,7 +33,8 @@ const commands = [...objects].map(name => {
 commands.push({ name: 'aniview_bridge', file: resolve('tools/extended-archive/native/bridge.cpp') })
 const q = s => '"' + s.replaceAll('\\', '/') + '"'
 const nf = s => s.replaceAll('\\', '/').replaceAll(':', '$:').replaceAll(' ', '$ ')
-let ninja = `builddir = ${nf(work)}\nrule cc\n  command = ${q(process.execPath)} ${q(resolve('tools/extended-archive/compile.mjs'))} $in $out\nrule link\n  command = ${q(process.execPath)} ${q(resolve('tools/extended-archive/compile.mjs'))} LINK $out\n`
+const commandFile = work + '/commands.json'
+let ninja = `builddir = ${nf(work)}\nrule cc\n  command = ${q(process.execPath)} ${q(resolve('tools/extended-archive/compile.mjs'))} $in $out ${q(commandFile)}\nrule link\n  command = ${q(process.execPath)} ${q(resolve('tools/extended-archive/compile.mjs'))} LINK $out ${q(commandFile)}\n`
 for (const c of commands) ninja += `build ${nf(work + '/' + c.name + '.o')}: cc ${nf(c.file)} | ${nf(work + '/commands.json')}\n`
 const exports = ['open', 'count', 'string', 'number', 'extract', 'output', 'length', 'release', 'close', 'last'].map(n => '_av_' + n)
 const link = [...commands.map(c => work + '/' + c.name + '.o'), '-Oz', '-fexceptions', '--no-entry', '-sMODULARIZE=1', '-sEXPORT_ES6=1', '-sEXPORT_NAME=BoundedSevenZip', '-sENVIRONMENT=worker,node', '-sINITIAL_MEMORY=16777216', '-sMAXIMUM_MEMORY=67108864', '-sALLOW_MEMORY_GROWTH=1', '-sSTACK_SIZE=1048576', '-sABORTING_MALLOC=0', '-sDYNAMIC_EXECUTION=0', '-sEXPORTED_FUNCTIONS=' + JSON.stringify(exports), '-sEXPORTED_RUNTIME_METHODS=["FS","WORKERFS","UTF8ToString","ccall"]', '-lworkerfs.js', '-o', out + '/bounded-sevenzip.js']
@@ -44,11 +45,17 @@ const result = spawnSync(resolve(process.env.NINJA_EXE??'.tools/python-build/bin
 if (result.error) throw result.error
 process.exitCode = result.status ?? 1
 if (result.status === 0) {
+  const sha = bytes => createHash('sha256').update(bytes).digest('hex')
   const artifacts = []
   for (const file of ['bounded-sevenzip.js', 'bounded-sevenzip.wasm'])
     artifacts.push({ file, sha256: createHash('sha256').update(await readFile(out + '/' + file)).digest('hex') })
-  await writeFile(work + '/build-receipt.json', JSON.stringify({ schema: 1,
+  const compilationUnits = await Promise.all(commands.map(async c => ({ name: c.name,
+    file: c.name === 'aniview_bridge' ? 'tools/extended-archive/native/bridge.cpp' : relative(source, c.file).replaceAll('\\', '/'),
+    sourceSha256: sha(await readFile(c.file)), objectSha256: sha(await readFile(work + '/' + c.name + '.o')) })))
+  await writeFile(work + '/build-receipt.json', JSON.stringify({ schema: 2,
     emscripten: compilerVersion, node: process.version, inputs: await hashBuildInputs(), artifacts,
+    sourceRevision: securityBackport.baseRevision, securityBackport, patchApplications,
+    compilationUnits, flags, linkObjects: commands.map(c => c.name + '.o'),
     memory: { initial: 16777216, maximum: 67108864, shared: false, growth: true } }, null, 2) + '\n')
 }
 const label=process.argv[2]

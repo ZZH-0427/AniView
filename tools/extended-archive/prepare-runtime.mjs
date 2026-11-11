@@ -2,8 +2,10 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { parseArgs } from 'node:util'
 
-const root = '.tools/m10c3'
+const { values } = parseArgs({ options: { root: { type: 'string' } } })
+const root = values.root ?? '.tools/m10c3'
 await mkdir(root, { recursive: true })
 for (const [name, url, expected] of [
   ['7zip', 'https://codeload.github.com/ip7z/7zip/tar.gz/b88c6bc09339de32f7d18bbab900686b244f42ba', 'd06cf3c4b4cb085f9a9a5c385b80e46d9ab47849860a4e2c00e1882409c7f830'],
@@ -13,14 +15,17 @@ for (const [name, url, expected] of [
   let bytes
   try { bytes = await readFile(path) } catch {
     // Reuse a verified local cache or fetch an exact revision, never a moving tag.
-    try { bytes = await readFile('.tools/m10c2/' + name + '.tar.gz') } catch {
+    for (const cache of ['.tools/m10c3', '.tools/m10c2']) {
+      try { bytes = await readFile(cache + '/' + name + '.tar.gz'); break } catch { /* Try another pinned cache. */ }
+    }
+    if (!bytes) {
       const response = await fetch(url, { signal: AbortSignal.timeout(90000) })
       if (!response.ok) throw Error('Source retrieval failed: HTTP ' + response.status)
       bytes = Buffer.from(await response.arrayBuffer())
     }
-    await writeFile(path, bytes)
   }
   if (createHash('sha256').update(bytes).digest('hex') !== expected) throw Error('Pinned source archive integrity mismatch: ' + name)
+  await writeFile(path, bytes)
   const destination = root + '/' + (name === '7zip' ? 'source' : name)
   await mkdir(destination, { recursive: true })
   const result = spawnSync('tar', ['-xf', path, '-C', destination, '--strip-components=1'], { stdio: 'inherit', windowsHide: true })

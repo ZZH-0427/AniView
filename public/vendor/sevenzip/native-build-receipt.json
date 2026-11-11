@@ -1,0 +1,1418 @@
+{
+  "schema": 2,
+  "emscripten": "6.0.13",
+  "node": "v24.22.1",
+  "inputs": [
+    {
+      "file": "tools/extended-archive/build-runtime.mjs",
+      "sha256": "c28f37248793403d85fc9d64e576fc89ef2c6ac8002c84c1d0be921d7b63cbd7"
+    },
+    {
+      "file": "tools/extended-archive/compile.mjs",
+      "sha256": "c4e0bf65c1f4c5665d5a86bddf31529b09386448e341e5e3dd03c6c082c78e4a"
+    },
+    {
+      "file": "tools/extended-archive/apply-native-patches.mjs",
+      "sha256": "2176ad03011e31bbbf5623fd169db7de166b0059150ef174a2bac9f1f285809c"
+    },
+    {
+      "file": "tools/extended-archive/native/bridge.cpp",
+      "sha256": "09295719a6183308b12695007e81906d173fc4a830b2663ddc3228c15ef03fe0"
+    },
+    {
+      "file": "tools/extended-archive/system-emscripten.patch",
+      "sha256": "7fba657a2c40687cc20cf394f47364d037aefd67cf35bdd107924b40dae7e91d"
+    },
+    {
+      "file": "tools/extended-archive/rar4-filename.patch",
+      "sha256": "dfceaf8cd8c094c42830914ef97203c0e86e39f8e3efa7f0031d840be3b14b2a"
+    },
+    {
+      "file": "tools/extended-archive/rar3-inbuffer-2606-backport.patch",
+      "sha256": "d031e9d5abaa449d63ae2326335014e3652df9c48d34e9efe99c705c24514728"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "bounded-sevenzip.js",
+      "sha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d"
+    },
+    {
+      "file": "bounded-sevenzip.wasm",
+      "sha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c"
+    }
+  ],
+  "sourceRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+  "securityBackport": {
+    "baseRevision": "b88c6bc09339de32f7d18bbab900686b244f42ba",
+    "upstreamRevision": "d3296e39e1f1f92c7b41c0c3848e65640428d42d",
+    "files": [
+      {
+        "file": "CPP/7zip/Compress/Rar3Decoder.cpp",
+        "sha256": "fee600a4b359a12fc38a4a95f057d075a5f34a1eea9ba545915de9049d006d96"
+      },
+      {
+        "file": "CPP/7zip/Compress/Rar3Decoder.h",
+        "sha256": "0fa7330795ff6a1faddcf9fbe53497d7c6fb57c3c4111e36856c46f08c8b6086"
+      },
+      {
+        "file": "CPP/7zip/Common/InBuffer.cpp",
+        "sha256": "4264580db28cb2c563c9b416c119a8f82ddad95da09e6844f450b6a2a4451bbf"
+      }
+    ]
+  },
+  "patchApplications": [
+    {
+      "file": "system-emscripten.patch",
+      "status": "already-applied-reverse-checked"
+    },
+    {
+      "file": "rar4-filename.patch",
+      "status": "already-applied-reverse-checked"
+    },
+    {
+      "file": "rar3-inbuffer-2606-backport.patch",
+      "status": "already-applied-reverse-checked"
+    }
+  ],
+  "compilationUnits": [
+    {
+      "name": "MyWindows",
+      "file": "CPP/Common/MyWindows.cpp",
+      "sourceSha256": "1af0079a6058e3dfea025fca2a263a223cc8541d60ec7e659a8e01f632abc801",
+      "objectSha256": "e5772fc35a5ebe8b36f7a024b587cc55dc41cf7829a4047030cd0aa4360906e0"
+    },
+    {
+      "name": "FileStreams",
+      "file": "CPP/7zip/Common/FileStreams.cpp",
+      "sourceSha256": "3dd954bf17ec8db80c979171813376a76c5138f42597b6cf9859177f51b17bfc",
+      "objectSha256": "ea0994983da7d3f174126dc28ddc21abb3a0d75d22d312b959ee30a1bac14626"
+    },
+    {
+      "name": "CRC",
+      "file": "CPP/Common/CRC.cpp",
+      "sourceSha256": "3824e79d60edddad0b627ac61f25501a3d9d39a5cd18029571e9769de6a9e36b",
+      "objectSha256": "0c7998de5afb9f68ed3553774d6e55d71efaf9aa258163b029d6e71a6616fe62"
+    },
+    {
+      "name": "CrcReg",
+      "file": "CPP/Common/CrcReg.cpp",
+      "sourceSha256": "6ddd0d6f2217583dfdf478f94b6731398e72c5d528ee2f2035a8d3e72fc381ef",
+      "objectSha256": "88cfb36b3eb01bfe72422ae85e1ffb0adc185c65b66b8e93aef9dcd2694f0926"
+    },
+    {
+      "name": "DynLimBuf",
+      "file": "CPP/Common/DynLimBuf.cpp",
+      "sourceSha256": "c388716312330fa649575cb7c49df2f44fa0279312dd68d79cc2cd5358eab879",
+      "objectSha256": "3708cf8afd01ce23e291a9e670785f5c18c0f6cb9373bae08cec1c197405f4e5"
+    },
+    {
+      "name": "IntToString",
+      "file": "CPP/Common/IntToString.cpp",
+      "sourceSha256": "4f075ba0d53e72fb5ed692cc7b2c1c00d76c1f9a281bf4a6e3deffc48b380d72",
+      "objectSha256": "1d34013bdbece2ae03be41d854a353703020d207d16169a8dd3aa2b608f02e26"
+    },
+    {
+      "name": "LzFindPrepare",
+      "file": "CPP/Common/LzFindPrepare.cpp",
+      "sourceSha256": "b0bc168361a5be0a8a42eee320be9fefb8fe1e1867cdfccb481a7f5a14980762",
+      "objectSha256": "64b0b3782f69bc03e766e8de3a790f6252a56977b62578d6028eca4773653590"
+    },
+    {
+      "name": "Md5Reg",
+      "file": "CPP/Common/Md5Reg.cpp",
+      "sourceSha256": "2cc6ef4be12e623a980e200d3bdb6f784256e69ceb8454c7665a6c1ff44a0916",
+      "objectSha256": "7938d4b012a8ff0c46006fa1c9766c6247b46006da77f6c4a9a0fa9d8bbf41f4"
+    },
+    {
+      "name": "MyMap",
+      "file": "CPP/Common/MyMap.cpp",
+      "sourceSha256": "fdebb0e8655b2665ef09ec68e36e9a60f7380c599357648bd1a67d473155ed56",
+      "objectSha256": "bb86fc66f59294d387a3d95e99a42aa5788d18b25b0bfe581f15c0af6e766b08"
+    },
+    {
+      "name": "MyString",
+      "file": "CPP/Common/MyString.cpp",
+      "sourceSha256": "c562b6078fd4411805ff2bf35be1b166c1f094cf4008a50d8e272fba3ccd51cc",
+      "objectSha256": "65eca8ed326feb5daa2ffb8fdd9025f23e80df6cd3a297465fe017512ce7e33b"
+    },
+    {
+      "name": "MyVector",
+      "file": "CPP/Common/MyVector.cpp",
+      "sourceSha256": "0b7383dc489bc8bf3d9f22509b47316c45cc843b367e8d6c05c4f76053e103f8",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "MyXml",
+      "file": "CPP/Common/MyXml.cpp",
+      "sourceSha256": "07ef276fb188e7c4dfd9a336fa3e646d592836bb4b6649d2a834a5334bd94480",
+      "objectSha256": "c8b60ea2f0af20854baf251e5e3652b3ffc44dbca92b9c7d143deb845971cd41"
+    },
+    {
+      "name": "NewHandler",
+      "file": "CPP/Common/NewHandler.cpp",
+      "sourceSha256": "bbd6fb3ef884f97cd82fd0c02dc279a60eb414895d36f4b39ada9d8852f91f94",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Sha1Prepare",
+      "file": "CPP/Common/Sha1Prepare.cpp",
+      "sourceSha256": "10f4f2d96c5d4a5167868d52f0a7ccc10bb4095aad4050b1118fb210fe78a57a",
+      "objectSha256": "f197d6c30ffa81067a59ba347bd4d9257bf5ef6287da1bdb7185d81003b5bde6"
+    },
+    {
+      "name": "Sha1Reg",
+      "file": "CPP/Common/Sha1Reg.cpp",
+      "sourceSha256": "72521eec1805dcee54852f5cd6b87e318966b436954a439a4068666717bc9836",
+      "objectSha256": "6dcab71a56246a3166614f0be5126c2724512a46d563dcf745706e8d48a87380"
+    },
+    {
+      "name": "Sha256Prepare",
+      "file": "CPP/Common/Sha256Prepare.cpp",
+      "sourceSha256": "cfbb12c5591fe66fa818dc9921399d9ae921d7976710bee482a32777487b3466",
+      "objectSha256": "b25aef80cfcd1f342f45e605a43f85ee3bdb5fedd1c858649526fd7c7fe5142e"
+    },
+    {
+      "name": "Sha256Reg",
+      "file": "CPP/Common/Sha256Reg.cpp",
+      "sourceSha256": "59cec5abb249a89b3ff457edfb34fbd7189ba1ac1eaf487c0b6ed880eeb194ac",
+      "objectSha256": "5c2651e33b737f6342e7b8b6f951736d9ce5a685f73473fe7f02ea900f45f6a6"
+    },
+    {
+      "name": "Sha3Reg",
+      "file": "CPP/Common/Sha3Reg.cpp",
+      "sourceSha256": "b485dff57d4b3b1638b8ec4d5f75b4fa2fe0bca2e9eaecc203a6945a6941a12c",
+      "objectSha256": "ef4a99efe9b6b5d0fc9d3df109445105b0d09ac1b40f7a6a43b8e5810be8c419"
+    },
+    {
+      "name": "Sha512Prepare",
+      "file": "CPP/Common/Sha512Prepare.cpp",
+      "sourceSha256": "0052ebe4873797f762a4a55c425b7e3a90195c0458c51c4291ea3e45fe2ef065",
+      "objectSha256": "14e43edc1a72212e7ecb8c92ffaf9a7d6974d3ca88786edc4dab42f0399922fb"
+    },
+    {
+      "name": "Sha512Reg",
+      "file": "CPP/Common/Sha512Reg.cpp",
+      "sourceSha256": "44cbc073930dad3381932ea74df56ca4b8da1607ec83b5cee80cddb8369de023",
+      "objectSha256": "b3c96512715a3e6044ce9401fb17e0a4e94230da60515c29fd6737f1f15eac1a"
+    },
+    {
+      "name": "StringConvert",
+      "file": "CPP/Common/StringConvert.cpp",
+      "sourceSha256": "6189e4a22fd074ea55ef2ec8651d96e8f3b7f720ef3d19caab752a1f735cc6ee",
+      "objectSha256": "6eb07ed590b1bd1f9462328e831484875f001cff79dbd8a184b260941a9f386f"
+    },
+    {
+      "name": "StringToInt",
+      "file": "CPP/Common/StringToInt.cpp",
+      "sourceSha256": "9ec787dbdf2b2468f733b1b2257f81abd27f9e76fe7dbbb6c1d75759169ca3d7",
+      "objectSha256": "873c3e3057460f33cbf8a1b1229dcfa4777c51624d4e2bedc1c902326fc8524d"
+    },
+    {
+      "name": "UTFConvert",
+      "file": "CPP/Common/UTFConvert.cpp",
+      "sourceSha256": "f53cee5d99e897a0ac5a481e96609bb99b5b4143579ffbfa46ed5ec356333ddc",
+      "objectSha256": "32f7617705915e58d6ae2a056e5d6042a3de72ce448dee071aaec4121304085a"
+    },
+    {
+      "name": "Wildcard",
+      "file": "CPP/Common/Wildcard.cpp",
+      "sourceSha256": "5d105fdbe1aff5784ce73bac34a2d377bd1fde2c58c63608b6da255b120f0261",
+      "objectSha256": "2904cc4d8167f98b761e7d342bf32894247cf19fd3b059bde44e3765c7e64905"
+    },
+    {
+      "name": "Xxh64Reg",
+      "file": "CPP/Common/Xxh64Reg.cpp",
+      "sourceSha256": "bb8a30457de80cbb5efc4e7995fe9dbcb3f15b6f13afe41325803b4192eea384",
+      "objectSha256": "3592a41d10ebd416511b58b289079448f79f34f0b849f9401647e15bd387a59e"
+    },
+    {
+      "name": "XzCrc64Init",
+      "file": "CPP/Common/XzCrc64Init.cpp",
+      "sourceSha256": "c6fa0efc29dcc05993ab59d05b45409925d70a672547504f9a9e7237843c8a46",
+      "objectSha256": "afb85705573abb788affa40545a8421aa7c70f3d0b2a7b2ff0168930be49bdb7"
+    },
+    {
+      "name": "XzCrc64Reg",
+      "file": "CPP/Common/XzCrc64Reg.cpp",
+      "sourceSha256": "180ab525017ccd26c2c4a8dead5fb5170910404654d1c263cf0292ccdec69f3e",
+      "objectSha256": "497c9094e75a91dec35133c98c3ca64c2baab67334af9586681a21c07b061ed5"
+    },
+    {
+      "name": "FileDir",
+      "file": "CPP/Windows/FileDir.cpp",
+      "sourceSha256": "8f8528714fd788af2955cd949e1c59504c84551af8376f21629de3755af57506",
+      "objectSha256": "ae14a8ed9f9e54d370547823661c2b1b6961285a0547861516c3465d052c5a1d"
+    },
+    {
+      "name": "FileFind",
+      "file": "CPP/Windows/FileFind.cpp",
+      "sourceSha256": "c7ebf3f657a5bf666e3c5e5af3ad699d1bc32f8769e30ebcb0c73a3aad85c9c4",
+      "objectSha256": "d4eb9d260c0a6a6526b7660600ada39454a5e9fe6fbb7adad7e5cbbecbdf6ff0"
+    },
+    {
+      "name": "FileIO",
+      "file": "CPP/Windows/FileIO.cpp",
+      "sourceSha256": "400ffdd5921d44e8e9c04a10e8cd658ab878edd1cf774395462820551092003b",
+      "objectSha256": "778ec4c45cfe675b78d081c03106599637bc33ad09cdefced87a8ba7b13d55b8"
+    },
+    {
+      "name": "FileName",
+      "file": "CPP/Windows/FileName.cpp",
+      "sourceSha256": "fbbd1054ba9615f5b8b6e7cd06ba98975be1dd0aaab2f65934dd786e69d34637",
+      "objectSha256": "57c7b4a2eab68d1bffe8d86e917d34db790cf5be89f905718ee3dd8839120918"
+    },
+    {
+      "name": "PropVariant",
+      "file": "CPP/Windows/PropVariant.cpp",
+      "sourceSha256": "0c051295ab199a0438f05eb849daffea701eba3fdc95cbb09e51ca3c629873fd",
+      "objectSha256": "8380fda315138001833523081118694f1370c2e7ad7911b6ff55a65da53afb75"
+    },
+    {
+      "name": "PropVariantConv",
+      "file": "CPP/Windows/PropVariantConv.cpp",
+      "sourceSha256": "162cca9b61cd83aebac7bd3d030078139d4184f3120893769d70c594ea74eb38",
+      "objectSha256": "611bdec96ed6bbf6e2d6f9d1ab6bae614e43573f38f9eef144a349996ad65a41"
+    },
+    {
+      "name": "PropVariantUtils",
+      "file": "CPP/Windows/PropVariantUtils.cpp",
+      "sourceSha256": "0c1d3a76b3729c4298c140bd854aa4a8e4caaee714cb3fa9f09967c35d237c93",
+      "objectSha256": "7a80765f42aeb54334f9719e668dd43c54b17b65949e2e3436b9e5814a56c749"
+    },
+    {
+      "name": "System",
+      "file": "CPP/Windows/System.cpp",
+      "sourceSha256": "cff08771e6211208d7d17666aed0c052c25ec278fc8ad29455675a77a8688ec1",
+      "objectSha256": "0e9848ee1837e934b24ffd85b32974c258fd20caf9ec745418ce954d34a1465d"
+    },
+    {
+      "name": "TimeUtils",
+      "file": "CPP/Windows/TimeUtils.cpp",
+      "sourceSha256": "ea7dbc78a1a7b4f1b7250207614c9c5695d5bc69657367ef0407190b4992cbab",
+      "objectSha256": "2ce200600e1f4b5717679ef08925da45dc195f68326f12d2e0836072201cc74f"
+    },
+    {
+      "name": "CreateCoder",
+      "file": "CPP/7zip/Common/CreateCoder.cpp",
+      "sourceSha256": "f004457b86d5c6fdfde24d43e7f34affac021c62ff177e6804e440c2eda77967",
+      "objectSha256": "fbc51d92bb6e26d80ec4abda2d9ea718ba05b320976160b5686a889a2ef3fa1b"
+    },
+    {
+      "name": "CWrappers",
+      "file": "CPP/7zip/Common/CWrappers.cpp",
+      "sourceSha256": "634a4942ebf51f68fe0e66e77d9f9d9794b0e36851604107f905019bd95a28d8",
+      "objectSha256": "3f6a4cb0eea7b4a03fbb85c9e93e26e055cd7e92f8b27464895d2e8acb902f76"
+    },
+    {
+      "name": "InBuffer",
+      "file": "CPP/7zip/Common/InBuffer.cpp",
+      "sourceSha256": "4264580db28cb2c563c9b416c119a8f82ddad95da09e6844f450b6a2a4451bbf",
+      "objectSha256": "dfc0f83be51051decab1e47e51b5a938799dac69a7a25dc7f04632a5d25969ed"
+    },
+    {
+      "name": "InOutTempBuffer",
+      "file": "CPP/7zip/Common/InOutTempBuffer.cpp",
+      "sourceSha256": "acd41de73af84fd31fceb71213b26bad287c8e07bd943d1f5bf4cf88bdcf79fd",
+      "objectSha256": "2a5007e84215cfff9d18493a85ea9da978e3e394b71439ce64316fe720b9d7ec"
+    },
+    {
+      "name": "FilterCoder",
+      "file": "CPP/7zip/Common/FilterCoder.cpp",
+      "sourceSha256": "49c1d1b63474ad85437c48b1278ec3589bb7f04eb07c269271d40f13a807bb90",
+      "objectSha256": "c238215e699fd272227aa0b06b6fd821a53f28dcc4051d9f67bf21b62f379425"
+    },
+    {
+      "name": "LimitedStreams",
+      "file": "CPP/7zip/Common/LimitedStreams.cpp",
+      "sourceSha256": "616596b4e607c218e27b50407240e777b36e0cec0d5bae066472cc7e61f3a053",
+      "objectSha256": "87b5dfdffae7c6ebd667b5086d304a26d83ed6c24fe9be207c9acf44cb4cd7c0"
+    },
+    {
+      "name": "LockedStream",
+      "file": "CPP/7zip/Common/LockedStream.cpp",
+      "sourceSha256": "3ecc56d9c2c745e67f7f680b795ba08f8f85e173c3d09df6ce39524395b932a7",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "MethodId",
+      "file": "CPP/7zip/Common/MethodId.cpp",
+      "sourceSha256": "bbf09d859a26f10a2786701e9656cddac837952e6067316a1bdede5b75ca8880",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "MethodProps",
+      "file": "CPP/7zip/Common/MethodProps.cpp",
+      "sourceSha256": "3d596067c7863690886c563e66bff60ef39349fe067821e6fe8a1b044d887dec",
+      "objectSha256": "bd9d5902359b5b520374b964721c70b3e49c970aba7cb69b525d5812ad009246"
+    },
+    {
+      "name": "OffsetStream",
+      "file": "CPP/7zip/Common/OffsetStream.cpp",
+      "sourceSha256": "8eafce5957c22445f4cf2a194d69456790218d3f1e2c19fe3ccd4b550ec16685",
+      "objectSha256": "14bd8a63c3a8e9891774f0fffd49bec0529eb36a11ac8fa7a05fa0a15f998ace"
+    },
+    {
+      "name": "OutBuffer",
+      "file": "CPP/7zip/Common/OutBuffer.cpp",
+      "sourceSha256": "f40102cb6a0217c844e44f71bae0367c8c307fdfc5adb7e362c54f05c14babbb",
+      "objectSha256": "0e8b123482bb846210362376e99c0958371683366d478c0f9d962a9c9347946a"
+    },
+    {
+      "name": "ProgressUtils",
+      "file": "CPP/7zip/Common/ProgressUtils.cpp",
+      "sourceSha256": "e7030e7ce90385b1249944af12047d67815a9e2d42af529a2d26917a1fdbc13b",
+      "objectSha256": "5c26082094588f92068d80c1c064c488568ffa0e61a18f790b8a30c84b674153"
+    },
+    {
+      "name": "PropId",
+      "file": "CPP/7zip/Common/PropId.cpp",
+      "sourceSha256": "95299871ac4273de3a0e12605adf42b8dd1882a39a561e67704892f70a679182",
+      "objectSha256": "1781fb91501c0b4a3ab907ccfe61b9d8e5ffd8cbc370a1ca1179083991ea63d6"
+    },
+    {
+      "name": "StreamObjects",
+      "file": "CPP/7zip/Common/StreamObjects.cpp",
+      "sourceSha256": "c8ffbc43c1cc267098eafc7823b16d5351ebd989f0f175de6fdd4255c634e76d",
+      "objectSha256": "0ba9a45e997a0a42e4218f77fb6b19f59070837cff3e9d77185aecfd95482a7b"
+    },
+    {
+      "name": "StreamUtils",
+      "file": "CPP/7zip/Common/StreamUtils.cpp",
+      "sourceSha256": "84278cec91bd90810b64d9d10e69f6d7bc802ff56cb88ea76465e8bca522565c",
+      "objectSha256": "1f6d20ffa40e211887dcde9f7fb985393ca5d7170e76edb72efbc13fb5bf2c01"
+    },
+    {
+      "name": "UniqBlocks",
+      "file": "CPP/7zip/Common/UniqBlocks.cpp",
+      "sourceSha256": "56d8b9eec67fde6177f3b31a8876e54d28fcb94a45f68a47d57f76a51bec5e20",
+      "objectSha256": "efee4b0d2e797146b8cdaa2a39b93585fd771476db284e4f2733c2b5736fbad6"
+    },
+    {
+      "name": "CoderMixer2",
+      "file": "CPP/7zip/Archive/Common/CoderMixer2.cpp",
+      "sourceSha256": "042af03c76506eb0b5c4590ef42fdf64eff078b6b5af27113708a89c63eb4f0d",
+      "objectSha256": "4f199f69330c59333269d37ad67e632a5851020b1cb6118461d95ee16278b62b"
+    },
+    {
+      "name": "DummyOutStream",
+      "file": "CPP/7zip/Archive/Common/DummyOutStream.cpp",
+      "sourceSha256": "298dfc542e87b3dfaa78002381fd902b8bd5d251a2f8324db9710c8cc0f8e582",
+      "objectSha256": "ed43fd6e9fe0cd8ca63cb08d63a300d04facd0f8cd34a5028559e6bf0e034820"
+    },
+    {
+      "name": "FindSignature",
+      "file": "CPP/7zip/Archive/Common/FindSignature.cpp",
+      "sourceSha256": "9be9d7e8b16e1d2387c86bb8506749d1ab45f496e81cd75772468fc75c6d7509",
+      "objectSha256": "81394a6c05a6b0bf6b8fc26524b842b3adf4824fd50744b3a6a554e2c659b998"
+    },
+    {
+      "name": "InStreamWithCRC",
+      "file": "CPP/7zip/Archive/Common/InStreamWithCRC.cpp",
+      "sourceSha256": "e8805eda623d2ec8573ce950b6e04f9364e7eb007d527244dcb8d70e15585cb7",
+      "objectSha256": "4ec5017b89613d28635428433dd5f11f992c93b7428629a29c397e800192199e"
+    },
+    {
+      "name": "ItemNameUtils",
+      "file": "CPP/7zip/Archive/Common/ItemNameUtils.cpp",
+      "sourceSha256": "2b9ccd13d1d8c8edab95e76eb4a991fb122cb247f35655569bb487f96398fdf7",
+      "objectSha256": "9ca2a14b07ef4f299c5a4f047b039d91e954ece0e64369088fb9fdbcdb2a164e"
+    },
+    {
+      "name": "MultiStream",
+      "file": "CPP/7zip/Archive/Common/MultiStream.cpp",
+      "sourceSha256": "a3b5748ec51c57b9b89f1b64a86fb08137f13a1d19795203130ffb51ff5de09f",
+      "objectSha256": "fc2aefe36c44d3a05e3fb366470a9ff9602aad46fdca47fc8446f20fdf0c9039"
+    },
+    {
+      "name": "OutStreamWithCRC",
+      "file": "CPP/7zip/Archive/Common/OutStreamWithCRC.cpp",
+      "sourceSha256": "30a3e99bc52cc86a614560e8091f24989abc113200ebfe4476cd1d7798da76e4",
+      "objectSha256": "dae741fb2cf1e9d67bc76fc2d2e7d6b42a62c764ae1b885e5f45d2041e91f7aa"
+    },
+    {
+      "name": "OutStreamWithSha1",
+      "file": "CPP/7zip/Archive/Common/OutStreamWithSha1.cpp",
+      "sourceSha256": "607994b3dc161008ab40beb70e36353351b81b09a2371bd4fe0a9725d7bba897",
+      "objectSha256": "70338157a0c3eacfb5d94e44d8710411caac1312afa55bfedf99df5a7797c8af"
+    },
+    {
+      "name": "HandlerOut",
+      "file": "CPP/7zip/Archive/Common/HandlerOut.cpp",
+      "sourceSha256": "997113fbff3e4aeabbd3ab3a138f796cd8035d114387a33556ac9c064c7dd3a8",
+      "objectSha256": "c3dd2dd10ee6ec7a6b67e1cb21b7b12570a70382841a10cacb35456b71785152"
+    },
+    {
+      "name": "ParseProperties",
+      "file": "CPP/7zip/Archive/Common/ParseProperties.cpp",
+      "sourceSha256": "8a2ba8e2f9b8389a772fec5eb65bd1b1a019010997c1d3f7815a8700915b8c7d",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "7zCompressionMode",
+      "file": "CPP/7zip/Archive/7z/7zCompressionMode.cpp",
+      "sourceSha256": "11e6e1e17215463fde1277e5db8439c048883cf17db0fa60c406ec422e9b3ad5",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "7zDecode",
+      "file": "CPP/7zip/Archive/7z/7zDecode.cpp",
+      "sourceSha256": "d01e680467df2bc8b11326628e2d1e4ed4e58e912ac4ba650aabfd4ae453e53f",
+      "objectSha256": "689b355fae5b05c1fef588bb00dbcf183b978e80271d54056114a409c890a578"
+    },
+    {
+      "name": "7zExtract",
+      "file": "CPP/7zip/Archive/7z/7zExtract.cpp",
+      "sourceSha256": "189f607ca66658b62f292cdecf7168ccd951d050c8ccc07c23326c079ab4e4c5",
+      "objectSha256": "491fd17ff5afeb6c9d46a214ca04e4b7bb8fd0a9342514f8226a3e17400e0899"
+    },
+    {
+      "name": "7zFolderInStream",
+      "file": "CPP/7zip/Archive/7z/7zFolderInStream.cpp",
+      "sourceSha256": "e75e60ecfc11d4f5fda912833806e1e80a671308eb7ef7edfc9848f2bfffb3f6",
+      "objectSha256": "241926151ec7067cf88b9d70f1d3a7167a32b713552a919d9af6b3a415882b2c"
+    },
+    {
+      "name": "7zHandler",
+      "file": "CPP/7zip/Archive/7z/7zHandler.cpp",
+      "sourceSha256": "40d6e03508a327462baeab2eeb175b4937e601939fc06497d7f2fb4d21cb34ea",
+      "objectSha256": "0436a4c4b3efbf460906f645c36d91b42812ba15fae1725c5e5951e8aae197dc"
+    },
+    {
+      "name": "7zHeader",
+      "file": "CPP/7zip/Archive/7z/7zHeader.cpp",
+      "sourceSha256": "bd9e621d8e57f9e97b533be461b8249add53619d76e4918f7a17a9bf00372c78",
+      "objectSha256": "41cf0cce713565efce6a06e765d19f5df2f0c839dee65f03c0458ef53260d717"
+    },
+    {
+      "name": "7zIn",
+      "file": "CPP/7zip/Archive/7z/7zIn.cpp",
+      "sourceSha256": "8120be5248c001ff799c724b4daf4f1dc22aa4768fe01b355bd9269ff6cb87f8",
+      "objectSha256": "d7b7ed7712246ce901c26f28865314863112e77c47c33375036aecbb1f3312e3"
+    },
+    {
+      "name": "7zOut",
+      "file": "CPP/7zip/Archive/7z/7zOut.cpp",
+      "sourceSha256": "5c4b214737efc80a0615ddc1072d118593539bfd38b287dc9e9b2895b4d13c2c",
+      "objectSha256": "73aa808434f970eec4ace9920ce98653476678e2b3322f3f353e5a65a79cab05"
+    },
+    {
+      "name": "7zProperties",
+      "file": "CPP/7zip/Archive/7z/7zProperties.cpp",
+      "sourceSha256": "e57bcecac7de54ec41b704b3aca41cfbe3d7cd55419a4d4afbb10034593ae52d",
+      "objectSha256": "205a0a80863021334fa3d2ca122e09b3027504e44ffbbcb2aaead95324f51ed7"
+    },
+    {
+      "name": "7zSpecStream",
+      "file": "CPP/7zip/Archive/7z/7zSpecStream.cpp",
+      "sourceSha256": "eb136cde35a623be7c75264f6fabfb926c164a74e1cf1b4478ef5cca4a5a03e3",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "RarHandler",
+      "file": "CPP/7zip/Archive/Rar/RarHandler.cpp",
+      "sourceSha256": "faf26d124cf52e1c3d1831a4c211d05eeffbe9df34cfde92e9af011337517e0d",
+      "objectSha256": "10706ba5aaee3bef08b45590398d8184f939f909a4f645e7ffc669808e7f54e7"
+    },
+    {
+      "name": "Rar5Handler",
+      "file": "CPP/7zip/Archive/Rar/Rar5Handler.cpp",
+      "sourceSha256": "720dba4cc84540e5c6344eba144c87ee02edf3f9c1a9c0e7bd4b02fa2d7deba8",
+      "objectSha256": "d1ec7bf0ee3215d9fbe34480199cca05ae0b58c8e2061b9b195cb78024146d28"
+    },
+    {
+      "name": "Bcj2Coder",
+      "file": "CPP/7zip/Compress/Bcj2Coder.cpp",
+      "sourceSha256": "e9d973dcf8c78772ec72c63a494e58dbb238367fe8a973cad6d9f9e1ee652e05",
+      "objectSha256": "8e6166e0b45f64c7525544fa72a582fc1fd39b7c9e6a5ecfa4bff090bb5c4638"
+    },
+    {
+      "name": "Bcj2Register",
+      "file": "CPP/7zip/Compress/Bcj2Register.cpp",
+      "sourceSha256": "464138ce35b3ed4f4b2224466a4a90ef00315d8f2ac14889925124603c6bc24d",
+      "objectSha256": "d0b9a54d65856990e4b8a13fff0890e23fb1bf9f28ed6fd22ee87b046b077f2d"
+    },
+    {
+      "name": "BcjCoder",
+      "file": "CPP/7zip/Compress/BcjCoder.cpp",
+      "sourceSha256": "db4ec67a2c73cf130dfc312fea793d4eb0cf71f98dbed19939e923e06a3be58f",
+      "objectSha256": "a7978add7a9108d505c209db792c41d745435fcf0cdad0019d7c50eaeda93ca5"
+    },
+    {
+      "name": "BcjRegister",
+      "file": "CPP/7zip/Compress/BcjRegister.cpp",
+      "sourceSha256": "71a0aede917a055e98a45030089693e091e53e8de445460d0da6cd7e5fd518ab",
+      "objectSha256": "4c0817221bb96aef72619a27098b87e931a797500c3dfaaeb80989b64bab8fe3"
+    },
+    {
+      "name": "BitlDecoder",
+      "file": "CPP/7zip/Compress/BitlDecoder.cpp",
+      "sourceSha256": "b6f83edd8d56abe264bf252da3ca5b4fa5fb0a0607f5197a061c501e167fb527",
+      "objectSha256": "adc1bb0a6451eb7673e7edd55f48500c58d6cd5179ab6323e6fedc5ac4c1e2f5"
+    },
+    {
+      "name": "BranchMisc",
+      "file": "CPP/7zip/Compress/BranchMisc.cpp",
+      "sourceSha256": "6e142d3f64dad154691f85a2e35f014c5d19196824fd5b13e5d2028228ec90cf",
+      "objectSha256": "17ac4e5b5259fc4b7f0a85ca985e00bd6694407e2e60186dcd8f679f78760453"
+    },
+    {
+      "name": "BranchRegister",
+      "file": "CPP/7zip/Compress/BranchRegister.cpp",
+      "sourceSha256": "0c24665cf680327c4d7ac1020a1e9708251a9c2c70988c90de84128d8183b6ca",
+      "objectSha256": "c948b6771b1c5223b2dbdfd1cb2ae53f10e692aa03c5d6ff5fa417e67df99877"
+    },
+    {
+      "name": "ByteSwap",
+      "file": "CPP/7zip/Compress/ByteSwap.cpp",
+      "sourceSha256": "f889052b1a45df8bed10d8ec71717c5a02279d40ccda585f4075c5bdd32879e6",
+      "objectSha256": "ac41ea71f4d8267a5c0c2ca3ee2603552a0249eecd60584cf50f90129b5b7dec"
+    },
+    {
+      "name": "BZip2Crc",
+      "file": "CPP/7zip/Compress/BZip2Crc.cpp",
+      "sourceSha256": "734414e7bdca6d843343e17b16d2660a2806b8d6c6b675659925999f07647827",
+      "objectSha256": "5e3407abad1df9a39e26f9a1f72f8499da4986638c2e161b3ea95f8b14a204bd"
+    },
+    {
+      "name": "BZip2Decoder",
+      "file": "CPP/7zip/Compress/BZip2Decoder.cpp",
+      "sourceSha256": "44db08f8ae50560bf6e8d2b3562695c3c18ec684a22c6c3a4b2ed01b631af4d5",
+      "objectSha256": "1d56be2c21cd1b47396232a5b2ce714eeaa72d1810092badab2ba85ef4a87261"
+    },
+    {
+      "name": "BZip2Encoder",
+      "file": "CPP/7zip/Compress/BZip2Encoder.cpp",
+      "sourceSha256": "3cb46fe332c28ebc8651fd56a376aa10f8ecea6285125351480f7ff4e572d559",
+      "objectSha256": "d91041319d09ced9c9c36e96655c69e4743720e9ab22899ff34c7f8050131fad"
+    },
+    {
+      "name": "BZip2Register",
+      "file": "CPP/7zip/Compress/BZip2Register.cpp",
+      "sourceSha256": "d6f352c7874263a4ccd65e5e5d67fc534232ed6c910fe6811deb05205b7f1b61",
+      "objectSha256": "5e1d208d68986f0baf13f2d529bf78277fb3ad26c6b6e7603d305f91b156cb09"
+    },
+    {
+      "name": "CopyCoder",
+      "file": "CPP/7zip/Compress/CopyCoder.cpp",
+      "sourceSha256": "9bc6c3589d448bfb233956f11549a5e3cda2f7571f8dadb8b16c668bf9b26ff7",
+      "objectSha256": "680b4e65c10b85ad196c56961f1c59255c89842830fa8caf6b54468c7f05166a"
+    },
+    {
+      "name": "CopyRegister",
+      "file": "CPP/7zip/Compress/CopyRegister.cpp",
+      "sourceSha256": "0e337dc6d1f9c62ac6177b5b22a6e358bb7cbc789d860e4a271199aa7ff21016",
+      "objectSha256": "69c2b28e9f0f4ad97488fdec86cc45af11bdee3bbb6eb8c33bb21826c6727cdb"
+    },
+    {
+      "name": "Deflate64Register",
+      "file": "CPP/7zip/Compress/Deflate64Register.cpp",
+      "sourceSha256": "9026beffe20eea32f16e3490bfd39fac417825026e3e39b7b5445c7c6f15b8fa",
+      "objectSha256": "3d24d309ba81db4b3c9339579b04b33e53c69a7691dca0d6289a5eebd0fdaddc"
+    },
+    {
+      "name": "DeflateDecoder",
+      "file": "CPP/7zip/Compress/DeflateDecoder.cpp",
+      "sourceSha256": "286bb6e21316419b564d3f65c18fe16427c4c10d08d64755385f41e07ea855a4",
+      "objectSha256": "8f8e61b82f28c06d3928da4af0b0ef8194bc12ce48c4f17ee3eaa6cb022b3799"
+    },
+    {
+      "name": "DeflateEncoder",
+      "file": "CPP/7zip/Compress/DeflateEncoder.cpp",
+      "sourceSha256": "c6ccc0d20bdc896cc22c150f06d9fab496a5992c32d6a21d7aef61b9fbd2497c",
+      "objectSha256": "624517ea4526f0061de34b45d182c9bb61c8693cc316e6616363b4321b6e4f11"
+    },
+    {
+      "name": "DeflateRegister",
+      "file": "CPP/7zip/Compress/DeflateRegister.cpp",
+      "sourceSha256": "2876414543ef93533df24fbc31eae2aaae156da54164e8940e0f30c07c6d5313",
+      "objectSha256": "432b3d2276f0ccae027912cf2088309989047b1a4414748023dab055eba46b35"
+    },
+    {
+      "name": "DeltaFilter",
+      "file": "CPP/7zip/Compress/DeltaFilter.cpp",
+      "sourceSha256": "ca8d2f7b88aea73e022a127f638a471ed15ca26a9d17f4af61a527f9bdbc469c",
+      "objectSha256": "479ead458d08bf54c81dc1b5f6a3b73e198f4b9467fe6460209b4844562568ab"
+    },
+    {
+      "name": "ImplodeDecoder",
+      "file": "CPP/7zip/Compress/ImplodeDecoder.cpp",
+      "sourceSha256": "b9960b13b9d2f9bb886fa534d411ab50baed6719ebfe5246930550446470be7a",
+      "objectSha256": "30a27bdac1dadb5ec6802bd6bb832a5a7d8735ff2faac0bf4665e76acc46344f"
+    },
+    {
+      "name": "LzfseDecoder",
+      "file": "CPP/7zip/Compress/LzfseDecoder.cpp",
+      "sourceSha256": "f36f1eeb892053a8083d2f2fbfe3d045d959890dc69828b2c89a968101a51f8f",
+      "objectSha256": "ae52f3bf5fd5f72bf4a8a3e0cb9dbb51a8c68af445ae4d887971ed8b87a504aa"
+    },
+    {
+      "name": "LzhDecoder",
+      "file": "CPP/7zip/Compress/LzhDecoder.cpp",
+      "sourceSha256": "5a04a72ab6468ae695d11124a484b03384514c13219a9d3fa4d3b9e4c2d000e2",
+      "objectSha256": "11cd2a3f54cfe238a8be377f4ad0a0621924823972ba4bb8b582fb396479cff1"
+    },
+    {
+      "name": "Lzma2Decoder",
+      "file": "CPP/7zip/Compress/Lzma2Decoder.cpp",
+      "sourceSha256": "7d12eed746a9c254c346dbe3179197c401126673044e22c4ab75269c2083ad52",
+      "objectSha256": "f51da8f3f858196b2f99a64c06e13abc15c851fb641d3a964e27bdabb08919db"
+    },
+    {
+      "name": "Lzma2Encoder",
+      "file": "CPP/7zip/Compress/Lzma2Encoder.cpp",
+      "sourceSha256": "10f6059afd444667a21f6ce05b8214b93813c8aadadb634768cd551dfde6eef8",
+      "objectSha256": "7d7794237f28ab71b727acba07973240716149d65246d714c9de3e1c2920b096"
+    },
+    {
+      "name": "Lzma2Register",
+      "file": "CPP/7zip/Compress/Lzma2Register.cpp",
+      "sourceSha256": "185e4dac843d7209b2ae8b51598c7037fa214779a02e8ff14a9bfdad34b02bd9",
+      "objectSha256": "9dd8e762dccb8447af8ac391f908c19a1dff6f37d5587b6d2e5edb36b47dca89"
+    },
+    {
+      "name": "LzmaDecoder",
+      "file": "CPP/7zip/Compress/LzmaDecoder.cpp",
+      "sourceSha256": "6e156feca4d17e289037b9866d2a5a9fab3697333a96e856079b4ed767d92f36",
+      "objectSha256": "4d04650b7e5afc08b71fd591207d8730430f7be5fd4bc41de5a6939ef8329d2e"
+    },
+    {
+      "name": "LzmaEncoder",
+      "file": "CPP/7zip/Compress/LzmaEncoder.cpp",
+      "sourceSha256": "3c0a04888dae0cf3c904acfda697e8ce9b55457fc51583cb8bb9a77f330deb94",
+      "objectSha256": "381aaa1b70c376b64256b0a016e9d5f51ef63a62d66bbeeb76b8f2a007f5ebb6"
+    },
+    {
+      "name": "LzmaRegister",
+      "file": "CPP/7zip/Compress/LzmaRegister.cpp",
+      "sourceSha256": "3980e2f6d71e1137627f65aa67d110aa298b2c0214267a76dfe149da0354378a",
+      "objectSha256": "366058dcace24be625ad2e898f30bd11af78bdcf22e388ede4a056fd54c12324"
+    },
+    {
+      "name": "LzmsDecoder",
+      "file": "CPP/7zip/Compress/LzmsDecoder.cpp",
+      "sourceSha256": "20ede485abedef236dceacedcbc494d878837f21f41d40e5a4a091579e0a8b94",
+      "objectSha256": "79bd1715c572b2cb6d6b098cd2558356338de8a609e334c9d14217cfd81952a5"
+    },
+    {
+      "name": "LzOutWindow",
+      "file": "CPP/7zip/Compress/LzOutWindow.cpp",
+      "sourceSha256": "57a74877ac6dba00e9cee6963f10bdb373a3b47759b3715870c816a06b448c0c",
+      "objectSha256": "cbbbe84f84fec43cb6050378e2861b5b93d74561891f2fb932cf1fcee6d5b992"
+    },
+    {
+      "name": "LzxDecoder",
+      "file": "CPP/7zip/Compress/LzxDecoder.cpp",
+      "sourceSha256": "92844d4d58653c746439b79f146128bb8196aca1f9869e43810bffb4341fd5e6",
+      "objectSha256": "9e2fca31fc8c74b05d1cf147c4adefc5cfa8af13141f74d2c3728598ffe9d87e"
+    },
+    {
+      "name": "PpmdDecoder",
+      "file": "CPP/7zip/Compress/PpmdDecoder.cpp",
+      "sourceSha256": "75cf2077fbc683cc523c1b0b6862ead3b9b20a0a1369786359376f7c3d711055",
+      "objectSha256": "3df9fbc4f970d669ed450c9b0945a706a2fa8aa1904bbf0b04f2cfaa05fd530b"
+    },
+    {
+      "name": "PpmdEncoder",
+      "file": "CPP/7zip/Compress/PpmdEncoder.cpp",
+      "sourceSha256": "1bf9955b258590419de6d6b1a7a28821c0c9e4ebeb652d7c5400e1ecefc00ab0",
+      "objectSha256": "692cac43fb6ec8de785cf1010fb6e9b937145274d61a203a85931ae4b524dd61"
+    },
+    {
+      "name": "PpmdRegister",
+      "file": "CPP/7zip/Compress/PpmdRegister.cpp",
+      "sourceSha256": "bb5bbfd2369f6a12b2d7adca0366dee3da434891332d5e72ffcde34911282c39",
+      "objectSha256": "7a12ced79993087d62f37053fde2000bb8b96d25b5dc9513f15d37cb1477974a"
+    },
+    {
+      "name": "PpmdZip",
+      "file": "CPP/7zip/Compress/PpmdZip.cpp",
+      "sourceSha256": "958014b725b9635fa526f787378e8f76f6ea525a730bf0ce5781dc5656039831",
+      "objectSha256": "0f3730d0ae5eeb0dac7f9832cb58d9e7233e6cd057f7e37c2487e1b550cd4de4"
+    },
+    {
+      "name": "QuantumDecoder",
+      "file": "CPP/7zip/Compress/QuantumDecoder.cpp",
+      "sourceSha256": "251b7eab4bcbb76d9e99aab35cece2f6871f6e6a191a28ea1009b113a4908e4a",
+      "objectSha256": "ea476544e32131d35f073d846f9b8184a09a7bd4f07669ec5c3bb12b24ec546a"
+    },
+    {
+      "name": "ShrinkDecoder",
+      "file": "CPP/7zip/Compress/ShrinkDecoder.cpp",
+      "sourceSha256": "fab6e97d24d2855f5b979bf00994c97731f232123c18135ef2ebdcb4eb060ac5",
+      "objectSha256": "bf24ec354a5916a38c9622107d493e4274d2c2a51bcd0e8ff1e4dda2f415b0d2"
+    },
+    {
+      "name": "XpressDecoder",
+      "file": "CPP/7zip/Compress/XpressDecoder.cpp",
+      "sourceSha256": "64d77643cebd668a7a4589a28e71ec55f55d7104fa31b3ba1d6d9827583e7e29",
+      "objectSha256": "5ec74b0f037ec887e7c7d45ceb1b83b881c411ef45facb2cb91d5cc33a0ec7cd"
+    },
+    {
+      "name": "XzDecoder",
+      "file": "CPP/7zip/Compress/XzDecoder.cpp",
+      "sourceSha256": "38117642a9dd0d1d2f0cb9ca17f6a50f72fe1b3e95e90036bb015c9eb8ce580e",
+      "objectSha256": "7c737496a21288a3027ff1fbc4b7dd047b3673dd56992a6beb4a1047580d1e0c"
+    },
+    {
+      "name": "XzEncoder",
+      "file": "CPP/7zip/Compress/XzEncoder.cpp",
+      "sourceSha256": "8d5e5ebbc226b67534daf5b2b9771422a0222cef6972155e04a973d01b7a5843",
+      "objectSha256": "8ef45c7d0b0f4babb3c03bd08da96e545165da9f1807e398653861c13e391709"
+    },
+    {
+      "name": "ZlibDecoder",
+      "file": "CPP/7zip/Compress/ZlibDecoder.cpp",
+      "sourceSha256": "366f098d2c90e66ca333519ac4920890585a6dd66e4187f0aa593f1ce3a23e63",
+      "objectSha256": "bdd3f3e3dcf08d2e74e7dd909f29fbdf263a4291b65cc593979beb80ceb6241f"
+    },
+    {
+      "name": "ZlibEncoder",
+      "file": "CPP/7zip/Compress/ZlibEncoder.cpp",
+      "sourceSha256": "7571e7f78879db41387725c722b3a2f4abb177d42aeb9fcb9e03e0770a949c9f",
+      "objectSha256": "63b714bfe790fae04f2a35af269d42686daeae465d996d6f2e85278999676069"
+    },
+    {
+      "name": "ZDecoder",
+      "file": "CPP/7zip/Compress/ZDecoder.cpp",
+      "sourceSha256": "b777c2d0ddb34106767af03d403f017c215c3af2abf07ee4c7906f14aa38c411",
+      "objectSha256": "baea6fe5c5aedd452acad6357ce9e508bc49f31224812092282a2c24b4ff9ca5"
+    },
+    {
+      "name": "ZstdDecoder",
+      "file": "CPP/7zip/Compress/ZstdDecoder.cpp",
+      "sourceSha256": "2e3d25c1d138e353005752da00e8bc59f5e5bae6eaa8003bf39bafac366a5b9a",
+      "objectSha256": "05775fffbbf6a008e5ba6477fbd801a1993c8ab4d01b259de06db9d731d5df60"
+    },
+    {
+      "name": "Rar1Decoder",
+      "file": "CPP/7zip/Compress/Rar1Decoder.cpp",
+      "sourceSha256": "17728bf83bd61d4bc8c54b2cc13416dfbfccd5c254205e115e43550f9b93c7c3",
+      "objectSha256": "c27ca60a2777b9cf06bfba073f12e29ff2593039eeaa0916d42cb1bc66daf5d5"
+    },
+    {
+      "name": "Rar2Decoder",
+      "file": "CPP/7zip/Compress/Rar2Decoder.cpp",
+      "sourceSha256": "9139119359db432d4b80a9230ac6f5bb02a67d2b520edc2a8f59645a15a0b4bf",
+      "objectSha256": "1603e82b90af5ebb08507781cce72b00b2a5808a2cb3909abe5dd23590fd0289"
+    },
+    {
+      "name": "Rar3Decoder",
+      "file": "CPP/7zip/Compress/Rar3Decoder.cpp",
+      "sourceSha256": "fee600a4b359a12fc38a4a95f057d075a5f34a1eea9ba545915de9049d006d96",
+      "objectSha256": "c2ae4e38aa061d6379aa4b0ed58f7ac096be2b24a77c6778e42b91c2de879cd2"
+    },
+    {
+      "name": "Rar3Vm",
+      "file": "CPP/7zip/Compress/Rar3Vm.cpp",
+      "sourceSha256": "f885647a09281832fb28c8d2332ff43c95def34463b31381a6984df03d177599",
+      "objectSha256": "3b43fb3fd2a92b56975106b036354f4996b3c37c24d90df914a8412b584e71a8"
+    },
+    {
+      "name": "Rar5Decoder",
+      "file": "CPP/7zip/Compress/Rar5Decoder.cpp",
+      "sourceSha256": "ffe93de121b47a9dc6c55171cdee366ea730c4332b69f159d4f8bbc5d73881d0",
+      "objectSha256": "e62707bc66141a344a9673f5d6c27c1be279e17725c85f64f6753059cf20e01b"
+    },
+    {
+      "name": "RarCodecsRegister",
+      "file": "CPP/7zip/Compress/RarCodecsRegister.cpp",
+      "sourceSha256": "9664a42ad6d71edb0feebc534b2fc7242df6fbbdbe28fdc8d793b2dd692daf19",
+      "objectSha256": "92220fee52771aa09046ad974f5aa615bb7688bbb2682d9087be7cac24f32138"
+    },
+    {
+      "name": "7zAes",
+      "file": "CPP/7zip/Crypto/7zAes.cpp",
+      "sourceSha256": "ebea4a6c743a2b0281d5e78e68476d5c436f9fc5c0be098538ccb2b37702d89a",
+      "objectSha256": "32cdd387161c86787d4c068ea295fda6fb5705768480f41544f3940d776e991c"
+    },
+    {
+      "name": "7zAesRegister",
+      "file": "CPP/7zip/Crypto/7zAesRegister.cpp",
+      "sourceSha256": "a5d144837042544afe2482a7c6e25b2b48e405d6dae8f38cadc09491d978a206",
+      "objectSha256": "64be815fbee9f3219e8dd12043e77b441c8c1f05d79a8b9ef01c757cc6ed3d91"
+    },
+    {
+      "name": "HmacSha1",
+      "file": "CPP/7zip/Crypto/HmacSha1.cpp",
+      "sourceSha256": "0a9c819a3e87cf9fec3417591d817aa7922bd6cf4ef15132482355935a191788",
+      "objectSha256": "4e111bc32f2af529727edb6f49bdc5eaa3b3c349874e52ba94004dcd1bd522fd"
+    },
+    {
+      "name": "HmacSha256",
+      "file": "CPP/7zip/Crypto/HmacSha256.cpp",
+      "sourceSha256": "aabffa957665a321847f522eec1645dd5a43fdbd6d4c4eae307c1a4d30bad110",
+      "objectSha256": "509aa069901392cfa336e84a3eed5397fab0cc639f0509a831892d905decff7c"
+    },
+    {
+      "name": "MyAes",
+      "file": "CPP/7zip/Crypto/MyAes.cpp",
+      "sourceSha256": "8e2a1a469bd29dbb41c647b3cec4e463f37ea71b986a71fa659fa06285329ed2",
+      "objectSha256": "9ccb9de3fb0c66f385053c9aa779cdd1ca71862877191befec0680c0d2f2d161"
+    },
+    {
+      "name": "MyAesReg",
+      "file": "CPP/7zip/Crypto/MyAesReg.cpp",
+      "sourceSha256": "c2cc695455b96c23d4d3b674f1a3c9fd1f7c8035a42d2eb44e8a9fd0dd380392",
+      "objectSha256": "843951f90d1b5d7eab40f6310a2a437d544322860d84617d6f7fba89c767f631"
+    },
+    {
+      "name": "Pbkdf2HmacSha1",
+      "file": "CPP/7zip/Crypto/Pbkdf2HmacSha1.cpp",
+      "sourceSha256": "6b463518a07ddf72530ddf01fc6a0b35a8c395ac1e74d5f297f39a41d4b9ad77",
+      "objectSha256": "6f7c530e1ac0d93d7022c3f8fe427a4e5dd1b3c707770cc1a425aa08172b8628"
+    },
+    {
+      "name": "RandGen",
+      "file": "CPP/7zip/Crypto/RandGen.cpp",
+      "sourceSha256": "700b8d9e823d4b63817e549bb772df3d18d485ddd4f2779640359f50933eb3c2",
+      "objectSha256": "d374a1c22a92d5580df8daa49a2c3dede543c56de8795d5cf5c8641c4970793f"
+    },
+    {
+      "name": "WzAes",
+      "file": "CPP/7zip/Crypto/WzAes.cpp",
+      "sourceSha256": "fbeef3255fdb175bce1d4d150d9f3007ba27d9e43beb66e537b6c87e93e0bb2b",
+      "objectSha256": "7b1f9f28c45f83b0baee045a15ba711d68f8393c30fc048fad5c998b175fee5d"
+    },
+    {
+      "name": "ZipCrypto",
+      "file": "CPP/7zip/Crypto/ZipCrypto.cpp",
+      "sourceSha256": "16e7f1f7527c78fcd529285f08b68d4fbc80063fc2b93861d75f77e430b39afd",
+      "objectSha256": "82e4f7930d10fc6502764a6e5791a6cb7fc0a28bceb4b1be7f0457779085c476"
+    },
+    {
+      "name": "ZipStrong",
+      "file": "CPP/7zip/Crypto/ZipStrong.cpp",
+      "sourceSha256": "119c5f43e781aed0a7ac53ff20ec8a325e1e9a5fcac0186938e037b878b4f41b",
+      "objectSha256": "98ed97912ec83eb3ed4f7c72f2f8e162408f53587e078677699835b458253c89"
+    },
+    {
+      "name": "Rar20Crypto",
+      "file": "CPP/7zip/Crypto/Rar20Crypto.cpp",
+      "sourceSha256": "f9f16677a4e66ff558bbcad3be3a7605983c0b3166333a13184476305e56109a",
+      "objectSha256": "dac7096cc2602e22e014f0e9b45c3bf478425760db4e5fa7cee32cd696124445"
+    },
+    {
+      "name": "Rar5Aes",
+      "file": "CPP/7zip/Crypto/Rar5Aes.cpp",
+      "sourceSha256": "dc7be24d61bf68c814a6cf8cee8f5cf0b980da607a5728057b67d6db824e6165",
+      "objectSha256": "07c982ec0aada314d782bbe66352e5c1e0eb3a617139e2a05955a856e1f3ffcf"
+    },
+    {
+      "name": "RarAes",
+      "file": "CPP/7zip/Crypto/RarAes.cpp",
+      "sourceSha256": "9bba14ad6ce095070f8442616c866346621284299847928612352e027d76d935",
+      "objectSha256": "36d9ca19b9750e661e72dc693c29bc6a8672d49ddba6f5d80a9d62dcba2328ce"
+    },
+    {
+      "name": "7zBuf2",
+      "file": "C/7zBuf2.c",
+      "sourceSha256": "bc1ad7f5f33f0e12044991cbcd707549e85bf3d54b8bc171247d1f24057d5b2a",
+      "objectSha256": "2ddd42c03fe4ff7748f208b212f914ef858fe119a0a037ca7040767cf1696c0b"
+    },
+    {
+      "name": "7zCrc",
+      "file": "C/7zCrc.c",
+      "sourceSha256": "6c826585a824f991488d16fc4fa236ab6abe317b8f853fea77282e31d5160c54",
+      "objectSha256": "f03798c782b31d6de7f9d3965093d9885509dee78292994fe2dcf534261d77fd"
+    },
+    {
+      "name": "7zCrcOpt",
+      "file": "C/7zCrcOpt.c",
+      "sourceSha256": "df23d84d9297358f401e36c0a0a5b004304f72f588f0f1db346a74d30e10036a",
+      "objectSha256": "8989bbac15a06d2c75fc07f712d22ecb8b7b447cace2606535e0e91b30005a45"
+    },
+    {
+      "name": "7zStream",
+      "file": "C/7zStream.c",
+      "sourceSha256": "835941df3324d828770bc09749a976bad8449e3733896d51bf102557c9ac0acb",
+      "objectSha256": "e826dcdc071007a69287fc5ad5ef1a5bab9eef26c5d212a1c8a052d377f6b979"
+    },
+    {
+      "name": "Aes",
+      "file": "C/Aes.c",
+      "sourceSha256": "f9cd02c597bd27c87b39144911c75ae3f85e9956b2cbae66e532162be22be469",
+      "objectSha256": "8fcf3e1c411aab56a5c0adbb5fc9ef5b71319b9b1db8c5f6e7ae2a826c18be0d"
+    },
+    {
+      "name": "AesOpt",
+      "file": "C/AesOpt.c",
+      "sourceSha256": "65974526dac442b2da386dc39ed1827eb1c41f697f646445c47fc2517278927e",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Alloc",
+      "file": "C/Alloc.c",
+      "sourceSha256": "b23e008fdaca355bc566e696223655ecf5758e0233d644449946bb7c93127f71",
+      "objectSha256": "5e4222d19c5ee5b4499fe72615c74cf2c1e74fcbc59dbe7fd2e3944070d80a7c"
+    },
+    {
+      "name": "Bcj2",
+      "file": "C/Bcj2.c",
+      "sourceSha256": "52f5c6bbaf512f867fe46a378d79888825a5b4e31abbd4c94f007058a890174e",
+      "objectSha256": "0ad6bce1a35896f7335bfd343937f42b2ca16a5d49d1a4b4d8903fd0f46da7ea"
+    },
+    {
+      "name": "Bcj2Enc",
+      "file": "C/Bcj2Enc.c",
+      "sourceSha256": "1a666c3635c862273e2b1437a03c6014f200eceb63c4dab63b2c485ef805b9c0",
+      "objectSha256": "40d2e884870a1dc3ea82f0021c27145c3027e143efe7a6e176c2098773b01450"
+    },
+    {
+      "name": "Blake2s",
+      "file": "C/Blake2s.c",
+      "sourceSha256": "2a3471d49057ee07a5e5411ac1ff64de674370c59301ffc9023e551d07fe930c",
+      "objectSha256": "adb80431b2e8791964217a212ce85616f83a964f9dea7d71c5bc0518708ae4bd"
+    },
+    {
+      "name": "Bra",
+      "file": "C/Bra.c",
+      "sourceSha256": "c90cbc0747a406d056daf3d7b2bf05cf88c55529777469db5ca15f754b7c38e8",
+      "objectSha256": "9d4dd4f26109001639cf02bf85077219fa2230d39f6396f98b7f399af42b3e17"
+    },
+    {
+      "name": "Bra86",
+      "file": "C/Bra86.c",
+      "sourceSha256": "0925d655955bdd2b7b25a01bbb3d2d395e5bac6d572f2cfd273141d1896af0ec",
+      "objectSha256": "3918bc295468e22c35cc415c90e5febd5e2c67f356301eb135a60cc7cc75077c"
+    },
+    {
+      "name": "BraIA64",
+      "file": "C/BraIA64.c",
+      "sourceSha256": "29e249368a098988bee5585a7f0225b9067155e46b8e16d606c5e63e274e9c30",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "BwtSort",
+      "file": "C/BwtSort.c",
+      "sourceSha256": "f388f70496d55ba97f30a76b2b1f88ff5f2d02ff7e4b5dc98cfc41cbf9833903",
+      "objectSha256": "d0bdb74d89b788e7e6718798ab00c1b85db4be1f7f82e46560a2acb43b19e2bc"
+    },
+    {
+      "name": "CpuArch",
+      "file": "C/CpuArch.c",
+      "sourceSha256": "1e0f166e34946fc7da05647a85d8edeb64038282915e73eef676cd067d6a7527",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Delta",
+      "file": "C/Delta.c",
+      "sourceSha256": "d5b3fad0896c21b428c9803760e537a30b82ed344faa525d39ca9a4b555a80f2",
+      "objectSha256": "5fac949043d94f8bbd04d8c732a9ec48534a14180e1c2e6804a923ef83388bd1"
+    },
+    {
+      "name": "HuffEnc",
+      "file": "C/HuffEnc.c",
+      "sourceSha256": "9fd87f852d7d3f9927123fefa549141c942bce31ecd109c3a47c582b7d9b62a1",
+      "objectSha256": "035d3df8897264a67e723201b8c58bb08ffbdd9d00e44bdeee413c5c1c1f472a"
+    },
+    {
+      "name": "LzFind",
+      "file": "C/LzFind.c",
+      "sourceSha256": "f73da68845094a85b006a0d2da80b3ecdec92a1ca0f85df637e565c642e8d5ba",
+      "objectSha256": "9e9b03a2aba04268c1df5ab714c5274f271e2bb3192cf2d882cba35287e4af8f"
+    },
+    {
+      "name": "Lzma2Dec",
+      "file": "C/Lzma2Dec.c",
+      "sourceSha256": "3d691d30e4a1f4b661d56fc483db702167ff6a91781d143a017c793c1860476f",
+      "objectSha256": "875c521631db4e1af4f743702cd295afb7492596ca298b8710095f6886a32c41"
+    },
+    {
+      "name": "Lzma2DecMt",
+      "file": "C/Lzma2DecMt.c",
+      "sourceSha256": "9be6852324b9fb6d9f365590a273c9dbeb33f084ed01e2382981033a531f0f5e",
+      "objectSha256": "83c3b8d8897ad9b127180543f39555d611a86b6d16ddab72ad8fe4fc40f9d44d"
+    },
+    {
+      "name": "Lzma2Enc",
+      "file": "C/Lzma2Enc.c",
+      "sourceSha256": "4f53b9c04a7eca3c688b77ad869df26e5ed1d41f7e026295c642398457fbc6cc",
+      "objectSha256": "455d5ad25e77d43a8c6562e2688b25e8d94f91b9d23aa6bfbf6b45ce2b9edb37"
+    },
+    {
+      "name": "LzmaDec",
+      "file": "C/LzmaDec.c",
+      "sourceSha256": "4e6ec665a6df01f1722e2b2fc36dc5e3aa7c3890e0f8cb11c6a07c9a01f3309b",
+      "objectSha256": "a09e14da40f05439cba162692ab79b43ccafa272c8da4f9c7ed9eb8ff940503e"
+    },
+    {
+      "name": "LzmaEnc",
+      "file": "C/LzmaEnc.c",
+      "sourceSha256": "67f23656339b5e19015acac41acbcf36ea7787a8419907dce91c1dd336a2fb0f",
+      "objectSha256": "ef6d147d2300eef92a568988e639c7b1b222372d37f7cfadeef504e69f120bf5"
+    },
+    {
+      "name": "Md5",
+      "file": "C/Md5.c",
+      "sourceSha256": "0fc0a72915fd916f6a2863e619901239c12f739a11e3c0e10a93d0e384aef756",
+      "objectSha256": "d8053dda9e41ec0f849cb66810447c9ca4bdce89b888174882d25dd8c10d7c75"
+    },
+    {
+      "name": "MtCoder",
+      "file": "C/MtCoder.c",
+      "sourceSha256": "bbb952acf0bb36ff2c7d5a79204696a3a7d8ac53ba3588d093541a5e016798d0",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "MtDec",
+      "file": "C/MtDec.c",
+      "sourceSha256": "0ebeaf78be22e016702865507afbd1c94e6e76dbfd4e1d8a123e4c41e9bdcbcf",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Ppmd7",
+      "file": "C/Ppmd7.c",
+      "sourceSha256": "861cfd68c536ccc2040e1e68c4aeefe6c20982aa4d497a9a18516c35d5a62f3b",
+      "objectSha256": "699a8c41e76f21e6518527ced94accc5ec43fb4f78a090c2992901c19047f902"
+    },
+    {
+      "name": "Ppmd7Dec",
+      "file": "C/Ppmd7Dec.c",
+      "sourceSha256": "d6459b7ac7f5287cf7f2c2cb7978ca36840af8f243fda542219566e271018fb7",
+      "objectSha256": "91326d981598e41ba3126b78f168f3548c6a30cd7fcc82ee62a37dbd913a9070"
+    },
+    {
+      "name": "Ppmd7aDec",
+      "file": "C/Ppmd7aDec.c",
+      "sourceSha256": "5abe7e15f1a7fbee814ba5dc606c90be303c9dd2ba643120ebd951e41d12c274",
+      "objectSha256": "b88dfffdfc209351640b0e6a4663dbfd73b0fc49c306e3a11e53602e2dbd0868"
+    },
+    {
+      "name": "Ppmd7Enc",
+      "file": "C/Ppmd7Enc.c",
+      "sourceSha256": "83440732b0eba08376f51ddb144c1ee5ce2cbbf06cec414e0d7c396f607a4e99",
+      "objectSha256": "9cac0f9f15f0cdf00d2ce89367f8103aa771093bac0830a45d81f3a7fe432435"
+    },
+    {
+      "name": "Ppmd8",
+      "file": "C/Ppmd8.c",
+      "sourceSha256": "7840da8860cb71209520cfa25b24fee1aac997ffc8ecee5f602c3f1bb6dfbe49",
+      "objectSha256": "184832da7a4a1ddd9bdd157410e48aafc2cacb69503eb8ab90e2c75921b133f9"
+    },
+    {
+      "name": "Ppmd8Dec",
+      "file": "C/Ppmd8Dec.c",
+      "sourceSha256": "481cd1477cf93a0b08afb06a424907f510c4ea9206238f74096c9aacb9d3a3f2",
+      "objectSha256": "6a1b9f5cd42c786961a7ec4a545373f39e871bc851b786f0ac1f1cdae04377d4"
+    },
+    {
+      "name": "Ppmd8Enc",
+      "file": "C/Ppmd8Enc.c",
+      "sourceSha256": "8d1d2c23efcfa416d23d6686ecda091983119aa978959c3c0aa6a49359fef074",
+      "objectSha256": "f6e978d79251d434445384fd054375103f16c0a44107d6caec80653abf14f7cc"
+    },
+    {
+      "name": "Sha1",
+      "file": "C/Sha1.c",
+      "sourceSha256": "6c767a47face66a064dc0402f6e526bb3b9180d1a583f707d98101ef61398a03",
+      "objectSha256": "83f677ca2b50030bea3a50eb2565ef44789b70aa05026dfeff9240319f9b67a0"
+    },
+    {
+      "name": "Sha1Opt",
+      "file": "C/Sha1Opt.c",
+      "sourceSha256": "78546a5bc7b0e51963ca8389a5e5ad375c2e8b08b69434c91b09ef1e4647724b",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Sha256",
+      "file": "C/Sha256.c",
+      "sourceSha256": "4c7422ada8bb382f69eea7622951fc8391ca8bef97bb8a7ea9dedcaedd9e5039",
+      "objectSha256": "b75ab91a0e3c5c3edc2dae576b673183aefdb9194014c1b63a5fd5bae35f2b6a"
+    },
+    {
+      "name": "Sha256Opt",
+      "file": "C/Sha256Opt.c",
+      "sourceSha256": "2e966144ef46243960cef6921fa2e08d3110cb7549b4cb03baac3e70f48023e6",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Sha3",
+      "file": "C/Sha3.c",
+      "sourceSha256": "ad909a245e28ee3ddf3caccb22810faa0399f3e6a7c3401cc52dea46920c2075",
+      "objectSha256": "30e0156e32c44c6b77b1ddd2773c370cf54188028a9c664201d04449e2f1b1ac"
+    },
+    {
+      "name": "Sha512",
+      "file": "C/Sha512.c",
+      "sourceSha256": "4e4a7fe5517a87cac92a08ff5f96a2c62e69b3546ef778ead4edef6f566d123f",
+      "objectSha256": "c7fcca11f6133a059ecf969b66cece4ace65ff2dc6d2f1dea35f6bc4489d326a"
+    },
+    {
+      "name": "Sha512Opt",
+      "file": "C/Sha512Opt.c",
+      "sourceSha256": "74a8a58eadaef679aaea01e266b6e1a73e674242db510268d2a17ab6ce221dd2",
+      "objectSha256": "68c92501617a759bb2fcdba001305272d12a942531be8f4970c360dbf05deaa2"
+    },
+    {
+      "name": "Sort",
+      "file": "C/Sort.c",
+      "sourceSha256": "4be533e494408d88701fa950c5be5c9129260a4ab27a9c3b2b28a6cfaefaa69d",
+      "objectSha256": "bb307e2f9509561f59751932b593ab94c75a2c5ca2b127057e2f9ae6fed6aa29"
+    },
+    {
+      "name": "SwapBytes",
+      "file": "C/SwapBytes.c",
+      "sourceSha256": "270997f50a9496a5fa3ce171d865df08721f781857d23622fbfbb303d845d8bc",
+      "objectSha256": "e9a1541a00e83a76d038d8b16f1b88c450e91696c75d78706ea5e2e095e88258"
+    },
+    {
+      "name": "Xxh64",
+      "file": "C/Xxh64.c",
+      "sourceSha256": "f7f7681eeb0155cd25b65c871d1d6d2497ef8076ae03b957953ac6c47c4a1d2b",
+      "objectSha256": "066a352ccba240b3908122deb32cbd0043e453f7911a1e05c5247b80fced5b7b"
+    },
+    {
+      "name": "Xz",
+      "file": "C/Xz.c",
+      "sourceSha256": "8ab273ec9835c8cbae6faf810647d85430eb156c3184b9afd9b27c01539ff744",
+      "objectSha256": "d00569a912e3ab33b0ca258213240341cf3da2fa929bbe87b5f535ae880ae486"
+    },
+    {
+      "name": "XzDec",
+      "file": "C/XzDec.c",
+      "sourceSha256": "a8fccfc039bc6852ad4333f291dac09e12911b82f13856caed65fa6fec9edbb3",
+      "objectSha256": "09132ab22659c723fbdd75ac453c175c62e3212bf26b3db6baa4de91b7518e6e"
+    },
+    {
+      "name": "XzEnc",
+      "file": "C/XzEnc.c",
+      "sourceSha256": "add7b9feca234f636fb3b36717768f90bf13f44ca0d0b9736e6c34a53db66cf0",
+      "objectSha256": "b5282be388ac56bf5592f9d33691202181ad5ca294df28c1fde2d901f3e25b01"
+    },
+    {
+      "name": "XzIn",
+      "file": "C/XzIn.c",
+      "sourceSha256": "4ea4d70feb1d9a99c56f5cd252e39c086a639062aa10a54e6af988ca311c976e",
+      "objectSha256": "38993f69d53ba3107a2994241aea9fafb3448654bd8cdd6c517a149eaf72d310"
+    },
+    {
+      "name": "XzCrc64",
+      "file": "C/XzCrc64.c",
+      "sourceSha256": "188d92f49d76a9acd4768e09f4f478caf109d15583c40cbb0660627c54611f8c",
+      "objectSha256": "46e59c713bba8852a413fbe4d4cdab23c1b9b20b8a8d2cd3b829686947db36c0"
+    },
+    {
+      "name": "XzCrc64Opt",
+      "file": "C/XzCrc64Opt.c",
+      "sourceSha256": "54aa33b09aa5cf1bf5661c226d30908499c89c0e345eb0b46a6d671ef9808a3f",
+      "objectSha256": "3fa56c97ea77efa236cefe72b24576283f77a106429ed0927bb0a3b8959fbd9d"
+    },
+    {
+      "name": "ZstdDec",
+      "file": "C/ZstdDec.c",
+      "sourceSha256": "83e016b3e45b2d9a27abb91570ddc732eb1a596c74039f1acdecdac524971ab5",
+      "objectSha256": "c9be5b1e5dce1c4ff6b92aaf380f60ebf3f7442d3ac1d2f5ac3df7d59314e94c"
+    },
+    {
+      "name": "aniview_bridge",
+      "file": "tools/extended-archive/native/bridge.cpp",
+      "sourceSha256": "09295719a6183308b12695007e81906d173fc4a830b2663ddc3228c15ef03fe0",
+      "objectSha256": "dd249cb10756bc8427c332b815ee9970bb9525e15e756147e570391616362f64"
+    }
+  ],
+  "flags": [
+    "-Oz",
+    "-DZ7_ST",
+    "-DZ7_EXTRACT_ONLY",
+    "-D_FILE_OFFSET_BITS=64",
+    "-fexceptions"
+  ],
+  "linkObjects": [
+    "MyWindows.o",
+    "FileStreams.o",
+    "CRC.o",
+    "CrcReg.o",
+    "DynLimBuf.o",
+    "IntToString.o",
+    "LzFindPrepare.o",
+    "Md5Reg.o",
+    "MyMap.o",
+    "MyString.o",
+    "MyVector.o",
+    "MyXml.o",
+    "NewHandler.o",
+    "Sha1Prepare.o",
+    "Sha1Reg.o",
+    "Sha256Prepare.o",
+    "Sha256Reg.o",
+    "Sha3Reg.o",
+    "Sha512Prepare.o",
+    "Sha512Reg.o",
+    "StringConvert.o",
+    "StringToInt.o",
+    "UTFConvert.o",
+    "Wildcard.o",
+    "Xxh64Reg.o",
+    "XzCrc64Init.o",
+    "XzCrc64Reg.o",
+    "FileDir.o",
+    "FileFind.o",
+    "FileIO.o",
+    "FileName.o",
+    "PropVariant.o",
+    "PropVariantConv.o",
+    "PropVariantUtils.o",
+    "System.o",
+    "TimeUtils.o",
+    "CreateCoder.o",
+    "CWrappers.o",
+    "InBuffer.o",
+    "InOutTempBuffer.o",
+    "FilterCoder.o",
+    "LimitedStreams.o",
+    "LockedStream.o",
+    "MethodId.o",
+    "MethodProps.o",
+    "OffsetStream.o",
+    "OutBuffer.o",
+    "ProgressUtils.o",
+    "PropId.o",
+    "StreamObjects.o",
+    "StreamUtils.o",
+    "UniqBlocks.o",
+    "CoderMixer2.o",
+    "DummyOutStream.o",
+    "FindSignature.o",
+    "InStreamWithCRC.o",
+    "ItemNameUtils.o",
+    "MultiStream.o",
+    "OutStreamWithCRC.o",
+    "OutStreamWithSha1.o",
+    "HandlerOut.o",
+    "ParseProperties.o",
+    "7zCompressionMode.o",
+    "7zDecode.o",
+    "7zExtract.o",
+    "7zFolderInStream.o",
+    "7zHandler.o",
+    "7zHeader.o",
+    "7zIn.o",
+    "7zOut.o",
+    "7zProperties.o",
+    "7zSpecStream.o",
+    "RarHandler.o",
+    "Rar5Handler.o",
+    "Bcj2Coder.o",
+    "Bcj2Register.o",
+    "BcjCoder.o",
+    "BcjRegister.o",
+    "BitlDecoder.o",
+    "BranchMisc.o",
+    "BranchRegister.o",
+    "ByteSwap.o",
+    "BZip2Crc.o",
+    "BZip2Decoder.o",
+    "BZip2Encoder.o",
+    "BZip2Register.o",
+    "CopyCoder.o",
+    "CopyRegister.o",
+    "Deflate64Register.o",
+    "DeflateDecoder.o",
+    "DeflateEncoder.o",
+    "DeflateRegister.o",
+    "DeltaFilter.o",
+    "ImplodeDecoder.o",
+    "LzfseDecoder.o",
+    "LzhDecoder.o",
+    "Lzma2Decoder.o",
+    "Lzma2Encoder.o",
+    "Lzma2Register.o",
+    "LzmaDecoder.o",
+    "LzmaEncoder.o",
+    "LzmaRegister.o",
+    "LzmsDecoder.o",
+    "LzOutWindow.o",
+    "LzxDecoder.o",
+    "PpmdDecoder.o",
+    "PpmdEncoder.o",
+    "PpmdRegister.o",
+    "PpmdZip.o",
+    "QuantumDecoder.o",
+    "ShrinkDecoder.o",
+    "XpressDecoder.o",
+    "XzDecoder.o",
+    "XzEncoder.o",
+    "ZlibDecoder.o",
+    "ZlibEncoder.o",
+    "ZDecoder.o",
+    "ZstdDecoder.o",
+    "Rar1Decoder.o",
+    "Rar2Decoder.o",
+    "Rar3Decoder.o",
+    "Rar3Vm.o",
+    "Rar5Decoder.o",
+    "RarCodecsRegister.o",
+    "7zAes.o",
+    "7zAesRegister.o",
+    "HmacSha1.o",
+    "HmacSha256.o",
+    "MyAes.o",
+    "MyAesReg.o",
+    "Pbkdf2HmacSha1.o",
+    "RandGen.o",
+    "WzAes.o",
+    "ZipCrypto.o",
+    "ZipStrong.o",
+    "Rar20Crypto.o",
+    "Rar5Aes.o",
+    "RarAes.o",
+    "7zBuf2.o",
+    "7zCrc.o",
+    "7zCrcOpt.o",
+    "7zStream.o",
+    "Aes.o",
+    "AesOpt.o",
+    "Alloc.o",
+    "Bcj2.o",
+    "Bcj2Enc.o",
+    "Blake2s.o",
+    "Bra.o",
+    "Bra86.o",
+    "BraIA64.o",
+    "BwtSort.o",
+    "CpuArch.o",
+    "Delta.o",
+    "HuffEnc.o",
+    "LzFind.o",
+    "Lzma2Dec.o",
+    "Lzma2DecMt.o",
+    "Lzma2Enc.o",
+    "LzmaDec.o",
+    "LzmaEnc.o",
+    "Md5.o",
+    "MtCoder.o",
+    "MtDec.o",
+    "Ppmd7.o",
+    "Ppmd7Dec.o",
+    "Ppmd7aDec.o",
+    "Ppmd7Enc.o",
+    "Ppmd8.o",
+    "Ppmd8Dec.o",
+    "Ppmd8Enc.o",
+    "Sha1.o",
+    "Sha1Opt.o",
+    "Sha256.o",
+    "Sha256Opt.o",
+    "Sha3.o",
+    "Sha512.o",
+    "Sha512Opt.o",
+    "Sort.o",
+    "SwapBytes.o",
+    "Xxh64.o",
+    "Xz.o",
+    "XzDec.o",
+    "XzEnc.o",
+    "XzIn.o",
+    "XzCrc64.o",
+    "XzCrc64Opt.o",
+    "ZstdDec.o",
+    "aniview_bridge.o"
+  ],
+  "memory": {
+    "initial": 16777216,
+    "maximum": 67108864,
+    "shared": false,
+    "growth": true
+  }
+}

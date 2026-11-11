@@ -1,9 +1,11 @@
 # Bounded archive development tools
 
 The runtime recipe and native adapter in this directory are the product version
-of the isolated M10C2 build. They keep the same pinned 7-Zip26.05/Emscripten6.0.13
-source and 16/64MiB memory bounds, and remove the research allocation probe and
-native extraction-preflight bypass. No RAR compressor was derived or implemented.
+of the isolated M10C2 build. The current identity is **7-Zip 26.05 + selected
+26.06 Rar3/InBuffer security/error-handling backport + AniView RAR4 filename
+patch**, using Emscripten 6.0.13 / Node 24.22.1 and nonshared 16/64 MiB memory.
+This is not a complete 26.06 upgrade. No research allocation probe, native
+extraction-preflight bypass or RAR compressor is included.
 
 The production adapter additionally length-checks native BSTR metadata before
 UTF-8 conversion, rejects embedded NUL/control characters, and preserves a first
@@ -15,10 +17,29 @@ validates declared raw names before upstream truncation; a BSTR-only guard canno
 recover discarded bytes. Legal compressed-Unicode separators are preserved.
 No native parser exploit is claimed.
 
-The fixed toolchain remains 7-Zip26.05/Emscripten6.0.13/Node24, nonshared16/64MiB.
-Build twice from freshly prepared sources using `rebuild-1` and `rebuild-2` labels
-to compare emitted JS/WASM hashes. Packaging checks the native build-input receipt
-and includes the exact patches, source archive and dated change record.
+The original 26.05 source archive stays pinned. Apply patches in exactly this
+order: `system-emscripten.patch`, `rar4-filename.patch`,
+`rar3-inbuffer-2606-backport.patch`. The last patch imports only Rar3Decoder.cpp/.h
+and InBuffer.cpp from official revision
+`d3296e39e1f1f92c7b41c0c3848e65640428d42d`; exact source SHA-256 checks prevent
+mixed paired implementations. Patch commands use `git -c core.autocrlf=false
+apply` so a Windows global setting cannot change the reviewed LF bytes.
+
+Use `prepare-runtime.mjs --root <fresh-source-root>` and point `SEVENZIP_SOURCE`
+to its extracted `source/`. Build twice with two previously unused
+`SEVENZIP_WORK` object directories. Compare the JS/WASM hashes in their receipts.
+Package with `package-runtime.mjs --build <second-object-directory>` (or retain
+`SEVENZIP_WORK`), then run `verify-runtime.mjs`. Packaging requires a schema-2
+receipt with the complete 189-unit compile/link set and unchanged native inputs.
+It derives binary identity from that receipt rather than an older frozen hash.
+
+The `distribution/` Markdown files are the authoritative notice/rebuild templates.
+Packaging refreshes their public copies and ships both templates and copies with
+all patches, original source archives and the full native receipt. A fresh
+allowlisted staging directory avoids carrying previous package debris forward.
+The source package's internal manifest describes the two binaries; only the
+outer published manifest adds the enclosing source-package hash. Verification
+cross-checks the actual source archive members, build inputs, receipts and notices.
 
 Desktop acceptance order after building/packaging:
 
