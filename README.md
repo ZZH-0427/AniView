@@ -7,10 +7,10 @@ Images, videos and archive entries are processed **locally on your device**.
 [Releases](https://github.com/ZZH-0427/AniView/releases) ·
 [V0.3 release notes](docs/releases/v0.3.0-release-notes.md)
 
-This README describes the **v0.3.0 feature set**. Published versions appear in
-[Releases](https://github.com/ZZH-0427/AniView/releases); the
-[release preparation record](docs/releases/v0.3.0-release-preparation.md) records
-the publication gate and the exact candidate being prepared.
+**AniView v0.3.0 is officially released.** This README describes its feature set.
+See the [v0.3.0 GitHub Release](https://github.com/ZZH-0427/AniView/releases/tag/v0.3.0) for release details.
+The [release preparation record](docs/releases/v0.3.0-release-preparation.md) is
+retained as historical documentation.
 
 ## Supported workflows
 
