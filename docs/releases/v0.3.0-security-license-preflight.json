@@ -1,0 +1,101 @@
+{
+  "at": "2026-11-11T12:12:14.2247423Z",
+  "node": "v24.22.1",
+  "npm": "11.19.1",
+  "commands": [
+    {
+      "command": "npm audit --omit=dev --json",
+      "exitCode": 0,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      }
+    },
+    {
+      "command": "npm audit --json",
+      "exitCode": 1,
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 10,
+        "high": 0,
+        "critical": 0,
+        "total": 10
+      }
+    }
+  ],
+  "productionGate": "PASS: 0 production npm advisories",
+  "developmentGate": "ACCEPTED LIMITATION: 10 moderate dev-tool nodes propagate one advisory, not 10 independent browser vulnerabilities",
+  "advisories": [
+    {
+      "source": 1244623,
+      "name": "minimatch",
+      "dependency": "minimatch",
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "severity": "moderate",
+      "cwe": [
+        "CWE-405"
+      ],
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "range": ">=7.0.0 <11.0.1"
+    }
+  ],
+  "installedMinimatch": "10.2.6",
+  "patchedMinimatch": "11.0.1",
+  "preconditions": "Attacker-controlled glob patterns with optimizationLevel >= 2. Installed minimatch defaults to 1; inspected ESLint/config-array/typescript-eslint calls do not raise it. Repository/CLI lint globs are separate from selected media/archive/password input. These dev dependencies are not shipped in the browser runtime.",
+  "inspectionFiles": [
+    "node_modules/minimatch/dist/esm/index.js",
+    "node_modules/eslint/lib/eslint/eslint-helpers.js",
+    "node_modules/@eslint/config-array/dist/esm/index.js",
+    "node_modules/@typescript-eslint/typescript-estree/dist/parseSettings/resolveProjectList.js"
+  ],
+  "source": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+  "sourceChecked": "Official GitHub Reviewed advisory opened on 2026-11-11; upstream information and installed code inspected.",
+  "fixExecuted": false,
+  "dependenciesUpgraded": false,
+  "nativeRebuilt": false,
+  "licenseEngineeringGate": "PASS (engineering)",
+  "nativeMemory": {
+    "count": 1,
+    "flags": 1,
+    "initial": 16777216,
+    "maximum": 67108864
+  },
+  "wasmSha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c",
+  "jsSha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d",
+  "nativeSourcePackage": {
+    "file": "corresponding-source.tar.gz",
+    "bytes": 3650212,
+    "gzipBytes": 3651003,
+    "sha256": "f64a368ce5e4c94b03ca8a3b4fa7ec89d8d51e31fc04c899ff9ecedfa83addb3"
+  },
+  "runtimeLicenseChecks": 8,
+  "retainedTexts": 24,
+  "missingRequiredNoticeTexts": [],
+  "mplSourceFilesCompared": 67,
+  "rawEvidence": {
+    "production-audit.json": "b9ec6f66d3b18701cb8fdfad61e1078bca5c40a71e5882f206055041e0ae0e1d",
+    "full-audit.json": "413e69096a0171e91a49fda71a42ce52edc5977c77449cc417aa9ff9698d04cf",
+    "production-audit-utf8.json": "1a84ca7c1d6c1e085013c7296e9683e3fe91f5eebf1faa80664412fc84d2e63e",
+    "full-audit-utf8.json": "90be19f412ef41b3884100eda8aba7ef9874ebe5dc938c3339065f3ac2aa58fb",
+    "audit-command-exits.json": "79c598aef7400b3184adf0c9f248ba2119b2a5b514b798401b8fb07cec617547",
+    "license-native-checks.json": "1ca013d22f16eabfb94aae38c4803f208201c5c1b2bbd6a5c34cb98d6b6f5041",
+    "mpl-source.json": "029d8fd614f99c5d46b8ec0509b5fa63d40553e5d5de8c77c784375dcfc9e892"
+  },
+  "limitations": [
+    "npm audit does not assess the separately vendored native engine.",
+    "Existing native backport/independent20-case verification remains separately scoped.",
+    "Engineering license review is not legal advice or blanket combined-work compliance clearance.",
+    "Dev advisory remains unfixed per explicit no-upgrade/no-auto-fix release scope."
+  ],
+  "blockers": [],
+  "dependencyGraphApplicability": "Root version changed only; the complete dependency graph is identical across the accepted RC, audit and metadata validation checkpoint."
+}

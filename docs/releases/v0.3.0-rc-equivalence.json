@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "rcSource": "733df1984919e318348a88c512d68743990bdca6",
+  "metadataValidationSource": "fe5b0bbae222f98540f6aa960fd0faa194ac009f",
+  "scope": "Release metadata and documentation only; final attestation HEAD is rebuilt separately before approval",
+  "result": "PASS",
+  "sourceTrees": {
+    "src": {
+      "rc": "a4e814e988cb211e382f2745f9116d8dca73d890",
+      "preparation": "a4e814e988cb211e382f2745f9116d8dca73d890",
+      "identical": true
+    },
+    "public": {
+      "rc": "c49c8ccd800a30ba5fde98ef22eb5ed57b0b4c89",
+      "preparation": "c49c8ccd800a30ba5fde98ef22eb5ed57b0b4c89",
+      "identical": true
+    },
+    "tools": {
+      "rc": "b62d7f9eb2bd5f16bbcc92a7aec1cf56c339a87f",
+      "preparation": "b62d7f9eb2bd5f16bbcc92a7aec1cf56c339a87f",
+      "identical": true
+    },
+    "tests": {
+      "rc": "a0b9254fbc0fdc4c457e1dff078a2884bcff5317",
+      "preparation": "a0b9254fbc0fdc4c457e1dff078a2884bcff5317",
+      "identical": true
+    },
+    ".github": {
+      "rc": "88167577f50761b6c13daa2b490efbe19b920412",
+      "preparation": "88167577f50761b6c13daa2b490efbe19b920412",
+      "identical": true
+    }
+  },
+  "buildConfigurationIdentical": true,
+  "dependencyGraphIdenticalExceptRootVersion": true,
+  "normalizedLockGraphSha256": "136b90ceee9006fa0fbbd242dbe74c31280e2fb061a48a4315292393eec4f045",
+  "changedVersionFields": [
+    "package.json:version",
+    "package-lock.json:version",
+    "package-lock.json:packages[empty].version"
+  ],
+  "private": true,
+  "license": "UNLICENSED",
+  "runtimeAssetCount": 58,
+  "identicalRuntimeAssets": 58,
+  "changedArtifactPaths": [
+    "release-candidate.json"
+  ],
+  "changedArtifactReason": "Version 0.2.0 to 0.3.0 and clean build Git identity; no runtime JS/CSS/Worker/WASM/HTML/notices/source byte changes",
+  "metadataBuildManifestSha256": "9ef252d6163e8df5ac4f27ab5b380f155a1757e5990efffb17aa0c99015ca056",
+  "productBehaviorChanged": false,
+  "androidEvidence": "Existing M10E Edge/Quark functional and cleanup PASS inherited for byte-identical runtime; no new phone test claimed",
+  "formalReleaseCommit": "Not assigned; final named preparation HEAD requires separate user approval before main/tag/Pages/Release"
+}
