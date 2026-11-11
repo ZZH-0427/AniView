@@ -1,0 +1,83 @@
+name: M10E-S2 Native Error Harness
+
+on:
+  push:
+    branches:
+      - feat/v0.3-native-security-backport
+    paths:
+      - .github/workflows/m10e-s2-native-harness.yml
+      - tools/extended-archive/native-error-harness.mjs
+      - tools/extended-archive/native-error-harness.cpp
+      - tools/extended-archive/native-harness-ci.mjs
+
+permissions:
+  contents: read
+
+jobs:
+  native-error-harness:
+    if: github.repository == 'ZZH-0427/AniView' && github.ref == 'refs/heads/feat/v0.3-native-security-backport'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout reviewed feature source
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up exact harness Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24.22.1'
+          package-manager-cache: false
+
+      - name: Verify frozen inputs and prepare isolated native source
+        run: node tools/extended-archive/native-harness-ci.mjs prepare --source-commit "$GITHUB_SHA"
+
+      - name: Install pinned official Linux emsdk and execute original harness
+        env:
+          EMSDK_COMMIT: 35659964bc2762fffec0d257997fb61475f765b7
+          EMSDK_RELEASE: eb132757325583b787fe9414b09afea9442b72ad
+        run: |
+          # Save setup-node's executable before SDK activation changes PATH.
+          harness_node="$(command -v node)"
+          test "$("$harness_node" --version)" = v24.22.1
+          export EMSDK="$RUNNER_TEMP/m10e-s2-emsdk"
+          git init "$EMSDK"
+          git -C "$EMSDK" remote add origin https://github.com/emscripten-core/emsdk.git
+          git -C "$EMSDK" fetch --depth=1 origin "$EMSDK_COMMIT"
+          git -C "$EMSDK" checkout --detach FETCH_HEAD
+          test "$(git -C "$EMSDK" rev-parse HEAD)" = "$EMSDK_COMMIT"
+          python3 -c 'import json,os; p=os.path.join(os.environ["EMSDK"],"emscripten-releases-tags.json"); assert json.load(open(p))["releases"]["6.0.13"] == os.environ["EMSDK_RELEASE"]'
+          "$EMSDK/emsdk" install 6.0.13
+          "$EMSDK/emsdk" activate 6.0.13
+          source "$EMSDK/emsdk_env.sh"
+          python3 -c 'import json,os; p=os.path.join(os.environ["EMSDK"],"upstream/emscripten/emscripten-version.txt"); assert json.load(open(p)) == "6.0.13"'
+          test "$("$harness_node" --version)" = v24.22.1
+          {
+            printf 'Runner OS: '; . /etc/os-release; printf '%s %s\n' "$ID" "$VERSION_ID"
+            printf 'Architecture: '; uname -m
+            printf 'emsdk commit: %s\n' "$EMSDK_COMMIT"
+            "$EMSDK/upstream/emscripten/emcc" --version
+            "$EMSDK/upstream/bin/clang" --version
+            "$EMSDK/upstream/bin/llvm-ar" --version
+            "$EMSDK/upstream/bin/wasm-emscripten-finalize" --version
+            python3 --version
+            printf 'Harness Node: '; "$harness_node" --version
+            git --version
+          } | tee .tools/m10e-s2/ci-compiler-info.txt
+          # Only the independent 10-object harness is built. The shipped runtime
+          # and the 189-object product build are never invoked or replaced here.
+          "$harness_node" tools/extended-archive/native-error-harness.mjs --source .tools/m10e-s2/ci-source --label github-ubuntu
+
+      - name: Publish exact test counts and verify frozen component remains unchanged
+        if: always()
+        run: |
+          node tools/extended-archive/native-harness-ci.mjs summary \
+            --source-commit "$GITHUB_SHA" \
+            --report .tools/m10e-s2/error-harness/github-ubuntu/report.json \
+            --stdout .tools/m10e-s2/error-harness/github-ubuntu/stdout.jsonl \
+            --compiler-info .tools/m10e-s2/ci-compiler-info.txt

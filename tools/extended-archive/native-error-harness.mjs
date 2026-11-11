@@ -20,6 +20,9 @@ if (!/^[a-z0-9-]+$/.test(label)) throw Error('Label must use lowercase letters, 
 const source = resolve(option('--source', process.env.SEVENZIP_SOURCE ?? '.tools/m10e-s2/source-lf'))
 const work = resolve('.tools/m10e-s2/error-harness', label)
 const sdk = resolve(process.env.EMSDK ?? '.tools/emsdk')
+// Only the compiler launcher filename differs; the source and flags below are
+// identical on Windows and Linux. Never invoke Windows executables via interop.
+const compilerSuffix = process.platform === 'win32' ? '.exe' : ''
 const compilerVersion = JSON.parse((await readFile(resolve(sdk, 'upstream/emscripten/emscripten-version.txt'), 'utf8')).trim())
 if (process.version !== 'v24.22.1') throw Error('Harness requires pinned Node.js 24.22.1')
 if (compilerVersion !== '6.0.13') throw Error('Harness requires pinned Emscripten 6.0.13')
@@ -48,7 +51,9 @@ function run(exe, args, name) {
   commands.push({ name, executable: exe, args })
   const result = spawnSync(exe, args, { encoding: 'utf8', windowsHide: true, env, timeout: 120000 })
   const output = `${result.stdout ?? ''}${result.stderr ?? ''}`
-  if (result.error || result.status !== 0) throw Error(`${name} failed (${result.status ?? 'spawn'}): ${result.error?.message ?? ''}\n${output}`)
+  if (result.error || result.status !== 0) throw Object.assign(
+    Error(`${name} failed (${result.status ?? 'spawn'}): ${result.error?.message ?? ''}\n${output}`),
+    { executionOutput: output, executionExitCode: result.status, executionStage: name })
   return output
 }
 const flags = ['-Oz', '-DZ7_ST', '-DZ7_EXTRACT_ONLY', '-D_FILE_OFFSET_BITS=64', '-fexceptions', '-I' + source]
@@ -84,14 +89,14 @@ try {
   for (const file of dependencies) {
     const input = resolve(source, file)
     const object = resolve(work, basename(file).replace(/\.(c|cpp)$/, '.o'))
-    const compiler = resolve(sdk, 'upstream/emscripten', file.endsWith('.c') ? 'emcc.exe' : 'em++.exe')
+    const compiler = resolve(sdk, 'upstream/emscripten', (file.endsWith('.c') ? 'emcc' : 'em++') + compilerSuffix)
     report.compiledInputs.push({ file, sha256: sha256(await readFile(input)) })
     run(compiler, [...flags, '-c', input, '-o', object], `compile ${file}`)
     objects.push(object)
   }
   const harness = resolve('tools/extended-archive/native-error-harness.cpp')
   const harnessObject = resolve(work, 'native-error-harness.o')
-  const compiler = resolve(sdk, 'upstream/emscripten/em++.exe')
+  const compiler = resolve(sdk, 'upstream/emscripten', 'em++' + compilerSuffix)
   report.compiledInputs.push({ file: slash(harness), sha256: sha256(await readFile(harness)) })
   run(compiler, [...flags, '-fno-access-control', '-c', harness, '-o', harnessObject], 'compile harness with actual Rar3Decoder.cpp')
   const executable = resolve(work, 'native-error-harness.cjs')
@@ -104,10 +109,10 @@ try {
   const rows = output.trim().split(/\r?\n/).map(line => JSON.parse(line))
   const summary = rows.find(row => row.summary === true)
   const tests = rows.filter(row => typeof row.name === 'string')
-  if (!summary || summary.cases !== tests.length || summary.failed !== 0 || tests.some(row => row.passed !== true))
-    throw Error('Harness did not report a complete passing result')
   report.tests = tests
   report.summary = summary
+  if (!summary || summary.cases !== 20 || tests.length !== 20 || summary.failed !== 0 || tests.some(row => row.passed !== true))
+    throw Error('Harness did not report all 20 passing results')
   report.artifacts = []
   for (const file of ['native-error-harness.cjs', 'native-error-harness.wasm'])
     report.artifacts.push({ file, sha256: sha256(await readFile(resolve(work, file))) })
@@ -115,6 +120,17 @@ try {
   report.status = 'passed'
   console.log(`Native error harness: ${summary.cases} passed; report ${slash(resolve(work, 'report.json'))}`)
 } catch (error) {
+  // Retain real assertion output even when the independent native executable
+  // exits nonzero. A compile/link failure must not masquerade as executed tests.
+  if (error.executionStage === 'run controlled error harness') {
+    await writeFile(resolve(work, 'stdout.jsonl'), error.executionOutput)
+    const rows = error.executionOutput.trim().split(/\r?\n/).flatMap(line => {
+      try { return [JSON.parse(line)] } catch { return [] }
+    })
+    report.tests = rows.filter(row => typeof row.name === 'string')
+    report.summary = rows.find(row => row.summary === true) ?? null
+    report.executionExitCode = error.executionExitCode
+  }
   report.passed = false
   report.error = error instanceof Error ? error.message : String(error)
   report.status = report.error.includes('[WinError 4551]') ? 'blocked' : 'failed'
