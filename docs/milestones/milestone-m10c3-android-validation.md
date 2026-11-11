@@ -8,13 +8,27 @@ frozen production build without HMR for a later Android test session. Preparatio
 does not record an Android PASS or start formal acceptance.
 Do not reuse M10C1/M10C2 or prior milestone URLs. Production remains v0.2.0.
 
-Prepared entry:
-`https://insulation-burst-always-barrier.trycloudflare.com/AniView/?debug=1`.
-Public sample downloads: `/AniView/validation/extended-archive/`.
-Exact candidate commit/clean-tree identity: `/AniView/release-candidate.json`.
-Native hashes: `/AniView/vendor/sevenzip/manifest.json`. The candidate is the
-committed feature checkpoint, not main or Pages. The temporary endpoint depends
-on this computer and tunnel; reverify it before formal testing.
+Frozen code candidate: `c6915e9f8d2b26faf5f4b5234f282360df985a12`.
+The clean-tree production build and public fixture set are prepared locally.
+Exact served identity is in `/AniView/release-candidate.json`; native hashes are
+in `/AniView/vendor/sevenzip/manifest.json`.
+
+**No HTTPS phone entry is approved yet.** The first HTTP/2 quick tunnel returned
+intermittent520/530 and lost its edge connection. A QUIC replacement at
+`https://intervention-informed-elimination-momentum.trycloudflare.com/AniView/`
+confirmed secure context, no HMR, the clean candidate identity and JS/WASM hashes,
+but the actual archive/Viewer check hit the existing15s timeout. Local equivalents
+pass and frozen origin assets return200 with exact hashes. External delivery is
+not accepted; do not treat tunnel registration or a200 homepage as full readiness.
+The failed HTTP/2 tunnel is stopped; the frozen local server/QUIC preparation are
+retained for a later network recheck. No device test has started.
+
+Feature push also remains pending: ordinary push returned HTTP408, followed by
+connection resets / github.com:443 reachability failure. No authentication bypass,
+force push, TLS change or persistent Git configuration change was used. Recheck
+network delivery, push the current feature branch, and independently verify the
+complete HTTPS page/Worker path before issuing phone instructions. Do not rerun
+or relabel the passed native desktop matrix solely for this transport issue.
 
 ## Prerequisites
 

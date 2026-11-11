@@ -44,6 +44,11 @@ names. M10C2's original Android failures are retained without retroactive PASS o
 a claimed root cause. The [Android record](milestone-m10c3-android-validation.md)
 identifies the prepared candidate. No formal Android test has started.
 
+The local code checkpoint is `c6915e9`. External delivery is still pending:
+feature push encountered HTTP408/connection resets, and temporary HTTPS archive
+validation timed out despite correct local assets. No phone URL is approved yet;
+see the Android record for actual infrastructure evidence and recheck requirements.
+
 The remaining implementation/pre-retry sections are historical context,
 superseded by this desktop checkpoint where stated.
 

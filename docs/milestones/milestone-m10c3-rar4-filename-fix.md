@@ -160,6 +160,16 @@ The [Android record](milestone-m10c3-android-validation.md) describes the prepar
 HTTPS production candidate. This task stops before formal phone testing or a
 later milestone. No main merge, tag move, version bump, Release or Pages deploy.
 
+Implementation checkpoint: `c6915e9f8d2b26faf5f4b5234f282360df985a12`.
+Git push was attempted without force and failed with HTTP408, curl55 connection
+reset and later github.com:443 connectivity errors. One-shot transport options
+changed neither TLS nor persistent config. The frozen local production build is
+clean and matches that commit. External HTTP/2 delivery showed520/530; QUIC
+confirmed secure/no-HMR/identity/native hashes but not complete Viewer readiness
+(existing archive timeout). These are real handoff limitations, not Android PASS.
+No HTTPS phone URL is approved until delivery is reverified. Full local desktop
+gates remain passed; no product limit was relaxed to accommodate a test tunnel.
+
 Supported limits remain15MiB input /4MiB selected output /recognized4MiB dictionary,
 1000 entries,1024/128Ki path units,128MiB reads/1MiB chunk,15s operation deadline.
 Single-file read-only archives only; solid work can process prior data. WASM64MiB
