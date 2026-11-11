@@ -41,7 +41,7 @@ supplies one zero byte to select the LZ table branch and then ordinary EOF.
 `CodeReal` rejects the incomplete table; checks require no PPM allocation, no
 output writes and exactly two bounded input reads. Its implementation is unchanged.
 
-This establishes source-level error handling, not an admitted archive trigger,
+The intended scope is source-level error handling, not an admitted archive trigger,
 exploitability, or native memory safety in general. It does not throw arbitrary
 exceptions across the `ISequentialInStream::Read` noexcept boundary. Successful
 normal/PPM decoding, encrypted streams and successful solid sequences remain
@@ -58,6 +58,6 @@ with error 4551. Its SHA-256 is
 `0abc535fedc4399022373c3cfe9a54291db2fde33aefc5c0b5875037c20acb92`.
 The root agent confirmed this for the same command/tool inside and outside the
 process sandbox. The checks and toolchain are preserved; no security setting or
-tool executable was changed. Host authorization of that exact trusted tool is
+tool executable was changed. Host authorization of that exact installed tool is
 needed before rerunning the command above. The blocked receipt is retained under
 the ignored output directory; no runnable harness or dynamic result is claimed.

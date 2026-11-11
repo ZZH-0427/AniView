@@ -1,7 +1,8 @@
 # M10E — V0.3 stability and release candidate audit
 
 2026-11-11. **M10E: BLOCKED.** Desktop functional gates pass, but native security
-gate **NATIVE-SECURITY-01: REMEDIATION REQUIRED** after the M10E-S1 static review.
+gate **NATIVE-SECURITY-01: STILL BLOCKED** after the M10E-S2 backport and partial
+verification. See the [S2 record](milestone-m10e-s2-native-security-backport.md).
 Android RC acceptance is not started;
 no HTTPS RC handoff is issued and M10F is not ready.
 
@@ -16,6 +17,10 @@ The candidate is a **development V0.3 functional snapshot with package/runtime
 metadata version0.2.0**, not a published0.3.0. Version preparation belongs to M10F.
 Later audit-document commits are separate from the actually built/tested source;
 they do not mean all different Git HEADs were rebuilt and retested.
+
+The original test/build sections below describe8672859, followed by the historical
+S1 decision. The S2 follow-up identifies the new d31abd8 desktop snapshot and
+uncompleted controlled-error gate; it does not overwrite the older findings.
 
 ## Automated and repeated-build evidence
 
@@ -172,6 +177,32 @@ preceding test/build facts, execute archives, apply patches or replace artifacts
 M10E stays BLOCKED until separately implemented remediation, refreshed distribution,
 regressions, a new frozen candidate and the pending Android gate. Android RC/M10F
 are not unlocked. Main, v0.2.0 and production remain unchanged.
+
+### M10E-S2 backport and verification follow-up
+
+The [S2 record](milestone-m10e-s2-native-security-backport.md) preserves exact
+implementation source `d31abd8dbc4ab9e8b0bcf032b760c719f478ab6f`, two fresh
+189-object native builds and two identical clean59-file/6,049,630-byte product
+builds. Selected26.06 Rar3Decoder.cpp/.h + InBuffer.cpp changes are applied to
+26.05; portability/RAR4 filename patches, handlers, ABI and16/64MiB limits stay.
+The new WASM hash is `f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c`;
+newly regenerated glue happens to retain its old19aa…de6d hash. Refreshed source,
+three patches, receipt, manifest and notices pass distribution verification.
+
+Existing filename43, native boundaries22, compatibility34/195 hashes and
+95 files/1191 tests pass on the changed runtime, with fresh product/password ZIP
+and held-snapshot HTTP evidence. The [new asset manifest](../research/m10e-s2-desktop-asset-manifest.json)
+is separate from the old8672859 manifest. No product frontend module, package,
+lockfile, project license, safety setting or limit is changed.
+
+**S2 remains BLOCKED.** Its20-case controlled stream-error harness compiles objects
+but cannot link/execute: Windows application control blocks installed
+`wasm-emscripten-finalize.exe` with WinError4551, including a host `--version`
+attempt. Assertions/stack checks are not removed to bypass the block. The user
+asked to continue other builds and cannot handle that system setting; this does
+not waive verification. **NATIVE-SECURITY-01: STILL BLOCKED**, not CLOSED.
+The exact-source/fresh-build and other PASS results do not fabricate a harness
+PASS. Android remains NOT READY, and M10E/M10F are not unlocked.
 
 ## Android, Git and next state
 
