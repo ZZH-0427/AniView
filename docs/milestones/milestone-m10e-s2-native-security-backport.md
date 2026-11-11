@@ -6,8 +6,9 @@ The original Windows build/product evidence below is now complemented by the
 unchanged 20 C++ assertions actually passing on the pinned Ubuntu/Emscripten
 runner. Windows application control still blocks the Windows harness; that
 history is preserved. This is not a direct test of the frozen Windows WASM.
-**M10E: READY TO PREPARE ANDROID RC VALIDATION**, not M10E PASSED or RC-READY.
-No phone handoff or M10F work is performed.
+At S2 closeout: **M10E: READY TO PREPARE ANDROID RC VALIDATION**, not PASSED/RC-READY.
+No phone handoff was performed by S2. The later authorized preparation is tracked
+in the [Android RC record](milestone-m10e-android-rc-validation.md); M10F is not started.
 
 ## Git and candidate identity
 
@@ -368,7 +369,9 @@ Linux result above supplies the missing, separately scoped verification.
 
 **M10E-S2: PASSED.**
 **NATIVE-SECURITY-01: CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS.**
-**M10E: READY TO PREPARE ANDROID RC VALIDATION.** This is not M10E PASSED or
-RC-READY. Android acceptance is still PENDING; no URL or phone handoff is issued.
+At S2 closeout: **M10E: READY TO PREPARE ANDROID RC VALIDATION.** Not M10E PASSED or
+RC-READY. At S2 closeout no URL or phone handoff was issued. The separately
+authorized preparation is now tracked in the Android RC record; actual phone
+acceptance remains PENDING.
 No M10F, merge/version/tag/Release/Pages action is performed. The temporary workflow
 was subsequently removed only after the user's explicit cleanup authorization.

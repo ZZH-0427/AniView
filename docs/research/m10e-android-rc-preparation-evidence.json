@@ -1,0 +1,238 @@
+{
+  "schema": 1,
+  "date": "2026-11-11",
+  "scope": "M10E desktop HTTPS RC preparation only; Android results remain pending",
+  "candidateCommit": "733df1984919e318348a88c512d68743990bdca6",
+  "branch": "feat/v0.3-native-security-backport",
+  "freeze": {
+    "candidateCommit": "733df1984919e318348a88c512d68743990bdca6",
+    "sourceDirty": false,
+    "frozenRoot": ".tools/m10e-android/frozen-733df19",
+    "assetCount": 59,
+    "totalBytes": 6049630,
+    "manifestSha256": "bf8208541f8c26d34c119e6d67baabcd494827656bbf0ec081153332e0f0d93c",
+    "oldCandidate": "d31abd8dbc4ab9e8b0bcf032b760c719f478ab6f",
+    "changedAssetPaths": [
+      "release-candidate.json"
+    ],
+    "identicalProductAssets": 58
+  },
+  "commands": [
+    {
+      "command": "npm run lint",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run test",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    }
+  ],
+  "automated": {
+    "testFilesPassed": 95,
+    "testsPassed": 1191,
+    "node": "v24.22.1",
+    "npm": "11.19.1"
+  },
+  "native": {
+    "runtimeRebuilt": false,
+    "distributionAssetsVerified": 20,
+    "engine": "7-Zip 26.05 + selected 26.06 RAR3/InBuffer backport + original RAR4 filename patch",
+    "emscripten": "6.0.13",
+    "initialBytes": 16777216,
+    "maximumBytes": 67108864,
+    "shared": false,
+    "growth": true,
+    "wasmSha256": "f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c",
+    "glueSha256": "19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d",
+    "manifestSha256": "31939431ab44698093db1a496f560874c179436d991dd4021d662e3619fa7528"
+  },
+  "securityGate": {
+    "status": "CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS",
+    "originalRun": "https://github.com/ZZH-0427/AniView/actions/runs/43009589916",
+    "linuxTestsPassed": 20,
+    "linuxTestsExecutedThisTask": false,
+    "temporaryWorkflow": "Removed in 733df19; source, evidence, Git history and successful run retained",
+    "pagesWorkflowUnchanged": true
+  },
+  "https": {
+    "baseUrl": "https://ctrl-subtle-where-bullet.trycloudflare.com/AniView/",
+    "secureContext": true,
+    "hmr": false,
+    "transportChecksPassed": 22,
+    "assetCount": 59,
+    "sampleCount": 8,
+    "browser": "Edg/157.0.4341.42",
+    "checks": [
+      "actual HTTPS new frozen identity/assets/sample bytes, Worker/WASM MIME, CSP, 404 and POST 405",
+      "HTTPS Home lazy loading and legacy Spike WebP query returns Home, secureContext=true/HMR=false",
+      "actual HTTPS GIF/WebP/APNG application-controlled Viewer playback and navigation",
+      "ordinary/password ZIP actual Viewer, wrong/correct password and credential reuse without SevenZip loading",
+      "Creator one WebP output, actual Preview play/return and browser save verified by bytes",
+      "RAR5/plain/password and 7z/plain/encrypted-header actual extraction, passwords, Viewer navigation and Home cleanup",
+      "HTTPS Worker/WASM actual responses under /AniView/, CSP, same-origin/no-CDN, no upload/password transmission, no errors/reload"
+    ],
+    "mediaPixelChecks": 16,
+    "homeCleanupSnapshots": 9,
+    "documentUnchanged": true,
+    "browserErrors": [],
+    "requestMethods": [
+      "GET"
+    ],
+    "applicationNetworkSameOrigin": true,
+    "mediaArchivePasswordUploadsObserved": false,
+    "methodProbe": "Separate Node preflight synthetic POST rejected with 405; product browser requests are GET only",
+    "downloads": [
+      {
+        "bytes": 254,
+        "sha256": "fe3dcf9e79636b5db7ac29df9d4e274c2cb6a5f33e3150d37556d6a61e3bf4a9",
+        "format": "webp"
+      }
+    ],
+    "finalCleanup": {
+      "name": "normal7z actual extraction/Viewer/Next/Previous/Home",
+      "runtime": {
+        "workersCreated": 34,
+        "workersTerminated": 34,
+        "activeWorkers": 0,
+        "peakWorkers": 2,
+        "bitmapsCreated": 0,
+        "bitmapsClosed": 0,
+        "activeBitmaps": 0,
+        "peakBitmaps": 0,
+        "archiveSessionsOpened": 6,
+        "archiveSessionsClosed": 6,
+        "activeArchiveSessions": 0,
+        "entryExtractionsStarted": 19,
+        "entryExtractionsCompleted": 17,
+        "entryExtractionsDiscarded": 0,
+        "staleResultsDiscarded": 0,
+        "decoderErrors": 0,
+        "staticDecodeErrors": 0,
+        "archiveErrors": 1,
+        "cleanupErrors": 0,
+        "lastArchiveCleanup": {
+          "activeArchiveWorkers": 0,
+          "activeArchiveSessions": 0,
+          "pendingReads": 0,
+          "pendingPasswordAccess": 0,
+          "currentExtractedBytes": 0,
+          "cleanupErrors": 0
+        },
+        "lastExtendedArchiveCleanup": {
+          "extendedArchiveWorkersCreated": 1,
+          "extendedArchiveWorkersTerminated": 1,
+          "activeExtendedArchiveWorkers": 0,
+          "activeWasmInstances": 0,
+          "activeArchiveSessions": 0,
+          "activeExtraction": 0,
+          "pendingAccess": 0,
+          "currentExtractedBytes": 0,
+          "activeObjectUrls": 0,
+          "cleanupErrors": 0,
+          "peakWasmBytes": 16777216,
+          "timeouts": 0
+        },
+        "lastCreationCleanup": {
+          "activeSourceWorkers": 0,
+          "activeEncoderWorkers": 0,
+          "activeValidationDecoderWorkers": 0,
+          "activeInspectionWorkers": 0,
+          "activeBitmaps": 0,
+          "activeCanvases": 0,
+          "activeImageData": 0,
+          "ownedRgba": 0,
+          "awaitingAck": 0,
+          "activeObjectUrls": 0,
+          "cleanupErrors": 0,
+          "peakCanonicalRgbaFrames": 1,
+          "sourceSoftClosed": true
+        }
+      },
+      "probe": {
+        "created": 34,
+        "terminated": 34,
+        "activeWorkers": 0,
+        "urlsCreated": 1,
+        "urlsRevoked": 1,
+        "activeObjectUrls": 0
+      }
+    }
+  },
+  "initialSmokeAttempt": {
+    "status": "AUTOMATION ASSERTION FAILED",
+    "cause": "Harness assumed password-RAR next media was 02-animation.webp; actual archive option order selected 03-animation.png. No browser error observed.",
+    "resolution": "Attempt2 uses actual six-entry option order, validates the complete expected media set and Next/Previous title/index/format plus actual Canvas pixels; the same frozen product was not changed.",
+    "rawFailureSha256": "b773c5f306c05fb7553c1b603b7953e2863fd832a91ba06be32d4c0835cf55a0"
+  },
+  "publicSyntheticSamples": [
+    {
+      "path": "/AniView/validation/rc-v03/mixed-static.zip",
+      "bytes": 5757,
+      "sha256": "20cd2e83c06db857e71911ba49d584a15ff587aac00060474016093bad53a39b"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/password-mixed.zip",
+      "bytes": 1543,
+      "sha256": "0ac6de764d071ba8e8370f4a2472480e52c5fa97158514b1a42def6b343800f1"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/mixed.zip",
+      "bytes": 1056,
+      "sha256": "4aceb60373af20367a77bd76c04d227fced621e86b58a5165a11e7739c28ee28"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/normal-rar5.rar",
+      "bytes": 2326,
+      "sha256": "ecbee084e77da651dc2356a75db7b3534c6b20cae0601ff3cca2e5b0669a0d6c"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/headers.7z",
+      "bytes": 1663,
+      "sha256": "fbb8e5792d6fff6de4052c680dd11a3c3dc92d982d5efa2ea2a5a25933b61eac"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/normal.7z",
+      "bytes": 2014,
+      "sha256": "6efa8cf22cd395b2a8c45f756177ddaab7f78da8cf2ee4572c6a34582d340594"
+    },
+    {
+      "path": "/AniView/validation/rc-v03/test_read_format_rar4_solid_encrypted_filenames.rar",
+      "bytes": 428,
+      "sha256": "867341376d5b9a922ec3283c8111821b0435e4cbc493efde8b5083ae3b5ed340"
+    },
+    {
+      "path": "/AniView/validation/extended-archive/password-rar5.rar",
+      "bytes": 2394,
+      "sha256": "13f217732d35e131e2e2530266f2cf61d8e51b7630bb5b3380aa5b0c7d674925"
+    }
+  ],
+  "rawLocalEvidence": {
+    "directory": ".tools/m10e-android/",
+    "httpsBrowserReportSha256": "0c0a0e784326f1de2ac59245eddae52202060ca6a78845ba1f6f88ade769498f",
+    "httpsBrowserSummarySha256": "591295cc7618b256910a8664aa8b89725dd1b496f008d0b867136e9569e9c06e",
+    "transportReportSha256": "f7a469cfd0e24894ce24b96c36b97f8888e96223aa1ab2caa063cd15832ff8a7"
+  },
+  "limitations": [
+    "Desktop HTTPS preparation is not Android acceptance.",
+    "Runtime counters measure application ownership, not total browser/native/GPU/system memory.",
+    "Current HTTPS Creator smoke generates one WebP; three-format Creator and cancel/reopen remain in the requested phone sequences.",
+    "Wrong-password probes can increase historical archiveErrors; applicable ownership and cleanupErrors are zero.",
+    "Temporary HTTPS needs the PC, origin server, tunnel and network to remain available."
+  ],
+  "android": {
+    "edge": "PENDING",
+    "quark": "PENDING",
+    "homeCleanupJson": "NOT PROVIDED",
+    "candidateIdentityUserConfirmed": false
+  },
+  "nextStatus": "M10E: PENDING ANDROID RC VALIDATION",
+  "m10f": "NOT STARTED"
+}

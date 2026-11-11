@@ -1,10 +1,11 @@
 # M10E — V0.3 stability and release candidate audit
 
-2026-11-11. **M10E: READY TO PREPARE ANDROID RC VALIDATION.**
+2026-11-11. **M10E: PENDING ANDROID RC VALIDATION.**
 Native gate **NATIVE-SECURITY-01: CLOSED — VERIFIED BACKPORT WITH INDEPENDENT
 LINUX HARNESS**; see the [S2 record](milestone-m10e-s2-native-security-backport.md).
-M10E itself is not PASSED/RC-READY: Android acceptance is not started, no HTTPS
-handoff is issued and M10F is not ready.
+M10E itself is not PASSED/RC-READY: real Android results and per-browser Home
+cleanup JSON are still pending. The current HTTPS handoff is recorded below;
+M10F is NOT STARTED.
 
 ## Identity and scope
 
@@ -63,7 +64,7 @@ from earlier M10A/B/C Android confirmations.
 
 ## Same-document cross-feature A/B/C
 
-All three sequences ran in one Edge157 page with unchanged document timeOrigin;
+All three sequences ran in one Edge 157 page with unchanged document timeOrigin;
 no product reload/crash or browser errors. Durations include automation.
 
 | Sequence | Actual coverage | Result / duration |
@@ -80,7 +81,7 @@ all applicable active Worker/WASM/archive/extraction/pending/plaintext/URL field
 and cleanupErrors are zero.24 extractions started,22 completed: two observed
 cancel/replacement operations explain the difference, with no remaining work.
 
-Six controlled repeats cover three encrypted-header7z open/close rounds and one
+Six controlled repeats cover three encrypted-header 7z open/close rounds and one
 Creator generation per target. Eight Creator layouts cover four widths×EN/ZH.
 The independent visible heartbeat window peaks at20.2ms; the video job's separate
 internal reading peaks at64.7ms. These are different observation windows.
@@ -190,7 +191,7 @@ newly regenerated glue happens to retain its old19aa…de6d hash. Refreshed sour
 three patches, receipt, manifest and notices pass distribution verification.
 
 Existing filename43, native boundaries22, compatibility34/195 hashes and
-95 files/1191 tests pass on the changed runtime, with fresh product/password ZIP
+95 files / 1191 tests pass on the changed runtime, with fresh product/password ZIP
 and held-snapshot HTTP evidence. The [new asset manifest](../research/m10e-s2-desktop-asset-manifest.json)
 is separate from the old8672859 manifest. No product frontend module, package,
 lockfile, project license, safety setting or limit is changed.
@@ -222,21 +223,21 @@ The separate Windows189-object inclusion/build/product regression evidence and
 Linux controlled unit evidence jointly resolve this gate; neither proves universal
 native safety or supplies Android acceptance. Original Windows4551 and missing-WSL
 records remain failures/not-executed checkpoints, not retroactive passes.
-The branch/path-scoped workflow is retained; REMOVE LATER is a recommendation
-requiring the user's decision. No secrets, write permissions or Pages steps were
-added to it. No product code, safety limit, version or frozen component changes.
+The branch/path-scoped workflow was retained at d2004c2 pending the user's decision.
+It was subsequently removed by explicitly authorized forward commit 733df19, with
+source, assertions, run evidence and history preserved. It had no secrets, write
+permissions or Pages steps. No product code, limit, version or frozen component changes.
 
 ## Android, Git and next state
 
 [Android RC record](milestone-m10e-android-rc-validation.md): Edge **PENDING**,
-Quark **PENDING**, new cleanup JSON **NOT PROVIDED**. The native gate now permits
-preparing Phase2; no public M10E HTTPS URL is registered or handed off. Older M10A/B/C
-phone results do not substitute. The local static audit preview is closed after
-the checks; frozen assets/evidence remain for traceability.
+Quark **PENDING**, new cleanup JSON **NOT PROVIDED**. The native gate permits the separately authorized preparation follow-up below.
+Older M10A/B/C phone results do not substitute. The historical audit loopback
+preview was closed after its checks; the new held HTTPS RC is identified separately.
 
 The original audit-only branch remains preserved. Separately authorized S2 CI
 and documentation commits are pushed on `feat/v0.3-native-security-backport`;
-the tested product remains d31abd8 and actual Linux CI source is d7bc6e8. Final
+the S2 desktop product source is d31abd8 and actual Linux CI source is d7bc6e8. Final
 M10E closeout still requires the separately requested Android results.
 Main/peeled v0.2.0 stay0cb82c0; annotated v0.2.0 stays3f83ab4, and production
 Pages remains V0.2.0. No merge/version/tag/Release/Pages operation occurs.
@@ -248,5 +249,51 @@ versioned manifest preserve the result summary without copying full logs.
 Known resource/format/solid/password ambiguity/platform codec/download limits
 remain accepted; the scoped native gate closure does not remove those limits.
 
-**Final: READY TO PREPARE ANDROID RC VALIDATION; not M10E PASSED or RC-READY.**
-Stop before preparing a remote phone environment; M10F is not started.
+**Historical post-S2 state: READY TO PREPARE ANDROID RC VALIDATION.**
+The subsequent explicitly authorized preparation is recorded below; M10F is not started.
+
+
+## Authorized temporary CI cleanup and Android RC preparation (current)
+
+Cleanup commit `733df1984919e318348a88c512d68743990bdca6` removes only the one-time
+workflow and updates its S2 retention explanation. Pages remains byte-identical;
+no successful run or Git history is deleted. GitHub HEAD/tree equality and upstream
+were checked before the clean build. Later evidence/documentation commits are
+separate from the source identity of the held product.
+
+Fresh lint/typecheck, 95 files / 1191 tests and production build PASS on installed
+Node 24.22.1/npm 11.19.1. The clean 733df19 build has sourceDirty=false and 59 assets,
+6,049,630 bytes. Its [manifest](../research/m10e-android-rc-asset-manifest.json)
+canonical UTF-8/LF SHA256 is
+`bf8208541f8c26d34c119e6d67baabcd494827656bbf0ec081153332e0f0d93c`.
+Only release-candidate.json differs from the S2 snapshot; all 58 product assets
+are identical. This is one fresh build, not another two-build reproducibility run.
+No native rebuild occurs. Frozen JS/WASM, actual 16/64 MiB nonshared memory, all
+limits, three patches, notices/source/manifest and 20 distribution checks remain valid.
+
+[Preparation evidence](../research/m10e-android-rc-preparation-evidence.json)
+records the actual installed desktop Edge 157 HTTPS smoke: normal Home/lazy loading,
+legacy Spike query returning Home, three animated Viewers, ordinary/password ZIP
+without SevenZip loading, one Creator WebP generation/Preview/actual download,
+normal/password RAR5 and plain/encrypted-header 7z extraction/Viewer/navigation.
+All 59 assets/eight synthetic samples match HTTPS bytes; Workers/WASM use correct
+MIME and /AniView/ paths, TLS is secure, HMR=false, no browser errors/reload or
+media/archive/password upload is observed. Sixteen Canvas pixel checks/screenshots
+and nine Home cleanup snapshots PASS; applicable active/pending/ownership fields
+and cleanupErrors are zero. Final Workers 34/34, archive sessions 6/6, URL 1/1.
+The historical archiveErrors=1 comes from a deliberate wrong-password test.
+
+The first browser attempt is retained as an automation assertion failure: the
+script assumed the same second media filename in differently ordered archives.
+The next run validates each archive's actual six-option ordering and full expected
+media set, with Next/Previous title/index/format and pixel assertions. It passes on
+the same held product; no product behavior is changed or error hidden.
+
+The [Android RC record](milestone-m10e-android-rc-validation.md) supplies the frozen
+HTTPS URL, verified public samples, minimal A/B/C steps and required Home JSON.
+The temporary static origin/tunnel remain running for that handoff. Desktop HTTPS
+results are not new Android results; application counters do not measure all native
+or GPU memory. Edge and Quark are both PENDING, new cleanup JSON NOT PROVIDED.
+Main, version, tag, Release and production Pages remain unchanged.
+
+**M10E: PENDING ANDROID RC VALIDATION. M10F: NOT STARTED.**

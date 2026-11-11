@@ -1,88 +1,113 @@
 # M10E — Android RC validation record
 
-2026-11-11. **NOT STARTED / READY TO PREPARE ANDROID RC VALIDATION.**
-Edge: **PENDING**. Quark: **PENDING**. New Android cleanup JSON: **NOT PROVIDED**.
-No M10E Android PASS is inferred from earlier milestone testing.
+2026-11-11. **M10E: PENDING ANDROID RC VALIDATION.**
+Android Edge: **PENDING**. Android Quark: **PENDING**.
+New phone cleanup JSON: **NOT PROVIDED**. No previous milestone phone result is
+relabeled as this RC's acceptance. M10E is not PASSED/RC-READY; M10F is NOT STARTED.
 
-## Gate and candidate identity
+## Current frozen candidate
 
-Current frozen desktop product source is
-`d31abd8dbc4ab9e8b0bcf032b760c719f478ab6f`: 59 assets/6,049,630 bytes,
-sourceDirty=false, two identical builds. The
-[current desktop asset manifest](../research/m10e-s2-desktop-asset-manifest.json)
-has canonical UTF-8/LF SHA256
-`4874fbe6e66eed03d101a8b6a690f1c16755be02018e7f0605238b41cab459ea`.
-The independent Linux 20/20 run uses CI commit d7bc6e8; it does not create another
-product build or Android result. See the [S2 resolution](milestone-m10e-s2-native-security-backport.md).
+Product build source: `733df1984919e318348a88c512d68743990bdca6`, the clean
+workflow-cleanup commit on `feat/v0.3-native-security-backport`.
+`release-candidate.json` says sourceDirty=false, version 0.2.0 and UNLICENSED.
+Later documentation commits are not the source identity of this held build.
 
-Retained historical audit baseline: `86728599149381455ddbfaba7cd529ccfea11ab6`;
-two clean builds produce the same57 assets/5,957,987 bytes. The
-[asset manifest](../research/m10e-v0.3-rc-asset-manifest.json) SHA256 is
-`43b1fec144b756d03d8a9635c645dd20ac2ed0d551ab54176cc4e8ebff085ea5`.
-The manifest digest refers to UTF-8/LF bytes, as generated and committed; Windows
-checkout line-ending conversion must be normalized for that documentation hash.
-Package metadata remains0.2.0; this is not a released0.3.0.
+[RC asset manifest](../research/m10e-android-rc-asset-manifest.json):
+59 assets, 6,049,630 bytes; canonical UTF-8/LF SHA256
+`bf8208541f8c26d34c119e6d67baabcd494827656bbf0ec081153332e0f0d93c`.
+One new production build was executed and frozen. Compared with the S2 desktop
+manifest, only release-candidate.json changes; the other 58 assets are identical.
+The S2 two-build reproducibility result belongs to d31abd8, not to this new commit.
+
+Frozen SevenZip remains 26.05 with the selected 26.06 RAR3/InBuffer security
+backport and original RAR4 filename patch, built with Emscripten 6.0.13.
+WASM: `f0e358b356a3f05372842be90d1023ce148bc82c268922ebf7cad4758641137c`.
+JS: `19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d`.
+Actual memory: 16 MiB initial / 64 MiB maximum, growth enabled, nonshared. Input 15 MiB,
+selected output 4 MiB, known dictionary 4 MiB, operation 15 s and all other limits remain.
+No native rebuild or runtime replacement occurs in this preparation task.
 
 [NATIVE-SECURITY-01](../research/m10e-v0.3-security-license-audit.md#native-gate-native-security-01)
-is **CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS**.
-**No public HTTPS RC URL is prepared or provided.** Do not use an
-old milestone/tunnel URL as M10E acceptance. The desktop loopback secure-context
-check is not an Android HTTPS result. Source/glue/WASM are not updated here.
+remains **CLOSED — VERIFIED BACKPORT WITH INDEPENDENT LINUX HARNESS**.
+[Run 43009589916](https://github.com/ZZH-0427/AniView/actions/runs/43009589916)
+and [Linux 20/20 evidence](../research/m10e-s2-linux-harness-evidence.json) are
+retained. This independently built harness is not the frozen Windows product WASM.
+The [S2 record](milestone-m10e-s2-native-security-backport.md) retains the original
+Windows 4551/WSL checkpoints. The successful one-time workflow was subsequently
+removed by authorized forward commit 733df19; its Git history, source and evidence remain.
 
-Before a separately requested handoff, identify the actual tested source and
-build manifest again. Native or product changes require a new frozen identity
-and explicit retest scope. Edge and Quark must use that same identified build;
-do not alter it between their tests. HTTPS must actually load Home, ZIP, RAR/7z,
-SevenZip, Viewer, Preview and Download with secureContext=true/HMR=false before
-asking the user to begin. Tunnel registration alone is insufficient.
+## HTTPS handoff and desktop verification
 
-## Minimal matrix retained for the future handoff
+Frozen page:
+<https://ctrl-subtle-where-bullet.trycloudflare.com/AniView/?debug=1&rc=733df1984919e318348a88c512d68743990bdca6>
 
-This is a plan, **not completed testing**. Each browser should use one continuous
-page/session where practical. Only public synthetic fixtures are needed.
+Public synthetic sample catalog:
+<https://ctrl-subtle-where-bullet.trycloudflare.com/AniView/validation/rc-v03/>
 
-| Sequence | Future phone steps |
+This temporary Cloudflare tunnel serves an immutable production snapshot under
+/AniView/, not GitHub Pages. The PC and tunnel must stay running and online.
+An expired/unreachable URL is an access problem to report, not an Android FAIL/PASS.
+Do not substitute an older milestone link. Both phone browsers must use this
+same candidate; the build and samples must not change between their tests.
+
+[Preparation evidence](../research/m10e-android-rc-preparation-evidence.json)
+records fresh lint/typecheck, 95 files / 1191 tests, production build, 20-asset native
+distribution verification, real HTTPS transport and desktop browser results.
+The desktop HTTPS results do not constitute Android acceptance. Runtime ownership
+counters do not measure total browser/native/GPU/system memory.
+
+## Minimal Android matrix — not yet performed
+
+Use Android Edge and Quark, each covering A/B/C. No full codec/native negative
+matrix, stress run or video benchmark is requested. Only public synthetic fixtures
+are required; do not provide personal files or passwords.
+
+| Sequence | Steps in each browser |
 | --- | --- |
-| A | Extract a mixed static JPEG/PNG/WebP delivery ZIP in the phone file manager. Create representative GIF, Animated WebP and APNG outputs; Preview/return, download and open saved files, then Home. |
-| B | Open password ZIP, wrong/correct public test password, Viewer and Back. Then open normal RAR5 and encrypted-header7z, unlock where required, Viewer/Back and Home. Confirm ZIP/extended state do not mix. |
-| C | Cancel or replace an archive source, reopen and view another entry, then Home. Exercise EN/ZH and the password controls under the soft keyboard. |
+| A — Creator | Download mixed-static.zip, extract in the phone file manager, then select its static JPEG/PNG/WebP images in Create animation. Generate GIF, Animated WebP and APNG; Preview representative output(s), return, Download and confirm saved result(s) open. Return Home. Do not import the delivery ZIP directly into Creator. |
+| B — Archives | Open password-mixed.zip directly in AniView; its first GIF is public, so Next reaches an encrypted item. Try a wrong public test password, then aniview-test; verify Viewer, navigation and return. Open either normal-rar5.rar or headers.7z, enter Viewer and return; headers.7z also uses aniview-test. Return Home. |
+| C — Lifecycle | Cancel once or replace an archive source, close/reopen and successfully read a media entry. For example, cancel the headers.7z password prompt, close the archive, reopen and unlock. Switch EN/ZH and check the password controls under the soft keyboard. Close all media/archives and return Home. |
 
-Planned public sample set: `mixed-static.zip`, `password-mixed.zip`, `mixed.zip`,
-`normal-rar5.rar`, `headers.7z` and `normal.7z`. Expected normal public fixture
-password is `aniview-test`. Legacy RAR4 fixtures use `password`; text-only listing
-is expected. Sample download URLs/hashes must be supplied and verified at the
-actual handoff; none is represented as currently available on a public M10E URL.
+The catalog also retains mixed.zip and normal.7z for ordinary/reopen checks.
+Legacy RAR4 is optional, not an extra required matrix; its public password is
+password and its text-only listing is expected. Each sample's size/SHA is in the
+preparation evidence and the catalog. Report any exact error code/step, noticeable
+stall, reload or crash, and confirm the candidate used.
 
-No full codec/native negative matrix or video benchmark is required on the phone.
-Add targeted checks only if the actual continuous flows expose a problem.
+## Home cleanup evidence required from each browser
 
-## Diagnostic copy and attribution
-
-On the actual frozen URL with `?debug=1`, close all media/archives and return Home.
-Expand Resource diagnostics, then Raw JSON, and copy that existing output; this
-does not introduce a new telemetry/export feature. Provide one result per browser
-with candidate identity and functional outcome. Report an exact code/step for
-failures, reloads or crashes; do not paste personal passwords or private files.
-
-Check fields actually present:
+After completing A/B/C, close all media/archives and return Home. Expand Resource
+diagnostics → Raw JSON and copy the existing output separately for Edge and Quark.
+Do not edit its values or paste personal passwords. Check fields actually present:
 
 - Runtime activeWorkers, activeBitmaps, activeArchiveSessions and cleanupErrors.
 - lastExtendedArchiveCleanup activeExtendedArchiveWorkers, activeWasmInstances,
   activeArchiveSessions, activeExtraction, pendingAccess, currentExtractedBytes,
   activeObjectUrls and cleanupErrors.
-- Other present creation/conversion/video cleanup snapshots: active Workers,
-  Bitmap/Canvas/ImageData/RGBA/ACK/VideoFrame/URL ownership and cleanupErrors.
+- Other present creation/archive/conversion snapshots: active Worker/Bitmap/
+  Canvas/ImageData/RGBA/ACK/VideoFrame/URL ownership, pending reads and cleanupErrors.
 
-Required active/error values should be zero, with created/terminated and
-opened/closed balanced. Cumulative/peak counters need not be zero. Missing fields
-or unperformed steps must be marked unprovided, not invented. This observes
-application ownership, not complete browser/native/GPU/system memory.
+Active/pending/current ownership values and cleanupErrors should be zero;
+created/terminated and opened/closed should balance. Peak/cumulative counters
+need not be zero. Deliberately wrong passwords may increase historical
+archiveErrors; identify that step instead of requiring all historical errors to
+be zero. Missing fields, unperformed steps and absent JSON remain unprovided.
 
-| Browser | Candidate used | A/B/C | Cleanup evidence | Verdict |
+| Browser | Candidate used | A/B/C | Home cleanup JSON | Verdict |
 | --- | --- | --- | --- | --- |
-| Android Edge | Not yet supplied | PENDING | NOT PROVIDED | PENDING |
-| Android Quark | Not yet supplied | PENDING | NOT PROVIDED | PENDING |
+| Android Edge | Not yet user-confirmed | PENDING | NOT PROVIDED | PENDING |
+| Android Quark | Not yet user-confirmed | PENDING | NOT PROVIDED | PENDING |
 
-**Current M10E is READY TO PREPARE ANDROID RC VALIDATION, not PASSED/RC-READY.**
-Preparation and real Edge/Quark evidence still require their own task; no remote
-environment or phone acceptance starts here. M10F is not authorized or started.
+## Historical baselines retained
+
+S2 desktop source d31abd8: 59 assets/6,049,630 bytes, two identical clean builds;
+[manifest](../research/m10e-s2-desktop-asset-manifest.json) canonical SHA256
+`4874fbe6e66eed03d101a8b6a690f1c16755be02018e7f0605238b41cab459ea`.
+Original audit source 86728599149381455ddbfaba7cd529ccfea11ab6: 57 assets/5,957,987
+bytes; [manifest](../research/m10e-v0.3-rc-asset-manifest.json) canonical SHA256
+`43b1fec144b756d03d8a9635c645dd20ac2ed0d551ab54176cc4e8ebff085ea5`.
+Normalize Windows checkout CRLF to LF when verifying these documentation digests.
+Old audit findings and M10C2 initial Android failures are not rewritten.
+
+**M10E: PENDING ANDROID RC VALIDATION.** Await separate real Edge/Quark results.
+No version bump, main merge, tag, Release, production Pages or M10F action occurs.
