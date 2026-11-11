@@ -1,7 +1,8 @@
 # M10E — V0.3 stability and release candidate audit
 
 2026-11-11. **M10E: BLOCKED.** Desktop functional gates pass, but native security
-gate **NATIVE-SECURITY-01** is unresolved. Android RC acceptance is not started;
+gate **NATIVE-SECURITY-01: REMEDIATION REQUIRED** after the M10E-S1 static review.
+Android RC acceptance is not started;
 no HTTPS RC handoff is issued and M10F is not ready.
 
 ## Identity and scope
@@ -116,7 +117,7 @@ event/identity/numeric metadata, not passwords or media. Public synthetic fixtur
 names are not private user files. Required notices/source/manifest and source
 replacement materials pass engineering verification.
 
-Frozen 7-Zip26.05/Emscripten6.0.13 stays nonshared16/64MiB with growth. The actual
+Frozen 7-Zip26.05/Emscripten6.0.13 stays nonshared 16/64MiB with growth. The actual
 compiled maximum is64MiB; the test-observed peak is not substituted for this cap.
 Input15MiB, selected output4MiB, known dictionary4MiB,1000 entries,
 1024/131072 UTF-16 single/total path units, I/O and15s operation limits remain.
@@ -139,6 +140,38 @@ A separate reviewed native impact assessment or minimal remediation is required.
 Any changed runtime needs refreshed source/patch/notices/hashes/manifests and
 targeted regressions before a new frozen Android candidate. This audit makes no
 unapproved fix or upgrade and does not raise limits.
+
+### M10E-S1 static review follow-up
+
+2026-11-11: [native impact review and remediation decision](../research/m10e-native-security-impact-review.md)
+completed against documentation HEAD `bf64ca4ff4c9665850a280230d218bd52e1ded7a`.
+The tested RC source remains 8672859; this follow-up does not alter or rerun the
+preceding test/build facts, execute archives, apply patches or replace artifacts.
+
+- **RAR3/InBuffer: UNKNOWN / NOT EXCLUDED.** The official changes repair callback
+  exception/error propagation and failed-reader state on a supported RAR4 decoder
+  path. Input errors have a static encrypted-stream edge, but a complete admitted
+  trigger and its exact frozen-WASM security effect are not established. No new
+  memory-corruption, disclosure, crash or exploitability result is claimed.
+- **CAB/LZX: NOT APPLICABLE to the current supported static call graph.** LZX's
+  object is a link input, but CAB/CHM/WIM handlers are excluded, no LZX codec
+  adapter/registration exists and all 189 linked objects have no incoming NLzx
+  symbol. This is separate from the unresolved RAR3 question; it is not a claim
+  to have proven every optimized WASM instruction absent.
+- Recommend **B — BACKPORT REQUIRED FIX**, in a separate task: exact upstream
+  Rar3Decoder.cpp/.h and InBuffer.cpp changes, preserving the existing RAR4
+  NUL/Unicode patch, ABI, handlers and limits. The source dependency set is closed,
+  but the header changes object layout, so all 189 objects, including the factory
+  in RarCodecsRegister, must be rebuilt consistently. A two-object swap is invalid.
+- Current static manifest/hash/memory checks PASS; frozen WASM/glue, source package,
+  notices and native patches are unchanged. Full tests/build and Android are not
+  rerun for documentation-only review. No version/dependency/security setting
+  changes, exploit execution or bypass of the original safety stop occurs.
+
+**NATIVE-SECURITY-01: REMEDIATION REQUIRED.** The static decision task is complete;
+M10E stays BLOCKED until separately implemented remediation, refreshed distribution,
+regressions, a new frozen candidate and the pending Android gate. Android RC/M10F
+are not unlocked. Main, v0.2.0 and production remain unchanged.
 
 ## Android, Git and next state
 
