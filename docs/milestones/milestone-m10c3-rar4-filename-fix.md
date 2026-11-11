@@ -161,6 +161,9 @@ HTTPS production candidate. This task stops before formal phone testing or a
 later milestone. No main merge, tag move, version bump, Release or Pages deploy.
 
 Implementation checkpoint: `c6915e9f8d2b26faf5f4b5234f282360df985a12`.
+The following network failures are historical and retained. They are superseded
+by the successful [GitHub/HTTPS delivery recovery](milestone-m10c3-sync-https-recovery.md);
+the fixed implementation and native hashes have not changed.
 Git push was attempted without force and failed with HTTP408, curl55 connection
 reset and later github.com:443 connectivity errors. One-shot transport options
 changed neither TLS nor persistent config. The frozen local production build is

@@ -1,101 +1,92 @@
 # M10C3 — Android RAR / 7z product validation
 
-2026-11-11. **PENDING ANDROID RAR/7Z PRODUCT VALIDATION — NOT STARTED.**
+Status: READY FOR ANDROID PRODUCT VALIDATION. No Android PASS is recorded.
+Use Android Edge and Quark separately; old milestone results do not substitute.
 
-Desktop/native/distribution gates now pass, including the
-[RAR4 raw-name fix](milestone-m10c3-rar4-filename-fix.md). This branch prepares a
-frozen production build without HMR for a later Android test session. Preparation
-does not record an Android PASS or start formal acceptance.
-Do not reuse M10C1/M10C2 or prior milestone URLs. Production remains v0.2.0.
+## Frozen candidate
 
-Frozen code candidate: `c6915e9f8d2b26faf5f4b5234f282360df985a12`.
-The clean-tree production build and public fixture set are prepared locally.
-Exact served identity is in `/AniView/release-candidate.json`; native hashes are
-in `/AniView/vendor/sevenzip/manifest.json`.
+Page: https://distributor-promotions-participate-surfaces.trycloudflare.com/AniView/?debug=1
 
-**No HTTPS phone entry is approved yet.** The first HTTP/2 quick tunnel returned
-intermittent520/530 and lost its edge connection. A QUIC replacement at
-`https://intervention-informed-elimination-momentum.trycloudflare.com/AniView/`
-confirmed secure context, no HMR, the clean candidate identity and JS/WASM hashes,
-but the actual archive/Viewer check hit the existing15s timeout. Local equivalents
-pass and frozen origin assets return200 with exact hashes. External delivery is
-not accepted; do not treat tunnel registration or a200 homepage as full readiness.
-The failed HTTP/2 tunnel is stopped; the frozen local server/QUIC preparation are
-retained for a later network recheck. No device test has started.
+Samples: https://distributor-promotions-participate-surfaces.trycloudflare.com/AniView/validation/extended-archive/
 
-Feature push also remains pending: ordinary push returned HTTP408, followed by
-connection resets / github.com:443 reachability failure. No authentication bypass,
-force push, TLS change or persistent Git configuration change was used. Recheck
-network delivery, push the current feature branch, and independently verify the
-complete HTTPS page/Worker path before issuing phone instructions. Do not rerun
-or relabel the passed native desktop matrix solely for this transport issue.
+Implementation/build commit: `c6915e9f8d2b26faf5f4b5234f282360df985a12`.
+Subsequent feature commits contain handoff documentation only. The production
+build identifies this clean code snapshot in `release-candidate.json`.
 
-## Prerequisites
+WASM SHA-256: `bcbd8a4466062683a7e5d5c195be745fe18ea1065a4c6ccfe157dbca230fe970`.
+JS SHA-256: `19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d`.
+Same 7-Zip26.05 / Emscripten6.0.13, nonshared16/64MiB, original15s deadline.
+Actual fresh HTTPS desktop product smoke passed; secureContext=true, HMR=false.
+This is a static frozen preview, not the production GitHub Pages deployment.
 
-Complete and verify the native component/source distribution; pass exact native
-boundaries, real product desktop Viewer/conversion/navigation/cancel/cleanup and
-production `/AniView/` build; commit/push the feature-branch checkpoint. Freeze
-one no-HMR production preview and its public synthetic fixture set, verify the
-secure URL, then record candidate commit, artifact manifest and URLs here.
-No source/build/service change during user testing. Local freeze/identity/HTTPS
-checks are preparation evidence; device results remain empty.
+Keep the computer, local server and selected tunnel running. Do not change the
+build, fixtures or service during phone acceptance. Avoid simultaneous bulk
+uploads while testing; they previously congested this network. Recheck this
+temporary URL if testing occurs after a network change, sleep or restart.
 
-## Planned Edge sequence
+## Files and passwords
 
-Open normal RAR5 → six media types/Viewer → Next/Previous. Open solid RAR5 and a
-later entry. Open password RAR5 → wrong/correct → reusable credential → convert
-an animated entry → Preview/Back to the same source/selection. Open normal/solid
-7z and encrypted-header 7z. Cancel a medium selected extraction and retry without
-choosing the archive again. Switch EN/ZH with the password input retained. Test
-a controlled near-policy sample after smaller cases. Close all and return Home.
+Download files from the sample index, then choose the downloaded archive directly
+with Open archive. Do not extract it first. All fixture media and passwords are
+public test data; do not use personal passwords.
 
-## Planned Quark sequence
+| Group | Files | Password |
+| --- | --- | --- |
+| Normal | normal-rar4.rar, normal-rar5.rar, normal.7z | none |
+| Solid | solid-rar5.rar, solid.7z | none |
+| Encrypted entries | password-rar5.rar, password.7z | aniview-test |
+| Encrypted headers | headers-rar5.rar, headers.7z | aniview-test |
+| Legacy RAR4 encrypted/header/solid | test_read_format_rar4_*.rar | password |
+| Unicode RAR4 | unicode-chinese.rar, unicode-japanese.rar | none |
+| Controlled medium/near selected-output cap | medium-solid.7z, medium-solid-rar5.rar | none |
 
-Open RAR4/RAR5 → Viewer; password wrong/correct; cancel prompt, explicit retry;
-normal/solid/password 7z; keyboard-size scrolling, input, errors and buttons;
-cancel/reopen/Viewer; EN/ZH; small then medium and controlled near-policy sample;
-Home/cleanup. Stop on OOM, crash, reload or severe freeze; do not raise load.
+The legacy RAR4 fixtures contain text only: successful listing with no supported
+images is expected. Their selected-byte hashes are separately verified on desktop.
+M10C2's original first Android failures remain historical; no original root cause
+or retroactive PASS is claimed.
 
-Both browsers also open `unicode-chinese.rar` and `unicode-japanese.rar`, confirm
-the full names, play the GIF, convert one and Back to the same source. These new
-valid separator fixtures exercise the filename patch without phone stress tests.
+## Each browser
 
-## Required historical regression
+1. Open normal RAR4, RAR5 and7z; view supported animation/static entries, Play/Pause
+   and Next/Previous. Confirm selection/heading identity. Open solid RAR5/7z and
+   select a later media entry by name; native solid order can differ by extension.
+2. Open password archives: wrong password → correct password → normal Viewer.
+   Next/Previous should reuse a verified password without repeated prompts.
+   On an animated entry use More → Convert animation → supported target → Convert
+   → Preview → Close → Back; retain the original archive and selected item.
+3. Open encrypted-header RAR5/7z: Cancel keeps a retryable archive, explicit Unlock
+   retries; wrong → correct works. While typing test characters, switch EN/ZH;
+   preserve input and check errors/Unlock/Cancel remain visible or scroll-reachable
+   above the soft keyboard. Close/reopen or replace the archive requires a password
+   again; cancelled partial entry input must not leak to another selection.
+4. Historical RAR4 regression: open
+   test_read_format_rar4_encrypted_filenames.rar without a credential, Cancel and
+   retry, enter a wrong value then correct `password`. Confirm successful listing
+   (no images is expected). Close/reopen and repeat that sequence three times.
+   Also open the available RAR4 encrypted/solid variants with `password`.
+5. Open unicode-chinese.rar and unicode-japanese.rar; full names and GIF playback
+   should work. Convert one and Back, retaining the full selected name.
+6. After small cases, use one controlled medium solid sample. Cancel extraction
+   when possible, explicitly Retry/reopen and confirm the PNG Viewer. Do not raise
+   limits or repeat stress after a crash, reload, OOM or severe freeze.
+7. Close all media/archives and return Home. Resource diagnostics must show zero
+   activeWorkers, activeBitmaps and activeArchiveSessions. lastExtendedArchiveCleanup
+   must show zero activeExtendedArchiveWorkers, activeWasmInstances,
+   activeArchiveSessions, activeExtraction, pendingAccess, currentExtractedBytes,
+   activeObjectUrls and cleanupErrors. Created/terminated Workers should balance.
+   Historical wrong-password/error and peak counters need not be zero.
 
-Both browsers must repeat the M10C2-equivalent RAR4 encrypted-header missing →
-wrong → correct sequence. The public legacy fixture is
-`test_read_format_rar4_encrypted_filenames.rar`, public password `password`.
-It contains text only: successful archive opening with no media is expected.
-Desktop real product Worker tests must additionally verify the selected `b.txt`
-hash. New original-media RAR5/7z fixtures use public password `aniview-test`.
-Never enter a personal archive password for these tests.
+## Reply
 
-Original M10C2 first failures remain historical and are not rewritten. No root
-cause for those original phone failures has been proven. Fresh M10C3 results
-must say whether the equivalent sequence reproduces.
+For Edge and Quark separately, report normal/solid/password/header/legacy-repeat,
+Viewer/conversion/Back/navigation, cancel/reopen, Unicode/EN-ZH/keyboard outcomes;
+obvious lag/reload/crash; and the final cleanup JSON or explicit all-zero
+confirmation. Include exact error code/step if something fails. No personal
+password, private filename or media contents should be copied into diagnostics.
 
-## Evidence to collect
-
-Record Edge/Quark browser, candidate identity, flow outcomes, successful download
-reopening, cancellation/retry, soft keyboard/language behavior, obvious UI
-problems/reloads/crashes, small/medium/near-policy outcomes and observable WASM
-high-water. Heartbeat gaps are timing evidence, not standalone proof of a freeze
-or responsiveness. Native/GPU/OS total memory is unmeasured.
-
-After Home, Resource diagnostics → Raw JSON must show active Workers, Bitmaps and
-ArchiveSessions at zero. `lastExtendedArchiveCleanup` must have zero
-`activeExtendedArchiveWorkers`, `activeWasmInstances`, `activeArchiveSessions`,
-`activeExtraction`, `pendingAccess`, `currentExtractedBytes`, `activeObjectUrls`
-and `cleanupErrors`; Workers created must equal terminated. Historical error and
-peak counters need not be zero. Never collect credentials/credential length,
-private filenames or media in diagnostics.
-
-## Results
-
-| Browser | Frozen candidate | Native/product flows | RAR4 regression | Cleanup | Decision |
+| Browser | Candidate | Product flows | RAR4 repeated sequence | Cleanup | Decision |
 | --- | --- | --- | --- | --- | --- |
-| Android Edge | Not issued | Not tested | Not tested | Not tested | PENDING |
-| Android Quark | Not issued | Not tested | Not tested | Not tested | PENDING |
+| Android Edge | c6915e9 | Not tested | Not tested | Not tested | PENDING |
+| Android Quark | c6915e9 | Not tested | Not tested | Not tested | PENDING |
 
-**No Android PASS is recorded.** The milestone stays open until new user-supplied
-product results satisfy the gate. Only then update/push the closeout documents.
+M10C3 remains open until these new user-supplied device results pass.

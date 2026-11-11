@@ -2,7 +2,13 @@
 
 Checkpoint date: 2026-11-11. **DESKTOP PASSED.**
 
-**M10C3: PENDING ANDROID RAR/7Z PRODUCT VALIDATION.** Not PASSED/CLOSED.
+**M10C3: READY FOR ANDROID PRODUCT VALIDATION.** Not PASSED/CLOSED.
+
+GitHub feature synchronization and the complete fresh HTTPS product smoke now
+pass. The [delivery recovery record](milestone-m10c3-sync-https-recovery.md)
+documents exact-object/API synchronization, unchanged frozen binaries and actual
+network/Viewer/conversion/cleanup evidence. Use the updated
+[Android guide](milestone-m10c3-android-validation.md); no phone PASS is recorded.
 
 The fixed 7-Zip26.05 RAR4 parser validates the full declared NAME_SIZE before the
 old `ReadName` scan/SetFrom discards a NUL suffix. Non-Unicode embedded NUL rejects
@@ -44,10 +50,11 @@ names. M10C2's original Android failures are retained without retroactive PASS o
 a claimed root cause. The [Android record](milestone-m10c3-android-validation.md)
 identifies the prepared candidate. No formal Android test has started.
 
-The local code checkpoint is `c6915e9`. External delivery is still pending:
-feature push encountered HTTP408/connection resets, and temporary HTTPS archive
-validation timed out despite correct local assets. No phone URL is approved yet;
-see the Android record for actual infrastructure evidence and recheck requirements.
+The local code/build checkpoint is `c6915e9`; later feature commits contain
+documentation only. Earlier push/HTTPS failures remain historical evidence.
+Exact-object GitHub synchronization now succeeds, and the selected US-route HTTPS
+preview passes actual cold RAR5,7z,password,conversion and Home cleanup flows with
+the original limits. Fresh Android results are the remaining milestone gate.
 
 The remaining implementation/pre-retry sections are historical context,
 superseded by this desktop checkpoint where stated.
