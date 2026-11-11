@@ -2,13 +2,32 @@
 
 Checkpoint date: 2026-11-11. **DESKTOP PASSED.**
 
-**M10C3: READY FOR ANDROID PRODUCT VALIDATION.** Not PASSED/CLOSED.
+**M10C3 — RAR / 7z Narrow Productization: PASSED / CLOSED.**
 
 GitHub feature synchronization and the complete fresh HTTPS product smoke now
 pass. The [delivery recovery record](milestone-m10c3-sync-https-recovery.md)
 documents exact-object/API synchronization, unchanged frozen binaries and actual
-network/Viewer/conversion/cleanup evidence. Use the updated
-[Android guide](milestone-m10c3-android-validation.md); no phone PASS is recorded.
+network/Viewer/conversion/cleanup evidence. The current user now confirms the new
+Android functional round with **“未发现任何问题”**, separately for Edge and Quark.
+Both are **USER-CONFIRMED PASS** for the arranged scope in the
+[Android record](milestone-m10c3-android-validation.md): normal-rar5.rar,
+headers.7z, test_read_format_rar4_solid_encrypted_filenames.rar and
+medium-solid.7z; archive opening/listing, Viewer where media exists, passwords,
+cancel/reopen and return/navigation, including supported animation conversion and
+EN/ZH. The user also separately supplies both browsers' Home Resource Diagnostics.
+The [Android resource tables](milestone-m10c3-android-validation.md#user-provided-home-resource-diagnostics)
+archive the exact values once: Workers 5/5, Bitmaps 4/4, archive sessions 2/2,
+extractions 7/7, extended Workers 1/1; all reported active resources and errors are
+zero on each browser. `peakWasmBytes=16777216` and `timeouts=0` on each. Android
+application-observable cleanup is **USER-CONFIRMED PASS**. This supersedes the
+earlier FUNCTIONAL PASS / EVIDENCE PENDING conclusion.
+
+Desktop HTTPS cleanup remains **DESKTOP PASS**; unit/native/browser regression
+remains **AUTOMATED PASS**. Test/repetition counts, timings, device/version details
+and system/native/GPU memory measurements remain **NOT SEPARATELY VERIFIED**.
+The functional confirmation is not expanded to additional fixtures or the exact
+three RAR4 password repetitions in the historical expanded guide. Unreported
+diagnostic fields are not assumed to be zero.
 
 The fixed 7-Zip26.05 RAR4 parser validates the full declared NAME_SIZE before the
 old `ReadName` scan/SetFrom discards a NUL suffix. Non-Unicode embedded NUL rejects
@@ -32,7 +51,8 @@ during native opening, before listing. **43 filename cases (19 positive / 24
 negative), 22 native boundary checks and all 34 compatibility cases / 195 hashes
 PASS.** Actual Viewer, Chinese/Japanese RAR4 conversion/Back/Home, passwords,
 encrypted headers, solid, Cancel/reopen/retry, replacement and cleanup PASS.
-ZIP/password-ZIP nine groups and three-target Creator 26 groups PASS. Lint,
+ZIP/password-ZIP nine groups and three-target Creator 26 groups PASS. These are
+retained desktop/automated results, not newly measured Android results. Lint,
 typecheck, **95 files / 1,188 tests**, complete build and 18 distribution assets PASS.
 
 Two builds from newly extracted pinned sources produce identical JS/WASM hashes:
@@ -44,17 +64,35 @@ JS   19aa0a07b46578bed8a31ee1ea6c8848d79d4ffd14498f88020a07e5ea66de6d
 
 Actual memory stays nonshared, initial16MiB / maximum64MiB, growth enabled.
 Source, patch, notices, change record and replacement materials match the manifest.
-These hashes supersede the historical pre-fix binaries. Fresh Android Edge/Quark
-product results remain required, including the RAR4 password sequence and Unicode
-names. M10C2's original Android failures are retained without retroactive PASS or
-a claimed root cause. The [Android record](milestone-m10c3-android-validation.md)
-identifies the prepared candidate. No formal Android test has started.
+These hashes supersede the historical pre-fix binaries. On this closeout review,
+both hashes, the actual nonshared 16/64 MiB memory section, 18 manifest assets,
+six current build inputs and 31 source comparisons against the previously audited
+source package match. Native patches, notices, licenses and distribution materials
+remain unchanged. This is engineering provenance verification, not a new legal
+assessment. No dependency upgrade, native rebuild or product edit was performed.
+The complete lint/typecheck/test/build receipts are retained; they were not rerun
+for these documentation-only changes.
+
+M10C1 research and M10C2's original Android failures/followup records remain
+unchanged from the baseline, without retroactive PASS or a claimed root cause.
+The [Android record](milestone-m10c3-android-validation.md) separates the current
+user-confirmed functional and numeric cleanup evidence from desktop/automated
+results and unreported measurements.
 
 The local code/build checkpoint is `c6915e9`; later feature commits contain
 documentation only. Earlier push/HTTPS failures remain historical evidence.
 Exact-object GitHub synchronization now succeeds, and the selected US-route HTTPS
 preview passes actual cold RAR5,7z,password,conversion and Home cleanup flows with
-the original limits. Fresh Android results are the remaining milestone gate.
+the original limits. Before the final documentation commit, local and directly
+queried remote feature HEAD both equal
+`382ba6a8a70a402248d711e134eb03d9e3396eff`, with upstream
+`origin/feat/v0.3-rar-7z-product`. Only the two final acceptance documents had
+pending changes; the index was empty.
+The RAR4 security patch is committed in `c6915e9`. Main and the v0.2.0 tag remain
+unchanged. This closeout changes only this report and the Android record. With
+the separate Android confirmations and resource metrics now supplied, the final
+documentation commit/push is authorized on this feature branch. Its identity and
+remote commit/tree equality are checked at delivery; no product commit is added.
 
 The remaining implementation/pre-retry sections are historical context,
 superseded by this desktop checkpoint where stated.
@@ -220,13 +258,20 @@ resource-limited solid work; small input/selected-output/dictionary policies;
 preflight; some password/corruption ambiguity; JS passwords cannot be physically
 memory-wiped; unobservable native/OS memory. Other backend formats are rejected.
 
-**M10C3: NOT CLOSED.** Native compilation, raw-NUL rejection, distribution and
-desktop gates now pass. Fresh Android RAR/7z product acceptance remains unstarted.
-Do not start a later milestone, merge main or release from this checkpoint.
-The controller-only localhost preview was stopped after its checks; no temporary
-phone endpoint is active or approved for this checkpoint.
+**M10C3 — RAR / 7z Narrow Productization: PASSED / CLOSED.** Native compilation,
+raw-NUL rejection, distribution, automated and desktop gates pass. Android Edge
+and Quark's arranged functional tests and application-observable Home cleanup are
+separately USER-CONFIRMED PASS. The narrow product scope covers bounded single-file
+RAR4/RAR5/7z browsing, ordinary/supported solid archives, passwords and encrypted
+filenames, the existing Viewer/animation conversion, Worker-termination cancel
+and recovery, and EN/ZH. No resource or format limit is raised.
 
-## Working-tree file impact
+The next separate task is **V0.3 Repository Hygiene & Artifact Audit — READ ONLY**;
+it is not started here. No main merge, version/tag change, RC, Release or Pages
+deployment occurs in this closeout. Current service availability was not rechecked
+or changed during this documentation-only review.
+
+## Working-tree file impact (historical pre-retry snapshot)
 
 New source files (with matching tests where listed):
 
